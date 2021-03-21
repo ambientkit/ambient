@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{{template "head" .}}
+
+<body>
+    <header>
+        <a class="title" href="/">
+            <h2>{{SiteSubtitle}}</h2>
+        </a>
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/dashboard/posts">Posts</a>
+            <a href="/dashboard/styles">Styles</a>
+            <a href="/dashboard/logout">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        {{if .title}}
+        <h1>{{.title}}</h1>
+        {{end}}
+        <content>
+            {{template "content" .}}
+        </content>
+    </main>
+    <footer>
+        {{SiteFooter}}
+    </footer>
+
+    {{if EnableStackEdit}}
+    <script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
+    <script type="text/javascript">
+    function openStackEditor(elementName) {
+        const el = document.querySelector(`textarea[name="${elementName}"]`);
+        const stackedit = new Stackedit();
+
+        // Open the iframe.
+        stackedit.openFile({
+            content: {
+                text: el.value,
+                properties: {
+                    extensions: {
+                        preset: 'commonmark',
+                        markdown: {
+                            table: true,
+                        }
+                    },
+                    colorTheme: 'dark',
+                }
+            }
+        });
+
+        // Listen to StackEdit events and apply the changes to the textarea.
+        stackedit.on('fileChange', (file) => {
+            el.value = file.content.text;
+        });
+    }
+    </script>
+    {{end}}
+    {{if EnablePrism}}
+    <script src="https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    {{end}}
+</body>
+
+</html>

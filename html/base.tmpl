@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{{template "head" .}}
+
+<body>
+    <header>
+        <a class="title" href="/">
+            <h2>{{SiteSubtitle}}</h2>
+        </a>
+        <nav>
+            <a href="/">Home</a>
+            {{if Authenticated}}<a href="/dashboard">Dashboard</a>{{end}}
+            {{range $p := PublishedPages}}
+            <a href="/{{.URL}}">{{.Title}}</a>
+            {{end}}
+            <a href="/blog">Blog</a>
+        </nav>
+    </header>
+
+    <main>
+        {{if .title}}
+        <h1>{{.title}}</h1>
+        {{end}}
+        {{if .pubdate}}
+        <p>
+            <i>
+                <time datetime="{{.pubdate | Stamp}}" pubdate>
+                    {{.pubdate | StampFriendly}}
+                </time>
+                {{if Authenticated}}<a href="/dashboard/posts/{{.id}}">edit</a>{{end}}
+            </i>
+            
+        </p>
+        {{end}}
+        <content>
+            {{if .query}}
+            <h3 style="margin-bottom:0">Filtering for "{{.query}}"</h3>
+            <small>
+                <a href="/blog">Remove filter</a>
+            </small>
+            {{end}}
+            {{template "content" .}}
+        </content>
+        {{if .tags}}
+        <small>
+            <div>
+                {{range $p := .tags}}
+                <a href="/blog?q={{.Name}}">#{{.Name}}</a>
+                {{end}}
+            </div>
+        </small>
+        {{end}}
+
+        {{if and .pubdate DisqusID}}
+        <div id="disqus_thread"></div>
+        {{end}}
+    </main>
+    <footer>
+        {{SiteFooter}}
+    </footer>
+
+    {{if GoogleAnalyticsID}}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{GoogleAnalyticsID}}"></script>
+    <script type="text/javascript">
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{GoogleAnalyticsID}}');
+    </script>
+    {{end}}
+    {{if and .pubdate DisqusID}}
+    <script type="text/javascript">
+        var disqus_config = function () {
+            this.page.url = '{{SiteURL}}/{{.posturl}}';
+            this.page.identifier = '{{.id}}';
+        };
+        (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://{{DisqusID}}.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    {{end}}
+    {{if EnablePrism}}
+    <script src="https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    {{end}}
+</body>
+
+</html>
