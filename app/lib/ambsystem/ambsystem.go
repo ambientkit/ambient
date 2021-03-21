@@ -24,8 +24,14 @@ type PluginMeta struct {
 type IPlugin interface {
 	PluginName() string
 	SetPages(IRouter) error
+	//SetSettings()
 	// Deactivate() error
 	// Uninstall() error
+}
+
+// ISettings -
+type ISettings interface {
+	Add(name string, fieldType string, defaultValue string)
 }
 
 // IRouter represents a router.

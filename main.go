@@ -18,7 +18,10 @@ func init() {
 }
 
 func main() {
-	mux := app.LoadPlugins()
+	mux, err := app.Boot()
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
 
 	// Start the web server.
 	port := os.Getenv("PORT")

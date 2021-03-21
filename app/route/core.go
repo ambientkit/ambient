@@ -33,12 +33,17 @@ func Register(storage *datastorage.Storage, sess *websession.Session, tmpl *html
 		Sess:    sess,
 	}
 
+	// Load the plugins
+	LoadPlugins(c.Router)
+
 	// Register routes.
 	registerHomePost(&HomePost{c})
 	registerStyles(&Styles{c})
 	registerAuthUtil(&AuthUtil{c})
 	registerXMLUtil(&XMLUtil{c})
 	registerAdminPost(&AdminPost{c})
+
+	// This should be last because it catches all other pages at the root.
 	registerPost(&Post{c})
 
 	return c, nil
