@@ -82,9 +82,6 @@ func FuncMap(r *http.Request, storage *datastorage.Storage,
 		}
 		return false
 	}
-	fm["EnableStackEdit"] = func() bool {
-		return storage.Site.StackEdit
-	}
 
 	return fm
 }

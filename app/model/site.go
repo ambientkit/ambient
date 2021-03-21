@@ -26,7 +26,6 @@ type Site struct {
 	Content           string                              `json:"content"` // Home content.
 	Styles            string                              `json:"styles"`
 	StylesAppend      bool                                `json:"stylesappend"`
-	StackEdit         bool                                `json:"stackedit"`
 	Plugins           map[string]ambsystem.PluginSettings `json:"plugins"`
 	Posts             map[string]Post                     `json:"posts"`
 }
