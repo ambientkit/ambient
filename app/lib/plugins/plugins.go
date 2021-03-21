@@ -80,7 +80,7 @@ func Pages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.Plu
 		}
 
 		// Load the assets.
-		assets, files := v.SetAssets()
+		assets, files := v.EmbeddedAssets()
 		if assets == nil || files == nil {
 			continue
 		}

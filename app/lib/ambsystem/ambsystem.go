@@ -43,7 +43,7 @@ type PluginSettings struct {
 type IPlugin interface {
 	PluginName() string
 	SetPages(IRouter) error
-	SetAssets() ([]string, *embed.FS)
+	EmbeddedAssets() ([]string, *embed.FS)
 	Header() string
 	Body() string
 	//SetSettings()
@@ -67,8 +67,8 @@ func (p PluginMeta) SetPages(mux IRouter) error {
 	return nil
 }
 
-// SetAssets -
-func (p PluginMeta) SetAssets() ([]string, *embed.FS) {
+// EmbeddedAssets -
+func (p PluginMeta) EmbeddedAssets() ([]string, *embed.FS) {
 	return nil, nil
 }
 

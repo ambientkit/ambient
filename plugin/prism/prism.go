@@ -25,8 +25,8 @@ func New() Plugin {
 	}
 }
 
-// SetAssets -
-func (p Plugin) SetAssets() ([]string, *embed.FS) {
+// EmbeddedAssets -
+func (p Plugin) EmbeddedAssets() ([]string, *embed.FS) {
 	return []string{
 		"css/prism-vsc-dark-plus.css",
 		"css/clean.css",
