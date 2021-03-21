@@ -80,14 +80,15 @@ func Pages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.Plu
 		}
 
 		// Load the assets.
-		assets, files := v.EmbeddedAssets()
-		if assets == nil || files == nil {
+		assets, files := v.Assets()
+		if files == nil {
 			continue
 		}
 
 		fmt.Println("loading assets for:", name)
 
-		err = Assets(mux, name, assets, files)
+		// Handle embedded assets.
+		err = EmbeddedAssets(mux, name, assets, files)
 		if err != nil {
 			log.Println(err.Error())
 		}
@@ -106,11 +107,18 @@ func Pages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.Plu
 	return nil
 }
 
-func Assets(mux *router.Mux, pluginName string, files []string, assets *embed.FS) error {
+func EmbeddedAssets(mux *router.Mux, pluginName string, files []ambsystem.Asset, assets *embed.FS) error {
 	for _, v := range files {
-		fileurl := path.Join("/plugins", pluginName, v)
+		// Skip files that are not embedded.
+		if !v.Embedded {
+			continue
+		}
 
-		exists := fileExists(assets, v)
+		fileurl := path.Join("/plugins", pluginName, v.Path)
+
+		// TODO: Need to check for missing locations and types.
+
+		exists := fileExists(assets, v.Path)
 		if !exists {
 			return fmt.Errorf("plugin (%v) has missing file, please check 'SetAssets()': %v", pluginName, v)
 		}

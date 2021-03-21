@@ -96,8 +96,42 @@ func (tm *TemplateManager) pluginHeader(t *template.Template) (*template.Templat
 			continue
 		}
 
-		pluginHeader += v.Header()
-		pluginBody += v.Body()
+		files, _ := v.Assets()
+		if files == nil {
+			continue
+		}
+
+		for _, file := range files {
+			txt := ""
+			switch file.Filetype {
+			case ambsystem.FiletypeStylesheet:
+				if file.Embedded {
+					txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?%v">`, v.PluginName(), file.Path, v.PluginVersion())
+				} else {
+					txt = fmt.Sprintf(`<link rel="stylesheet" href="%v">`, file.Path)
+				}
+			case ambsystem.FiletypeJavaScript:
+				if file.Embedded {
+					txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?%v"></script>`, v.PluginName(), file.Path, v.PluginVersion())
+				} else {
+					txt = fmt.Sprintf(`<script type="application/javascript" src="%v"></script>`, file.Path)
+				}
+			default:
+				fmt.Printf("unsupported asset filetype for plugin (%v): %v", v.PluginName(), file.Filetype)
+			}
+
+			switch file.Location {
+			case ambsystem.LocationBody:
+				pluginBody += txt + "\n"
+			case ambsystem.LocationHeader:
+				pluginHeader += txt + "\n"
+			default:
+				fmt.Printf("unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
+			}
+		}
+
+		//pluginHeader += v.Header()
+		//pluginBody += v.Body()
 	}
 
 	content := fmt.Sprintf(`{{define "PluginHeaderContent"}}%s{{end}}`, pluginHeader)

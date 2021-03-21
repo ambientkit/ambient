@@ -25,10 +25,15 @@ func New() Plugin {
 	}
 }
 
-// EmbeddedAssets -
-func (p Plugin) EmbeddedAssets() ([]string, *embed.FS) {
-	return []string{
-		"js/stackedit.js",
+// Assets -
+func (p Plugin) Assets() ([]ambsystem.Asset, *embed.FS) {
+	return []ambsystem.Asset{
+		{
+			Path:     "js/stackedit.js",
+			Filetype: ambsystem.FiletypeJavaScript,
+			Location: ambsystem.LocationBody,
+			Embedded: true,
+		},
 	}, &assets
 }
 

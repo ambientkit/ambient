@@ -39,11 +39,31 @@ type PluginSettings struct {
 	Found   bool `json:"found"`
 }
 
+type AssetLocation string
+type AssetType string
+
+const (
+	LocationHeader AssetLocation = "header"
+	LocationBody   AssetLocation = "body"
+
+	FiletypeStylesheet AssetType = "stylesheet"
+	FiletypeJavaScript AssetType = "javascript"
+)
+
+// Asset -
+type Asset struct {
+	Path     string        `json:"path"`
+	Location AssetLocation `json:"location"`
+	Filetype AssetType     `json:"filetype"`
+	Embedded bool          `json:"embedded"`
+}
+
 // IPlugin represents a plugin.
 type IPlugin interface {
 	PluginName() string
+	PluginVersion() string
 	SetPages(IRouter) error
-	EmbeddedAssets() ([]string, *embed.FS)
+	Assets() ([]Asset, *embed.FS)
 	Header() string
 	Body() string
 	//SetSettings()
@@ -80,4 +100,9 @@ func (p PluginMeta) Header() string {
 // PluginName -
 func (p PluginMeta) PluginName() string {
 	return p.Name
+}
+
+// PluginVersion -
+func (p PluginMeta) PluginVersion() string {
+	return p.Version
 }

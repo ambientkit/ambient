@@ -25,11 +25,33 @@ func New() Plugin {
 	}
 }
 
-// EmbeddedAssets -
-func (p Plugin) EmbeddedAssets() ([]string, *embed.FS) {
-	return []string{
-		"css/prism-vsc-dark-plus.css",
-		"css/clean.css",
+// Assets -
+func (p Plugin) Assets() ([]ambsystem.Asset, *embed.FS) {
+	return []ambsystem.Asset{
+		{
+			Path:     "css/prism-vsc-dark-plus.css",
+			Filetype: ambsystem.FiletypeStylesheet,
+			Location: ambsystem.LocationHeader,
+			Embedded: true,
+		},
+		{
+			Path:     "css/clean.css",
+			Filetype: ambsystem.FiletypeStylesheet,
+			Location: ambsystem.LocationHeader,
+			Embedded: true,
+		},
+		{
+			Path:     "https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js",
+			Filetype: ambsystem.FiletypeJavaScript,
+			Location: ambsystem.LocationBody,
+			Embedded: false,
+		},
+		{
+			Path:     "https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js",
+			Filetype: ambsystem.FiletypeJavaScript,
+			Location: ambsystem.LocationBody,
+			Embedded: false,
+		},
 	}, &assets
 }
 
