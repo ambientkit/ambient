@@ -32,7 +32,7 @@ jobs:
         GO111MODULE: off
       run: go get github.com/mattn/goveralls
     # Send coverage to https://coveralls.io/.
-    - name: Send coverage
-      env:
-        COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: goveralls -coverprofile=covprofile -service=github
+    # - name: Send coverage
+    #   env:
+    #     COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: goveralls -coverprofile=covprofile -service=github
