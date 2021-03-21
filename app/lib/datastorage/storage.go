@@ -3,6 +3,7 @@ package datastorage
 import (
 	"encoding/json"
 
+	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/model"
 )
@@ -36,6 +37,9 @@ func New(ds Datastorer, site *model.Site) (*Storage, error) {
 	// Save to storage. Ensure the posts exists first so it doesn't error.
 	if s.Site.Posts == nil {
 		s.Site.Posts = make(map[string]model.Post)
+	}
+	if s.Site.Plugins == nil {
+		s.Site.Plugins = make(map[string]ambsystem.PluginSettings)
 	}
 	// Ensure redirects don't try to happen if the scheme is empty.
 	if s.Site.Scheme == "" {

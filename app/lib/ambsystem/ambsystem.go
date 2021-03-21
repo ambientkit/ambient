@@ -20,6 +20,11 @@ type PluginMeta struct {
 	//Permissions []string `json:"permissions"`
 }
 
+// PluginSettings -
+type PluginSettings struct {
+	Enabled bool `json:"enabled"`
+}
+
 // IPlugin represents a plugin.
 type IPlugin interface {
 	PluginName() string
