@@ -28,44 +28,14 @@ func New() Plugin {
 	}
 }
 
-// Assets -
-// func (p Plugin) Assets() ([]ambsystem.Asset, *embed.FS) {
-// 	return []ambsystem.Asset{
-// 		{
-// 			Path:     "css/prism-vsc-dark-plus.css",
-// 			Filetype: ambsystem.FiletypeStylesheet,
-// 			Location: ambsystem.LocationHeader,
-// 			Embedded: true,
-// 		},
-// 		{
-// 			Path:     "css/clean.css",
-// 			Filetype: ambsystem.FiletypeStylesheet,
-// 			Location: ambsystem.LocationHeader,
-// 			Embedded: true,
-// 		},
-// 		{
-// 			Path:     "https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js",
-// 			Filetype: ambsystem.FiletypeJavaScript,
-// 			Location: ambsystem.LocationBody,
-// 			Embedded: false,
-// 		},
-// 		{
-// 			Path:     "https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js",
-// 			Filetype: ambsystem.FiletypeJavaScript,
-// 			Location: ambsystem.LocationBody,
-// 			Embedded: false,
-// 		},
-// 	}, nil
-// }
-
 func (p Plugin) SetPages(toolkit *ambsystem.Toolkit) error {
 	p.Toolkit = toolkit
 
 	fmt.Println("pages loaded for ambplugins")
 
-	p.Router.Get("/dashboard/plugins2", p.edit)
-	p.Router.Post("/dashboard/plugins2", p.update)
-	p.Router.Get("/dashboard/plugins2/:id/delete", p.destroy)
+	p.Router.Get("/dashboard/plugins", p.edit)
+	p.Router.Post("/dashboard/plugins", p.update)
+	p.Router.Get("/dashboard/plugins/:id/delete", p.destroy)
 
 	return nil
 }
@@ -116,7 +86,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		}
 	}
 
-	http.Redirect(w, r, "/dashboard/plugins2", http.StatusFound)
+	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
 	return
 }
 
@@ -137,6 +107,6 @@ func (p *Plugin) destroy(w http.ResponseWriter, r *http.Request) (status int, er
 		return p.Site.Error(err)
 	}
 
-	http.Redirect(w, r, "/dashboard/plugins2", http.StatusFound)
+	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
 	return
 }

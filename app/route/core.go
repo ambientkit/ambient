@@ -42,7 +42,6 @@ func Register(storage *datastorage.Storage, sess *websession.Session, tmpl *html
 	registerAuthUtil(&AuthUtil{c})
 	registerXMLUtil(&XMLUtil{c})
 	registerAdminPost(&AdminPost{c})
-	registerPluginPage(&PluginPage{c})
 
 	// This should be last because it catches all other pages at the root.
 	registerPost(&Post{c})
