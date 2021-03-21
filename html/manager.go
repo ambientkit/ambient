@@ -122,9 +122,9 @@ func (tm *TemplateManager) pluginHeader(t *template.Template) (*template.Templat
 
 			switch file.Location {
 			case ambsystem.LocationBody:
-				pluginBody += txt + "\n"
+				pluginBody += txt + "\n    "
 			case ambsystem.LocationHeader:
-				pluginHeader += txt + "\n"
+				pluginHeader += txt + "\n    "
 			default:
 				fmt.Printf("unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
 			}
