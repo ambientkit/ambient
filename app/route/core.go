@@ -62,11 +62,12 @@ func SetupRouter(tmpl *htmltemplate.Engine) *router.Mux {
 
 			switch status {
 			case 403:
+				// Already logged on plugin access denials.
 				errTemplate = "403"
 			case 404:
+				// No need to log.
 				errTemplate = "404"
-			}
-			if status != 404 {
+			default:
 				if err != nil {
 					fmt.Println(err.Error())
 				}
