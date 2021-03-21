@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
+	"github.com/josephspurrier/ambient/app/modelsecure"
 )
 
 //go:embed *
@@ -65,7 +66,7 @@ func (p Plugin) SetPages(toolkit *ambsystem.Toolkit) error {
 
 	p.Router.Get("/dashboard/plugins2", p.edit)
 	//p.Router.Post("/dashboard/plugins2", p.update)
-	//p.Router.Get("/dashboard/plugins2/:id/delete", p.destroy)
+	p.Router.Get("/dashboard/plugins2/:id/delete", p.destroy)
 
 	return nil
 }
@@ -75,9 +76,13 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	vars := make(map[string]interface{})
 	vars["title"] = "Plugins"
 	vars["token"] = p.Security.SetCSRF(r)
-	//vars["plugins"] = p.Storage.Site.Plugins
 
-	//return p.Render.Template(w, r, "dashboard", "plugins_edit", vars)
+	plugins, err := p.Site.Plugins()
+	if err != nil {
+		return http.StatusForbidden, err
+	}
+	vars["plugins"] = plugins
+
 	return p.Render.PluginTemplate(w, r, assets, "template/plugins_edit.tmpl", vars)
 }
 
@@ -106,21 +111,28 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 // 	return
 // }
 
-// func (p *Plugin) destroy(w http.ResponseWriter, r *http.Request) (status int, err error) {
-// 	ID := way.Param(r.Context(), "id")
+func (p *Plugin) destroy(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	ID := p.Router.Param(r, "id")
 
-// 	var ok bool
-// 	if _, ok = p.Storage.Site.Plugins[ID]; !ok {
-// 		return http.StatusNotFound, nil
-// 	}
+	plugins, err := p.Site.Plugins()
+	if err != nil {
+		return http.StatusForbidden, err
+	}
 
-// 	delete(c.Storage.Site.Plugins, ID)
+	if _, ok := plugins[ID]; !ok {
+		return http.StatusNotFound, nil
+	}
 
-// 	err = p.Storage.Save()
-// 	if err != nil {
-// 		return http.StatusInternalServerError, err
-// 	}
+	err = p.Site.DeletePlugin(ID)
+	if err != nil {
+		switch err {
+		case modelsecure.ErrAccessDenied:
+			return http.StatusForbidden, err
+		default:
+			return http.StatusInternalServerError, err
+		}
+	}
 
-// 	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
-// 	return
-// }
+	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
+	return
+}

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"html"
 	"net/http"
+
+	"github.com/josephspurrier/ambient/app/modelsecure"
 )
 
 // PluginSystem -
@@ -32,12 +34,6 @@ type PluginMeta struct {
 	AppVersion string `json:"appversion"`
 	// Permissions is which permissions the plugin requests.
 	//Permissions []string `json:"permissions"`
-}
-
-// PluginSettings -
-type PluginSettings struct {
-	Enabled bool `json:"enabled"`
-	Found   bool `json:"found"`
 }
 
 type AssetLocation string
@@ -86,6 +82,7 @@ type IPlugin interface {
 type IRouter interface {
 	Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	Param(r *http.Request, name string) string
 }
 
 // IRender represents a template rendered.
@@ -103,6 +100,7 @@ type Toolkit struct {
 	Render   IRender
 	Router   IRouter
 	Security ISecurity
+	Site     modelsecure.SecureSite
 }
 
 // SetPages -

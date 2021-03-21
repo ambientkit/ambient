@@ -15,6 +15,8 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/app/lib/websession"
+	"github.com/josephspurrier/ambient/app/model"
+	"github.com/josephspurrier/ambient/app/modelsecure"
 )
 
 // Load the plugins into storage.
@@ -30,7 +32,7 @@ func Load(arr []ambsystem.IPlugin, storage *datastorage.Storage) (*ambsystem.Plu
 		_, found := ps[name]
 		if !found {
 			fmt.Printf("Load new plugin: %v\n", name)
-			ps[name] = ambsystem.PluginSettings{
+			ps[name] = model.PluginSettings{
 				Enabled: false,
 			}
 			needSave = true
@@ -56,12 +58,6 @@ func Load(arr []ambsystem.IPlugin, storage *datastorage.Storage) (*ambsystem.Plu
 
 // Pages loads the pages from the plugins.
 func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltemplate.Engine, mux *router.Mux, plugins *ambsystem.PluginSystem) error {
-	toolkit := &ambsystem.Toolkit{
-		Router:   mux,
-		Render:   tmpl,
-		Security: sess,
-	}
-
 	// Set up the plugin routes.
 	shouldSave := false
 	ps := storage.Site.Plugins
@@ -79,6 +75,16 @@ func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltem
 		// If the plugin is not found or not enabled, then skip over it.
 		if !found || !plugin.Enabled {
 			continue
+		}
+
+		grants := make(map[string]bool)
+		grants["site.title:read"] = true
+
+		toolkit := &ambsystem.Toolkit{
+			Router:   mux,
+			Render:   tmpl,
+			Security: sess,
+			Site:     modelsecure.NewSecureSite(name, storage, grants),
 		}
 
 		// Load the pages.

@@ -4,30 +4,28 @@ import (
 	"fmt"
 	"sort"
 	"time"
-
-	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 )
 
 // Site -
 type Site struct {
-	Title             string                              `json:"title"`
-	Subtitle          string                              `json:"subtitle"`
-	Author            string                              `json:"author"`
-	Favicon           string                              `json:"favicon"`
-	Description       string                              `json:"description"`
-	Footer            string                              `json:"footer"`
-	Scheme            string                              `json:"scheme"`
-	URL               string                              `json:"url"`
-	LoginURL          string                              `json:"loginurl"`
-	GoogleAnalyticsID string                              `json:"googleanalytics"`
-	DisqusID          string                              `json:"disqus"`
-	Created           time.Time                           `json:"created"`
-	Updated           time.Time                           `json:"updated"`
-	Content           string                              `json:"content"` // Home content.
-	Styles            string                              `json:"styles"`
-	StylesAppend      bool                                `json:"stylesappend"`
-	Plugins           map[string]ambsystem.PluginSettings `json:"plugins"`
-	Posts             map[string]Post                     `json:"posts"`
+	Title             string                    `json:"title"`
+	Subtitle          string                    `json:"subtitle"`
+	Author            string                    `json:"author"`
+	Favicon           string                    `json:"favicon"`
+	Description       string                    `json:"description"`
+	Footer            string                    `json:"footer"`
+	Scheme            string                    `json:"scheme"`
+	URL               string                    `json:"url"`
+	LoginURL          string                    `json:"loginurl"`
+	GoogleAnalyticsID string                    `json:"googleanalytics"`
+	DisqusID          string                    `json:"disqus"`
+	Created           time.Time                 `json:"created"`
+	Updated           time.Time                 `json:"updated"`
+	Content           string                    `json:"content"` // Home content.
+	Styles            string                    `json:"styles"`
+	StylesAppend      bool                      `json:"stylesappend"`
+	Plugins           map[string]PluginSettings `json:"plugins"`
+	Posts             map[string]Post           `json:"posts"`
 }
 
 // SiteURL -
@@ -93,7 +91,7 @@ func (s Site) PostsAndPages(onlyPublished bool) PostWithIDList {
 // Tags -
 func (s Site) Tags(onlyPublished bool) TagList {
 	// Get unique values.
-	m := make(map[string]Tag, 0)
+	m := make(map[string]Tag)
 	for _, v := range s.Posts {
 		if onlyPublished && !v.Published {
 			continue

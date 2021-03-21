@@ -10,6 +10,7 @@ require (
 	github.com/mdp/qrterminal/v3 v3.0.0
 	github.com/microcosm-cc/bluemonday v1.0.4
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/stretchr/testify v1.5.1

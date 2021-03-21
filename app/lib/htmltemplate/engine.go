@@ -6,7 +6,10 @@ import (
 
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/html"
+	"github.com/oxtoacart/bpool"
 )
+
+var bufpool *bpool.BufferPool = bpool.NewBufferPool(64)
 
 // New returns a HTML template engine.
 func New(manager *html.TemplateManager, allowUnsafeHTML bool) *Engine {
@@ -49,10 +52,17 @@ func (te *Engine) partialTemplate(w http.ResponseWriter, r *http.Request, mainTe
 	// Output the status code.
 	w.WriteHeader(statusCode)
 
+	// Write temporarily to a buffer pool
+	buf := bufpool.Get()
+	defer bufpool.Put(buf)
+
 	// Execute the template.
-	if err := t.Execute(w, vars); err != nil {
+	if err := t.Execute(buf, vars); err != nil {
 		return http.StatusInternalServerError, err
 	}
+
+	// Write out the template.
+	buf.WriteTo(w)
 
 	return statusCode, nil
 }
@@ -78,10 +88,17 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 		return http.StatusInternalServerError, err
 	}
 
+	// Write temporarily to a buffer pool
+	buf := bufpool.Get()
+	defer bufpool.Put(buf)
+
 	// Execute the template.
-	if err := t.Execute(w, vars); err != nil {
+	if err := t.Execute(buf, vars); err != nil {
 		return http.StatusInternalServerError, err
 	}
+
+	// Write out the template.
+	buf.WriteTo(w)
 
 	return http.StatusOK, nil
 }
@@ -98,13 +115,20 @@ func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, assets 
 		return http.StatusInternalServerError, err
 	}
 
+	// Write temporarily to a buffer pool
+	buf := bufpool.Get()
+	defer bufpool.Put(buf)
+
+	// Execute the template.
+	if err := t.Execute(buf, vars); err != nil {
+		return http.StatusInternalServerError, err
+	}
+
 	// Output the status code.
 	w.WriteHeader(status)
 
-	// Execute the template.
-	if err := t.Execute(w, vars); err != nil {
-		return http.StatusInternalServerError, err
-	}
+	// Write out the template.
+	buf.WriteTo(w)
 
 	return
 }

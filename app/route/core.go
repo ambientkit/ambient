@@ -57,15 +57,21 @@ func SetupRouter(tmpl *htmltemplate.Engine) *router.Mux {
 		if status >= 400 {
 			vars := make(map[string]interface{})
 			vars["title"] = fmt.Sprint(status)
+
 			errTemplate := "400"
-			if status == 404 {
+
+			switch status {
+			case 403:
+				errTemplate = "403"
+			case 404:
 				errTemplate = "404"
-			} else {
+			}
+			if status != 404 {
 				if err != nil {
 					fmt.Println(err.Error())
 				}
-
 			}
+
 			status, err = tmpl.ErrorTemplate(w, r, "base", errTemplate, vars)
 			if err != nil {
 				if err != nil {
