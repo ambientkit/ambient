@@ -18,6 +18,7 @@ import (
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
+	"github.com/josephspurrier/ambient/plugin/ambplugins"
 	"github.com/josephspurrier/ambient/plugin/prism"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
 )
@@ -100,6 +101,7 @@ func Boot() (http.Handler, error) {
 
 	// Define the plugins.
 	arrPlugins := []ambsystem.IPlugin{
+		ambplugins.New(),
 		prism.New(),
 		stackedit.New(),
 	}
@@ -118,7 +120,7 @@ func Boot() (http.Handler, error) {
 	mux := route.SetupRouter(tmpl)
 
 	// Load the plugin pages.
-	err = plugins.Pages(storage, mux, plugs)
+	err = plugins.Pages(storage, sess, tmpl, mux, plugs)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package htmltemplate
 
 import (
+	"embed"
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/model"
@@ -83,4 +84,27 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 	}
 
 	return http.StatusOK, nil
+}
+
+// PluginTemplate -
+func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, assets embed.FS,
+	partialTemplate string, vars map[string]interface{}) (status int, err error) {
+	// Set the status to OK starting out.
+	status = http.StatusOK
+
+	// Parse the template.
+	t, err := te.manager.PluginTemplate(r, assets, "dashboard", partialTemplate)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// Output the status code.
+	w.WriteHeader(status)
+
+	// Execute the template.
+	if err := t.Execute(w, vars); err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return
 }

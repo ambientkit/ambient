@@ -82,6 +82,35 @@ func (tm *TemplateManager) PostTemplate(r *http.Request, mainTemplate string) (*
 	return t, nil
 }
 
+// PluginTemplate -
+func (tm *TemplateManager) PluginTemplate(r *http.Request, assets embed.FS, mainTemplate string, partialTemplate string) (*template.Template, error) {
+	// Functions available in the templates.
+	fm := FuncMap(r, tm.storage, tm.sess)
+
+	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
+	headerTemplate := "partial/head.tmpl"
+
+	// Parse the main template with the functions.
+	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(templates, baseTemplate,
+		headerTemplate)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse the plugin template.
+	t, err = t.ParseFS(assets, partialTemplate)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err = tm.pluginHeader(t)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
 func (tm *TemplateManager) pluginHeader(t *template.Template) (*template.Template, error) {
 	pluginHeader := ""
 	pluginBody := ""

@@ -68,10 +68,10 @@ func (p Asset) SanitizedPath() string {
 type IPlugin interface {
 	PluginName() string
 	PluginVersion() string
-	SetPages(IRouter) error
+	SetPages(*Toolkit) error
 	Assets() ([]Asset, *embed.FS)
-	Header() string
-	Body() string
+	//Header() string
+	//Body() string
 	//SetSettings()
 	// Deactivate() error
 	// Uninstall() error
@@ -85,16 +85,34 @@ type IPlugin interface {
 // IRouter represents a router.
 type IRouter interface {
 	Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+}
+
+// IRender represents a template rendered.
+type IRender interface {
+	PluginTemplate(w http.ResponseWriter, r *http.Request, assets embed.FS, templateName string, vars map[string]interface{}) (status int, err error)
+}
+
+// ISecurity -
+type ISecurity interface {
+	SetCSRF(r *http.Request) string
+}
+
+// ISecurity -
+type Toolkit struct {
+	Render   IRender
+	Router   IRouter
+	Security ISecurity
 }
 
 // SetPages -
-func (p PluginMeta) SetPages(mux IRouter) error {
+func (p PluginMeta) SetPages(toolkit *Toolkit) error {
 	fmt.Println("No page to add.")
 	return nil
 }
 
-// EmbeddedAssets -
-func (p PluginMeta) EmbeddedAssets() ([]string, *embed.FS) {
+// Assets -
+func (p PluginMeta) Assets() ([]Asset, *embed.FS) {
 	return nil, nil
 }
 

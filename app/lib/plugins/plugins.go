@@ -12,7 +12,9 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
+	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/router"
+	"github.com/josephspurrier/ambient/app/lib/websession"
 )
 
 // Load the plugins into storage.
@@ -53,7 +55,13 @@ func Load(arr []ambsystem.IPlugin, storage *datastorage.Storage) (*ambsystem.Plu
 }
 
 // Pages loads the pages from the plugins.
-func Pages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.PluginSystem) error {
+func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltemplate.Engine, mux *router.Mux, plugins *ambsystem.PluginSystem) error {
+	toolkit := &ambsystem.Toolkit{
+		Router:   mux,
+		Render:   tmpl,
+		Security: sess,
+	}
+
 	// Set up the plugin routes.
 	shouldSave := false
 	ps := storage.Site.Plugins
@@ -74,7 +82,7 @@ func Pages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.Plu
 		}
 
 		// Load the pages.
-		err := v.SetPages(mux)
+		err := v.SetPages(toolkit)
 		if err != nil {
 			log.Printf("problem loading pages from plugin %v: %v", name, err.Error())
 		}
