@@ -1,14 +1,8 @@
 package route
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/lib/ambsystem"
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/app/lib/router"
-	"github.com/josephspurrier/ambient/plugin/prism"
 	"github.com/matryer/way"
 )
 
@@ -75,93 +69,6 @@ func (c *PluginPage) destroy(w http.ResponseWriter, r *http.Request) (status int
 
 	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
 	return
-}
-
-// LoadPlugins will load the plugins.
-func LoadPlugins(storage *datastorage.Storage) *ambsystem.PluginSystem {
-	// Create the plugin system.
-	pluginsys := ambsystem.NewPluginSystem()
-
-	// Define the plugins.
-	plugins := []ambsystem.IPlugin{
-		prism.New(),
-	}
-
-	// Load the plugins.
-	needSave := false
-	ps := storage.Site.Plugins
-	for _, v := range plugins {
-		name := v.PluginName()
-		_, found := ps[name]
-		if !found {
-			fmt.Printf("Load new plugin: %v\n", name)
-			ps[name] = ambsystem.PluginSettings{
-				Enabled: false,
-			}
-			needSave = true
-		} else {
-			fmt.Printf("Plugin already found: %v\n", name)
-		}
-
-		// Add the system.
-		pluginsys.Plugins[name] = v
-
-		//v.SetPages(mux)
-	}
-
-	if needSave {
-		// Save the plugins.
-		storage.Site.Plugins = ps
-		err := storage.Save()
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-	}
-
-	return pluginsys
-}
-
-func LoadPluginPages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.PluginSystem) error {
-	// Set up the plugin routes.
-	shouldSave := false
-	ps := storage.Site.Plugins
-	for name, plugin := range ps {
-		if !plugin.Enabled {
-			continue
-		}
-
-		// Determine if the plugin that is in stored is found in the system.
-		v, found := plugins.Plugins[name]
-
-		// If the found setting is different, then update it for saving.
-		if found != plugin.Found {
-			shouldSave = true
-			plugin.Found = found
-			ps[name] = plugin
-		}
-
-		// If the plugin is not found, then skip over trying to read from it.
-		if !found {
-			continue
-		}
-
-		// Load the pages.
-		err := v.SetPages(mux)
-		if err != nil {
-			log.Printf("problem loading pages from plugin %v: %v", name, err.Error())
-		}
-	}
-
-	if shouldSave {
-		// Save the plugin state if something changed.
-		storage.Site.Plugins = ps
-		err := storage.Save()
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // func setLogging() {

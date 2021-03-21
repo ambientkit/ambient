@@ -8,14 +8,17 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
+	"github.com/josephspurrier/ambient/app/lib/plugins"
 	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/middleware"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
+	"github.com/josephspurrier/ambient/plugin/prism"
 )
 
 var (
@@ -94,21 +97,32 @@ func Boot() (http.Handler, error) {
 	sessionManager.Store = store
 	sess := websession.New(sessionName, sessionManager)
 
+	// Define the plugins.
+	arrPlugins := []ambsystem.IPlugin{
+		prism.New(),
+	}
+
 	// Load the plugins.
-	plugins := route.LoadPlugins(storage)
+	plugs, err := plugins.Load(arrPlugins, storage)
+	if err != nil {
+		return nil, err
+	}
 
 	// Set up the template engine.
-	tm := html.NewTemplateManager(storage, sess, plugins)
+	tm := html.NewTemplateManager(storage, sess, plugs)
 	tmpl := htmltemplate.New(tm, allowHTML)
 
 	// Set up the router.
 	mux := route.SetupRouter(tmpl)
 
 	// Load the plugin pages.
-	route.LoadPluginPages(storage, mux, plugins)
+	err = plugins.Pages(storage, mux, plugs)
+	if err != nil {
+		return nil, err
+	}
 
 	// Setup the routes.
-	c, err := route.Register(storage, sess, tmpl, mux, plugins)
+	c, err := route.Register(storage, sess, tmpl, mux, plugs)
 	if err != nil {
 		return nil, err
 	}
