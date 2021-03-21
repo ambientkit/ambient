@@ -1,8 +1,14 @@
 package plugins
 
 import (
+	"embed"
 	"fmt"
+	"io"
+	"io/fs"
 	"log"
+	"net/http"
+	"path"
+	"strings"
 
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
@@ -52,10 +58,6 @@ func Pages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.Plu
 	shouldSave := false
 	ps := storage.Site.Plugins
 	for name, plugin := range ps {
-		if !plugin.Enabled {
-			continue
-		}
-
 		// Determine if the plugin that is in stored is found in the system.
 		v, found := plugins.Plugins[name]
 
@@ -66,8 +68,8 @@ func Pages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.Plu
 			ps[name] = plugin
 		}
 
-		// If the plugin is not found, then skip over trying to read from it.
-		if !found {
+		// If the plugin is not found or not enabled, then skip over it.
+		if !found || !plugin.Enabled {
 			continue
 		}
 
@@ -76,6 +78,20 @@ func Pages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.Plu
 		if err != nil {
 			log.Printf("problem loading pages from plugin %v: %v", name, err.Error())
 		}
+
+		// Load the assets.
+		assets, files := v.SetAssets()
+		if assets == nil || files == nil {
+			continue
+		}
+
+		fmt.Println("loading assets for:", name)
+
+		err = Assets(mux, name, assets, files)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 	}
 
 	if shouldSave {
@@ -88,4 +104,67 @@ func Pages(storage *datastorage.Storage, mux *router.Mux, plugins *ambsystem.Plu
 	}
 
 	return nil
+}
+
+func Assets(mux *router.Mux, pluginName string, files []string, assets *embed.FS) error {
+	for _, v := range files {
+		fileurl := path.Join("/plugins", pluginName, v)
+
+		exists := fileExists(assets, v)
+		if !exists {
+			return fmt.Errorf("plugin (%v) has missing file, please check 'SetAssets()': %v", pluginName, v)
+		}
+
+		mux.Get(fileurl, func(w http.ResponseWriter, r *http.Request) (statusCode int, err error) {
+			// Don't allow directory browsing.
+			if strings.HasSuffix(r.URL.Path, "/") {
+				return http.StatusNotFound, nil
+			}
+
+			// Use the root directory.
+			fsys, err := fs.Sub(assets, ".")
+			if err != nil {
+				return http.StatusInternalServerError, err
+			}
+
+			// Get the requested file name.
+			fname := strings.TrimPrefix(r.URL.Path, path.Join("/plugins", pluginName)+"/")
+
+			// Open the file.
+			f, err := fsys.Open(fname)
+			if err != nil {
+				return http.StatusNotFound, nil
+			}
+			defer f.Close()
+
+			// Get the file time.
+			st, err := f.Stat()
+			if err != nil {
+				return http.StatusInternalServerError, err
+			}
+
+			http.ServeContent(w, r, fname, st.ModTime(), f.(io.ReadSeeker))
+			return
+		})
+	}
+
+	return nil
+}
+
+// fileExists determines if an embedded file exists.
+func fileExists(assets *embed.FS, filename string) bool {
+	// Use the root directory.
+	fsys, err := fs.Sub(assets, ".")
+	if err != nil {
+		return false
+	}
+
+	// Open the file.
+	f, err := fsys.Open(filename)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+
+	return true
 }

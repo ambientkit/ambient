@@ -19,6 +19,7 @@ import (
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
 	"github.com/josephspurrier/ambient/plugin/prism"
+	"github.com/josephspurrier/ambient/plugin/stackedit"
 )
 
 var (
@@ -100,6 +101,7 @@ func Boot() (http.Handler, error) {
 	// Define the plugins.
 	arrPlugins := []ambsystem.IPlugin{
 		prism.New(),
+		stackedit.New(),
 	}
 
 	// Load the plugins.

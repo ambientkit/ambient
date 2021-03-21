@@ -1,0 +1,7 @@
+pre[class*="language-"] {
+    padding: 0 !important;
+}
+
+code[class*="language-"] {
+    background-color: inherit;
+}

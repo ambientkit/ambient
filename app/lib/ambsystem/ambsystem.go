@@ -1,6 +1,7 @@
 package ambsystem
 
 import (
+	"embed"
 	"fmt"
 	"net/http"
 )
@@ -42,6 +43,7 @@ type PluginSettings struct {
 type IPlugin interface {
 	PluginName() string
 	SetPages(IRouter) error
+	SetAssets() ([]string, *embed.FS)
 	Header() string
 	Body() string
 	//SetSettings()
@@ -60,17 +62,22 @@ type IRouter interface {
 }
 
 // SetPages -
-func (pm PluginMeta) SetPages() error {
+func (p PluginMeta) SetPages(mux IRouter) error {
 	fmt.Println("No page to add.")
 	return nil
 }
 
+// SetAssets -
+func (p PluginMeta) SetAssets() ([]string, *embed.FS) {
+	return nil, nil
+}
+
 // Header -
-func (pm PluginMeta) Header() string {
+func (p PluginMeta) Header() string {
 	return ""
 }
 
 // PluginName -
-func (pm PluginMeta) PluginName() string {
-	return pm.Name
+func (p PluginMeta) PluginName() string {
+	return p.Name
 }
