@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/router"
@@ -21,20 +22,19 @@ type Core struct {
 	Storage *datastorage.Storage
 	Render  *htmltemplate.Engine
 	Sess    *websession.Session
+	Plugins *ambsystem.PluginSystem
 }
 
 // Register all routes.
-func Register(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltemplate.Engine) (*Core, error) {
+func Register(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltemplate.Engine, mux *router.Mux, plugins *ambsystem.PluginSystem) (*Core, error) {
 	// Create core app.
 	c := &Core{
-		Router:  SetupRouter(tmpl),
+		Router:  mux,
 		Storage: storage,
 		Render:  tmpl,
 		Sess:    sess,
+		Plugins: plugins,
 	}
-
-	// Load the plugins
-	LoadPlugins(c.Router, storage)
 
 	// Register routes.
 	registerHomePost(&HomePost{c})
@@ -60,10 +60,17 @@ func SetupRouter(tmpl *htmltemplate.Engine) *router.Mux {
 			errTemplate := "400"
 			if status == 404 {
 				errTemplate = "404"
+			} else {
+				if err != nil {
+					fmt.Println(err.Error())
+				}
+
 			}
 			status, err = tmpl.ErrorTemplate(w, r, "base", errTemplate, vars)
 			if err != nil {
-				log.Println(err.Error())
+				if err != nil {
+					log.Println(err.Error())
+				}
 				http.Error(w, "500 internal server error", http.StatusInternalServerError)
 				return
 			}

@@ -94,12 +94,33 @@ func Boot() (http.Handler, error) {
 	sessionManager.Store = store
 	sess := websession.New(sessionName, sessionManager)
 
+	// Load the plugins.
+	plugins := route.LoadPlugins(storage)
+
 	// Set up the template engine.
-	tm := html.NewTemplateManager(storage, sess)
+	tm := html.NewTemplateManager(storage, sess, plugins)
 	tmpl := htmltemplate.New(tm, allowHTML)
 
+	// Set up the router.
+	mux := route.SetupRouter(tmpl)
+
+	// Set up the plugin routes.
+	ps := storage.Site.Plugins
+	for name, plugin := range ps {
+		if !plugin.Enabled {
+			continue
+		}
+		v, found := plugins.Plugins[name]
+		if !found {
+			fmt.Printf("Plugin missing: %v\n", name)
+			continue
+		}
+
+		v.SetPages(mux)
+	}
+
 	// Setup the routes.
-	c, err := route.Register(storage, sess, tmpl)
+	c, err := route.Register(storage, sess, tmpl, mux, plugins)
 	if err != nil {
 		return nil, err
 	}

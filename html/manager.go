@@ -11,6 +11,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/assets"
@@ -23,13 +24,15 @@ var templates embed.FS
 type TemplateManager struct {
 	storage *datastorage.Storage
 	sess    *websession.Session
+	plugins *ambsystem.PluginSystem
 }
 
 // NewTemplateManager -
-func NewTemplateManager(storage *datastorage.Storage, sess *websession.Session) *TemplateManager {
+func NewTemplateManager(storage *datastorage.Storage, sess *websession.Session, plugins *ambsystem.PluginSystem) *TemplateManager {
 	return &TemplateManager{
 		storage: storage,
 		sess:    sess,
+		plugins: plugins,
 	}
 }
 
@@ -49,6 +52,11 @@ func (tm *TemplateManager) PartialTemplate(r *http.Request, mainTemplate string,
 		return nil, err
 	}
 
+	t, err = tm.pluginHeader(t)
+	if err != nil {
+		return nil, err
+	}
+
 	return t, nil
 }
 
@@ -62,6 +70,40 @@ func (tm *TemplateManager) PostTemplate(r *http.Request, mainTemplate string) (*
 
 	// Parse the main template with the functions.
 	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(templates, baseTemplate, headerTemplate)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err = tm.pluginHeader(t)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
+func (tm *TemplateManager) pluginHeader(t *template.Template) (*template.Template, error) {
+	pluginHeader := ""
+	pluginBody := ""
+	for name, plugin := range tm.storage.Site.Plugins {
+		if !plugin.Enabled {
+			continue
+		}
+
+		v := tm.plugins.Plugins[name]
+		pluginHeader += v.Header()
+		pluginBody += v.Body()
+	}
+
+	content := fmt.Sprintf(`{{define "PluginHeaderContent"}}%s{{end}}`, pluginHeader)
+	var err error
+	t, err = t.Parse(content)
+	if err != nil {
+		return nil, err
+	}
+
+	content = fmt.Sprintf(`{{define "PluginBodyContent"}}%s{{end}}`, pluginBody)
+	t, err = t.Parse(content)
 	if err != nil {
 		return nil, err
 	}

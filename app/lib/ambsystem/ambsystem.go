@@ -5,6 +5,18 @@ import (
 	"net/http"
 )
 
+// PluginSystem -
+type PluginSystem struct {
+	Plugins map[string]IPlugin
+}
+
+// NewPluginSystem -
+func NewPluginSystem() *PluginSystem {
+	return &PluginSystem{
+		Plugins: make(map[string]IPlugin),
+	}
+}
+
 // PluginMeta represents metadata for a plugin that works with the Ambient
 // system.
 type PluginMeta struct {
@@ -29,15 +41,17 @@ type PluginSettings struct {
 type IPlugin interface {
 	PluginName() string
 	SetPages(IRouter) error
+	Header() string
+	Body() string
 	//SetSettings()
 	// Deactivate() error
 	// Uninstall() error
 }
 
 // ISettings -
-type ISettings interface {
-	Add(name string, fieldType string, defaultValue string)
-}
+// type ISettings interface {
+// 	Add(name string, fieldType string, defaultValue string)
+// }
 
 // IRouter represents a router.
 type IRouter interface {
@@ -48,6 +62,11 @@ type IRouter interface {
 func (pm PluginMeta) SetPages() error {
 	fmt.Println("No page to add.")
 	return nil
+}
+
+// Header -
+func (pm PluginMeta) Header() string {
+	return ""
 }
 
 // PluginName -

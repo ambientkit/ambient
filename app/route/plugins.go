@@ -6,7 +6,6 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
 )
 
@@ -26,7 +25,6 @@ func (c *PluginPage) edit(w http.ResponseWriter, r *http.Request) (status int, e
 	vars["title"] = "Plugins"
 	vars["token"] = c.Sess.SetCSRF(r)
 	vars["plugins"] = c.Storage.Site.Plugins
-	fmt.Println(c.Storage.Site.Plugins)
 
 	return c.Render.Template(w, r, "dashboard", "plugins_edit", vars)
 }
@@ -57,7 +55,10 @@ func (c *PluginPage) update(w http.ResponseWriter, r *http.Request) (status int,
 }
 
 // LoadPlugins will load the plugins.
-func LoadPlugins(mux *router.Mux, storage *datastorage.Storage) {
+func LoadPlugins(storage *datastorage.Storage) *ambsystem.PluginSystem {
+	// Create the plugin system.
+	pluginsys := ambsystem.NewPluginSystem()
+
 	// Define the plugins.
 	plugins := []ambsystem.IPlugin{
 		stackedit.Activate(),
@@ -79,7 +80,10 @@ func LoadPlugins(mux *router.Mux, storage *datastorage.Storage) {
 			fmt.Printf("Plugin already found: %v\n", name)
 		}
 
-		v.SetPages(mux)
+		// Add the system.
+		pluginsys.Plugins[name] = v
+
+		//v.SetPages(mux)
 	}
 
 	if needSave {
@@ -90,6 +94,8 @@ func LoadPlugins(mux *router.Mux, storage *datastorage.Storage) {
 			fmt.Println(err.Error())
 		}
 	}
+
+	return pluginsys
 }
 
 // func setLogging() {
