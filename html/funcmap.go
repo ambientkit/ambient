@@ -85,9 +85,6 @@ func FuncMap(r *http.Request, storage *datastorage.Storage,
 	fm["EnableStackEdit"] = func() bool {
 		return storage.Site.StackEdit
 	}
-	fm["EnablePrism"] = func() bool {
-		return storage.Site.Prism
-	}
 
 	return fm
 }

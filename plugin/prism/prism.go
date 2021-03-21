@@ -1,4 +1,4 @@
-package stackedit
+package prism
 
 import (
 	"embed"
@@ -13,16 +13,16 @@ import (
 //go:embed *
 var assets embed.FS
 
-// StackEdit -
-type StackEdit struct {
+// Plugin -
+type Plugin struct {
 	ambsystem.PluginMeta
 }
 
-// Activate installs and enables the plugin.
-func Activate() StackEdit {
-	return StackEdit{
+// New sets up the plugin.
+func New() Plugin {
+	return Plugin{
 		PluginMeta: ambsystem.PluginMeta{
-			Name:       "stackedit",
+			Name:       "prism",
 			Version:    "1.0.0",
 			AppVersion: "1.0.0",
 		},
@@ -30,12 +30,12 @@ func Activate() StackEdit {
 }
 
 // Assets -
-func (pm StackEdit) Assets() *embed.FS {
+func (p Plugin) Assets() *embed.FS {
 	return &assets
 }
 
 // SetPages -
-func (pm StackEdit) SetPages(mux ambsystem.IRouter) error {
+func (p Plugin) SetPages(mux ambsystem.IRouter) error {
 	mux.Get("/plugins...", func(w http.ResponseWriter, r *http.Request) (statusCode int, err error) {
 		// Don't allow directory browsing.
 		if strings.HasSuffix(r.URL.Path, "/") {
@@ -72,7 +72,7 @@ func (pm StackEdit) SetPages(mux ambsystem.IRouter) error {
 }
 
 // SetPages -
-func (pm StackEdit) Header() string {
+func (p Plugin) Header() string {
 	return `
 	<link rel="stylesheet" href="{{"/plugins/css/prism-vsc-dark-plus.css" | AssetStamp}}">
 	<style>
@@ -88,7 +88,7 @@ func (pm StackEdit) Header() string {
 }
 
 // Body -
-func (pm StackEdit) Body() string {
+func (pm Plugin) Body() string {
 	return `
 	<script src="https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js"></script>
 	<script src="https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
@@ -96,7 +96,7 @@ func (pm StackEdit) Body() string {
 }
 
 // // SetSettings -
-// func (pm StackEdit) SetSettings(s ambsystem.ISettings) error {
+// func (pm Prism) SetSettings(s ambsystem.ISettings) error {
 // 	s.Add("name string", fieldType string, defaultValue string)
 
 // }

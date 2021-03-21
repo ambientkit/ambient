@@ -90,7 +90,12 @@ func (tm *TemplateManager) pluginHeader(t *template.Template) (*template.Templat
 			continue
 		}
 
-		v := tm.plugins.Plugins[name]
+		v, found := tm.plugins.Plugins[name]
+		if !found {
+			fmt.Println("Plugin is missing:", name)
+			continue
+		}
+
 		pluginHeader += v.Header()
 		pluginBody += v.Body()
 	}

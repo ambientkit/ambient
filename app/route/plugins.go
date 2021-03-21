@@ -6,7 +6,7 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/plugin/stackedit"
+	"github.com/josephspurrier/ambient/plugin/prism"
 )
 
 // PluginPage -
@@ -61,7 +61,7 @@ func LoadPlugins(storage *datastorage.Storage) *ambsystem.PluginSystem {
 
 	// Define the plugins.
 	plugins := []ambsystem.IPlugin{
-		stackedit.Activate(),
+		prism.New(),
 	}
 
 	// Load the plugins.
