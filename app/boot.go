@@ -19,6 +19,7 @@ import (
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
 	"github.com/josephspurrier/ambient/plugin/ambplugins"
+	"github.com/josephspurrier/ambient/plugin/hello"
 	"github.com/josephspurrier/ambient/plugin/prism"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
 )
@@ -104,6 +105,7 @@ func Boot() (http.Handler, error) {
 		ambplugins.New(),
 		prism.New(),
 		stackedit.New(),
+		hello.New(),
 	}
 
 	// Load the plugins.

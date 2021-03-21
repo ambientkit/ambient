@@ -6,7 +6,6 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/model"
-	"github.com/matryer/way"
 )
 
 // Post -
@@ -53,7 +52,7 @@ func (c *Post) index(w http.ResponseWriter, r *http.Request) (status int, err er
 }
 
 func (c *Post) show(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	slug := way.Param(r.Context(), "slug")
+	slug := c.Router.Param(r, "slug")
 	p := c.Storage.Site.PostBySlug(slug)
 
 	// Determine if in preview mode.

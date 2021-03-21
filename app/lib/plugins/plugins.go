@@ -83,12 +83,13 @@ func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltem
 		grants["site.plugins:enable"] = true
 		grants["site.plugins:disable"] = true
 		grants["site.plugins:deleteone"] = true
+		grants["router:clear"] = true
 
 		toolkit := &ambsystem.Toolkit{
 			Router:   mux,
 			Render:   tmpl,
 			Security: sess,
-			Site:     modelsecure.NewSecureSite(name, storage, grants),
+			Site:     modelsecure.NewSecureSite(name, storage, mux, grants),
 		}
 
 		// Load the pages.

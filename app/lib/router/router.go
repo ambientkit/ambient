@@ -3,12 +3,12 @@ package router
 import (
 	"net/http"
 
-	"github.com/matryer/way"
+	"github.com/josephspurrier/ambient/app/lib/away"
 )
 
 // Mux contains the router.
 type Mux struct {
-	router *way.Router
+	router *away.Router
 
 	// customServeHTTP is the serve function.
 	customServeHTTP func(w http.ResponseWriter, r *http.Request, status int, err error)
@@ -16,7 +16,7 @@ type Mux struct {
 
 // New returns an instance of the router.
 func New(csh func(w http.ResponseWriter, r *http.Request, status int, err error), notFound http.Handler) *Mux {
-	r := way.NewRouter()
+	r := away.NewRouter()
 	if notFound != nil {
 		r.NotFound = notFound
 	}
@@ -25,6 +25,11 @@ func New(csh func(w http.ResponseWriter, r *http.Request, status int, err error)
 		router:          r,
 		customServeHTTP: csh,
 	}
+}
+
+// Clear will remove a path from the router.
+func (m *Mux) Clear(path string) {
+	m.router.Remove(path)
 }
 
 // ServeHTTP routes the incoming http.Request based on method and path
@@ -45,5 +50,5 @@ func (m *Mux) BadRequest(w http.ResponseWriter, r *http.Request) {
 
 // Param returns a URL parameter.
 func (m *Mux) Param(r *http.Request, param string) string {
-	return way.Param(r.Context(), param)
+	return away.Param(r.Context(), param)
 }

@@ -2,7 +2,6 @@ package ambplugins
 
 import (
 	"embed"
-	"fmt"
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
@@ -30,8 +29,6 @@ func New() Plugin {
 
 func (p Plugin) SetPages(toolkit *ambsystem.Toolkit) error {
 	p.Toolkit = toolkit
-
-	fmt.Println("pages loaded for ambplugins")
 
 	p.Router.Get("/dashboard/plugins", p.edit)
 	p.Router.Post("/dashboard/plugins", p.update)
@@ -85,6 +82,11 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 			}
 		}
 	}
+
+	// err = p.Site.ClearRoute("/dashboard/hello")
+	// if err != nil {
+	// 	return p.Site.Error(err)
+	// }
 
 	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
 	return

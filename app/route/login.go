@@ -11,7 +11,6 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/passhash"
 	"github.com/josephspurrier/ambient/app/lib/totp"
-	"github.com/matryer/way"
 )
 
 // AuthUtil -
@@ -27,7 +26,7 @@ func registerAuthUtil(c *AuthUtil) {
 
 // login allows a user to login to the dashboard.
 func (c *AuthUtil) login(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	slug := way.Param(r.Context(), "slug")
+	slug := c.Router.Param(r, "slug")
 	if slug != c.Storage.Site.LoginURL {
 		return http.StatusNotFound, nil
 	}
@@ -40,7 +39,7 @@ func (c *AuthUtil) login(w http.ResponseWriter, r *http.Request) (status int, er
 }
 
 func (c *AuthUtil) loginPost(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	slug := way.Param(r.Context(), "slug")
+	slug := c.Router.Param(r, "slug")
 	if slug != c.Storage.Site.LoginURL {
 		return http.StatusNotFound, nil
 	}

@@ -6,7 +6,6 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/uuid"
 	"github.com/josephspurrier/ambient/app/model"
-	"github.com/matryer/way"
 )
 
 // AdminPost -
@@ -91,7 +90,7 @@ func (c *AdminPost) edit(w http.ResponseWriter, r *http.Request) (status int, er
 	vars["title"] = "Edit post"
 	vars["token"] = c.Sess.SetCSRF(r)
 
-	ID := way.Param(r.Context(), "id")
+	ID := c.Router.Param(r, "id")
 
 	var p model.Post
 	var ok bool
@@ -113,7 +112,7 @@ func (c *AdminPost) edit(w http.ResponseWriter, r *http.Request) (status int, er
 }
 
 func (c *AdminPost) update(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	ID := way.Param(r.Context(), "id")
+	ID := c.Router.Param(r, "id")
 
 	var p model.Post
 	var ok bool
@@ -159,7 +158,7 @@ func (c *AdminPost) update(w http.ResponseWriter, r *http.Request) (status int, 
 }
 
 func (c *AdminPost) destroy(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	ID := way.Param(r.Context(), "id")
+	ID := c.Router.Param(r, "id")
 
 	var ok bool
 	if _, ok = c.Storage.Site.Posts[ID]; !ok {

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
+	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -20,14 +21,16 @@ var (
 type SecureSite struct {
 	pluginName string
 	storage    *datastorage.Storage
+	mux        *router.Mux
 	grants     map[string]bool
 }
 
 // NewSecureSite -
-func NewSecureSite(pluginName string, storage *datastorage.Storage, grants map[string]bool) SecureSite {
+func NewSecureSite(pluginName string, storage *datastorage.Storage, mux *router.Mux, grants map[string]bool) SecureSite {
 	return SecureSite{
 		pluginName: pluginName,
 		storage:    storage,
+		mux:        mux,
 		grants:     grants,
 	}
 }
@@ -140,4 +143,17 @@ func (ss SecureSite) DisablePlugin(name string) error {
 	ss.storage.Site.Plugins[name] = plugin
 
 	return ss.storage.Save()
+}
+
+// ClearRoute clears out an old route.
+func (ss SecureSite) ClearRoute(p string) error {
+	grant := "router:clear"
+
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
+
+	ss.mux.Clear(p)
+
+	return nil
 }
