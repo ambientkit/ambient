@@ -86,13 +86,13 @@ func (tm *TemplateManager) pluginHeader(t *template.Template) (*template.Templat
 	pluginHeader := ""
 	pluginBody := ""
 	for name, plugin := range tm.storage.Site.Plugins {
-		if !plugin.Enabled {
+		if !plugin.Enabled || !plugin.Found {
 			continue
 		}
 
 		v, found := tm.plugins.Plugins[name]
 		if !found {
-			fmt.Println("Plugin is missing:", name)
+			fmt.Println("Plugin is missing - should never see this:", name)
 			continue
 		}
 

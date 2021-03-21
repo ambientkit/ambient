@@ -104,20 +104,8 @@ func Boot() (http.Handler, error) {
 	// Set up the router.
 	mux := route.SetupRouter(tmpl)
 
-	// Set up the plugin routes.
-	ps := storage.Site.Plugins
-	for name, plugin := range ps {
-		if !plugin.Enabled {
-			continue
-		}
-		v, found := plugins.Plugins[name]
-		if !found {
-			fmt.Printf("Plugin missing: %v\n", name)
-			continue
-		}
-
-		v.SetPages(mux)
-	}
+	// Load the plugin pages.
+	route.LoadPluginPages(storage, mux, plugins)
 
 	// Setup the routes.
 	c, err := route.Register(storage, sess, tmpl, mux, plugins)

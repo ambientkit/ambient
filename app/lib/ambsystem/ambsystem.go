@@ -35,6 +35,7 @@ type PluginMeta struct {
 // PluginSettings -
 type PluginSettings struct {
 	Enabled bool `json:"enabled"`
+	Found   bool `json:"found"`
 }
 
 // IPlugin represents a plugin.
