@@ -93,6 +93,7 @@ type IRender interface {
 // ISecurity -
 type ISecurity interface {
 	SetCSRF(r *http.Request) string
+	CSRF(r *http.Request) bool
 }
 
 // ISecurity -

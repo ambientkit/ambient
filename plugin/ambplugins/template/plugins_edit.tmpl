@@ -7,7 +7,7 @@
                 <h3>{{$name}}</h3>
                 <label for="id_{{$name}}">Enable:</label>
                 <input type="checkbox" name="{{$name}}" id="id_{{$name}}" {{if .Enabled}}checked{{end}}>
-                {{if not .Found}}<span class="helptext">Plugin is missing. <a href="/dashboard/plugins/{{$name}}/delete">Delete state</a></span> {{end}}
+                {{if not .Found}}<span class="helptext">Plugin is missing. <a href="/dashboard/plugins2/{{$name}}/delete">Delete state</a></span> {{end}}
             </p>
             {{end}}
             <button type="submit" class="save btn btn-default">Save</button>

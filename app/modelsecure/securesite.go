@@ -3,6 +3,7 @@ package modelsecure
 import (
 	"errors"
 	"log"
+	"net/http"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/model"
@@ -11,6 +12,8 @@ import (
 var (
 	// ErrAccessDenied is when access is not allowed to the data item.
 	ErrAccessDenied = errors.New("access denied to the data item")
+	// ErrNotFound is when an item is not found.
+	ErrNotFound = errors.New("item was no found")
 )
 
 // SecureSite is a secure data access for the site.
@@ -26,6 +29,18 @@ func NewSecureSite(pluginName string, storage *datastorage.Storage, grants map[s
 		pluginName: pluginName,
 		storage:    storage,
 		grants:     grants,
+	}
+}
+
+// Error handles returning the proper error.
+func (ss SecureSite) Error(err error) (status int, errr error) {
+	switch err {
+	case ErrAccessDenied:
+		return http.StatusForbidden, err
+	case ErrNotFound:
+		return http.StatusNotFound, err
+	default:
+		return http.StatusInternalServerError, err
 	}
 }
 
@@ -76,7 +91,7 @@ func (ss SecureSite) Plugins() (map[string]model.PluginSettings, error) {
 	return ss.storage.Site.Plugins, nil
 }
 
-// Plugins returns the plugin list.
+// DeletePlugin deletes a plugin.
 func (ss SecureSite) DeletePlugin(name string) error {
 	grant := "site.plugins:deleteone"
 
@@ -85,6 +100,44 @@ func (ss SecureSite) DeletePlugin(name string) error {
 	}
 
 	delete(ss.storage.Site.Plugins, name)
+
+	return ss.storage.Save()
+}
+
+// EnablePlugin enables a plugin.
+func (ss SecureSite) EnablePlugin(name string) error {
+	grant := "site.plugins:enable"
+
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
+
+	plugin, ok := ss.storage.Site.Plugins[name]
+	if !ok {
+		return ErrNotFound
+	}
+
+	plugin.Enabled = true
+	ss.storage.Site.Plugins[name] = plugin
+
+	return ss.storage.Save()
+}
+
+// DisablePlugin disables a plugin.
+func (ss SecureSite) DisablePlugin(name string) error {
+	grant := "site.plugins:disable"
+
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
+
+	plugin, ok := ss.storage.Site.Plugins[name]
+	if !ok {
+		return ErrNotFound
+	}
+
+	plugin.Enabled = false
+	ss.storage.Site.Plugins[name] = plugin
 
 	return ss.storage.Save()
 }

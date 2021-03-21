@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
-	"github.com/josephspurrier/ambient/app/modelsecure"
 )
 
 //go:embed *
@@ -65,7 +64,7 @@ func (p Plugin) SetPages(toolkit *ambsystem.Toolkit) error {
 	fmt.Println("pages loaded for ambplugins")
 
 	p.Router.Get("/dashboard/plugins2", p.edit)
-	//p.Router.Post("/dashboard/plugins2", p.update)
+	p.Router.Post("/dashboard/plugins2", p.update)
 	p.Router.Get("/dashboard/plugins2/:id/delete", p.destroy)
 
 	return nil
@@ -79,44 +78,54 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 
 	plugins, err := p.Site.Plugins()
 	if err != nil {
-		return http.StatusForbidden, err
+		return p.Site.Error(err)
 	}
 	vars["plugins"] = plugins
 
 	return p.Render.PluginTemplate(w, r, assets, "template/plugins_edit.tmpl", vars)
 }
 
-// func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err error) {
-// 	r.ParseForm()
+func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	r.ParseForm()
 
-// 	// CSRF protection.
-// 	success := p.Sess.CSRF(r)
-// 	if !success {
-// 		return http.StatusBadRequest, nil
-// 	}
+	// CSRF protection.
+	ok := p.Security.CSRF(r)
+	if !ok {
+		return http.StatusBadRequest, nil
+	}
 
-// 	// Loop through each plugin to get the setting.
-// 	for name, plugin := range p.Storage.Site.Plugins {
-// 		plugin.Enabled = (r.FormValue(name) == "on")
-// 		c.Storage.Site.Plugins[name] = plugin
-// 	}
+	// Get list of plugins.
+	plugins, err := p.Site.Plugins()
+	if err != nil {
+		return p.Site.Error(err)
+	}
 
-// 	// Save to storage.
-// 	err = p.Storage.Save()
-// 	if err != nil {
-// 		return http.StatusInternalServerError, err
-// 	}
+	// Loop through each plugin to get the setting then save.
+	for name := range plugins {
+		enable := (r.FormValue(name) == "on")
+		if enable {
+			err = p.Site.EnablePlugin(name)
+			if err != nil {
+				return p.Site.Error(err)
+			}
+		} else {
+			err = p.Site.DisablePlugin(name)
+			if err != nil {
+				return p.Site.Error(err)
+			}
+		}
+	}
 
-// 	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
-// 	return
-// }
+	http.Redirect(w, r, "/dashboard/plugins2", http.StatusFound)
+	return
+}
 
 func (p *Plugin) destroy(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	ID := p.Router.Param(r, "id")
 
 	plugins, err := p.Site.Plugins()
 	if err != nil {
-		return http.StatusForbidden, err
+		return p.Site.Error(err)
 	}
 
 	if _, ok := plugins[ID]; !ok {
@@ -125,14 +134,9 @@ func (p *Plugin) destroy(w http.ResponseWriter, r *http.Request) (status int, er
 
 	err = p.Site.DeletePlugin(ID)
 	if err != nil {
-		switch err {
-		case modelsecure.ErrAccessDenied:
-			return http.StatusForbidden, err
-		default:
-			return http.StatusInternalServerError, err
-		}
+		return p.Site.Error(err)
 	}
 
-	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
+	http.Redirect(w, r, "/dashboard/plugins2", http.StatusFound)
 	return
 }

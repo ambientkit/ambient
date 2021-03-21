@@ -79,6 +79,10 @@ func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltem
 
 		grants := make(map[string]bool)
 		grants["site.title:read"] = true
+		grants["site.plugins:read"] = true
+		grants["site.plugins:enable"] = true
+		grants["site.plugins:disable"] = true
+		grants["site.plugins:deleteone"] = true
 
 		toolkit := &ambsystem.Toolkit{
 			Router:   mux,
