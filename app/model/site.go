@@ -4,29 +4,32 @@ import (
 	"fmt"
 	"sort"
 	"time"
+
+	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 )
 
 // Site -
 type Site struct {
-	Title             string          `json:"title"`
-	Subtitle          string          `json:"subtitle"`
-	Author            string          `json:"author"`
-	Favicon           string          `json:"favicon"`
-	Description       string          `json:"description"`
-	Footer            string          `json:"footer"`
-	Scheme            string          `json:"scheme"`
-	URL               string          `json:"url"`
-	LoginURL          string          `json:"loginurl"`
-	GoogleAnalyticsID string          `json:"googleanalytics"`
-	DisqusID          string          `json:"disqus"`
-	Created           time.Time       `json:"created"`
-	Updated           time.Time       `json:"updated"`
-	Content           string          `json:"content"` // Home content.
-	Styles            string          `json:"styles"`
-	StylesAppend      bool            `json:"stylesappend"`
-	StackEdit         bool            `json:"stackedit"`
-	Prism             bool            `json:"prism"`
-	Posts             map[string]Post `json:"posts"`
+	Title             string                       `json:"title"`
+	Subtitle          string                       `json:"subtitle"`
+	Author            string                       `json:"author"`
+	Favicon           string                       `json:"favicon"`
+	Description       string                       `json:"description"`
+	Footer            string                       `json:"footer"`
+	Scheme            string                       `json:"scheme"`
+	URL               string                       `json:"url"`
+	LoginURL          string                       `json:"loginurl"`
+	GoogleAnalyticsID string                       `json:"googleanalytics"`
+	DisqusID          string                       `json:"disqus"`
+	Created           time.Time                    `json:"created"`
+	Updated           time.Time                    `json:"updated"`
+	Content           string                       `json:"content"` // Home content.
+	Styles            string                       `json:"styles"`
+	StylesAppend      bool                         `json:"stylesappend"`
+	StackEdit         bool                         `json:"stackedit"`
+	Prism             bool                         `json:"prism"`
+	Plugins           map[string]ambsystem.IPlugin `json:"plugins"`
+	Posts             map[string]Post              `json:"posts"`
 }
 
 // SiteURL -

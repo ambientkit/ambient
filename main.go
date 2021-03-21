@@ -18,10 +18,7 @@ func init() {
 }
 
 func main() {
-	handler, err := app.Boot()
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
+	mux := app.LoadPlugins()
 
 	// Start the web server.
 	port := os.Getenv("PORT")
@@ -30,5 +27,5 @@ func main() {
 	}
 
 	fmt.Println("Web server running on port:", port)
-	log.Fatalln(http.ListenAndServe(":"+port, handler))
+	log.Fatalln(http.ListenAndServe(":"+port, mux))
 }

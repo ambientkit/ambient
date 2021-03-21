@@ -1,7 +1,9 @@
 package router
 
+import "net/http"
+
 // Delete is a shortcut for router.Handle("DELETE", path, handle)
-func (m *Mux) Delete(path string, fn HandlerFunc) {
+func (m *Mux) Delete(path string, fn func(http.ResponseWriter, *http.Request) (int, error)) {
 	m.router.Handle("DELETE", path, handler{
 		HandlerFunc:     fn,
 		CustomServeHTTP: m.customServeHTTP,
@@ -9,7 +11,7 @@ func (m *Mux) Delete(path string, fn HandlerFunc) {
 }
 
 // Get is a shortcut for router.Handle("GET", path, handle)
-func (m *Mux) Get(path string, fn HandlerFunc) {
+func (m *Mux) Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error)) {
 	m.router.Handle("GET", path, handler{
 		HandlerFunc:     fn,
 		CustomServeHTTP: m.customServeHTTP,
@@ -17,7 +19,7 @@ func (m *Mux) Get(path string, fn HandlerFunc) {
 }
 
 // Head is a shortcut for router.Handle("HEAD", path, handle)
-func (m *Mux) Head(path string, fn HandlerFunc) {
+func (m *Mux) Head(path string, fn func(http.ResponseWriter, *http.Request) (int, error)) {
 	m.router.Handle("HEAD", path, handler{
 		HandlerFunc:     fn,
 		CustomServeHTTP: m.customServeHTTP,
@@ -25,7 +27,7 @@ func (m *Mux) Head(path string, fn HandlerFunc) {
 }
 
 // Options is a shortcut for router.Handle("OPTIONS", path, handle)
-func (m *Mux) Options(path string, fn HandlerFunc) {
+func (m *Mux) Options(path string, fn func(http.ResponseWriter, *http.Request) (int, error)) {
 	m.router.Handle("OPTIONS", path, handler{
 		HandlerFunc:     fn,
 		CustomServeHTTP: m.customServeHTTP,
@@ -33,7 +35,7 @@ func (m *Mux) Options(path string, fn HandlerFunc) {
 }
 
 // Patch is a shortcut for router.Handle("PATCH", path, handle)
-func (m *Mux) Patch(path string, fn HandlerFunc) {
+func (m *Mux) Patch(path string, fn func(http.ResponseWriter, *http.Request) (int, error)) {
 	m.router.Handle("PATCH", path, handler{
 		HandlerFunc:     fn,
 		CustomServeHTTP: m.customServeHTTP,
@@ -41,7 +43,7 @@ func (m *Mux) Patch(path string, fn HandlerFunc) {
 }
 
 // Post is a shortcut for router.Handle("POST", path, handle)
-func (m *Mux) Post(path string, fn HandlerFunc) {
+func (m *Mux) Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error)) {
 	m.router.Handle("POST", path, handler{
 		HandlerFunc:     fn,
 		CustomServeHTTP: m.customServeHTTP,
@@ -49,7 +51,7 @@ func (m *Mux) Post(path string, fn HandlerFunc) {
 }
 
 // Put is a shortcut for router.Handle("PUT", path, handle)
-func (m *Mux) Put(path string, fn HandlerFunc) {
+func (m *Mux) Put(path string, fn func(http.ResponseWriter, *http.Request) (int, error)) {
 	m.router.Handle("PUT", path, handler{
 		HandlerFunc:     fn,
 		CustomServeHTTP: m.customServeHTTP,

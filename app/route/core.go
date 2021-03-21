@@ -27,7 +27,7 @@ type Core struct {
 func Register(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltemplate.Engine) (*Core, error) {
 	// Create core app.
 	c := &Core{
-		Router:  setupRouter(tmpl),
+		Router:  SetupRouter(tmpl),
 		Storage: storage,
 		Render:  tmpl,
 		Sess:    sess,
@@ -44,7 +44,7 @@ func Register(storage *datastorage.Storage, sess *websession.Session, tmpl *html
 	return c, nil
 }
 
-func setupRouter(tmpl *htmltemplate.Engine) *router.Mux {
+func SetupRouter(tmpl *htmltemplate.Engine) *router.Mux {
 	// Set the handling of all responses.
 	customServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
 		// Handle only errors.
