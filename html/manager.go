@@ -106,15 +106,15 @@ func (tm *TemplateManager) pluginHeader(t *template.Template) (*template.Templat
 			switch file.Filetype {
 			case ambsystem.FiletypeStylesheet:
 				if file.Embedded {
-					txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?%v">`, v.PluginName(), file.Path, v.PluginVersion())
+					txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?%v">`, v.PluginName(), file.SanitizedPath(), v.PluginVersion())
 				} else {
-					txt = fmt.Sprintf(`<link rel="stylesheet" href="%v">`, file.Path)
+					txt = fmt.Sprintf(`<link rel="stylesheet" href="%v">`, file.SanitizedPath())
 				}
 			case ambsystem.FiletypeJavaScript:
 				if file.Embedded {
-					txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?%v"></script>`, v.PluginName(), file.Path, v.PluginVersion())
+					txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?%v"></script>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion())
 				} else {
-					txt = fmt.Sprintf(`<script type="application/javascript" src="%v"></script>`, file.Path)
+					txt = fmt.Sprintf(`<script type="application/javascript" src="%v"></script>`, file.SanitizedPath())
 				}
 			default:
 				fmt.Printf("unsupported asset filetype for plugin (%v): %v", v.PluginName(), file.Filetype)

@@ -114,11 +114,11 @@ func EmbeddedAssets(mux *router.Mux, pluginName string, files []ambsystem.Asset,
 			continue
 		}
 
-		fileurl := path.Join("/plugins", pluginName, v.Path)
+		fileurl := path.Join("/plugins", pluginName, v.SanitizedPath())
 
 		// TODO: Need to check for missing locations and types.
 
-		exists := fileExists(assets, v.Path)
+		exists := fileExists(assets, v.SanitizedPath())
 		if !exists {
 			return fmt.Errorf("plugin (%v) has missing file, please check 'SetAssets()': %v", pluginName, v)
 		}

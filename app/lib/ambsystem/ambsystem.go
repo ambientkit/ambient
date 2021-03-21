@@ -3,6 +3,7 @@ package ambsystem
 import (
 	"embed"
 	"fmt"
+	"html"
 	"net/http"
 )
 
@@ -58,6 +59,11 @@ type Asset struct {
 	Embedded bool          `json:"embedded"`
 }
 
+// SanitizedPath -
+func (p Asset) SanitizedPath() string {
+	return html.EscapeString(p.Path)
+}
+
 // IPlugin represents a plugin.
 type IPlugin interface {
 	PluginName() string
@@ -99,7 +105,7 @@ func (p PluginMeta) Header() string {
 
 // PluginName -
 func (p PluginMeta) PluginName() string {
-	return p.Name
+	return html.EscapeString(p.Name)
 }
 
 // PluginVersion -
