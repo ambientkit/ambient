@@ -52,8 +52,8 @@ func RegisterPlugins(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem
 	return pluginsys, nil
 }
 
-// LoadPluginPages loads the pages from the plugins.
-func (c *App) LoadPluginPages() error {
+// LoadAllPluginPages loads all of the pages from the plugins.
+func (c *App) LoadAllPluginPages() error {
 	// Set up the plugin routes.
 	shouldSave := false
 	ps := c.Storage.Site.Plugins
