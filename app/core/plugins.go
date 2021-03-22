@@ -56,8 +56,7 @@ func RegisterPlugins(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem
 func (c *App) LoadAllPluginPages() error {
 	// Set up the plugin routes.
 	shouldSave := false
-	ps := c.Storage.Site.Plugins
-	for name := range ps {
+	for name := range c.Storage.Site.Plugins {
 		bl := c.LoadSinglePluginPages(name)
 		if bl {
 			shouldSave = true
@@ -66,7 +65,20 @@ func (c *App) LoadAllPluginPages() error {
 
 	if shouldSave {
 		// Save the plugin state if something changed.
-		c.Storage.Site.Plugins = ps
+		err := c.Storage.Save()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// LoadSinglePlugin -
+// FIXME: Need to add security to this so not any plugin can call it.
+func (c *App) LoadSinglePlugin(name string) error {
+	save := c.LoadSinglePluginPages(name)
+	if save {
 		err := c.Storage.Save()
 		if err != nil {
 			return err
@@ -112,10 +124,11 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	recorder := router.NewRecorder(c.Router)
 
 	toolkit := &Toolkit{
-		Router:   recorder,
-		Render:   c.Render,
-		Security: c.Sess,
-		Site:     NewSecureSite(name, c.Storage, c.Router, grants),
+		Router:       recorder,
+		Render:       c.Render,
+		Security:     c.Sess,
+		Site:         NewSecureSite(name, c.Storage, c.Router, grants),
+		PluginLoader: c,
 	}
 
 	// Load the pages.

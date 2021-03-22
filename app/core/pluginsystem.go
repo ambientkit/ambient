@@ -104,12 +104,18 @@ type ISecurity interface {
 	CSRF(r *http.Request) bool
 }
 
+// IPluginLoader -
+type IPluginLoader interface {
+	LoadSinglePlugin(name string) error
+}
+
 // ISecurity -
 type Toolkit struct {
-	Render   IRender
-	Router   IRouter
-	Security ISecurity
-	Site     SecureSite
+	Render       IRender
+	Router       IRouter
+	Security     ISecurity
+	Site         SecureSite
+	PluginLoader IPluginLoader
 }
 
 // SetPages -
