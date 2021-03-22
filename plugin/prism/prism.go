@@ -3,7 +3,7 @@ package prism
 import (
 	"embed"
 
-	"github.com/josephspurrier/ambient/app/lib/ambsystem"
+	"github.com/josephspurrier/ambient/app/core"
 )
 
 //go:embed *
@@ -11,13 +11,13 @@ var assets embed.FS
 
 // Plugin -
 type Plugin struct {
-	ambsystem.PluginMeta
+	core.PluginMeta
 }
 
 // New sets up the plugin.
 func New() Plugin {
 	return Plugin{
-		PluginMeta: ambsystem.PluginMeta{
+		PluginMeta: core.PluginMeta{
 			Name:       "prism",
 			Version:    "1.0.0",
 			AppVersion: "1.0.0",
@@ -26,30 +26,30 @@ func New() Plugin {
 }
 
 // Assets -
-func (p Plugin) Assets() ([]ambsystem.Asset, *embed.FS) {
-	return []ambsystem.Asset{
+func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
+	return []core.Asset{
 		{
 			Path:     "css/prism-vsc-dark-plus.css",
-			Filetype: ambsystem.FiletypeStylesheet,
-			Location: ambsystem.LocationHeader,
+			Filetype: core.FiletypeStylesheet,
+			Location: core.LocationHeader,
 			Embedded: true,
 		},
 		{
 			Path:     "css/clean.css",
-			Filetype: ambsystem.FiletypeStylesheet,
-			Location: ambsystem.LocationHeader,
+			Filetype: core.FiletypeStylesheet,
+			Location: core.LocationHeader,
 			Embedded: true,
 		},
 		{
 			Path:     "https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js",
-			Filetype: ambsystem.FiletypeJavaScript,
-			Location: ambsystem.LocationBody,
+			Filetype: core.FiletypeJavaScript,
+			Location: core.LocationBody,
 			Embedded: false,
 		},
 		{
 			Path:     "https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js",
-			Filetype: ambsystem.FiletypeJavaScript,
-			Location: ambsystem.LocationBody,
+			Filetype: core.FiletypeJavaScript,
+			Location: core.LocationBody,
 			Embedded: false,
 		},
 	}, &assets
@@ -68,7 +68,7 @@ func (p Plugin) Body() string {
 }
 
 // // SetSettings -
-// func (pm Prism) SetSettings(s ambsystem.ISettings) error {
+// func (pm Prism) SetSettings(s core.ISettings) error {
 // 	s.Add("name string", fieldType string, defaultValue string)
 
 // }

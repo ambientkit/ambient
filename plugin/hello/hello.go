@@ -4,7 +4,7 @@ import (
 	"embed"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/lib/ambsystem"
+	"github.com/josephspurrier/ambient/app/core"
 )
 
 //go:embed *
@@ -12,14 +12,14 @@ var assets embed.FS
 
 // Plugin -
 type Plugin struct {
-	ambsystem.PluginMeta
-	*ambsystem.Toolkit
+	core.PluginMeta
+	*core.Toolkit
 }
 
 // New sets up the plugin.
 func New() Plugin {
 	return Plugin{
-		PluginMeta: ambsystem.PluginMeta{
+		PluginMeta: core.PluginMeta{
 			Name:       "hello",
 			Version:    "1.0.0",
 			AppVersion: "1.0.0",
@@ -27,7 +27,7 @@ func New() Plugin {
 	}
 }
 
-func (p Plugin) SetPages(toolkit *ambsystem.Toolkit) error {
+func (p Plugin) SetPages(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
 
 	p.Router.Get("/dashboard/hello", p.index)

@@ -4,25 +4,30 @@ import (
 	"embed"
 	"net/http"
 
+	"github.com/josephspurrier/ambient/app/lib/datastorage"
+	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
-	"github.com/josephspurrier/ambient/html"
 	"github.com/oxtoacart/bpool"
 )
 
 var bufpool *bpool.BufferPool = bpool.NewBufferPool(64)
 
 // New returns a HTML template engine.
-func New(manager *html.TemplateManager, allowUnsafeHTML bool) *Engine {
+func New(allowUnsafeHTML bool, storage *datastorage.Storage, sess *websession.Session, hi HeaderInjector) *Engine {
 	return &Engine{
 		allowUnsafeHTML: allowUnsafeHTML,
-		manager:         manager,
+		storage:         storage,
+		sess:            sess,
+		hi:              hi,
 	}
 }
 
 // Engine represents a HTML template engine.
 type Engine struct {
 	allowUnsafeHTML bool
-	manager         *html.TemplateManager
+	storage         *datastorage.Storage
+	sess            *websession.Session
+	hi              HeaderInjector
 }
 
 // Template renders HTML to a response writer and returns a 200 status code and
@@ -44,7 +49,7 @@ func (te *Engine) ErrorTemplate(w http.ResponseWriter, r *http.Request, mainTemp
 func (te *Engine) partialTemplate(w http.ResponseWriter, r *http.Request, mainTemplate string,
 	partialTemplate string, statusCode int, vars map[string]interface{}) (status int, err error) {
 	// Parse the template.
-	t, err := te.manager.PartialTemplate(r, mainTemplate, partialTemplate)
+	t, err := te.PartialTemplate(r, mainTemplate, partialTemplate)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -77,7 +82,7 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 	}
 
 	// Parse the template.
-	t, err := te.manager.PostTemplate(r, mainTemplate)
+	t, err := te.PostTemplate(r, mainTemplate)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -110,7 +115,7 @@ func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, assets 
 	status = http.StatusOK
 
 	// Parse the template.
-	t, err := te.manager.PluginTemplate(r, assets, "dashboard", partialTemplate)
+	t, err := te.PluginTemplate2(r, assets, "dashboard", partialTemplate)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}

@@ -1,4 +1,4 @@
-package plugins
+package core
 
 import (
 	"embed"
@@ -10,18 +10,15 @@ import (
 	"path"
 	"strings"
 
-	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/app/model"
-	"github.com/josephspurrier/ambient/app/modelsecure"
 )
 
 // Load the plugins into storage.
-func Load(arr []ambsystem.IPlugin, storage *datastorage.Storage) (*ambsystem.PluginSystem, error) {
+func Load(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem, error) {
 	// Create the plugin system.
-	pluginsys := ambsystem.NewPluginSystem()
+	pluginsys := NewPluginSystem()
 
 	// Load the plugins.
 	needSave := false
@@ -56,7 +53,7 @@ func Load(arr []ambsystem.IPlugin, storage *datastorage.Storage) (*ambsystem.Plu
 }
 
 // Pages loads the pages from the plugins.
-func Pages(c *core.App) error {
+func Pages(c *App) error {
 	// Set up the plugin routes.
 	shouldSave := false
 	ps := c.Storage.Site.Plugins
@@ -86,11 +83,11 @@ func Pages(c *core.App) error {
 
 		recorder := router.NewRecorder(c.Router)
 
-		toolkit := &ambsystem.Toolkit{
+		toolkit := &Toolkit{
 			Router:   recorder,
 			Render:   c.Render,
 			Security: c.Sess,
-			Site:     modelsecure.NewSecureSite(name, c.Storage, c.Router, grants),
+			Site:     NewSecureSite(name, c.Storage, c.Router, grants),
 		}
 
 		// Load the pages.
@@ -138,7 +135,7 @@ func Pages(c *core.App) error {
 	return nil
 }
 
-func EmbeddedAssets(mux *router.Mux, pluginName string, files []ambsystem.Asset, assets *embed.FS) error {
+func EmbeddedAssets(mux *router.Mux, pluginName string, files []Asset, assets *embed.FS) error {
 	for _, v := range files {
 		// Skip files that are not embedded.
 		if !v.Embedded {

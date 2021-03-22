@@ -1,4 +1,4 @@
-package modelsecure
+package core
 
 import (
 	"errors"
@@ -24,6 +24,7 @@ type SecureSite struct {
 	storage    *datastorage.Storage
 	mux        *router.Mux
 	grants     map[string]bool
+	App
 }
 
 // NewSecureSite -

@@ -1,7 +1,6 @@
 package core
 
 import (
-	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/router"
@@ -14,5 +13,5 @@ type App struct {
 	Storage *datastorage.Storage
 	Render  *htmltemplate.Engine
 	Sess    *websession.Session
-	Plugins *ambsystem.PluginSystem
+	Plugins *PluginSystem
 }

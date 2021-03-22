@@ -1,12 +1,10 @@
-package ambsystem
+package core
 
 import (
 	"embed"
 	"fmt"
 	"html"
 	"net/http"
-
-	"github.com/josephspurrier/ambient/app/modelsecure"
 )
 
 // PluginSystem -
@@ -111,7 +109,7 @@ type Toolkit struct {
 	Render   IRender
 	Router   IRouter
 	Security ISecurity
-	Site     modelsecure.SecureSite
+	Site     SecureSite
 }
 
 // SetPages -

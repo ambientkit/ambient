@@ -3,7 +3,7 @@ package stackedit
 import (
 	"embed"
 
-	"github.com/josephspurrier/ambient/app/lib/ambsystem"
+	"github.com/josephspurrier/ambient/app/core"
 )
 
 //go:embed *
@@ -11,13 +11,13 @@ var assets embed.FS
 
 // Plugin -
 type Plugin struct {
-	ambsystem.PluginMeta
+	core.PluginMeta
 }
 
 // New sets up the plugin.
 func New() Plugin {
 	return Plugin{
-		PluginMeta: ambsystem.PluginMeta{
+		PluginMeta: core.PluginMeta{
 			Name:       "stackedit",
 			Version:    "1.0.0",
 			AppVersion: "1.0.0",
@@ -26,18 +26,18 @@ func New() Plugin {
 }
 
 // Assets -
-func (p Plugin) Assets() ([]ambsystem.Asset, *embed.FS) {
-	return []ambsystem.Asset{
+func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
+	return []core.Asset{
 		{
 			Path:     "https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js",
-			Filetype: ambsystem.FiletypeJavaScript,
-			Location: ambsystem.LocationBody,
+			Filetype: core.FiletypeJavaScript,
+			Location: core.LocationBody,
 			Embedded: false,
 		},
 		{
 			Path:     "js/stackedit.js",
-			Filetype: ambsystem.FiletypeJavaScript,
-			Location: ambsystem.LocationBody,
+			Filetype: core.FiletypeJavaScript,
+			Location: core.LocationBody,
 			Embedded: true,
 		},
 	}, &assets
