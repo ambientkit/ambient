@@ -53,12 +53,12 @@ func RegisterPlugins(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem
 }
 
 // LoadPluginPages loads the pages from the plugins.
-func LoadPluginPages(c *App) error {
+func (c *App) LoadPluginPages() error {
 	// Set up the plugin routes.
 	shouldSave := false
 	ps := c.Storage.Site.Plugins
-	for name, plugin := range ps {
-		bl := LoadSinglePluginPages(name, plugin, ps, c)
+	for name := range ps {
+		bl := c.LoadSinglePluginPages(name)
 		if bl {
 			shouldSave = true
 		}
@@ -76,9 +76,15 @@ func LoadPluginPages(c *App) error {
 	return nil
 }
 
-func LoadSinglePluginPages(name string, plugin model.PluginSettings,
-	ps map[string]model.PluginSettings, c *App) bool {
+// LoadSinglePluginPages -
+func (c *App) LoadSinglePluginPages(name string) bool {
 	shouldSave := false
+
+	// Return if the plug isn't found.
+	plugin, ok := c.Storage.Site.Plugins[name]
+	if !ok {
+		return shouldSave
+	}
 
 	// Determine if the plugin that is in stored is found in the system.
 	v, found := c.Plugins.Plugins[name]
@@ -87,7 +93,7 @@ func LoadSinglePluginPages(name string, plugin model.PluginSettings,
 	if found != plugin.Found {
 		shouldSave = true
 		plugin.Found = found
-		ps[name] = plugin
+		c.Storage.Site.Plugins[name] = plugin
 	}
 
 	// If the plugin is not found or not enabled, then skip over it.

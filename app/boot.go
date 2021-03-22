@@ -132,7 +132,7 @@ func Boot() (http.Handler, error) {
 	}
 
 	// Load the plugin pages.
-	err = core.LoadPluginPages(c)
+	err = c.LoadPluginPages()
 	if err != nil {
 		return nil, err
 	}
