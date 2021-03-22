@@ -121,17 +121,23 @@ func Boot() (http.Handler, error) {
 	// Set up the router.
 	mux := route.SetupRouter(tmpl)
 
+	// Create core app.
+	c := &route.Core{
+		Router:  mux,
+		Storage: storage,
+		Render:  tmpl,
+		Sess:    sess,
+		Plugins: plugs,
+	}
+
 	// Load the plugin pages.
-	err = plugins.Pages(storage, sess, tmpl, mux, plugs)
+	err = plugins.Pages(c)
 	if err != nil {
 		return nil, err
 	}
 
 	// Setup the routes.
-	c, err := route.Register(storage, sess, tmpl, mux, plugs)
-	if err != nil {
-		return nil, err
-	}
+	route.Register(c)
 
 	// Set up the router and middleware.
 	var mw http.Handler

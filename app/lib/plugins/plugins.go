@@ -12,11 +12,10 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/router"
-	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/modelsecure"
+	"github.com/josephspurrier/ambient/app/route"
 )
 
 // Load the plugins into storage.
@@ -57,13 +56,13 @@ func Load(arr []ambsystem.IPlugin, storage *datastorage.Storage) (*ambsystem.Plu
 }
 
 // Pages loads the pages from the plugins.
-func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltemplate.Engine, mux *router.Mux, plugins *ambsystem.PluginSystem) error {
+func Pages(c *route.Core) error {
 	// Set up the plugin routes.
 	shouldSave := false
-	ps := storage.Site.Plugins
+	ps := c.Storage.Site.Plugins
 	for name, plugin := range ps {
 		// Determine if the plugin that is in stored is found in the system.
-		v, found := plugins.Plugins[name]
+		v, found := c.Plugins.Plugins[name]
 
 		// If the found setting is different, then update it for saving.
 		if found != plugin.Found {
@@ -85,13 +84,13 @@ func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltem
 		grants["site.plugins:deleteone"] = true
 		grants["router:clear"] = true
 
-		recorder := router.NewRecorder(mux)
+		recorder := router.NewRecorder(c.Router)
 
 		toolkit := &ambsystem.Toolkit{
 			Router:   recorder,
-			Render:   tmpl,
-			Security: sess,
-			Site:     modelsecure.NewSecureSite(name, storage, mux, grants),
+			Render:   c.Render,
+			Security: c.Sess,
+			Site:     modelsecure.NewSecureSite(name, c.Storage, c.Router, grants),
 		}
 
 		// Load the pages.
@@ -109,7 +108,7 @@ func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltem
 				Path:   route.Path,
 			})
 		}
-		storage.PluginRoutes.Routes[name] = arr
+		c.Storage.PluginRoutes.Routes[name] = arr
 
 		// Load the assets.
 		assets, files := v.Assets()
@@ -120,7 +119,7 @@ func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltem
 		fmt.Println("loading assets for:", name)
 
 		// Handle embedded assets.
-		err = EmbeddedAssets(mux, name, assets, files)
+		err = EmbeddedAssets(c.Router, name, assets, files)
 		if err != nil {
 			log.Println(err.Error())
 		}
@@ -129,8 +128,8 @@ func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltem
 
 	if shouldSave {
 		// Save the plugin state if something changed.
-		storage.Site.Plugins = ps
-		err := storage.Save()
+		c.Storage.Site.Plugins = ps
+		err := c.Storage.Save()
 		if err != nil {
 			return err
 		}

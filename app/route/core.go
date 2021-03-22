@@ -26,18 +26,9 @@ type Core struct {
 }
 
 // Register all routes.
-func Register(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltemplate.Engine, mux *router.Mux, plugins *ambsystem.PluginSystem) (*Core, error) {
-	// Create core app.
-	c := &Core{
-		Router:  mux,
-		Storage: storage,
-		Render:  tmpl,
-		Sess:    sess,
-		Plugins: plugins,
-	}
-
+func Register(c *Core) {
 	// Static assets.
-	mux.Get("/assets...", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	c.Router.Get("/assets...", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
 		// Don't allow directory browsing.
 		if strings.HasSuffix(r.URL.Path, "/") {
 			return http.StatusNotFound, nil
@@ -78,8 +69,6 @@ func Register(storage *datastorage.Storage, sess *websession.Session, tmpl *html
 
 	// This should be last because it catches all other pages at the root.
 	registerPost(&Post{c})
-
-	return c, nil
 }
 
 func SetupRouter(tmpl *htmltemplate.Engine) *router.Mux {
