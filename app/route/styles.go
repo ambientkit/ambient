@@ -2,11 +2,13 @@ package route
 
 import (
 	"net/http"
+
+	"github.com/josephspurrier/ambient/app/core"
 )
 
 // Styles -
 type Styles struct {
-	*Core
+	*core.App
 }
 
 func registerStyles(c *Styles) {

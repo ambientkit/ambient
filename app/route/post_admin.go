@@ -4,13 +4,14 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/uuid"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
 // AdminPost -
 type AdminPost struct {
-	*Core
+	*core.App
 }
 
 func registerAdminPost(c *AdminPost) {

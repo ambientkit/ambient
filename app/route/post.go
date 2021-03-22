@@ -4,13 +4,14 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
 // Post -
 type Post struct {
-	*Core
+	*core.App
 }
 
 func registerPost(c *Post) {

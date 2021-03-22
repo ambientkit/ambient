@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/passhash"
 	"github.com/josephspurrier/ambient/app/lib/totp"
@@ -15,7 +16,7 @@ import (
 
 // AuthUtil -
 type AuthUtil struct {
-	*Core
+	*core.App
 }
 
 func registerAuthUtil(c *AuthUtil) {

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
@@ -122,7 +123,7 @@ func Boot() (http.Handler, error) {
 	mux := route.SetupRouter(tmpl)
 
 	// Create core app.
-	c := &route.Core{
+	c := &core.App{
 		Router:  mux,
 		Storage: storage,
 		Render:  tmpl,

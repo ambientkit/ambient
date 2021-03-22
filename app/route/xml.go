@@ -6,12 +6,13 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 )
 
 // XMLUtil -
 type XMLUtil struct {
-	*Core
+	*core.App
 }
 
 func registerXMLUtil(c *XMLUtil) {

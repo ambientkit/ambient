@@ -8,25 +8,14 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/josephspurrier/ambient/app/lib/ambsystem"
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/router"
-	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/assets"
 )
 
-// Core -
-type Core struct {
-	Router  *router.Mux
-	Storage *datastorage.Storage
-	Render  *htmltemplate.Engine
-	Sess    *websession.Session
-	Plugins *ambsystem.PluginSystem
-}
-
 // Register all routes.
-func Register(c *Core) {
+func Register(c *core.App) {
 	// Static assets.
 	c.Router.Get("/assets...", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
 		// Don't allow directory browsing.

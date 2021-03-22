@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/stretchr/testify/assert"
@@ -28,7 +29,7 @@ func TestXML(t *testing.T) {
 	mux := setupRouter()
 
 	// Create core app.
-	c := &route.Core{}
+	c := &core.App{}
 	x := &route.XMLUtil{c}
 	mux.Get("/robots.txt", x.Robots)
 	r := httptest.NewRequest("GET", "/robots.txt", nil)

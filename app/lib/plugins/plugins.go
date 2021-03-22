@@ -10,12 +10,12 @@ import (
 	"path"
 	"strings"
 
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/ambsystem"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/modelsecure"
-	"github.com/josephspurrier/ambient/app/route"
 )
 
 // Load the plugins into storage.
@@ -56,7 +56,7 @@ func Load(arr []ambsystem.IPlugin, storage *datastorage.Storage) (*ambsystem.Plu
 }
 
 // Pages loads the pages from the plugins.
-func Pages(c *route.Core) error {
+func Pages(c *core.App) error {
 	// Set up the plugin routes.
 	shouldSave := false
 	ps := c.Storage.Site.Plugins
