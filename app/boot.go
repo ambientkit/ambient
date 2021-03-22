@@ -16,9 +16,9 @@ import (
 	"github.com/josephspurrier/ambient/app/middleware"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
-	"github.com/josephspurrier/ambient/plugin/ambplugins"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
 	"github.com/josephspurrier/ambient/plugin/hello"
+	"github.com/josephspurrier/ambient/plugin/plugins"
 	"github.com/josephspurrier/ambient/plugin/prism"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
 )
@@ -102,7 +102,7 @@ func Boot() (http.Handler, error) {
 	// Define the plugins.
 	arrPlugins := []core.IPlugin{
 		bearcss.New(),
-		ambplugins.New(),
+		plugins.New(),
 		prism.New(),
 		stackedit.New(),
 		hello.New(),

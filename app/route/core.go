@@ -12,39 +12,6 @@ import (
 
 // Register all routes.
 func Register(c *core.App) {
-	// // Static assets.
-	// c.Router.Get("/assets...", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	// 	// Don't allow directory browsing.
-	// 	if strings.HasSuffix(r.URL.Path, "/") {
-	// 		return http.StatusNotFound, nil
-	// 	}
-
-	// 	// Use the root directory.
-	// 	fsys, err := fs.Sub(assets.CSS, ".")
-	// 	if err != nil {
-	// 		return http.StatusInternalServerError, err
-	// 	}
-
-	// 	// Get the requested file name.
-	// 	fname := strings.TrimPrefix(r.URL.Path, "/assets/")
-
-	// 	// Open the file.
-	// 	f, err := fsys.Open(fname)
-	// 	if err != nil {
-	// 		return http.StatusNotFound, nil
-	// 	}
-	// 	defer f.Close()
-
-	// 	// Get the file time.
-	// 	st, err := f.Stat()
-	// 	if err != nil {
-	// 		return http.StatusInternalServerError, err
-	// 	}
-
-	// 	http.ServeContent(w, r, fname, st.ModTime(), f.(io.ReadSeeker))
-	// 	return
-	// })
-
 	// Register routes.
 	registerHomePost(&HomePost{c})
 	registerStyles(&Styles{c})

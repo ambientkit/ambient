@@ -1,4 +1,4 @@
-package ambplugins
+package plugins
 
 import (
 	"embed"
