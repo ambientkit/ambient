@@ -67,26 +67,27 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		return p.Site.Error(err)
 	}
 
-	// Loop through each plugin to get the setting then save.
-	for name := range plugins {
+	// Loop through each plugin to get the settings then save.
+	for name, info := range plugins {
 		enable := (r.FormValue(name) == "on")
-		if enable {
+		if enable && !info.Enabled {
 			err = p.Site.EnablePlugin(name)
 			if err != nil {
 				return p.Site.Error(err)
 			}
-		} else {
+			// TODO: Add in the logic to enable to plugin.
+		} else if !enable && info.Enabled {
 			err = p.Site.DisablePlugin(name)
+			if err != nil {
+				return p.Site.Error(err)
+			}
+
+			err = p.Site.ClearRoutePlugin(name)
 			if err != nil {
 				return p.Site.Error(err)
 			}
 		}
 	}
-
-	// err = p.Site.ClearRoute("/dashboard/hello")
-	// if err != nil {
-	// 	return p.Site.Error(err)
-	// }
 
 	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
 	return

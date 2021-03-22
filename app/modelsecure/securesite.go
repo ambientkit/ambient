@@ -2,6 +2,7 @@ package modelsecure
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -146,14 +147,35 @@ func (ss SecureSite) DisablePlugin(name string) error {
 }
 
 // ClearRoute clears out an old route.
-func (ss SecureSite) ClearRoute(p string) error {
+func (ss SecureSite) ClearRoute(method string, path string) error {
 	grant := "router:clear"
 
 	if !ss.Authorized(grant) {
 		return ErrAccessDenied
 	}
 
-	ss.mux.Clear(p)
+	ss.mux.Clear(method, path)
+
+	return nil
+}
+
+// ClearRoute clears out an old route.
+func (ss SecureSite) ClearRoutePlugin(pluginName string) error {
+	grant := "router:clear"
+
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
+
+	routes, ok := ss.storage.PluginRoutes.Routes[pluginName]
+	if !ok {
+		return ErrNotFound
+	}
+
+	for _, v := range routes {
+		fmt.Println("Remove:", v)
+		ss.mux.Clear(v.Method, v.Path)
+	}
 
 	return nil
 }

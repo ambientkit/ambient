@@ -85,8 +85,10 @@ func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltem
 		grants["site.plugins:deleteone"] = true
 		grants["router:clear"] = true
 
+		recorder := router.NewRecorder(mux)
+
 		toolkit := &ambsystem.Toolkit{
-			Router:   mux,
+			Router:   recorder,
 			Render:   tmpl,
 			Security: sess,
 			Site:     modelsecure.NewSecureSite(name, storage, mux, grants),
@@ -97,6 +99,17 @@ func Pages(storage *datastorage.Storage, sess *websession.Session, tmpl *htmltem
 		if err != nil {
 			log.Printf("problem loading pages from plugin %v: %v", name, err.Error())
 		}
+
+		fmt.Println("Routes:", recorder.Routes())
+
+		arr := make([]model.Route, 0)
+		for _, route := range recorder.Routes() {
+			arr = append(arr, model.Route{
+				Method: route.Method,
+				Path:   route.Path,
+			})
+		}
+		storage.PluginRoutes.Routes[name] = arr
 
 		// Load the assets.
 		assets, files := v.Assets()

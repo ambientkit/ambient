@@ -27,9 +27,9 @@ func New(csh func(w http.ResponseWriter, r *http.Request, status int, err error)
 	}
 }
 
-// Clear will remove a path from the router.
-func (m *Mux) Clear(path string) {
-	m.router.Remove(path)
+// Clear will remove a method and path from the router.
+func (m *Mux) Clear(method string, path string) {
+	m.router.Remove(method, path)
 }
 
 // ServeHTTP routes the incoming http.Request based on method and path

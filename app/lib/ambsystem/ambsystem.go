@@ -12,6 +12,7 @@ import (
 // PluginSystem -
 type PluginSystem struct {
 	Plugins map[string]IPlugin
+	Routes  map[string]IRouteList
 }
 
 // NewPluginSystem -
@@ -71,6 +72,15 @@ type IPlugin interface {
 	//SetSettings()
 	// Deactivate() error
 	// Uninstall() error
+}
+
+type IRouteList interface {
+	Routes() []IRoute
+}
+
+type IRoute interface {
+	Method() string
+	Path() string
 }
 
 // ISettings -

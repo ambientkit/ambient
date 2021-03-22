@@ -31,9 +31,9 @@ func (r *Router) pathSegments(p string) []string {
 }
 
 // Remove an entry from the router.
-func (r *Router) Remove(p string) {
+func (r *Router) Remove(method string, p string) {
 	for index, v := range r.routes {
-		if v.pattern == p {
+		if v.pattern == p && strings.EqualFold(v.method, method) {
 			r.routes = removeIndex(r.routes, index)
 		}
 	}

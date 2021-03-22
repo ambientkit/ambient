@@ -15,8 +15,9 @@ type Datastorer interface {
 
 // Storage represents a writable and readable object.
 type Storage struct {
-	Site       *model.Site
-	datastorer Datastorer
+	Site         *model.Site
+	PluginRoutes *model.PluginRoutes
+	datastorer   Datastorer
 }
 
 // New returns a writable and readable site object. Returns an error if the
@@ -30,6 +31,11 @@ func New(ds Datastorer, site *model.Site) (*Storage, error) {
 	err := s.Load()
 	if err != nil {
 		return nil, err
+	}
+
+	// Initialize the data structure.
+	s.PluginRoutes = &model.PluginRoutes{
+		Routes: make(map[string][]model.Route),
 	}
 
 	// Set the defaults for the site object.
