@@ -11,7 +11,7 @@ import (
 )
 
 type HeaderInjector interface {
-	PluginHeader(t *template.Template) (*template.Template, error)
+	InjectPlugins(t *template.Template) (*template.Template, error)
 }
 
 // PartialTemplate -
@@ -30,7 +30,7 @@ func (tm *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialT
 		return nil, err
 	}
 
-	t, err = tm.hi.PluginHeader(t)
+	t, err = tm.hi.InjectPlugins(t)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (tm *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.
 		return nil, err
 	}
 
-	t, err = tm.hi.PluginHeader(t)
+	t, err = tm.hi.InjectPlugins(t)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (tm *Engine) PluginTemplate2(r *http.Request, assets embed.FS, mainTemplate
 		return nil, err
 	}
 
-	t, err = tm.hi.PluginHeader(t)
+	t, err = tm.hi.InjectPlugins(t)
 	if err != nil {
 		return nil, err
 	}

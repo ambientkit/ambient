@@ -1,22 +1,16 @@
 package html
 
 import (
-	"crypto/md5"
 	"embed"
-	"fmt"
 	"html/template"
-	"io/fs"
-	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
-	"github.com/josephspurrier/ambient/assets"
 )
 
 //go:embed *
@@ -75,9 +69,6 @@ func FuncMap(r *http.Request, storage *datastorage.Storage, sess *websession.Ses
 	fm["MFAEnabled"] = func() bool {
 		return len(os.Getenv("AMB_MFA_KEY")) > 0
 	}
-	fm["AssetStamp"] = func(f string) string {
-		return assetTimePath(f)
-	}
 	fm["SiteStyles"] = func() template.CSS {
 		return template.CSS(storage.Site.Styles)
 	}
@@ -93,35 +84,4 @@ func FuncMap(r *http.Request, storage *datastorage.Storage, sess *websession.Ses
 	}
 
 	return fm
-}
-
-// assetTimePath returns a URL with a MD5 hash appended.
-func assetTimePath(s string) string {
-	// Use the root directory.
-	fsys, err := fs.Sub(assets.CSS, ".")
-	if err != nil {
-		return s
-	}
-
-	// Get the requested file name.
-	fname := strings.TrimPrefix(s, "/assets/")
-
-	// Open the file.
-	f, err := fsys.Open(fname)
-	if err != nil {
-		return s
-	}
-	defer f.Close()
-
-	// Get all the content.s
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		return s
-	}
-
-	// Create a hash.
-	hsh := md5.New()
-	hsh.Write(b)
-
-	return fmt.Sprintf("%v?%x", s, hsh.Sum(nil))
 }

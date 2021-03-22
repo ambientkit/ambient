@@ -76,7 +76,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 				return p.Site.Error(err)
 			}
 
-			// Load the plugin.
+			// Load the plugin routes.
 			err = p.PluginLoader.LoadSinglePlugin(name)
 			if err != nil {
 				return http.StatusInternalServerError, err
@@ -87,6 +87,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 				return p.Site.Error(err)
 			}
 
+			// Clear the plugin routes.
 			err = p.Site.ClearRoutePlugin(name)
 			if err != nil {
 				return p.Site.Error(err)

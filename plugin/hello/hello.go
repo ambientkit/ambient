@@ -29,9 +29,7 @@ func New() Plugin {
 
 func (p Plugin) SetPages(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
-
 	p.Router.Get("/dashboard/hello", p.index)
-
 	return nil
 }
 
@@ -39,6 +37,5 @@ func (p Plugin) SetPages(toolkit *core.Toolkit) error {
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	vars := make(map[string]interface{})
 	vars["title"] = "Plugins"
-
 	return p.Render.PluginTemplate(w, r, assets, "template/hello.tmpl", vars)
 }

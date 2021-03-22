@@ -144,7 +144,7 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	}
 
 	// Handle embedded assets.
-	err = EmbeddedAssets(recorder, name, assets, files)
+	err = embeddedAssets(recorder, name, assets, files)
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -167,7 +167,7 @@ func (c *App) saveRoutesForPlugin(name string, recorder *router.Recorder) {
 	c.Storage.PluginRoutes.Routes[name] = arr
 }
 
-func EmbeddedAssets(mux IRouter, pluginName string, files []Asset, assets *embed.FS) error {
+func embeddedAssets(mux IRouter, pluginName string, files []Asset, assets *embed.FS) error {
 	for _, v := range files {
 		// Skip files that are not embedded.
 		if !v.Embedded {

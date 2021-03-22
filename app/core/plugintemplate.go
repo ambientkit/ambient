@@ -5,8 +5,8 @@ import (
 	"html/template"
 )
 
-// PluginHeader -
-func (c *App) PluginHeader(t *template.Template) (*template.Template, error) {
+// InjectPlugins -
+func (c *App) InjectPlugins(t *template.Template) (*template.Template, error) {
 	pluginHeader := ""
 	pluginBody := ""
 	for name, plugin := range c.Storage.Site.Plugins {
