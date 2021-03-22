@@ -15,8 +15,8 @@ import (
 	"github.com/josephspurrier/ambient/app/model"
 )
 
-// Load the plugins into storage.
-func Load(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem, error) {
+// RegisterPlugins into storage.
+func RegisterPlugins(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem, error) {
 	// Create the plugin system.
 	pluginsys := NewPluginSystem()
 
@@ -52,75 +52,16 @@ func Load(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem, error) {
 	return pluginsys, nil
 }
 
-// Pages loads the pages from the plugins.
-func Pages(c *App) error {
+// LoadPluginPages loads the pages from the plugins.
+func LoadPluginPages(c *App) error {
 	// Set up the plugin routes.
 	shouldSave := false
 	ps := c.Storage.Site.Plugins
 	for name, plugin := range ps {
-		// Determine if the plugin that is in stored is found in the system.
-		v, found := c.Plugins.Plugins[name]
-
-		// If the found setting is different, then update it for saving.
-		if found != plugin.Found {
+		bl := LoadSinglePluginPages(name, plugin, ps, c)
+		if bl {
 			shouldSave = true
-			plugin.Found = found
-			ps[name] = plugin
 		}
-
-		// If the plugin is not found or not enabled, then skip over it.
-		if !found || !plugin.Enabled {
-			continue
-		}
-
-		grants := make(map[string]bool)
-		grants["site.title:read"] = true
-		grants["site.plugins:read"] = true
-		grants["site.plugins:enable"] = true
-		grants["site.plugins:disable"] = true
-		grants["site.plugins:deleteone"] = true
-		grants["router:clear"] = true
-
-		recorder := router.NewRecorder(c.Router)
-
-		toolkit := &Toolkit{
-			Router:   recorder,
-			Render:   c.Render,
-			Security: c.Sess,
-			Site:     NewSecureSite(name, c.Storage, c.Router, grants),
-		}
-
-		// Load the pages.
-		err := v.SetPages(toolkit)
-		if err != nil {
-			log.Printf("problem loading pages from plugin %v: %v", name, err.Error())
-		}
-
-		fmt.Println("Routes:", recorder.Routes())
-
-		arr := make([]model.Route, 0)
-		for _, route := range recorder.Routes() {
-			arr = append(arr, model.Route{
-				Method: route.Method,
-				Path:   route.Path,
-			})
-		}
-		c.Storage.PluginRoutes.Routes[name] = arr
-
-		// Load the assets.
-		assets, files := v.Assets()
-		if files == nil {
-			continue
-		}
-
-		fmt.Println("loading assets for:", name)
-
-		// Handle embedded assets.
-		err = EmbeddedAssets(c.Router, name, assets, files)
-		if err != nil {
-			log.Println(err.Error())
-		}
-
 	}
 
 	if shouldSave {
@@ -133,6 +74,76 @@ func Pages(c *App) error {
 	}
 
 	return nil
+}
+
+func LoadSinglePluginPages(name string, plugin model.PluginSettings,
+	ps map[string]model.PluginSettings, c *App) bool {
+	shouldSave := false
+
+	// Determine if the plugin that is in stored is found in the system.
+	v, found := c.Plugins.Plugins[name]
+
+	// If the found setting is different, then update it for saving.
+	if found != plugin.Found {
+		shouldSave = true
+		plugin.Found = found
+		ps[name] = plugin
+	}
+
+	// If the plugin is not found or not enabled, then skip over it.
+	if !found || !plugin.Enabled {
+		return shouldSave
+	}
+
+	grants := make(map[string]bool)
+	grants["site.title:read"] = true
+	grants["site.plugins:read"] = true
+	grants["site.plugins:enable"] = true
+	grants["site.plugins:disable"] = true
+	grants["site.plugins:deleteone"] = true
+	grants["router:clear"] = true
+
+	recorder := router.NewRecorder(c.Router)
+
+	toolkit := &Toolkit{
+		Router:   recorder,
+		Render:   c.Render,
+		Security: c.Sess,
+		Site:     NewSecureSite(name, c.Storage, c.Router, grants),
+	}
+
+	// Load the pages.
+	err := v.SetPages(toolkit)
+	if err != nil {
+		log.Printf("problem loading pages from plugin %v: %v", name, err.Error())
+	}
+
+	fmt.Println("Routes:", recorder.Routes())
+
+	arr := make([]model.Route, 0)
+	for _, route := range recorder.Routes() {
+		arr = append(arr, model.Route{
+			Method: route.Method,
+			Path:   route.Path,
+		})
+	}
+	c.Storage.PluginRoutes.Routes[name] = arr
+
+	// Load the assets.
+	assets, files := v.Assets()
+	if files == nil {
+		return shouldSave
+	}
+
+	fmt.Println("loading assets for:", name)
+
+	// Handle embedded assets.
+	err = EmbeddedAssets(c.Router, name, assets, files)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return shouldSave
 }
 
 func EmbeddedAssets(mux *router.Mux, pluginName string, files []Asset, assets *embed.FS) error {

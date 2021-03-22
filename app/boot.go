@@ -106,14 +106,14 @@ func Boot() (http.Handler, error) {
 		hello.New(),
 	}
 
-	// Load the plugins.
-	plugs, err := core.Load(arrPlugins, storage)
+	// Register the plugins.
+	plugs, err := core.RegisterPlugins(arrPlugins, storage)
 	if err != nil {
 		return nil, err
 	}
 
 	// Set up the template engine.
-	//ph := core.NewPH(storage.Site.Plugins, plugs.Plugins)
+	//FIXME: Don't use app like this.
 	tmpl := htmltemplate.New(allowHTML, storage, sess, &core.App{
 		Storage: storage,
 		Plugins: plugs,
@@ -132,7 +132,7 @@ func Boot() (http.Handler, error) {
 	}
 
 	// Load the plugin pages.
-	err = core.Pages(c)
+	err = core.LoadPluginPages(c)
 	if err != nil {
 		return nil, err
 	}

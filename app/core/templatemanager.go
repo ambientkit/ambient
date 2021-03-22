@@ -5,18 +5,7 @@ import (
 	"html/template"
 )
 
-// func NewPH(ps map[string]model.PluginSettings, plugins map[string]IPlugin) *PH {
-// 	return &PH{
-// 		ps:      ps,
-// 		plugins: plugins,
-// 	}
-// }
-
-// type PH struct {
-// 	ps      map[string]model.PluginSettings
-// 	plugins map[string]IPlugin
-// }
-
+// PluginHeader -
 func (c *App) PluginHeader(t *template.Template) (*template.Template, error) {
 	pluginHeader := ""
 	pluginBody := ""

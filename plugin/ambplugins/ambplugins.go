@@ -76,6 +76,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 				return p.Site.Error(err)
 			}
 			// TODO: Add in the logic to enable to plugin.
+
 		} else if !enable && info.Enabled {
 			err = p.Site.DisablePlugin(name)
 			if err != nil {
