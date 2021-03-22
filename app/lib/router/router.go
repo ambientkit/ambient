@@ -32,7 +32,7 @@ func (m *Mux) Clear(method string, path string) {
 	m.router.Remove(method, path)
 }
 
-// Routes will get the number of routes from the router.
+// Routes will return the number of routes from the router.
 func (m *Mux) Count() int {
 	return m.router.Count()
 }

@@ -27,13 +27,10 @@ func RegisterPlugins(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem
 		name := v.PluginName()
 		_, found := ps[name]
 		if !found {
-			fmt.Printf("Load new plugin: %v\n", name)
 			ps[name] = model.PluginSettings{
 				Enabled: false,
 			}
 			needSave = true
-		} else {
-			fmt.Printf("Plugin already found: %v\n", name)
 		}
 
 		// Add to the system.
@@ -113,6 +110,7 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 		return shouldSave
 	}
 
+	// FIXME: Need to allows users to grant permissions.
 	grants := make(map[string]bool)
 	grants["site.title:read"] = true
 	grants["site.plugins:read"] = true

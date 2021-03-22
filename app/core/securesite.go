@@ -2,7 +2,6 @@ package core
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -174,7 +173,6 @@ func (ss SecureSite) ClearRoutePlugin(pluginName string) error {
 	}
 
 	for _, v := range routes {
-		fmt.Println("Remove:", v)
 		ss.mux.Clear(v.Method, v.Path)
 	}
 
