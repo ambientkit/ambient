@@ -23,7 +23,6 @@ type Site struct {
 	Updated           time.Time                 `json:"updated"`
 	Content           string                    `json:"content"` // Home content.
 	Styles            string                    `json:"styles"`
-	StylesAppend      bool                      `json:"stylesappend"`
 	Plugins           map[string]PluginSettings `json:"plugins"`
 	Posts             map[string]Post           `json:"posts"`
 }

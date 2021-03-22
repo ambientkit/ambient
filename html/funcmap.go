@@ -72,16 +72,6 @@ func FuncMap(r *http.Request, storage *datastorage.Storage, sess *websession.Ses
 	fm["SiteStyles"] = func() template.CSS {
 		return template.CSS(storage.Site.Styles)
 	}
-	fm["StylesAppend"] = func() bool {
-		if len(storage.Site.Styles) == 0 {
-			// If there are no style, then always append.
-			return true
-		} else if storage.Site.StylesAppend {
-			// Else if there are style and it's append, then append.
-			return true
-		}
-		return false
-	}
 
 	return fm
 }

@@ -22,7 +22,6 @@ func (c *Styles) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	vars["token"] = c.Sess.SetCSRF(r)
 	vars["favicon"] = c.Storage.Site.Favicon
 	vars["styles"] = c.Storage.Site.Styles
-	vars["stylesappend"] = c.Storage.Site.StylesAppend
 
 	return c.Render.Template(w, r, "dashboard", "styles_edit", vars)
 }
@@ -38,7 +37,6 @@ func (c *Styles) update(w http.ResponseWriter, r *http.Request) (status int, err
 
 	c.Storage.Site.Favicon = r.FormValue("favicon")
 	c.Storage.Site.Styles = r.FormValue("styles")
-	c.Storage.Site.StylesAppend = (r.FormValue("stylesappend") == "on")
 
 	err = c.Storage.Save()
 	if err != nil {
