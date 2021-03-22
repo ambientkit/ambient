@@ -32,6 +32,11 @@ func (m *Mux) Clear(method string, path string) {
 	m.router.Remove(method, path)
 }
 
+// Routes will get the number of routes from the router.
+func (m *Mux) Count() int {
+	return m.router.Count()
+}
+
 // ServeHTTP routes the incoming http.Request based on method and path
 // extracting path parameters as it goes.
 func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {

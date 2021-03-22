@@ -39,6 +39,11 @@ func (r *Router) Remove(method string, p string) {
 	}
 }
 
+// Count returns the number of routes.
+func (r *Router) Count() int {
+	return len(r.routes)
+}
+
 func removeIndex(s []*route, index int) []*route {
 	return append(s[:index], s[index+1:]...)
 }

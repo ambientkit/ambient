@@ -2,7 +2,6 @@ package core
 
 import (
 	"embed"
-	"fmt"
 	"html"
 	"net/http"
 )
@@ -120,7 +119,6 @@ type Toolkit struct {
 
 // SetPages -
 func (p PluginMeta) SetPages(toolkit *Toolkit) error {
-	fmt.Println("No page to add.")
 	return nil
 }
 

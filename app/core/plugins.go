@@ -137,8 +137,28 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 		log.Printf("problem loading pages from plugin %v: %v", name, err.Error())
 	}
 
-	fmt.Println("Routes:", recorder.Routes())
+	// Load the assets.
+	assets, files := v.Assets()
+	if files == nil {
+		// Save the plugin routes so they can be removed if disabled.
+		c.saveRoutesForPlugin(name, recorder)
+		return shouldSave
+	}
 
+	// Handle embedded assets.
+	err = EmbeddedAssets(recorder, name, assets, files)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	// Save the plugin routes so they can be removed if disabled.
+	c.saveRoutesForPlugin(name, recorder)
+
+	return shouldSave
+}
+
+func (c *App) saveRoutesForPlugin(name string, recorder *router.Recorder) {
+	// Save the routes.
 	arr := make([]model.Route, 0)
 	for _, route := range recorder.Routes() {
 		arr = append(arr, model.Route{
@@ -147,25 +167,9 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 		})
 	}
 	c.Storage.PluginRoutes.Routes[name] = arr
-
-	// Load the assets.
-	assets, files := v.Assets()
-	if files == nil {
-		return shouldSave
-	}
-
-	fmt.Println("loading assets for:", name)
-
-	// Handle embedded assets.
-	err = EmbeddedAssets(c.Router, name, assets, files)
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	return shouldSave
 }
 
-func EmbeddedAssets(mux *router.Mux, pluginName string, files []Asset, assets *embed.FS) error {
+func EmbeddedAssets(mux IRouter, pluginName string, files []Asset, assets *embed.FS) error {
 	for _, v := range files {
 		// Skip files that are not embedded.
 		if !v.Embedded {
