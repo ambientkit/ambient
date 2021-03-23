@@ -1,22 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 {{template "head" .}}
-
 <body>
     <header>
         <a class="title" href="/">
             <h2>{{SiteSubtitle}}</h2>
         </a>
-        <nav>
-            {{if Authenticated}}<a href="/dashboard">Dashboard</a>{{end}}
-            {{range $p := PublishedPages}}
-            <a href="/{{.URL}}">{{.Title}}</a>
-            {{end}}
-            <a href="/blog">Blog</a>
-        </nav>
+        {{template "nav" .}}
     </header>
-
     <main>
         {{if .title}}
         <h1>{{.title}}</h1>
@@ -56,5 +47,4 @@
     {{template "footer" .}}
     {{block "PluginBodyContent" ""}}<!-- No plugins. -->{{end}}
 </body>
-
 </html>

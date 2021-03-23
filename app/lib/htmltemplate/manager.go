@@ -21,12 +21,13 @@ func (tm *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialT
 
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	headerTemplate := "partial/head.tmpl"
+	navTemplate := "partial/nav.tmpl"
 	footerTemplate := "partial/footer.tmpl"
 	contentTemplate := fmt.Sprintf("content/%v.tmpl", partialTemplate)
 
 	// Parse the main template with the functions.
 	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate,
-		headerTemplate, footerTemplate, contentTemplate)
+		headerTemplate, navTemplate, footerTemplate, contentTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -46,10 +47,11 @@ func (tm *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.
 
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	headerTemplate := "partial/head.tmpl"
+	navTemplate := "partial/nav.tmpl"
 	footerTemplate := "partial/footer.tmpl"
 
 	// Parse the main template with the functions.
-	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate, headerTemplate, footerTemplate)
+	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate, headerTemplate, navTemplate, footerTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +71,11 @@ func (tm *Engine) PluginTemplate2(r *http.Request, assets embed.FS, mainTemplate
 
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	headerTemplate := "partial/head.tmpl"
+	navTemplate := "partial/nav.tmpl"
 	footerTemplate := "partial/footer.tmpl"
 
 	// Parse the main template with the functions.
-	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate, headerTemplate, footerTemplate)
+	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate, headerTemplate, navTemplate, footerTemplate)
 	if err != nil {
 		return nil, err
 	}

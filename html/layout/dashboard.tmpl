@@ -1,20 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 {{template "head" .}}
-
 <body>
     <header>
         <a class="title" href="/">
             <h2>{{SiteSubtitle}}</h2>
         </a>
-        <nav>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/dashboard/posts">Posts</a>
-            <a href="/dashboard/styles">Styles</a>
-            <a href="/dashboard/plugins">Plugins</a>
-            <a href="/dashboard/logout">Logout</a>
-        </nav>
+        {{template "nav" .}}
     </header>
 
     <main>
@@ -28,5 +20,4 @@
     {{template "footer" .}}
     {{block "PluginBodyContent" ""}}<!-- No plugins. -->{{end}}
 </body>
-
 </html>

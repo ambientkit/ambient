@@ -1,0 +1,17 @@
+{{define "nav"}}
+        <nav>
+            {{if Authenticated}}
+            <a href="/dashboard">Dashboard</a>
+            <a href="/dashboard/posts">Edit Blog</a>
+            <a href="/dashboard/styles">Styles</a>
+            <a href="/dashboard/plugins">Plugins</a>
+            {{end}}
+            {{range $p := PublishedPages}}
+            <a href="/{{.URL}}">{{.Title}}</a>
+            {{end}}
+            <a href="/blog">Blog</a>
+            {{if Authenticated}}
+            <a href="/dashboard/logout">Logout</a>
+            {{end}}
+        </nav>
+{{end}}
