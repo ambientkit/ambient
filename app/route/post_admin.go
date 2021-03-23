@@ -28,7 +28,7 @@ func (c *AdminPost) index(w http.ResponseWriter, r *http.Request) (status int, e
 	vars["title"] = "Posts"
 	vars["posts"] = c.Storage.Site.PostsAndPages(false)
 
-	return c.Render.Template(w, r, "dashboard", "bloglist_edit", vars)
+	return c.Render.Template(w, r, "layout/dashboard", "bloglist_edit", vars)
 }
 
 func (c *AdminPost) create(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -36,7 +36,7 @@ func (c *AdminPost) create(w http.ResponseWriter, r *http.Request) (status int, 
 	vars["title"] = "New post"
 	vars["token"] = c.Sess.SetCSRF(r)
 
-	return c.Render.Template(w, r, "dashboard", "post_create", vars)
+	return c.Render.Template(w, r, "layout/dashboard", "post_create", vars)
 }
 
 func (c *AdminPost) store(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -109,7 +109,7 @@ func (c *AdminPost) edit(w http.ResponseWriter, r *http.Request) (status int, er
 	vars["page"] = p.Page
 	vars["published"] = p.Published
 
-	return c.Render.Template(w, r, "dashboard", "post_edit", vars)
+	return c.Render.Template(w, r, "layout/dashboard", "post_edit", vars)
 }
 
 func (c *AdminPost) update(w http.ResponseWriter, r *http.Request) (status int, err error) {

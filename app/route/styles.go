@@ -23,7 +23,7 @@ func (c *Styles) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	vars["favicon"] = c.Storage.Site.Favicon
 	vars["styles"] = c.Storage.Site.Styles
 
-	return c.Render.Template(w, r, "dashboard", "styles_edit", vars)
+	return c.Render.Template(w, r, "layout/dashboard", "styles_edit", vars)
 }
 
 func (c *Styles) update(w http.ResponseWriter, r *http.Request) (status int, err error) {

@@ -46,7 +46,7 @@ func SetupRouter(tmpl *htmltemplate.Engine) *router.Mux {
 				}
 			}
 
-			status, err = tmpl.ErrorTemplate(w, r, "base", errTemplate, vars)
+			status, err = tmpl.ErrorTemplate(w, r, "layout/base", errTemplate, vars)
 			if err != nil {
 				if err != nil {
 					log.Println(err.Error())

@@ -49,7 +49,7 @@ func (c *Post) index(w http.ResponseWriter, r *http.Request) (status int, err er
 		vars["posts"] = c.Storage.Site.PublishedPosts()
 	}
 
-	return c.Render.Template(w, r, "base", "bloglist_index", vars)
+	return c.Render.Template(w, r, "layout/base", "bloglist_index", vars)
 }
 
 func (c *Post) show(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -80,5 +80,5 @@ func (c *Post) show(w http.ResponseWriter, r *http.Request) (status int, err err
 	vars["posturl"] = p.URL
 	vars["metadescription"] = htmltemplate.PlaintextBlurb(p.Content)
 
-	return c.Render.Post(w, r, "base", p.Post, vars)
+	return c.Render.Post(w, r, "layout/base", p.Post, vars)
 }

@@ -115,7 +115,7 @@ func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, assets 
 	status = http.StatusOK
 
 	// Parse the template.
-	t, err := te.PluginTemplate2(r, assets, "dashboard", partialTemplate)
+	t, err := te.PluginTemplate2(r, assets, "layout/dashboard", partialTemplate)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
