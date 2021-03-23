@@ -17,7 +17,6 @@ type Site struct {
 	Scheme      string                    `json:"scheme"`
 	URL         string                    `json:"url"`
 	LoginURL    string                    `json:"loginurl"`
-	DisqusID    string                    `json:"disqus"`
 	Created     time.Time                 `json:"created"`
 	Updated     time.Time                 `json:"updated"`
 	Content     string                    `json:"content"` // Home content.

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 )
@@ -50,12 +49,6 @@ func FuncMap(r *http.Request, storage *datastorage.Storage, sess *websession.Ses
 		// If user is not authenticated, don't allow them to access the page.
 		_, loggedIn := sess.User(r)
 		return loggedIn
-	}
-	fm["DisqusID"] = func() string {
-		if envdetect.RunningLocalDev() {
-			return ""
-		}
-		return storage.Site.DisqusID
 	}
 	fm["SiteFooter"] = func() string {
 		return storage.Site.Footer

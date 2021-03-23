@@ -157,10 +157,6 @@ ul.blog-posts li a:visited {
     color: #8b6fcb;
 }
 
-#disqus_thread {
-    margin-top: 40px;
-}
-
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #01242e;

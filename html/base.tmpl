@@ -9,7 +9,6 @@
             <h2>{{SiteSubtitle}}</h2>
         </a>
         <nav>
-            {{/* <a href="/">Home</a> */}}
             {{if Authenticated}}<a href="/dashboard">Dashboard</a>{{end}}
             {{range $p := PublishedPages}}
             <a href="/{{.URL}}">{{.Title}}</a>
@@ -52,27 +51,11 @@
         </small>
         {{end}}
 
-        {{if and .pubdate DisqusID}}
         <div id="disqus_thread"></div>
-        {{end}}
     </main>
     <footer>
         {{SiteFooter}}
     </footer>
-    {{if and .pubdate DisqusID}}
-    <script type="text/javascript">
-        var disqus_config = function () {
-            this.page.url = '{{SiteURL}}/{{.posturl}}';
-            this.page.identifier = '{{.id}}';
-        };
-        (function() {
-        var d = document, s = d.createElement('script');
-        s.src = 'https://{{DisqusID}}.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-        })();
-    </script>
-    {{end}}
     {{block "PluginBodyContent" ""}}<!-- No plugins. -->{{end}}
 </body>
 

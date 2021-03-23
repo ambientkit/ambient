@@ -18,6 +18,7 @@ import (
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
+	"github.com/josephspurrier/ambient/plugin/disqus"
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/hello"
 	"github.com/josephspurrier/ambient/plugin/plugins"
@@ -108,6 +109,7 @@ func Boot() (http.Handler, error) {
 		prism.New(),
 		stackedit.New(),
 		googleanalytics.New(),
+		disqus.New(),
 		hello.New(),
 	}
 

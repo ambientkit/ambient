@@ -113,5 +113,3 @@ When `AMB_LOCAL` is set, the following things will happen:
 - data storage will be the local filesystem instead of in Google Cloud Storage
 - redirects will no be attempted so you can use localhost:8080
 - MFA, if enable will accept any number and will always pass validation
-- Google Analytics will be disabled if set
-- Disqus will be disabled if set
