@@ -25,9 +25,7 @@
             {{template "content" .}}
         </content>
     </main>
-    <footer>
-        {{SiteFooter}}
-    </footer>
+    {{template "footer" .}}
     {{block "PluginBodyContent" ""}}<!-- No plugins. -->{{end}}
 </body>
 
