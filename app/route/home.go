@@ -53,7 +53,6 @@ func (c *HomePost) edit(w http.ResponseWriter, r *http.Request) (status int, err
 	vars["pauthor"] = c.Storage.Site.Author
 	vars["pdescription"] = c.Storage.Site.Description
 	vars["loginurl"] = c.Storage.Site.LoginURL
-	vars["googleanalytics"] = c.Storage.Site.GoogleAnalyticsID
 	vars["disqus"] = c.Storage.Site.DisqusID
 	vars["footer"] = c.Storage.Site.Footer
 
@@ -77,7 +76,6 @@ func (c *HomePost) update(w http.ResponseWriter, r *http.Request) (status int, e
 	c.Storage.Site.Author = r.FormValue("author")
 	c.Storage.Site.Description = r.FormValue("pdescription")
 	c.Storage.Site.LoginURL = r.FormValue("loginurl")
-	c.Storage.Site.GoogleAnalyticsID = r.FormValue("googleanalytics")
 	c.Storage.Site.DisqusID = r.FormValue("disqus")
 	c.Storage.Site.Footer = r.FormValue("footer")
 	c.Storage.Site.Updated = time.Now()

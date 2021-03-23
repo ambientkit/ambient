@@ -1,3 +1,4 @@
+// Package app initializes all the services for the application.
 package app
 
 import (
@@ -17,6 +18,7 @@ import (
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
+	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/hello"
 	"github.com/josephspurrier/ambient/plugin/plugins"
 	"github.com/josephspurrier/ambient/plugin/prism"
@@ -29,7 +31,7 @@ var (
 	sessionName        = "session"
 )
 
-// Boot -
+// Boot returns a router with the application ready to be started.
 func Boot() (http.Handler, error) {
 	// Set the storage and session environment variables.
 	sitePath := os.Getenv("AMB_SITE_PATH")
@@ -105,6 +107,7 @@ func Boot() (http.Handler, error) {
 		plugins.New(),
 		prism.New(),
 		stackedit.New(),
+		googleanalytics.New(),
 		hello.New(),
 	}
 

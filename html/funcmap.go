@@ -51,12 +51,6 @@ func FuncMap(r *http.Request, storage *datastorage.Storage, sess *websession.Ses
 		_, loggedIn := sess.User(r)
 		return loggedIn
 	}
-	fm["GoogleAnalyticsID"] = func() string {
-		if envdetect.RunningLocalDev() {
-			return ""
-		}
-		return storage.Site.GoogleAnalyticsID
-	}
 	fm["DisqusID"] = func() string {
 		if envdetect.RunningLocalDev() {
 			return ""
