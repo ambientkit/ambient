@@ -1,3 +1,4 @@
+// Package hello provides a hello page for an Ambient application.
 package hello
 
 import (
@@ -10,13 +11,13 @@ import (
 //go:embed *
 var assets embed.FS
 
-// Plugin -
+// Plugin represents an Ambient plugin.
 type Plugin struct {
 	core.PluginMeta
 	*core.Toolkit
 }
 
-// New sets up the plugin.
+// New returns a new hello plugin.
 func New() Plugin {
 	return Plugin{
 		PluginMeta: core.PluginMeta{
@@ -27,13 +28,13 @@ func New() Plugin {
 	}
 }
 
+// SetPages sets pages on a router.
 func (p Plugin) SetPages(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
 	p.Router.Get("/dashboard/hello", p.index)
 	return nil
 }
 
-// edit -
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	vars := make(map[string]interface{})
 	vars["title"] = "Plugins"

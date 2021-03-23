@@ -1,3 +1,5 @@
+// Package stackedit provides a markdown editor to content blocks for an Ambient
+// application.
 package stackedit
 
 import (
@@ -9,12 +11,12 @@ import (
 //go:embed *
 var assets embed.FS
 
-// Plugin -
+// Plugin represents an Ambient plugin.
 type Plugin struct {
 	core.PluginMeta
 }
 
-// New sets up the plugin.
+// New returns a new stackedit plugin.
 func New() Plugin {
 	return Plugin{
 		PluginMeta: core.PluginMeta{
@@ -25,7 +27,7 @@ func New() Plugin {
 	}
 }
 
-// Assets -
+// Assets returns a list of assets and an embedded filesystem.
 func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
 	return []core.Asset{
 		{
@@ -43,8 +45,8 @@ func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
 	}, &assets
 }
 
-// Body -
-func (p Plugin) Body() string {
-	return `<script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
-	<script src="/plugins/stackedit/js/stackedit.js?` + p.Version + `"></script>`
-}
+// // Body -
+// func (p Plugin) Body() string {
+// 	return `<script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
+// 	<script src="/plugins/stackedit/js/stackedit.js?` + p.Version + `"></script>`
+// }

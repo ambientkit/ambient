@@ -1,3 +1,5 @@
+// Package bearcss provides styles from the Bear Blog (https://bearblog.dev/)
+// for an Ambient application.
 package bearcss
 
 import (
@@ -9,12 +11,12 @@ import (
 //go:embed *
 var assets embed.FS
 
-// Plugin -
+// Plugin represents an Ambient plugin.
 type Plugin struct {
 	core.PluginMeta
 }
 
-// New sets up the plugin.
+// New returns a new bearcss plugin.
 func New() Plugin {
 	return Plugin{
 		PluginMeta: core.PluginMeta{
@@ -25,7 +27,7 @@ func New() Plugin {
 	}
 }
 
-// Assets -
+// Assets returns a list of assets and an embedded filesystem.
 func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
 	return []core.Asset{
 		{

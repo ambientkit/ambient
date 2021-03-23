@@ -1,3 +1,5 @@
+// Package prism provides code highlighting through Prism for an Ambient
+// application.
 package prism
 
 import (
@@ -9,12 +11,12 @@ import (
 //go:embed *
 var assets embed.FS
 
-// Plugin -
+// Plugin represents an Ambient plugin.
 type Plugin struct {
 	core.PluginMeta
 }
 
-// New sets up the plugin.
+// New returns a new prism plugin.
 func New() Plugin {
 	return Plugin{
 		PluginMeta: core.PluginMeta{
@@ -25,7 +27,7 @@ func New() Plugin {
 	}
 }
 
-// Assets -
+// Assets returns a list of assets and an embedded filesystem.
 func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
 	return []core.Asset{
 		{
@@ -55,17 +57,17 @@ func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
 	}, &assets
 }
 
-// SetPages -
-func (p Plugin) Header() string {
-	return `<link rel="stylesheet" href="/plugins/prism/css/prism-vsc-dark-plus.css?` + p.Version + `">
-	<link rel="stylesheet" href="/plugins/prism/css/clean.css?` + p.Version + `">`
-}
+// // SetPages -
+// func (p Plugin) Header() string {
+// 	return `<link rel="stylesheet" href="/plugins/prism/css/prism-vsc-dark-plus.css?` + p.Version + `">
+// 	<link rel="stylesheet" href="/plugins/prism/css/clean.css?` + p.Version + `">`
+// }
 
-// Body -
-func (p Plugin) Body() string {
-	return `<script src="https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js"></script>
-	<script src="https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>`
-}
+// // Body -
+// func (p Plugin) Body() string {
+// 	return `<script src="https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js"></script>
+// 	<script src="https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>`
+// }
 
 // // SetSettings -
 // func (pm Prism) SetSettings(s core.ISettings) error {
