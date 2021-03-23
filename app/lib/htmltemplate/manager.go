@@ -20,14 +20,15 @@ func (tm *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialT
 	fm := html.FuncMap(r, tm.storage, tm.sess)
 
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
-	headerTemplate := "partial/head.tmpl"
+	headTemplate := "partial/head.tmpl"
+	headerTemplate := "partial/header.tmpl"
 	navTemplate := "partial/nav.tmpl"
 	footerTemplate := "partial/footer.tmpl"
 	contentTemplate := fmt.Sprintf("content/%v.tmpl", partialTemplate)
 
 	// Parse the main template with the functions.
 	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate,
-		headerTemplate, navTemplate, footerTemplate, contentTemplate)
+		headTemplate, headerTemplate, navTemplate, footerTemplate, contentTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -46,12 +47,13 @@ func (tm *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.
 	fm := html.FuncMap(r, tm.storage, tm.sess)
 
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
-	headerTemplate := "partial/head.tmpl"
+	headTemplate := "partial/head.tmpl"
+	headerTemplate := "partial/header.tmpl"
 	navTemplate := "partial/nav.tmpl"
 	footerTemplate := "partial/footer.tmpl"
 
 	// Parse the main template with the functions.
-	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate, headerTemplate, navTemplate, footerTemplate)
+	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate, headTemplate, headerTemplate, navTemplate, footerTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -70,12 +72,13 @@ func (tm *Engine) PluginTemplate2(r *http.Request, assets embed.FS, mainTemplate
 	fm := html.FuncMap(r, tm.storage, tm.sess)
 
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
-	headerTemplate := "partial/head.tmpl"
+	headTemplate := "partial/head.tmpl"
+	headerTemplate := "partial/header.tmpl"
 	navTemplate := "partial/nav.tmpl"
 	footerTemplate := "partial/footer.tmpl"
 
 	// Parse the main template with the functions.
-	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate, headerTemplate, navTemplate, footerTemplate)
+	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, baseTemplate, headTemplate, headerTemplate, navTemplate, footerTemplate)
 	if err != nil {
 		return nil, err
 	}

@@ -2,13 +2,7 @@
 <html lang="en">
 {{template "head" .}}
 <body>
-    <header>
-        <a class="title" href="/">
-            <h2>{{SiteSubtitle}}</h2>
-        </a>
-        {{template "nav" .}}
-    </header>
-
+    {{template "header" .}}
     <main>
         {{if .title}}
         <h1>{{.title}}</h1>
