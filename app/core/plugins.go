@@ -13,6 +13,7 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/router"
+	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -171,23 +172,23 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	assets, files := v.Assets()
 	if files == nil {
 		// Save the plugin routes so they can be removed if disabled.
-		c.saveRoutesForPlugin(name, recorder)
+		saveRoutesForPlugin(name, recorder, c.Storage)
 		return shouldSave
 	}
 
 	// Handle embedded assets.
-	err = embeddedAssets(recorder, name, assets, files)
+	err = embeddedAssets(recorder, c.Sess, name, assets, files)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
 	// Save the plugin routes so they can be removed if disabled.
-	c.saveRoutesForPlugin(name, recorder)
+	saveRoutesForPlugin(name, recorder, c.Storage)
 
 	return shouldSave
 }
 
-func (c *App) saveRoutesForPlugin(name string, recorder *router.Recorder) {
+func saveRoutesForPlugin(name string, recorder *router.Recorder, storage *datastorage.Storage) {
 	// Save the routes.
 	arr := make([]model.Route, 0)
 	for _, route := range recorder.Routes() {
@@ -196,28 +197,34 @@ func (c *App) saveRoutesForPlugin(name string, recorder *router.Recorder) {
 			Path:   route.Path,
 		})
 	}
-	c.Storage.PluginRoutes.Routes[name] = arr
+	storage.PluginRoutes.Routes[name] = arr
 }
 
-func embeddedAssets(mux IRouter, pluginName string, files []Asset, assets *embed.FS) error {
-	for _, v := range files {
+func embeddedAssets(mux IRouter, sess *websession.Session, pluginName string, files []Asset, assets *embed.FS) error {
+	for _, file := range files {
 		// Skip files that are not embedded.
-		if !v.Embedded {
+		if !file.Embedded {
 			continue
 		}
 
-		fileurl := path.Join("/plugins", pluginName, v.SanitizedPath())
+		fileurl := path.Join("/plugins", pluginName, file.SanitizedPath())
 
 		// TODO: Need to check for missing locations and types.
 
-		exists := fileExists(assets, v.SanitizedPath())
+		exists := fileExists(assets, file.SanitizedPath())
 		if !exists {
-			return fmt.Errorf("plugin (%v) has missing file, please check 'SetAssets()': %v", pluginName, v)
+			return fmt.Errorf("plugin (%v) has missing file, please check 'SetAssets()': %v", pluginName, file)
 		}
 
 		mux.Get(fileurl, func(w http.ResponseWriter, r *http.Request) (statusCode int, err error) {
 			// Don't allow directory browsing.
 			if strings.HasSuffix(r.URL.Path, "/") {
+				return http.StatusNotFound, nil
+			}
+
+			// Handle authentication on resources without changing resources.
+			_, loggedIn := sess.User(r)
+			if !authAssetAllowed(loggedIn, file) {
 				return http.StatusNotFound, nil
 			}
 
@@ -244,17 +251,17 @@ func embeddedAssets(mux IRouter, pluginName string, files []Asset, assets *embed
 			}
 
 			// Get the contents.
-			file, err := ioutil.ReadAll(f)
+			ff, err := ioutil.ReadAll(f)
 			if err != nil {
 				return http.StatusInternalServerError, err
 			}
 
 			// Loop over the items to replace.
-			for _, rep := range v.Replace {
-				file = bytes.ReplaceAll(file, []byte(rep.Find), []byte(rep.Replace))
+			for _, rep := range file.Replace {
+				ff = bytes.ReplaceAll(ff, []byte(rep.Find), []byte(rep.Replace))
 			}
 
-			http.ServeContent(w, r, fname, st.ModTime(), bytes.NewReader(file))
+			http.ServeContent(w, r, fname, st.ModTime(), bytes.NewReader(ff))
 			return
 		})
 	}

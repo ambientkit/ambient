@@ -124,6 +124,7 @@ func Boot() (http.Handler, error) {
 	tmpl := htmltemplate.New(allowHTML, storage, sess, &core.App{
 		Storage: storage,
 		Plugins: plugs,
+		Sess:    sess,
 	})
 
 	// Set up the router.

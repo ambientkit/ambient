@@ -3,10 +3,11 @@ package core
 import (
 	"fmt"
 	"html/template"
+	"net/http"
 )
 
 // InjectPlugins -
-func (c *App) InjectPlugins(t *template.Template) (*template.Template, error) {
+func (c *App) InjectPlugins(t *template.Template, r *http.Request) (*template.Template, error) {
 	pluginHeader := ""
 	pluginBody := ""
 	for name, plugin := range c.Storage.Site.PluginSettings {
@@ -25,7 +26,13 @@ func (c *App) InjectPlugins(t *template.Template) (*template.Template, error) {
 			continue
 		}
 
+		_, loggedIn := c.Sess.User(r)
 		for _, file := range files {
+			// Handle authentication on resources without changing resources.
+			if !authAssetAllowed(loggedIn, file) {
+				continue
+			}
+
 			txt := ""
 			switch file.Filetype {
 			case FiletypeStylesheet:

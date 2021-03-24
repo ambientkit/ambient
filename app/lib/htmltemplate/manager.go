@@ -10,14 +10,15 @@ import (
 	"github.com/josephspurrier/ambient/html"
 )
 
+// HeaderInjector represents code that can inject files into a template.
 type HeaderInjector interface {
-	InjectPlugins(t *template.Template) (*template.Template, error)
+	InjectPlugins(t *template.Template, r *http.Request) (*template.Template, error)
 }
 
 // PartialTemplate -
-func (tm *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialTemplate string) (*template.Template, error) {
+func (te *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialTemplate string) (*template.Template, error) {
 	// Functions available in the templates.
-	fm := html.FuncMap(r, tm.storage, tm.sess)
+	fm := html.FuncMap(r, te.storage, te.sess)
 
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	headTemplate := "partial/head.tmpl"
@@ -33,7 +34,7 @@ func (tm *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialT
 		return nil, err
 	}
 
-	t, err = tm.hi.InjectPlugins(t)
+	t, err = te.hi.InjectPlugins(t, r)
 	if err != nil {
 		return nil, err
 	}
@@ -42,9 +43,9 @@ func (tm *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialT
 }
 
 // PostTemplate -
-func (tm *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.Template, error) {
+func (te *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.Template, error) {
 	// Functions available in the templates.
-	fm := html.FuncMap(r, tm.storage, tm.sess)
+	fm := html.FuncMap(r, te.storage, te.sess)
 
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	headTemplate := "partial/head.tmpl"
@@ -58,7 +59,7 @@ func (tm *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.
 		return nil, err
 	}
 
-	t, err = tm.hi.InjectPlugins(t)
+	t, err = te.hi.InjectPlugins(t, r)
 	if err != nil {
 		return nil, err
 	}
@@ -67,9 +68,9 @@ func (tm *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.
 }
 
 // PluginTemplate2 -
-func (tm *Engine) PluginTemplate2(r *http.Request, assets embed.FS, mainTemplate string, partialTemplate string) (*template.Template, error) {
+func (te *Engine) PluginTemplate2(r *http.Request, assets embed.FS, mainTemplate string, partialTemplate string) (*template.Template, error) {
 	// Functions available in the templates.
-	fm := html.FuncMap(r, tm.storage, tm.sess)
+	fm := html.FuncMap(r, te.storage, te.sess)
 
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	headTemplate := "partial/head.tmpl"
@@ -89,7 +90,7 @@ func (tm *Engine) PluginTemplate2(r *http.Request, assets embed.FS, mainTemplate
 		return nil, err
 	}
 
-	t, err = tm.hi.InjectPlugins(t)
+	t, err = te.hi.InjectPlugins(t, r)
 	if err != nil {
 		return nil, err
 	}

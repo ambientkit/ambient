@@ -1,3 +1,4 @@
+// Package htmltemplate provides HTML generation using templates.
 package htmltemplate
 
 import (
