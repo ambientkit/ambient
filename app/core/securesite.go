@@ -23,7 +23,7 @@ type SecureSite struct {
 	storage    *datastorage.Storage
 	mux        *router.Mux
 	grants     map[string]bool
-	App
+	//App
 }
 
 // NewSecureSite -
@@ -159,7 +159,7 @@ func (ss SecureSite) ClearRoute(method string, path string) error {
 	return nil
 }
 
-// ClearRoute clears out an old route.
+// ClearRoutePlugin clears out an old route.
 func (ss SecureSite) ClearRoutePlugin(pluginName string) error {
 	grant := "router:clear"
 

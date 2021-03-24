@@ -13,13 +13,14 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	core.PluginMeta
+	*core.PluginMeta
+	*core.Toolkit
 }
 
 // New returns a new bearcss plugin.
-func New() Plugin {
-	return Plugin{
-		PluginMeta: core.PluginMeta{
+func New() *Plugin {
+	return &Plugin{
+		PluginMeta: &core.PluginMeta{
 			Name:       "bearcss",
 			Version:    "1.0.0",
 			AppVersion: "1.0.0",
@@ -27,8 +28,14 @@ func New() Plugin {
 	}
 }
 
+// Enable accepts the toolkit.
+func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+	p.Toolkit = toolkit
+	return nil
+}
+
 // Assets returns a list of assets and an embedded filesystem.
-func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	return []core.Asset{
 		{
 			Path:     "css/bear.css",

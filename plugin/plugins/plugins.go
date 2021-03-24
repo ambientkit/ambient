@@ -13,14 +13,14 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	core.PluginMeta
+	*core.PluginMeta
 	*core.Toolkit
 }
 
 // New returns a new plugins plugin.
-func New() Plugin {
-	return Plugin{
-		PluginMeta: core.PluginMeta{
+func New() *Plugin {
+	return &Plugin{
+		PluginMeta: &core.PluginMeta{
 			Name:       "plugins",
 			Version:    "1.0.0",
 			AppVersion: "1.0.0",
@@ -28,10 +28,8 @@ func New() Plugin {
 	}
 }
 
-// SetPages sets pages on a router.
-func (p Plugin) SetPages(toolkit *core.Toolkit) error {
-	p.Toolkit = toolkit
-
+// Routes gets routes for the plugin.
+func (p *Plugin) Routes() error {
 	p.Router.Get("/dashboard/plugins", p.edit)
 	p.Router.Post("/dashboard/plugins", p.update)
 	p.Router.Get("/dashboard/plugins/:id/delete", p.destroy)

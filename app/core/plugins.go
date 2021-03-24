@@ -129,8 +129,14 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 		PluginLoader: c,
 	}
 
-	// Load the pages.
-	err := v.SetPages(toolkit)
+	// Enable the plugin and pass in the toolkit.
+	err := v.Enable(toolkit)
+	if err != nil {
+		log.Printf("problem enabling plugin %v: %v", name, err.Error())
+	}
+
+	// Load the routes.
+	err = v.Routes()
 	if err != nil {
 		log.Printf("problem loading pages from plugin %v: %v", name, err.Error())
 	}

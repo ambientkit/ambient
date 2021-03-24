@@ -13,14 +13,14 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	core.PluginMeta
+	*core.PluginMeta
 	*core.Toolkit
 }
 
 // New returns a new hello plugin.
-func New() Plugin {
-	return Plugin{
-		PluginMeta: core.PluginMeta{
+func New() *Plugin {
+	return &Plugin{
+		PluginMeta: &core.PluginMeta{
 			Name:       "hello",
 			Version:    "1.0.0",
 			AppVersion: "1.0.0",
@@ -28,9 +28,14 @@ func New() Plugin {
 	}
 }
 
-// SetPages sets pages on a router.
-func (p Plugin) SetPages(toolkit *core.Toolkit) error {
+// Enable accepts the toolkit.
+func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
+	return nil
+}
+
+// Routes gets routes for the plugin.
+func (p *Plugin) Routes() error {
 	p.Router.Get("/dashboard/hello", p.index)
 	return nil
 }

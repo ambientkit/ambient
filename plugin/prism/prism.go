@@ -13,13 +13,14 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	core.PluginMeta
+	*core.PluginMeta
+	*core.Toolkit
 }
 
 // New returns a new prism plugin.
-func New() Plugin {
-	return Plugin{
-		PluginMeta: core.PluginMeta{
+func New() *Plugin {
+	return &Plugin{
+		PluginMeta: &core.PluginMeta{
 			Name:       "prism",
 			Version:    "1.0.0",
 			AppVersion: "1.0.0",
@@ -28,7 +29,7 @@ func New() Plugin {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	return []core.Asset{
 		{
 			Path:     "css/prism-vsc-dark-plus.css",
@@ -57,7 +58,7 @@ func (p Plugin) Assets() ([]core.Asset, *embed.FS) {
 	}, &assets
 }
 
-// // SetPages -
+//
 // func (p Plugin) Header() string {
 // 	return `<link rel="stylesheet" href="/plugins/prism/css/prism-vsc-dark-plus.css?` + p.Version + `">
 // 	<link rel="stylesheet" href="/plugins/prism/css/clean.css?` + p.Version + `">`

@@ -62,7 +62,8 @@ func (p Asset) SanitizedPath() string {
 type IPlugin interface {
 	PluginName() string
 	PluginVersion() string
-	SetPages(*Toolkit) error
+	Routes() error
+	Enable(*Toolkit) error
 	Assets() ([]Asset, *embed.FS)
 	//Header() string
 	//Body() string
@@ -71,10 +72,12 @@ type IPlugin interface {
 	// Uninstall() error
 }
 
+// IRouteList -
 type IRouteList interface {
 	Routes() []IRoute
 }
 
+// IRoute -
 type IRoute interface {
 	Method() string
 	Path() string
@@ -108,7 +111,7 @@ type IPluginLoader interface {
 	LoadSinglePlugin(name string) error
 }
 
-// ISecurity -
+// Toolkit -
 type Toolkit struct {
 	Render       IRender
 	Router       IRouter
@@ -117,27 +120,32 @@ type Toolkit struct {
 	PluginLoader IPluginLoader
 }
 
-// SetPages -
-func (p PluginMeta) SetPages(toolkit *Toolkit) error {
+// Enable -
+func (p *PluginMeta) Enable(*Toolkit) error {
+	return nil
+}
+
+// Routes -
+func (p *PluginMeta) Routes() error {
 	return nil
 }
 
 // Assets -
-func (p PluginMeta) Assets() ([]Asset, *embed.FS) {
+func (p *PluginMeta) Assets() ([]Asset, *embed.FS) {
 	return nil, nil
 }
 
 // Header -
-func (p PluginMeta) Header() string {
+func (p *PluginMeta) Header() string {
 	return ""
 }
 
 // PluginName -
-func (p PluginMeta) PluginName() string {
+func (p *PluginMeta) PluginName() string {
 	return html.EscapeString(p.Name)
 }
 
 // PluginVersion -
-func (p PluginMeta) PluginVersion() string {
+func (p *PluginMeta) PluginVersion() string {
 	return p.Version
 }
