@@ -2,8 +2,10 @@ package core
 
 import (
 	"fmt"
+	"html"
 	"html/template"
 	"net/http"
+	"strings"
 )
 
 // InjectPlugins -
@@ -33,19 +35,35 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request) (*template.Te
 				continue
 			}
 
+			// Add the attributes.
+			attrs := make([]string, 0)
+			for attrName, attrValue := range file.Attributes {
+				if attrValue == nil {
+					attrs = append(attrs, fmt.Sprintf(`%v`, html.EscapeString(attrName)))
+				} else {
+					attrs = append(attrs, fmt.Sprintf(`%v="%v"`, html.EscapeString(attrName), html.EscapeString(fmt.Sprint(attrValue))))
+				}
+			}
+			attrsJoined := strings.Join(attrs, " ")
+			if len(attrsJoined) > 0 {
+				// Add a space at the beginning.
+				attrsJoined = " " + attrsJoined
+			}
+
 			txt := ""
 			switch file.Filetype {
 			case FiletypeStylesheet:
+
 				if file.Embedded {
-					txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?v=%v">`, v.PluginName(), file.SanitizedPath(), v.PluginVersion())
+					txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?v=%v"%v>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
 				} else {
-					txt = fmt.Sprintf(`<link rel="stylesheet" href="%v">`, file.SanitizedPath())
+					txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
 				}
 			case FiletypeJavaScript:
 				if file.Embedded {
-					txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?v=%v"></script>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion())
+					txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?v=%v"%v></script>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
 				} else {
-					txt = fmt.Sprintf(`<script type="application/javascript" src="%v"></script>`, file.SanitizedPath())
+					txt = fmt.Sprintf(`<script type="application/javascript" src="%v"%v></script>`, file.SanitizedPath(), attrsJoined)
 				}
 			default:
 				fmt.Printf("unsupported asset filetype for plugin (%v): %v", v.PluginName(), file.Filetype)
