@@ -50,21 +50,27 @@ const (
 	AuthenticatedOnly AuthType = "authenticated"
 )
 
+// Asset -
+type Asset struct {
+	Path       string        `json:"path"`
+	Location   AssetLocation `json:"location"`
+	Filetype   AssetType     `json:"filetype"`
+	Embedded   bool          `json:"embedded"`
+	Replace    []Replace     `json:"replace"`
+	Auth       AuthType      `json:"auth"`
+	Attributes []Attribute   `json:"attributes"`
+}
+
+// Attribute -
+type Attribute struct {
+	Name  string
+	Value interface{}
+}
+
 // Replace -
 type Replace struct {
 	Find    string
 	Replace string
-}
-
-// Asset -
-type Asset struct {
-	Path       string                 `json:"path"`
-	Location   AssetLocation          `json:"location"`
-	Filetype   AssetType              `json:"filetype"`
-	Embedded   bool                   `json:"embedded"`
-	Replace    []Replace              `json:"replace"`
-	Auth       AuthType               `json:"auth"`
-	Attributes map[string]interface{} `json:"atrributes"`
 }
 
 // SanitizedPath -

@@ -35,13 +35,13 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request) (*template.Te
 				continue
 			}
 
-			// Add the attributes.
+			// Build the attributes.
 			attrs := make([]string, 0)
-			for attrName, attrValue := range file.Attributes {
-				if attrValue == nil {
-					attrs = append(attrs, fmt.Sprintf(`%v`, html.EscapeString(attrName)))
+			for _, attr := range file.Attributes {
+				if attr.Value == nil {
+					attrs = append(attrs, fmt.Sprintf(`%v`, html.EscapeString(attr.Name)))
 				} else {
-					attrs = append(attrs, fmt.Sprintf(`%v="%v"`, html.EscapeString(attrName), html.EscapeString(fmt.Sprint(attrValue))))
+					attrs = append(attrs, fmt.Sprintf(`%v="%v"`, html.EscapeString(attr.Name), html.EscapeString(fmt.Sprint(attr.Value))))
 				}
 			}
 			attrsJoined := strings.Join(attrs, " ")

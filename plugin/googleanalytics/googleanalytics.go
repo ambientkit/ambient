@@ -61,8 +61,11 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 			Location: core.LocationBody,
 			Embedded: false,
 			Auth:     core.AnonymousOnly,
-			Attributes: map[string]interface{}{
-				"async": nil,
+			Attributes: []core.Attribute{
+				{
+					Name:  "async",
+					Value: nil,
+				},
 			},
 		},
 		{
