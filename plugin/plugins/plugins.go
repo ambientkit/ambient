@@ -39,6 +39,8 @@ func (p *Plugin) Routes() error {
 	p.Router.Get("/dashboard/plugins", p.edit)
 	p.Router.Post("/dashboard/plugins", p.update)
 	p.Router.Get("/dashboard/plugins/:id/delete", p.destroy)
+	p.Router.Get("/dashboard/plugins/:id/settings", p.settingsEdit)
+	p.Router.Post("/dashboard/plugins/:id/settings", p.settingsUpdate)
 
 	return nil
 }

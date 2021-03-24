@@ -38,22 +38,8 @@ func New(ds Datastorer, site *model.Site) (*Storage, error) {
 		Routes: make(map[string][]model.Route),
 	}
 
-	// Set the defaults for the site object.
-	// Save to storage. Ensure the posts exists first so it doesn't error.
-	if s.Site.Posts == nil {
-		s.Site.Posts = make(map[string]model.Post)
-	}
-	if s.Site.Plugins == nil {
-		s.Site.Plugins = make(map[string]model.PluginSettings)
-	}
-	// Ensure redirects don't try to happen if the scheme is empty.
-	if s.Site.Scheme == "" {
-		s.Site.Scheme = "http"
-	}
-	// Ensure it's set to the login page works.
-	if s.Site.LoginURL == "" {
-		s.Site.LoginURL = "admin"
-	}
+	// Fill in the missing defaults.
+	s.Site.Correct()
 
 	return s, nil
 }

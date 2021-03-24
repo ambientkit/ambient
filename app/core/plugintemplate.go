@@ -9,7 +9,7 @@ import (
 func (c *App) InjectPlugins(t *template.Template) (*template.Template, error) {
 	pluginHeader := ""
 	pluginBody := ""
-	for name, plugin := range c.Storage.Site.Plugins {
+	for name, plugin := range c.Storage.Site.PluginSettings {
 		if !plugin.Enabled || !plugin.Found {
 			continue
 		}

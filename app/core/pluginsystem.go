@@ -65,6 +65,7 @@ type IPlugin interface {
 	Routes() error
 	Enable(*Toolkit) error
 	Assets() ([]Asset, *embed.FS)
+	Fields() []string
 	//Header() string
 	//Body() string
 	//SetSettings()
@@ -116,7 +117,7 @@ type Toolkit struct {
 	Render       IRender
 	Router       IRouter
 	Security     ISecurity
-	Site         SecureSite
+	Site         *SecureSite
 	PluginLoader IPluginLoader
 }
 
@@ -135,9 +136,9 @@ func (p *PluginMeta) Assets() ([]Asset, *embed.FS) {
 	return nil, nil
 }
 
-// Header -
-func (p *PluginMeta) Header() string {
-	return ""
+// Fields -
+func (p *PluginMeta) Fields() []string {
+	return nil
 }
 
 // PluginName -

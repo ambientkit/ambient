@@ -22,7 +22,7 @@ func RegisterPlugins(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem
 
 	// Load the plugins.
 	needSave := false
-	ps := storage.Site.Plugins
+	ps := storage.Site.PluginSettings
 	for _, v := range arr {
 		name := v.PluginName()
 		_, found := ps[name]
@@ -39,7 +39,7 @@ func RegisterPlugins(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem
 
 	if needSave {
 		// Save the plugins.
-		storage.Site.Plugins = ps
+		storage.Site.PluginSettings = ps
 		err := storage.Save()
 		if err != nil {
 			return nil, err
@@ -53,7 +53,7 @@ func RegisterPlugins(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem
 func (c *App) LoadAllPluginPages() error {
 	// Set up the plugin routes.
 	shouldSave := false
-	for name := range c.Storage.Site.Plugins {
+	for name := range c.Storage.Site.PluginSettings {
 		bl := c.LoadSinglePluginPages(name)
 		if bl {
 			shouldSave = true
@@ -69,6 +69,20 @@ func (c *App) LoadAllPluginPages() error {
 	}
 
 	return nil
+}
+
+// stringArrayEqual tells whether a and b contain the same elements.
+// A nil argument is equivalent to an empty slice.
+func stringArrayEqual(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
 }
 
 // LoadSinglePlugin -
@@ -90,7 +104,7 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	shouldSave := false
 
 	// Return if the plug isn't found.
-	plugin, ok := c.Storage.Site.Plugins[name]
+	plugin, ok := c.Storage.Site.PluginSettings[name]
 	if !ok {
 		return shouldSave
 	}
@@ -102,7 +116,14 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	if found != plugin.Found {
 		shouldSave = true
 		plugin.Found = found
-		c.Storage.Site.Plugins[name] = plugin
+		c.Storage.Site.PluginSettings[name] = plugin
+	}
+
+	// If the fields are different, then update it for saving.
+	if !stringArrayEqual(plugin.Fields, v.Fields()) {
+		shouldSave = true
+		plugin.Fields = v.Fields()
+		c.Storage.Site.PluginSettings[name] = plugin
 	}
 
 	// If the plugin is not found or not enabled, then skip over it.
@@ -118,6 +139,10 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	grants["site.plugins:disable"] = true
 	grants["site.plugins:deleteone"] = true
 	grants["router:clear"] = true
+	grants["plugin:getfield"] = true
+	grants["plugin:setfield"] = true
+	grants["plugin:setneighborfield"] = true
+	grants["plugin:getneighborfield"] = true
 
 	recorder := router.NewRecorder(c.Router)
 

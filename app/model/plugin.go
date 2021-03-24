@@ -2,8 +2,14 @@ package model
 
 // PluginSettings -
 type PluginSettings struct {
-	Enabled bool `json:"enabled"`
-	Found   bool `json:"found"`
+	Enabled bool     `json:"enabled"`
+	Found   bool     `json:"found"`
+	Fields  []string `json:"fields"`
+}
+
+// PluginFields -
+type PluginFields struct {
+	Fields map[string]string `json:"fields"`
 }
 
 // PluginRoutes -

@@ -1,3 +1,4 @@
+// Package model provides the data structure for the application.
 package model
 
 import (
@@ -8,21 +9,45 @@ import (
 
 // Site -
 type Site struct {
-	Title       string                    `json:"title"`
-	Subtitle    string                    `json:"subtitle"`
-	Author      string                    `json:"author"`
-	Favicon     string                    `json:"favicon"`
-	Description string                    `json:"description"`
-	Footer      string                    `json:"footer"`
-	Scheme      string                    `json:"scheme"`
-	URL         string                    `json:"url"`
-	LoginURL    string                    `json:"loginurl"`
-	Created     time.Time                 `json:"created"`
-	Updated     time.Time                 `json:"updated"`
-	Content     string                    `json:"content"` // Home content.
-	Styles      string                    `json:"styles"`
-	Plugins     map[string]PluginSettings `json:"plugins"`
-	Posts       map[string]Post           `json:"posts"`
+	Title          string                    `json:"title"`
+	Subtitle       string                    `json:"subtitle"`
+	Author         string                    `json:"author"`
+	Favicon        string                    `json:"favicon"`
+	Description    string                    `json:"description"`
+	Footer         string                    `json:"footer"`
+	Scheme         string                    `json:"scheme"`
+	URL            string                    `json:"url"`
+	LoginURL       string                    `json:"loginurl"`
+	Created        time.Time                 `json:"created"`
+	Updated        time.Time                 `json:"updated"`
+	Content        string                    `json:"content"` // Home content.
+	Styles         string                    `json:"styles"`
+	PluginSettings map[string]PluginSettings `json:"plugins"`
+	PluginFields   map[string]PluginFields   `json:"pluginfields"`
+	Posts          map[string]Post           `json:"posts"`
+}
+
+// Correct will fill in the missing defaults.
+func (s *Site) Correct() {
+	// Set the defaults for the site object.
+	// Save to storage. Ensure the posts exists first so it doesn't error.
+	if s.Posts == nil {
+		s.Posts = make(map[string]Post)
+	}
+	if s.PluginSettings == nil {
+		s.PluginSettings = make(map[string]PluginSettings)
+	}
+	if s.PluginFields == nil {
+		s.PluginFields = make(map[string]PluginFields)
+	}
+	// Ensure redirects don't try to happen if the scheme is empty.
+	if s.Scheme == "" {
+		s.Scheme = "http"
+	}
+	// Ensure it's set to the login page works.
+	if s.LoginURL == "" {
+		s.LoginURL = "admin"
+	}
 }
 
 // SiteURL -
