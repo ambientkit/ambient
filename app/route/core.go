@@ -1,3 +1,4 @@
+// Package route provides the handlers for the application.
 package route
 
 import (
@@ -23,6 +24,8 @@ func Register(c *core.App) {
 	registerPost(&Post{c})
 }
 
+// SetupRouter returns a router with the NotFound handler and the default
+// handler set.
 func SetupRouter(tmpl *htmltemplate.Engine) *router.Mux {
 	// Set the handling of all responses.
 	customServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
