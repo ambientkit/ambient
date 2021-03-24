@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+{{template "head" .}}
+<body>
+    {{template "header" .}}
+    <main>
+        {{if .title}}
+        <h1>{{.title}}</h1>
+        {{end}}
+        <content>
+            {{if .query}}
+            <h3 style="margin-bottom:0">Filtering for "{{.query}}"</h3>
+            <small>
+                <a href="/blog">Remove filter</a>
+            </small>
+            {{end}}
+            {{template "content" .}}
+        </content>
+    </main>
+    {{template "footer" .}}
+    {{block "PluginBodyContent" ""}}<!-- No plugins. -->{{end}}
+</body>
+</html>

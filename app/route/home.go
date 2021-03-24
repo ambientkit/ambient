@@ -31,7 +31,7 @@ func (c *HomePost) show(w http.ResponseWriter, r *http.Request) (status int, err
 	}
 
 	vars := make(map[string]interface{})
-	return c.Render.Post(w, r, "layout/base", p, vars)
+	return c.Render.Post(w, r, "layout/page", p, vars)
 }
 
 func (c *HomePost) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {

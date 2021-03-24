@@ -7,7 +7,6 @@
         {{if .title}}
         <h1>{{.title}}</h1>
         {{end}}
-        {{if .pubdate}}
         <p>
             <i>
                 <time datetime="{{.pubdate | Stamp}}" pubdate>
@@ -15,16 +14,8 @@
                 </time>
                 {{if Authenticated}}<a href="/dashboard/posts/{{.id}}">edit</a>{{end}}
             </i>
-            
         </p>
-        {{end}}
         <content>
-            {{if .query}}
-            <h3 style="margin-bottom:0">Filtering for "{{.query}}"</h3>
-            <small>
-                <a href="/blog">Remove filter</a>
-            </small>
-            {{end}}
             {{template "content" .}}
         </content>
         {{if .tags}}
@@ -36,7 +27,6 @@
             </div>
         </small>
         {{end}}
-
         <div id="disqus_thread"></div>
     </main>
     {{template "footer" .}}
