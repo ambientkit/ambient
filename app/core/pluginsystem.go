@@ -36,6 +36,7 @@ type PluginMeta struct {
 
 type AssetLocation string
 type AssetType string
+type AuthType string
 
 const (
 	LocationHeader AssetLocation = "header"
@@ -43,6 +44,10 @@ const (
 
 	FiletypeStylesheet AssetType = "stylesheet"
 	FiletypeJavaScript AssetType = "javascript"
+
+	All               AuthType = "all" // Default.
+	AnonymousOnly     AuthType = "anonymous"
+	AuthenticatedOnly AuthType = "authenticated"
 )
 
 // Replace -
@@ -58,6 +63,7 @@ type Asset struct {
 	Filetype AssetType     `json:"filetype"`
 	Embedded bool          `json:"embedded"`
 	Replace  []Replace     `json:"replace"`
+	Auth     AuthType      `json:"auth"`
 }
 
 // SanitizedPath -

@@ -243,6 +243,7 @@ func embeddedAssets(mux IRouter, pluginName string, files []Asset, assets *embed
 				return http.StatusInternalServerError, err
 			}
 
+			// Get the contents.
 			file, err := ioutil.ReadAll(f)
 			if err != nil {
 				return http.StatusInternalServerError, err

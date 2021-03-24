@@ -60,12 +60,14 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 			Filetype: core.FiletypeJavaScript,
 			Location: core.LocationBody,
 			Embedded: false,
+			Auth:     core.AnonymousOnly,
 		},
 		{
 			Path:     "js/ga.js",
 			Filetype: core.FiletypeJavaScript,
 			Location: core.LocationBody,
 			Embedded: true,
+			Auth:     core.AnonymousOnly,
 			Replace: []core.Replace{
 				{
 					Find:    "{{TrackingID}}",
