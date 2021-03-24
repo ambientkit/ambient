@@ -51,6 +51,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	// Get the tracking ID.
 	trackingid, err := p.Site.PluginField(trackingID)
 	if err != nil || len(trackingid) == 0 {
+		// Otherwise don't set the assets.
 		return nil, nil
 	}
 
