@@ -28,6 +28,12 @@ func New() *Plugin {
 	}
 }
 
+// Enable accepts the toolkit.
+func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+	p.Toolkit = toolkit
+	return nil
+}
+
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() error {
 	p.Router.Get("/dashboard/plugins", p.edit)

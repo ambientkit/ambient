@@ -28,6 +28,12 @@ func New() *Plugin {
 	}
 }
 
+// Enable accepts the toolkit.
+func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+	p.Toolkit = toolkit
+	return nil
+}
+
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	return []core.Asset{
