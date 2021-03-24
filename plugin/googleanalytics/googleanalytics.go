@@ -48,15 +48,15 @@ func (p *Plugin) Fields() []string {
 
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
-	// Get the plugin field.
-	v, err := p.Site.PluginField(trackingID)
-	if err != nil || len(v) == 0 {
+	// Get the tracking ID.
+	trackingid, err := p.Site.PluginField(trackingID)
+	if err != nil || len(trackingid) == 0 {
 		return nil, nil
 	}
 
 	return []core.Asset{
 		{
-			Path:     fmt.Sprintf("https://www.googletagmanager.com/gtag/js?id=%v", v),
+			Path:     fmt.Sprintf("https://www.googletagmanager.com/gtag/js?id=%v", trackingid),
 			Filetype: core.FiletypeJavaScript,
 			Location: core.LocationBody,
 			Embedded: false,
@@ -66,6 +66,12 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 			Filetype: core.FiletypeJavaScript,
 			Location: core.LocationBody,
 			Embedded: true,
+			Replace: []core.Replace{
+				{
+					Find:    "{{TrackingID}}",
+					Replace: trackingid,
+				},
+			},
 		},
 	}, &assets
 }

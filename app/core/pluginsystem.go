@@ -45,12 +45,19 @@ const (
 	FiletypeJavaScript AssetType = "javascript"
 )
 
+// Replace -
+type Replace struct {
+	Find    string
+	Replace string
+}
+
 // Asset -
 type Asset struct {
 	Path     string        `json:"path"`
 	Location AssetLocation `json:"location"`
 	Filetype AssetType     `json:"filetype"`
 	Embedded bool          `json:"embedded"`
+	Replace  []Replace     `json:"replace"`
 }
 
 // SanitizedPath -

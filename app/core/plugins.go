@@ -1,10 +1,11 @@
 package core
 
 import (
+	"bytes"
 	"embed"
 	"fmt"
-	"io"
 	"io/fs"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"path"
@@ -242,7 +243,17 @@ func embeddedAssets(mux IRouter, pluginName string, files []Asset, assets *embed
 				return http.StatusInternalServerError, err
 			}
 
-			http.ServeContent(w, r, fname, st.ModTime(), f.(io.ReadSeeker))
+			file, err := ioutil.ReadAll(f)
+			if err != nil {
+				return http.StatusInternalServerError, err
+			}
+
+			// Loop over the items to replace.
+			for _, rep := range v.Replace {
+				file = bytes.ReplaceAll(file, []byte(rep.Find), []byte(rep.Replace))
+			}
+
+			http.ServeContent(w, r, fname, st.ModTime(), bytes.NewReader(file))
 			return
 		})
 	}
