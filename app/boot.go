@@ -113,6 +113,11 @@ func Boot() (http.Handler, error) {
 		hello.New(),
 	}
 
+	pluginNames := make([]string, 0)
+	for _, v := range arrPlugins {
+		pluginNames = append(pluginNames, v.PluginName())
+	}
+
 	// Register the plugins.
 	plugs, err := core.RegisterPlugins(arrPlugins, storage)
 	if err != nil {
@@ -121,7 +126,7 @@ func Boot() (http.Handler, error) {
 
 	// Set up the template engine.
 	//FIXME: Don't use app like this.
-	tmpl := htmltemplate.New(allowHTML, storage, sess, &core.App{
+	tmpl := htmltemplate.New(allowHTML, storage, sess, pluginNames, &core.App{
 		Storage: storage,
 		Plugins: plugs,
 		Sess:    sess,

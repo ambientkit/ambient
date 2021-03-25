@@ -8,12 +8,16 @@ import (
 	"strings"
 )
 
-// InjectPlugins -
-func (c *App) InjectPlugins(t *template.Template, r *http.Request) (*template.Template, error) {
+// InjectPlugins will return a template and an error.
+func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames []string) (*template.Template, error) {
 	pluginHeader := ""
 	pluginBody := ""
-	for name, plugin := range c.Storage.Site.PluginSettings {
-		if !plugin.Enabled || !plugin.Found {
+
+	// Loop through each of the plugins.
+	// Use the plugin names because it's ordered.
+	for _, name := range pluginNames {
+		plugin, ok := c.Storage.Site.PluginSettings[name]
+		if !ok || !plugin.Enabled || !plugin.Found {
 			continue
 		}
 

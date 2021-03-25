@@ -12,11 +12,10 @@ import (
 
 // HeaderInjector represents code that can inject files into a template.
 type HeaderInjector interface {
-	InjectPlugins(t *template.Template, r *http.Request) (*template.Template, error)
+	InjectPlugins(t *template.Template, r *http.Request, pluginNames []string) (*template.Template, error)
 }
 
-// PartialTemplate -
-func (te *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialTemplate string) (*template.Template, error) {
+func (te *Engine) partialTemplate(r *http.Request, mainTemplate string, partialTemplate string) (*template.Template, error) {
 	// Functions available in the templates.
 	fm := html.FuncMap(r, te.storage, te.sess)
 
@@ -34,7 +33,7 @@ func (te *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialT
 		return nil, err
 	}
 
-	t, err = te.hi.InjectPlugins(t, r)
+	t, err = te.hi.InjectPlugins(t, r, te.pluginNames)
 	if err != nil {
 		return nil, err
 	}
@@ -42,8 +41,7 @@ func (te *Engine) PartialTemplate(r *http.Request, mainTemplate string, partialT
 	return t, nil
 }
 
-// PostTemplate -
-func (te *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.Template, error) {
+func (te *Engine) postTemplate(r *http.Request, mainTemplate string) (*template.Template, error) {
 	// Functions available in the templates.
 	fm := html.FuncMap(r, te.storage, te.sess)
 
@@ -59,7 +57,7 @@ func (te *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.
 		return nil, err
 	}
 
-	t, err = te.hi.InjectPlugins(t, r)
+	t, err = te.hi.InjectPlugins(t, r, te.pluginNames)
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +65,7 @@ func (te *Engine) PostTemplate(r *http.Request, mainTemplate string) (*template.
 	return t, nil
 }
 
-// PluginTemplate2 -
-func (te *Engine) PluginTemplate2(r *http.Request, assets embed.FS, mainTemplate string, partialTemplate string) (*template.Template, error) {
+func (te *Engine) pluginTemplate(r *http.Request, assets embed.FS, mainTemplate string, partialTemplate string) (*template.Template, error) {
 	// Functions available in the templates.
 	fm := html.FuncMap(r, te.storage, te.sess)
 
@@ -90,7 +87,7 @@ func (te *Engine) PluginTemplate2(r *http.Request, assets embed.FS, mainTemplate
 		return nil, err
 	}
 
-	t, err = te.hi.InjectPlugins(t, r)
+	t, err = te.hi.InjectPlugins(t, r, te.pluginNames)
 	if err != nil {
 		return nil, err
 	}
