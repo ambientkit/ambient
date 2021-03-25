@@ -1,3 +1,4 @@
+// Package middleware provides handlers for routes.
 package middleware
 
 import (
@@ -6,7 +7,7 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/websession"
 )
 
-// Handler -
+// Handler represents a middleware handler.
 type Handler struct {
 	Router     *router.Mux
 	Render     *htmltemplate.Engine
@@ -15,7 +16,7 @@ type Handler struct {
 	SiteScheme string
 }
 
-// NewHandler -
+// NewHandler returns a middleware handler.
 func NewHandler(te *htmltemplate.Engine, sess *websession.Session, mux *router.Mux, siteURL string, siteScheme string) *Handler {
 	return &Handler{
 		Render:     te,

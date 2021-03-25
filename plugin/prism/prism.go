@@ -40,13 +40,13 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		{
 			Path:     "css/prism-vsc-dark-plus.css",
 			Filetype: core.FiletypeStylesheet,
-			Location: core.LocationHeader,
+			Location: core.LocationHead,
 			Embedded: true,
 		},
 		{
 			Path:     "css/clean.css",
 			Filetype: core.FiletypeStylesheet,
-			Location: core.LocationHeader,
+			Location: core.LocationHead,
 			Embedded: true,
 		},
 		{

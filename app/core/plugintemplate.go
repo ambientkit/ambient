@@ -70,10 +70,10 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request) (*template.Te
 			}
 
 			switch file.Location {
+			case LocationHead:
+				pluginHeader += txt + "\n    "
 			case LocationBody:
 				pluginBody += txt + "\n    "
-			case LocationHeader:
-				pluginHeader += txt + "\n    "
 			default:
 				fmt.Printf("unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
 			}

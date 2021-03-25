@@ -40,7 +40,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		{
 			Path:     "css/bear.css",
 			Filetype: core.FiletypeStylesheet,
-			Location: core.LocationHeader,
+			Location: core.LocationHead,
 			Embedded: true,
 		},
 	}, &assets

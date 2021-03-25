@@ -34,23 +34,35 @@ type PluginMeta struct {
 	//Permissions []string `json:"permissions"`
 }
 
+// AssetLocation is a location where assets can be added.
 type AssetLocation string
+
+// AssetType is a type of asset.
 type AssetType string
+
+// AuthType is a type of authentication.
 type AuthType string
 
 const (
-	LocationHeader AssetLocation = "header"
-	LocationBody   AssetLocation = "body"
+	// LocationHead is at the bottom of the HTML <head> section.
+	LocationHead AssetLocation = "head"
+	// LocationBody is at the bottom of the HTML <body> section.
+	LocationBody AssetLocation = "body"
 
+	// FiletypeStylesheet is a stylesheet element.
 	FiletypeStylesheet AssetType = "stylesheet"
+	// FiletypeJavaScript is a javascript element.
 	FiletypeJavaScript AssetType = "javascript"
 
-	All               AuthType = "all" // Default.
-	AnonymousOnly     AuthType = "anonymous"
+	// All is both anonymous and authenticated users.
+	All AuthType = "all" // Default.
+	// AnonymousOnly is only non-authenticated users.
+	AnonymousOnly AuthType = "anonymous"
+	// AuthenticatedOnly is only authenticated users.
 	AuthenticatedOnly AuthType = "authenticated"
 )
 
-// Asset -
+// Asset represents an HTML asset like a stylesheet or javascript file.
 type Asset struct {
 	Path       string        `json:"path"`
 	Location   AssetLocation `json:"location"`
@@ -61,19 +73,19 @@ type Asset struct {
 	Attributes []Attribute   `json:"attributes"`
 }
 
-// Attribute -
+// Attribute represents an HTML attribute.
 type Attribute struct {
 	Name  string
 	Value interface{}
 }
 
-// Replace -
+// Replace represents text to find and replace.
 type Replace struct {
 	Find    string
 	Replace string
 }
 
-// SanitizedPath -
+// SanitizedPath returns an HTML escaped asset path.
 func (p Asset) SanitizedPath() string {
 	return html.EscapeString(p.Path)
 }
