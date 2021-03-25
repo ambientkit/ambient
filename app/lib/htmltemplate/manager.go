@@ -10,8 +10,8 @@ import (
 	"github.com/josephspurrier/ambient/html"
 )
 
-// HeaderInjector represents code that can inject files into a template.
-type HeaderInjector interface {
+// AssetInjector represents code that can inject files into a template.
+type AssetInjector interface {
 	InjectPlugins(t *template.Template, r *http.Request, pluginNames []string) (*template.Template, error)
 }
 
@@ -33,7 +33,7 @@ func (te *Engine) partialTemplate(r *http.Request, mainTemplate string, partialT
 		return nil, err
 	}
 
-	t, err = te.hi.InjectPlugins(t, r, te.pluginNames)
+	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (te *Engine) postTemplate(r *http.Request, mainTemplate string) (*template.
 		return nil, err
 	}
 
-	t, err = te.hi.InjectPlugins(t, r, te.pluginNames)
+	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (te *Engine) pluginTemplate(r *http.Request, assets embed.FS, mainTemplate 
 		return nil, err
 	}
 
-	t, err = te.hi.InjectPlugins(t, r, te.pluginNames)
+	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames)
 	if err != nil {
 		return nil, err
 	}

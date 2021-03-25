@@ -16,17 +16,17 @@ type Engine struct {
 	allowUnsafeHTML bool
 	storage         *datastorage.Storage
 	sess            *websession.Session
-	hi              HeaderInjector
+	assetInjector   AssetInjector
 	pluginNames     []string
 }
 
 // New returns a HTML template engine.
-func New(allowUnsafeHTML bool, storage *datastorage.Storage, sess *websession.Session, pluginNames []string, hi HeaderInjector) *Engine {
+func New(allowUnsafeHTML bool, storage *datastorage.Storage, sess *websession.Session, pluginNames []string, assetInjector AssetInjector) *Engine {
 	return &Engine{
 		allowUnsafeHTML: allowUnsafeHTML,
 		storage:         storage,
 		sess:            sess,
-		hi:              hi,
+		assetInjector:   assetInjector,
 		pluginNames:     pluginNames,
 	}
 }
