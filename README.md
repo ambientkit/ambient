@@ -117,7 +117,6 @@ When `AMB_LOCAL` is set, the following things will happen:
 ## Plugin System
 
 Ambient is designed as a pluggable architecture for web applications.
-
 The plugin system is designed so plugins are secure from the start.
 We want to make it easy for users to integrate existing plugins to build a website.
 We want to make it easy for developers to build plugins for a website.
