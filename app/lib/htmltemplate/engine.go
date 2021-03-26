@@ -21,7 +21,8 @@ type Engine struct {
 }
 
 // New returns a HTML template engine.
-func New(allowUnsafeHTML bool, storage *datastorage.Storage, sess *websession.Session, pluginNames []string, assetInjector AssetInjector) *Engine {
+func New(allowUnsafeHTML bool, storage *datastorage.Storage, sess *websession.Session,
+	pluginNames []string, assetInjector AssetInjector) *Engine {
 	return &Engine{
 		allowUnsafeHTML: allowUnsafeHTML,
 		storage:         storage,

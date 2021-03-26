@@ -58,7 +58,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	return []core.Asset{
 		{
 			Path:     fmt.Sprintf("https://www.googletagmanager.com/gtag/js?id=%v", trackingid),
-			Filetype: core.FiletypeJavaScript,
+			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
 			Embedded: false,
 			Auth:     core.AnonymousOnly,
@@ -71,7 +71,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		},
 		{
 			Path:     "js/ga.js",
-			Filetype: core.FiletypeJavaScript,
+			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
 			Embedded: true,
 			Auth:     core.AnonymousOnly,

@@ -27,9 +27,9 @@
             </div>
         </small>
         {{end}}
-        <div id="disqus_thread"></div>
+        {{block "PluginMainContent" ""}}{{end}}
     </main>
     {{template "footer" .}}
-    {{block "PluginBodyContent" ""}}<!-- No plugins. -->{{end}}
+    {{block "PluginBodyContent" ""}}{{end}}
 </body>
 </html>

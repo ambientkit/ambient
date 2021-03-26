@@ -2,15 +2,14 @@ package core
 
 import (
 	"fmt"
-	"html"
 	"html/template"
 	"net/http"
-	"strings"
 )
 
 // InjectPlugins will return a template and an error.
 func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames []string) (*template.Template, error) {
-	pluginHeader := ""
+	pluginHead := ""
+	pluginMain := ""
 	pluginBody := ""
 
 	// Loop through each of the plugins.
@@ -39,45 +38,16 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames [
 				continue
 			}
 
-			// Build the attributes.
-			attrs := make([]string, 0)
-			for _, attr := range file.Attributes {
-				if attr.Value == nil {
-					attrs = append(attrs, fmt.Sprintf(`%v`, html.EscapeString(attr.Name)))
-				} else {
-					attrs = append(attrs, fmt.Sprintf(`%v="%v"`, html.EscapeString(attr.Name), html.EscapeString(fmt.Sprint(attr.Value))))
-				}
-			}
-			attrsJoined := strings.Join(attrs, " ")
-			if len(attrsJoined) > 0 {
-				// Add a space at the beginning.
-				attrsJoined = " " + attrsJoined
-			}
-
-			txt := ""
-			switch file.Filetype {
-			case FiletypeStylesheet:
-
-				if file.Embedded {
-					txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?v=%v"%v>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
-				} else {
-					txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
-				}
-			case FiletypeJavaScript:
-				if file.Embedded {
-					txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?v=%v"%v></script>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
-				} else {
-					txt = fmt.Sprintf(`<script type="application/javascript" src="%v"%v></script>`, file.SanitizedPath(), attrsJoined)
-				}
-			default:
-				fmt.Printf("unsupported asset filetype for plugin (%v): %v", v.PluginName(), file.Filetype)
-			}
+			// Convert the asset to an element.
+			txt := file.Element(v)
 
 			switch file.Location {
 			case LocationHead:
-				pluginHeader += txt + "\n    "
+				pluginHead += txt + "\n    "
 			case LocationBody:
 				pluginBody += txt + "\n    "
+			case LocationMain:
+				pluginMain += txt + "\n    "
 			default:
 				fmt.Printf("unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
 			}
@@ -87,9 +57,15 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames [
 		//pluginBody += v.Body()
 	}
 
-	content := fmt.Sprintf(`{{define "PluginHeaderContent"}}%s{{end}}`, pluginHeader)
+	content := fmt.Sprintf(`{{define "PluginHeadContent"}}%s{{end}}`, pluginHead)
 	var err error
 	t, err = t.Parse(content)
+	if err != nil {
+		return nil, err
+	}
+
+	main := fmt.Sprintf(`{{define "PluginMainContent"}}%s{{end}}`, pluginMain)
+	t, err = t.Parse(main)
 	if err != nil {
 		return nil, err
 	}

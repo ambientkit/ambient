@@ -2,8 +2,10 @@ package core
 
 import (
 	"embed"
+	"fmt"
 	"html"
 	"net/http"
+	"strings"
 )
 
 // PluginSystem -
@@ -43,34 +45,114 @@ type AssetType string
 // AuthType is a type of authentication.
 type AuthType string
 
+// LayoutType is a type of layout.
+type LayoutType string
+
 const (
 	// LocationHead is at the bottom of the HTML <head> section.
 	LocationHead AssetLocation = "head"
 	// LocationBody is at the bottom of the HTML <body> section.
 	LocationBody AssetLocation = "body"
+	// LocationMain is at the bottom of the HTML <main> section.
+	LocationMain AssetLocation = "main"
 
-	// FiletypeStylesheet is a stylesheet element.
-	FiletypeStylesheet AssetType = "stylesheet"
-	// FiletypeJavaScript is a javascript element.
-	FiletypeJavaScript AssetType = "javascript"
+	// AssetStylesheet is a stylesheet element.
+	AssetStylesheet AssetType = "stylesheet"
+	// AssetJavaScript is a javascript element.
+	AssetJavaScript AssetType = "javascript"
+	// AssetGeneric is a generic element.
+	AssetGeneric AssetType = "generic"
 
-	// All is both anonymous and authenticated users.
-	All AuthType = "all" // Default.
+	// AllAuth is both anonymous and authenticated users.
+	AllAuth AuthType = "all" // Default.
 	// AnonymousOnly is only non-authenticated users.
 	AnonymousOnly AuthType = "anonymous"
 	// AuthenticatedOnly is only authenticated users.
 	AuthenticatedOnly AuthType = "authenticated"
+
+	// Page is a page layout.
+	Page LayoutType = "page"
+	// Post is a post layout.
+	Post LayoutType = "post"
+	// Dashboard is a dashboard layout.
+	Dashboard LayoutType = "dashboard"
+	// Bloglist is a bloglist layout.
+	Bloglist LayoutType = "bloglist"
 )
+
+// Snippet represents an HTML snippet.
+type Snippet struct {
+	Path     string        `json:"path"`
+	Location AssetLocation `json:"location"`
+	Embedded bool          `json:"embedded"`
+	Replace  []Replace     `json:"replace"`
+	Auth     AuthType      `json:"auth"`
+	Layout   LayoutType    `json:"layout"`
+	//Attributes []Attribute   `json:"attributes"`
+}
 
 // Asset represents an HTML asset like a stylesheet or javascript file.
 type Asset struct {
-	Path       string        `json:"path"`
-	Location   AssetLocation `json:"location"`
 	Filetype   AssetType     `json:"filetype"`
-	Embedded   bool          `json:"embedded"`
-	Replace    []Replace     `json:"replace"`
+	Location   AssetLocation `json:"location"`
 	Auth       AuthType      `json:"auth"`
 	Attributes []Attribute   `json:"attributes"`
+
+	TagName    string `json:"tagname"`
+	ClosingTag bool   `json:"closingtag"`
+
+	Embedded bool      `json:"embedded"`
+	Path     string    `json:"path"`
+	Replace  []Replace `json:"replace"`
+}
+
+// SanitizedPath returns an HTML escaped asset path.
+func (file Asset) SanitizedPath() string {
+	return html.EscapeString(file.Path)
+}
+
+// Element returns an HTML element.
+func (file *Asset) Element(v IPlugin) string {
+	// Build the attributes.
+	attrs := make([]string, 0)
+	for _, attr := range file.Attributes {
+		if attr.Value == nil {
+			attrs = append(attrs, fmt.Sprintf(`%v`, html.EscapeString(attr.Name)))
+		} else {
+			attrs = append(attrs, fmt.Sprintf(`%v="%v"`, html.EscapeString(attr.Name), html.EscapeString(fmt.Sprint(attr.Value))))
+		}
+	}
+	attrsJoined := strings.Join(attrs, " ")
+	if len(attrsJoined) > 0 {
+		// Add a space at the beginning.
+		attrsJoined = " " + attrsJoined
+	}
+
+	txt := ""
+	switch file.Filetype {
+	case AssetStylesheet:
+		if file.Embedded {
+			txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?v=%v"%v>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+		} else {
+			txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
+		}
+	case AssetJavaScript:
+		if file.Embedded {
+			txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?v=%v"%v></script>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+		} else {
+			txt = fmt.Sprintf(`<script type="application/javascript" src="%v"%v></script>`, file.SanitizedPath(), attrsJoined)
+		}
+	case AssetGeneric:
+		if file.ClosingTag {
+			txt = fmt.Sprintf(`<%v%v></%v>`, html.EscapeString(file.TagName), attrsJoined, html.EscapeString(file.TagName))
+		} else {
+			txt = fmt.Sprintf(`<%v%v>`, html.EscapeString(file.TagName), attrsJoined)
+		}
+	default:
+		fmt.Printf("unsupported asset filetype for plugin (%v): %v", v.PluginName(), file.Filetype)
+	}
+
+	return txt
 }
 
 // Attribute represents an HTML attribute.
@@ -83,11 +165,6 @@ type Attribute struct {
 type Replace struct {
 	Find    string
 	Replace string
-}
-
-// SanitizedPath returns an HTML escaped asset path.
-func (p Asset) SanitizedPath() string {
-	return html.EscapeString(p.Path)
 }
 
 // IPlugin represents a plugin.

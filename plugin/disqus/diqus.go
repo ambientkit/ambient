@@ -39,15 +39,45 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	return []core.Asset{
 		{
 			Path:     "css/disqus.css",
-			Filetype: core.FiletypeStylesheet,
+			Filetype: core.AssetStylesheet,
 			Location: core.LocationHead,
 			Embedded: true,
 		},
 		{
 			Path:     "js/disqus.js",
-			Filetype: core.FiletypeJavaScript,
+			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
 			Embedded: true,
+			Replace: []core.Replace{
+				{
+					Find:    "{{DisqusID}}",
+					Replace: "123",
+				},
+				{
+					Find:    "{{SiteURL}}",
+					Replace: "456",
+				},
+				{
+					Find:    "{{.posturl}}",
+					Replace: "789",
+				},
+				{
+					Find:    "{{.id}}",
+					Replace: "101",
+				},
+			},
+		},
+		{
+			Filetype:   core.AssetGeneric,
+			Location:   core.LocationMain,
+			TagName:    "div",
+			ClosingTag: true,
+			Attributes: []core.Attribute{
+				{
+					Name:  "id",
+					Value: "disqus_thread",
+				},
+			},
 		},
 	}, &assets
 }

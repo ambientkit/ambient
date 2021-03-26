@@ -201,7 +201,11 @@ func saveRoutesForPlugin(name string, recorder *router.Recorder, storage *datast
 }
 
 func embeddedAssets(mux IRouter, sess *websession.Session, pluginName string, files []Asset, assets *embed.FS) error {
-	for _, file := range files {
+	for _, unsafeFile := range files {
+		// Recreate the variable when using closures:
+		// https://golang.org/doc/faq#closures_and_goroutines
+		file := unsafeFile
+
 		// Skip files that are not embedded.
 		if !file.Embedded {
 			continue
