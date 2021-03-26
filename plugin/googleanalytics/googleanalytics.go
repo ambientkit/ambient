@@ -36,28 +36,29 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 }
 
 const (
-	trackingID = "Tracking ID"
+	// TrackingID allows the user to set the Google Analytics property ID.
+	TrackingID = "Tracking ID"
 )
 
 // Fields returns a list of user settable fields.
 func (p *Plugin) Fields() []string {
 	return []string{
-		trackingID,
+		TrackingID,
 	}
 }
 
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	// Get the tracking ID.
-	trackingid, err := p.Site.PluginField(trackingID)
-	if err != nil || len(trackingid) == 0 {
+	trackingID, err := p.Site.PluginField(TrackingID)
+	if err != nil || len(trackingID) == 0 {
 		// Otherwise don't set the assets.
 		return nil, nil
 	}
 
 	return []core.Asset{
 		{
-			Path:     fmt.Sprintf("https://www.googletagmanager.com/gtag/js?id=%v", trackingid),
+			Path:     fmt.Sprintf("https://www.googletagmanager.com/gtag/js?id=%v", trackingID),
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
 			Embedded: false,
@@ -78,7 +79,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 			Replace: []core.Replace{
 				{
 					Find:    "{{TrackingID}}",
-					Replace: trackingid,
+					Replace: trackingID,
 				},
 			},
 		},

@@ -171,8 +171,9 @@ type Replace struct {
 type IPlugin interface {
 	PluginName() string
 	PluginVersion() string
-	Routes() error
+	Routes()
 	Enable(*Toolkit) error
+	Disable() error
 	Assets() ([]Asset, *embed.FS)
 	Fields() []string
 	//Header() string
@@ -235,10 +236,13 @@ func (p *PluginMeta) Enable(*Toolkit) error {
 	return nil
 }
 
-// Routes -
-func (p *PluginMeta) Routes() error {
+// Disable -
+func (p *PluginMeta) Disable() error {
 	return nil
 }
+
+// Routes -
+func (p *PluginMeta) Routes() {}
 
 // Assets -
 func (p *PluginMeta) Assets() ([]Asset, *embed.FS) {

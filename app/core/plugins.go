@@ -163,10 +163,7 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	}
 
 	// Load the routes.
-	err = v.Routes()
-	if err != nil {
-		log.Printf("problem loading pages from plugin %v: %v", name, err.Error())
-	}
+	v.Routes()
 
 	// Load the assets.
 	assets, files := v.Assets()

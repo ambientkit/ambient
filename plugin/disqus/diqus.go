@@ -34,8 +34,33 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
+const (
+	// DisqusID allows user to set the Disqus ID.
+	DisqusID = "Disqus ID"
+)
+
+// Fields returns a list of user settable fields.
+func (p *Plugin) Fields() []string {
+	return []string{
+		DisqusID,
+	}
+}
+
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+	// Get the Disqus ID.
+	disqusID, err := p.Site.PluginField(DisqusID)
+	if err != nil || len(disqusID) == 0 {
+		// Otherwise don't set the assets.
+		return nil, nil
+	}
+
+	URL, err := p.Site.URL()
+	if err != nil || len(disqusID) == 0 {
+		// Otherwise don't set the assets.
+		return nil, nil
+	}
+
 	return []core.Asset{
 		{
 			Path:     "css/disqus.css",
@@ -51,11 +76,11 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 			Replace: []core.Replace{
 				{
 					Find:    "{{DisqusID}}",
-					Replace: "123",
+					Replace: disqusID,
 				},
 				{
 					Find:    "{{SiteURL}}",
-					Replace: "456",
+					Replace: URL,
 				},
 				{
 					Find:    "{{.posturl}}",

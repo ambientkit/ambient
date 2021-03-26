@@ -35,9 +35,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 }
 
 // Routes gets routes for the plugin.
-func (p *Plugin) Routes() error {
+func (p *Plugin) Routes() {
 	p.Router.Get("/dashboard/hello", p.index)
-	return nil
 }
 
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {

@@ -113,3 +113,11 @@ When `AMB_LOCAL` is set, the following things will happen:
 - data storage will be the local filesystem instead of in Google Cloud Storage
 - redirects will no be attempted so you can use localhost:8080
 - MFA, if enable will accept any number and will always pass validation
+
+## Plugin System
+
+Ambient is designed as a pluggable architecture for web applications.
+
+The plugin system is designed so plugins are secure from the start.
+We want to make it easy for users to integrate existing plugins to build a website.
+We want to make it easy for developers to build plugins for a website.

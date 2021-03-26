@@ -83,6 +83,17 @@ func (ss *SecureSite) SetTitle(title string) error {
 	return ss.storage.Save()
 }
 
+// URL returns the site URL.
+func (ss *SecureSite) URL() (string, error) {
+	grant := "site.url:read"
+
+	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	return ss.storage.Site.SiteURL(), nil
+}
+
 // Plugins returns the plugin list.
 func (ss *SecureSite) Plugins() (map[string]model.PluginSettings, error) {
 	grant := "site.plugins:read"
