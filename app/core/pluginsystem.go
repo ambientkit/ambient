@@ -1,9 +1,12 @@
 package core
 
 import (
+	"bytes"
 	"embed"
 	"fmt"
 	"html"
+	"io/fs"
+	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -101,7 +104,8 @@ type Asset struct {
 	TagName    string `json:"tagname"`
 	ClosingTag bool   `json:"closingtag"`
 
-	Embedded bool      `json:"embedded"`
+	External bool      `json:"external"`
+	Inline   bool      `json:"inline"`
 	Path     string    `json:"path"`
 	Replace  []Replace `json:"replace"`
 }
@@ -112,7 +116,7 @@ func (file Asset) SanitizedPath() string {
 }
 
 // Element returns an HTML element.
-func (file *Asset) Element(v IPlugin) string {
+func (file *Asset) Element(v IPlugin, assets fs.FS) string {
 	// Build the attributes.
 	attrs := make([]string, 0)
 	for _, attr := range file.Attributes {
@@ -131,16 +135,37 @@ func (file *Asset) Element(v IPlugin) string {
 	txt := ""
 	switch file.Filetype {
 	case AssetStylesheet:
-		if file.Embedded {
-			txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?v=%v"%v>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+		if file.Inline {
+			ff, status, err := file.Contents(assets)
+			if status != http.StatusOK {
+				// FIXME: Do something with these.
+				fmt.Println(err.Error())
+				return ""
+			}
+			txt = fmt.Sprintf("<style>%v</style>", string(ff))
 		} else {
-			txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
+			if file.External {
+				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
+
+			} else {
+				txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?v=%v"%v>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+			}
 		}
 	case AssetJavaScript:
-		if file.Embedded {
-			txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?v=%v"%v></script>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+		if file.Inline {
+			ff, status, err := file.Contents(assets)
+			if status != http.StatusOK {
+				// FIXME: Do something with these.
+				fmt.Println(err.Error())
+				return ""
+			}
+			txt = fmt.Sprintf("<script>%v</script>", string(ff))
 		} else {
-			txt = fmt.Sprintf(`<script type="application/javascript" src="%v"%v></script>`, file.SanitizedPath(), attrsJoined)
+			if file.External {
+				txt = fmt.Sprintf(`<script type="application/javascript" src="%v"%v></script>`, file.SanitizedPath(), attrsJoined)
+			} else {
+				txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?v=%v"%v></script>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+			}
 		}
 	case AssetGeneric:
 		if file.ClosingTag {
@@ -153,6 +178,35 @@ func (file *Asset) Element(v IPlugin) string {
 	}
 
 	return txt
+}
+
+// Contents returns the text of the file to inline in HTML after doing replace.
+func (file *Asset) Contents(assets fs.FS) (ff []byte, status int, err error) {
+	// Use the root directory.
+	fsys, err := fs.Sub(assets, ".")
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	// Open the file.
+	f, err := fsys.Open(file.Path)
+	if err != nil {
+		return nil, http.StatusNotFound, nil
+	}
+	defer f.Close()
+
+	// Get the contents.
+	ff, err = ioutil.ReadAll(f)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	// Loop over the items to replace.
+	for _, rep := range file.Replace {
+		ff = bytes.ReplaceAll(ff, []byte(rep.Find), []byte(rep.Replace))
+	}
+
+	return ff, http.StatusOK, nil
 }
 
 // Attribute represents an HTML attribute.

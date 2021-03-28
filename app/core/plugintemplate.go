@@ -26,7 +26,7 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames [
 			continue
 		}
 
-		files, _ := v.Assets()
+		files, assets := v.Assets()
 		if files == nil {
 			continue
 		}
@@ -39,7 +39,7 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames [
 			}
 
 			// Convert the asset to an element.
-			txt := file.Element(v)
+			txt := file.Element(v, assets)
 
 			switch file.Location {
 			case LocationHead:

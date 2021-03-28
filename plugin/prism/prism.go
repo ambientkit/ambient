@@ -41,25 +41,23 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 			Path:     "css/prism-vsc-dark-plus.css",
 			Filetype: core.AssetStylesheet,
 			Location: core.LocationHead,
-			Embedded: true,
 		},
 		{
 			Path:     "css/clean.css",
 			Filetype: core.AssetStylesheet,
 			Location: core.LocationHead,
-			Embedded: true,
 		},
 		{
 			Path:     "https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js",
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
-			Embedded: false,
+			External: true,
 		},
 		{
 			Path:     "https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js",
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
-			Embedded: false,
+			External: true,
 		},
 	}, &assets
 }

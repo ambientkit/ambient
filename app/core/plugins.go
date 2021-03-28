@@ -5,11 +5,11 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/router"
@@ -145,6 +145,7 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	grants["plugin:setfield"] = true
 	grants["plugin:setneighborfield"] = true
 	grants["plugin:getneighborfield"] = true
+	grants["site.url:read"] = true
 
 	recorder := router.NewRecorder(c.Router)
 
@@ -204,7 +205,7 @@ func embeddedAssets(mux IRouter, sess *websession.Session, pluginName string, fi
 		file := unsafeFile
 
 		// Skip files that are not embedded.
-		if !file.Embedded {
+		if file.External || file.Inline {
 			continue
 		}
 
@@ -229,40 +230,20 @@ func embeddedAssets(mux IRouter, sess *websession.Session, pluginName string, fi
 				return http.StatusNotFound, nil
 			}
 
-			// Use the root directory.
-			fsys, err := fs.Sub(assets, ".")
-			if err != nil {
-				return http.StatusInternalServerError, err
-			}
-
 			// Get the requested file name.
 			fname := strings.TrimPrefix(r.URL.Path, path.Join("/plugins", pluginName)+"/")
 
-			// Open the file.
-			f, err := fsys.Open(fname)
-			if err != nil {
-				return http.StatusNotFound, nil
-			}
-			defer f.Close()
-
-			// Get the file time.
-			st, err := f.Stat()
-			if err != nil {
-				return http.StatusInternalServerError, err
+			// Get the file contents.
+			ff, status, err := file.Contents(assets)
+			if status != http.StatusOK {
+				return status, err
 			}
 
-			// Get the contents.
-			ff, err := ioutil.ReadAll(f)
-			if err != nil {
-				return http.StatusInternalServerError, err
-			}
+			// Assets all have the same time so it's pointless to use the FS
+			// ModTime.
+			now := time.Now()
 
-			// Loop over the items to replace.
-			for _, rep := range file.Replace {
-				ff = bytes.ReplaceAll(ff, []byte(rep.Find), []byte(rep.Replace))
-			}
-
-			http.ServeContent(w, r, fname, st.ModTime(), bytes.NewReader(ff))
+			http.ServeContent(w, r, fname, now, bytes.NewReader(ff))
 			return
 		})
 	}

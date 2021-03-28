@@ -41,14 +41,13 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 			Path:     "https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js",
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
-			Embedded: false,
+			External: true,
 			Auth:     core.AuthenticatedOnly,
 		},
 		{
 			Path:     "js/stackedit.js",
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
-			Embedded: true,
 			Auth:     core.AuthenticatedOnly,
 		},
 	}, &assets

@@ -66,13 +66,12 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 			Path:     "css/disqus.css",
 			Filetype: core.AssetStylesheet,
 			Location: core.LocationHead,
-			Embedded: true,
 		},
 		{
 			Path:     "js/disqus.js",
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
-			Embedded: true,
+			Inline:   true,
 			Replace: []core.Replace{
 				{
 					Find:    "{{DisqusID}}",
