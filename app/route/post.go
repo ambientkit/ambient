@@ -80,5 +80,5 @@ func (c *Post) show(w http.ResponseWriter, r *http.Request) (status int, err err
 	vars["posturl"] = p.URL
 	vars["metadescription"] = htmltemplate.PlaintextBlurb(p.Content)
 
-	return c.Render.Post(w, r, "layout/post", p.Post, vars)
+	return c.Render.Post(w, r, "layout/post", p.Post.Content, vars)
 }

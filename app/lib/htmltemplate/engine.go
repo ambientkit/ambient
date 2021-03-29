@@ -10,7 +10,6 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/websession"
-	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/html"
 	"github.com/oxtoacart/bpool"
 )
@@ -97,12 +96,7 @@ func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate s
 // Post converts a site post from markdown to HTML and then outputs to response
 // writer. Returns an HTTP status code and an error if one occurs.
 func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate string,
-	post model.Post, vars map[string]interface{}) (status int, err error) {
-	// Display 404 if not found.
-	if post.URL == "" {
-		return http.StatusNotFound, nil
-	}
-
+	postContent string, vars map[string]interface{}) (status int, err error) {
 	// Parse the main template with the functions.
 	t, err := te.generateTemplate(r, mainTemplate)
 	if err != nil {
@@ -110,7 +104,7 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 	}
 
 	// Parse the content.
-	t, err = te.sanitizedContent(t, post.Content)
+	t, err = te.sanitizedContent(t, postContent)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
