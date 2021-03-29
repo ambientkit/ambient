@@ -278,12 +278,19 @@ type IPluginLoader interface {
 
 // Toolkit -
 type Toolkit struct {
-	Render       IRender
-	Router       IRouter
-	Security     ISecurity
-	Site         *SecureSite
+	Render   IRender
+	Router   IRouter
+	Security ISecurity
+	Site     *SecureSite
+	//Variable     Variables
 	PluginLoader IPluginLoader
 }
+
+// type Variables struct{}
+
+// func (v *Variables) PostURL() string {
+// 	return ""
+// }
 
 // Enable -
 func (p *PluginMeta) Enable(*Toolkit) error {

@@ -55,11 +55,11 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		return nil, nil
 	}
 
-	URL, err := p.Site.URL()
-	if err != nil || len(disqusID) == 0 {
-		// Otherwise don't set the assets.
-		return nil, nil
-	}
+	// URL, err := p.Site.URL()
+	// if err != nil || len(disqusID) == 0 {
+	// 	// Otherwise don't set the assets.
+	// 	return nil, nil
+	// }
 
 	return []core.Asset{
 		{
@@ -77,18 +77,18 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 					Find:    "{{DisqusID}}",
 					Replace: disqusID,
 				},
-				{
-					Find:    "{{SiteURL}}",
-					Replace: URL,
-				},
-				{
-					Find:    "{{.posturl}}",
-					Replace: "789",
-				},
-				{
-					Find:    "{{.id}}",
-					Replace: "101",
-				},
+				// {
+				// 	Find:    "{{SiteURL}}",
+				// 	Replace: URL,
+				// },
+				// {
+				// 	Find:    "{{.posturl}}",
+				// 	Replace: "789",
+				// },
+				// {
+				// 	Find:    "{{.id}}",
+				// 	Replace: "101",
+				// },
 			},
 		},
 		{

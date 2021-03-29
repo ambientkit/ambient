@@ -4,10 +4,17 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
+	"github.com/oxtoacart/bpool"
 )
 
+// bufpool is used to write out HTML after it's been executed and before it's
+// written to the ResponseWriter to catch any partially written templates.
+var bufpool *bpool.BufferPool = bpool.NewBufferPool(64)
+
 // InjectPlugins will return a template and an error.
-func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames []string) (*template.Template, error) {
+func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames []string, pageURL string) (*template.Template, error) {
 	pluginHead := ""
 	pluginMain := ""
 	pluginBody := ""
@@ -57,20 +64,40 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames [
 		//pluginBody += v.Body()
 	}
 
-	content := fmt.Sprintf(`{{define "PluginHeadContent"}}%s{{end}}`, pluginHead)
-	var err error
+	// Expose the variables to the plugin templates.
+	data := map[string]interface{}{
+		"SiteURL": c.Storage.Site.SiteURL(),
+		"PageURL": pageURL,
+	}
+
+	head, err := templatebuffer.ParseTemplate(pluginHead, data)
+	if err != nil {
+		return nil, err
+	}
+
+	content := fmt.Sprintf(`{{define "PluginHeadContent"}}%s{{end}}`, head)
 	t, err = t.Parse(content)
 	if err != nil {
 		return nil, err
 	}
 
-	main := fmt.Sprintf(`{{define "PluginMainContent"}}%s{{end}}`, pluginMain)
-	t, err = t.Parse(main)
+	main, err := templatebuffer.ParseTemplate(pluginMain, data)
 	if err != nil {
 		return nil, err
 	}
 
-	content = fmt.Sprintf(`{{define "PluginBodyContent"}}%s{{end}}`, pluginBody)
+	content = fmt.Sprintf(`{{define "PluginMainContent"}}%s{{end}}`, main)
+	t, err = t.Parse(content)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := templatebuffer.ParseTemplate(pluginBody, data)
+	if err != nil {
+		return nil, err
+	}
+
+	content = fmt.Sprintf(`{{define "PluginBodyContent"}}%s{{end}}`, body)
 	t, err = t.Parse(content)
 	if err != nil {
 		return nil, err

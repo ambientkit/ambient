@@ -88,7 +88,7 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 	}
 
 	// Parse the template.
-	t, err := te.postTemplate(r, mainTemplate)
+	t, err := te.postTemplate(r, mainTemplate, post.URL)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}

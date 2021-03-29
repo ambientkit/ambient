@@ -13,7 +13,7 @@ bin = "tmp/main"
 # Customize binary.
 full_bin = "AMB_LOCAL=true ./tmp/main"
 # Watch these filename extensions.
-include_ext = ["go", "tmpl", "css"]
+include_ext = ["go", "tmpl", "css", "js"]
 # Ignore these filename extensions or directories.
 exclude_dir = ["tmp", "vendor"]
 # Watch these directories if you specified.
