@@ -1,6 +1,6 @@
 var disqus_config = function () {
     this.page.url = '{{.SiteURL}}{{.PageURL}}';
-    this.page.identifier = '{{.id}}';
+    this.page.identifier = '{{.SiteURL}}{{.PageURL}}';
 };
 (function () {
     var d = document, s = d.createElement('script');
