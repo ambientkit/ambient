@@ -1,3 +1,4 @@
+// Package html is the base templates and functions for rendering the application.
 package html
 
 import (
@@ -12,6 +13,7 @@ import (
 	"github.com/josephspurrier/ambient/app/model"
 )
 
+// Templates is the embedded files.
 //go:embed *
 var Templates embed.FS
 
