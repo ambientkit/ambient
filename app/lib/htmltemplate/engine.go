@@ -121,33 +121,6 @@ func (te *Engine) post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 	return
 }
 
-// PluginTemplate -
-func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, mainTemplate string, assets embed.FS, partialTemplate string, vars map[string]interface{}) (status int, err error) {
-	// Set the status to OK starting out.
-	status = http.StatusOK
-
-	// Parse the main template with the functions.
-	// FIXME: This shouldn't be dashboard.
-	t, err := te.generateTemplate(r, mainTemplate, "dashboard")
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	// Parse the plugin template.
-	t, err = t.ParseFS(assets, fmt.Sprintf("%v.tmpl", partialTemplate))
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, t, status, vars)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	return
-}
-
 func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutType string) (*template.Template, error) {
 	// Functions available in the templates.
 	fm := te.templateManager.FuncMap(r)

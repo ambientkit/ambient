@@ -263,7 +263,8 @@ type IRouter interface {
 
 // IRender represents a template rendered.
 type IRender interface {
-	PluginTemplate(w http.ResponseWriter, r *http.Request, mainTemplate string, assets embed.FS, templateName string, vars map[string]interface{}) (status int, err error)
+	PluginDashboard(w http.ResponseWriter, r *http.Request, assets embed.FS, templateName string, vars map[string]interface{}) (status int, err error)
+	PluginPage(w http.ResponseWriter, r *http.Request, assets embed.FS, templateName string, vars map[string]interface{}) (status int, err error)
 }
 
 // ISecurity -
