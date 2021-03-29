@@ -16,19 +16,8 @@ type XMLUtil struct {
 }
 
 func registerXMLUtil(c *XMLUtil) {
-	c.Router.Get("/robots.txt", c.Robots)
 	c.Router.Get("/sitemap.xml", c.sitemap)
 	c.Router.Get("/rss.xml", c.rss)
-}
-
-// Robots returns a page for web crawlers.
-func (c *XMLUtil) Robots(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	w.Header().Set("Content-Type", "text/plain")
-	text :=
-		`User-agent: *
-Allow: /`
-	fmt.Fprint(w, text)
-	return
 }
 
 func (c *XMLUtil) sitemap(w http.ResponseWriter, r *http.Request) (status int, err error) {

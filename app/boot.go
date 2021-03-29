@@ -24,6 +24,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/hello"
 	"github.com/josephspurrier/ambient/plugin/plugins"
 	"github.com/josephspurrier/ambient/plugin/prism"
+	"github.com/josephspurrier/ambient/plugin/robots"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
 )
 
@@ -112,6 +113,7 @@ func Boot() (http.Handler, error) {
 		googleanalytics.New(),
 		disqus.New(),
 		hello.New(),
+		robots.New(),
 	}
 
 	pluginNames := make([]string, 0)
