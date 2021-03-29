@@ -8,33 +8,33 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
-	"github.com/josephspurrier/ambient/app/lib/websession"
-	"github.com/josephspurrier/ambient/html"
 )
+
+// TemplateManager represents a function map for templates.
+type TemplateManager interface {
+	FuncMap(r *http.Request) template.FuncMap
+	Templates() embed.FS
+}
 
 // AssetInjector represents code that can inject files into a template.
 type AssetInjector interface {
-	InjectPlugins(t *template.Template, r *http.Request, pluginNames []string, pageURL string) (*template.Template, error)
+	Inject(t *template.Template, r *http.Request, pluginNames []string, pageURL string) (*template.Template, error)
 }
 
 // Engine represents a HTML template engine.
 type Engine struct {
 	allowUnsafeHTML bool
-	storage         *datastorage.Storage
-	sess            *websession.Session
+	templateManager TemplateManager
 	assetInjector   AssetInjector
 	pluginNames     []string
 }
 
 // New returns a HTML template engine.
-func New(allowUnsafeHTML bool, storage *datastorage.Storage, sess *websession.Session,
-	pluginNames []string, assetInjector AssetInjector) *Engine {
+func New(allowUnsafeHTML bool, templateManager TemplateManager, assetInjector AssetInjector, pluginNames []string) *Engine {
 	return &Engine{
 		allowUnsafeHTML: allowUnsafeHTML,
-		storage:         storage,
-		sess:            sess,
+		templateManager: templateManager,
 		assetInjector:   assetInjector,
 		pluginNames:     pluginNames,
 	}
@@ -69,7 +69,7 @@ func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate s
 
 	// Parse the partial template.
 	contentTemplate := fmt.Sprintf("content/%v.tmpl", partialTemplate)
-	t, err = t.ParseFS(html.Templates, contentTemplate)
+	t, err = t.ParseFS(te.templateManager.Templates(), contentTemplate)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -141,7 +141,7 @@ func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, assets 
 
 func (te *Engine) generateTemplate(r *http.Request, mainTemplate string) (*template.Template, error) {
 	// Functions available in the templates.
-	fm := html.FuncMap(r, te.storage, te.sess)
+	fm := te.templateManager.FuncMap(r)
 
 	// Generate list of templates.
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
@@ -154,13 +154,13 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string) (*templ
 	}
 
 	// Parse the main template with the functions.
-	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, templates...)
+	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(te.templateManager.Templates(), templates...)
 	if err != nil {
 		return nil, err
 	}
 
 	// Inject the plugins.
-	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames, r.URL.Path)
+	t, err = te.assetInjector.Inject(t, r, te.pluginNames, r.URL.Path)
 	if err != nil {
 		return nil, err
 	}

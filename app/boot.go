@@ -17,6 +17,7 @@ import (
 	"github.com/josephspurrier/ambient/app/middleware"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
+	"github.com/josephspurrier/ambient/html"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
 	"github.com/josephspurrier/ambient/plugin/disqus"
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
@@ -125,12 +126,9 @@ func Boot() (http.Handler, error) {
 	}
 
 	// Set up the template engine.
-	//FIXME: Don't use app like this.
-	tmpl := htmltemplate.New(allowHTML, storage, sess, pluginNames, &core.App{
-		Storage: storage,
-		Plugins: plugs,
-		Sess:    sess,
-	})
+	tm := html.NewTemplateManager(storage, sess)
+	pi := core.NewPlugininjector(storage, sess, plugs)
+	tmpl := htmltemplate.New(allowHTML, tm, pi, pluginNames)
 
 	// Set up the router.
 	mux := route.SetupRouter(tmpl)

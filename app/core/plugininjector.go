@@ -5,16 +5,29 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
-	"github.com/oxtoacart/bpool"
+	"github.com/josephspurrier/ambient/app/lib/websession"
 )
 
-// bufpool is used to write out HTML after it's been executed and before it's
-// written to the ResponseWriter to catch any partially written templates.
-var bufpool *bpool.BufferPool = bpool.NewBufferPool(64)
+// PluginInjector represents a plugin injector.
+type PluginInjector struct {
+	storage *datastorage.Storage
+	sess    *websession.Session
+	plugins *PluginSystem
+}
 
-// InjectPlugins will return a template and an error.
-func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames []string, pageURL string) (*template.Template, error) {
+// NewPlugininjector returns a PluginInjector.
+func NewPlugininjector(storage *datastorage.Storage, sess *websession.Session, plugins *PluginSystem) *PluginInjector {
+	return &PluginInjector{
+		storage: storage,
+		sess:    sess,
+		plugins: plugins,
+	}
+}
+
+// Inject will return a template and an error.
+func (c *PluginInjector) Inject(t *template.Template, r *http.Request, pluginNames []string, pageURL string) (*template.Template, error) {
 	pluginHead := ""
 	pluginMain := ""
 	pluginBody := ""
@@ -22,12 +35,12 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames [
 	// Loop through each of the plugins.
 	// Use the plugin names because it's ordered.
 	for _, name := range pluginNames {
-		plugin, ok := c.Storage.Site.PluginSettings[name]
+		plugin, ok := c.storage.Site.PluginSettings[name]
 		if !ok || !plugin.Enabled || !plugin.Found {
 			continue
 		}
 
-		v, found := c.Plugins.Plugins[name]
+		v, found := c.plugins.Plugins[name]
 		if !found {
 			fmt.Println("Plugin is missing - should never see this:", name)
 			continue
@@ -38,7 +51,7 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames [
 			continue
 		}
 
-		_, loggedIn := c.Sess.User(r)
+		_, loggedIn := c.sess.User(r)
 		for _, file := range files {
 			// Handle authentication on resources without changing resources.
 			if !authAssetAllowed(loggedIn, file) {
@@ -66,7 +79,7 @@ func (c *App) InjectPlugins(t *template.Template, r *http.Request, pluginNames [
 
 	// Expose the variables to the plugin templates.
 	data := map[string]interface{}{
-		"SiteURL": c.Storage.Site.SiteURL(),
+		"SiteURL": c.storage.Site.SiteURL(),
 		"PageURL": pageURL,
 	}
 
