@@ -9,9 +9,9 @@ import (
 	"path"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
+	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
 	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/html"
-	"github.com/oxtoacart/bpool"
 )
 
 // AssetInjector represents code that can inject files into a template.
@@ -54,14 +54,13 @@ func (te *Engine) ErrorTemplate(w http.ResponseWriter, r *http.Request, mainTemp
 	return te.partial(w, r, mainTemplate, partialTemplate, http.StatusNotFound, vars)
 }
 
-// bufpool is used to write out HTML after it's been executed and before it's
-// written to the ResponseWriter to catch any partially written templates.
-var bufpool *bpool.BufferPool = bpool.NewBufferPool(64)
-
 // partialTemplate converts content from markdown to HTML and then outputs to
 // a response writer. Returns an HTTP status code and an error if one occurs.
 func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate string,
 	partialTemplate string, statusCode int, vars map[string]interface{}) (status int, err error) {
+	// Set the status to passed in value.
+	status = statusCode
+
 	// Parse the main template with the functions.
 	t, err := te.generateTemplate(r, mainTemplate)
 	if err != nil {
@@ -75,28 +74,22 @@ func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate s
 		return http.StatusInternalServerError, err
 	}
 
-	// Output the status code.
-	w.WriteHeader(statusCode)
-
-	// Write temporarily to a buffer pool
-	buf := bufpool.Get()
-	defer bufpool.Put(buf)
-
-	// Execute the template.
-	if err := t.Execute(buf, vars); err != nil {
+	// Execute the template and write out if no error.
+	err = templatebuffer.ParseExistingTemplate(w, t, status, vars)
+	if err != nil {
 		return http.StatusInternalServerError, err
 	}
 
-	// Write out the template.
-	buf.WriteTo(w)
-
-	return statusCode, nil
+	return
 }
 
 // Post converts a site post from markdown to HTML and then outputs to response
 // writer. Returns an HTTP status code and an error if one occurs.
 func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate string,
 	postContent string, vars map[string]interface{}) (status int, err error) {
+	// Set the status to OK starting out.
+	status = http.StatusOK
+
 	// Parse the main template with the functions.
 	t, err := te.generateTemplate(r, mainTemplate)
 	if err != nil {
@@ -109,19 +102,13 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 		return http.StatusInternalServerError, err
 	}
 
-	// Write temporarily to a buffer pool
-	buf := bufpool.Get()
-	defer bufpool.Put(buf)
-
-	// Execute the template.
-	if err := t.Execute(buf, vars); err != nil {
+	// Execute the template and write out if no error.
+	err = templatebuffer.ParseExistingTemplate(w, t, status, vars)
+	if err != nil {
 		return http.StatusInternalServerError, err
 	}
 
-	// Write out the template.
-	buf.WriteTo(w)
-
-	return http.StatusOK, nil
+	return
 }
 
 // PluginTemplate -
@@ -143,20 +130,11 @@ func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, assets 
 		return http.StatusInternalServerError, err
 	}
 
-	// Write temporarily to a buffer pool
-	buf := bufpool.Get()
-	defer bufpool.Put(buf)
-
-	// Execute the template.
-	if err := t.Execute(buf, vars); err != nil {
+	// Execute the template and write out if no error.
+	err = templatebuffer.ParseExistingTemplate(w, t, status, vars)
+	if err != nil {
 		return http.StatusInternalServerError, err
 	}
-
-	// Output the status code.
-	w.WriteHeader(status)
-
-	// Write out the template.
-	buf.WriteTo(w)
 
 	return
 }

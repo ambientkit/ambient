@@ -4,6 +4,7 @@ package templatebuffer
 
 import (
 	"html/template"
+	"net/http"
 
 	"github.com/oxtoacart/bpool"
 )
@@ -33,4 +34,25 @@ func ParseTemplate(body string, data map[string]interface{}) (string, error) {
 	}
 
 	return buf.String(), nil
+}
+
+// ParseExistingTemplate will parse a template and return the string and an error.
+func ParseExistingTemplate(w http.ResponseWriter, tmpl *template.Template, status int, data map[string]interface{}) error {
+	// Write temporarily to a buffer pool.
+	buf := bufpool.Get()
+	defer bufpool.Put(buf)
+
+	// Execute the template.
+	err := tmpl.Execute(buf, data)
+	if err != nil {
+		return err
+	}
+
+	// Output the status code.
+	w.WriteHeader(status)
+
+	// Write out the template.
+	_, err = w.Write(buf.Bytes())
+
+	return err
 }
