@@ -3,13 +3,22 @@ package htmltemplate
 
 import (
 	"embed"
+	"fmt"
+	"html/template"
 	"net/http"
+	"path"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
+	"github.com/josephspurrier/ambient/html"
 	"github.com/oxtoacart/bpool"
 )
+
+// AssetInjector represents code that can inject files into a template.
+type AssetInjector interface {
+	InjectPlugins(t *template.Template, r *http.Request, pluginNames []string, pageURL string) (*template.Template, error)
+}
 
 // Engine represents a HTML template engine.
 type Engine struct {
@@ -54,8 +63,15 @@ var bufpool *bpool.BufferPool = bpool.NewBufferPool(64)
 // a response writer. Returns an HTTP status code and an error if one occurs.
 func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate string,
 	partialTemplate string, statusCode int, vars map[string]interface{}) (status int, err error) {
-	// Parse the template.
-	t, err := te.partialTemplate(r, mainTemplate, partialTemplate)
+	// Parse the main template with the functions.
+	t, err := te.generateTemplate(r, mainTemplate)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// Parse the partial template.
+	contentTemplate := fmt.Sprintf("content/%v.tmpl", partialTemplate)
+	t, err = t.ParseFS(html.Templates, contentTemplate)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -87,8 +103,8 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 		return http.StatusNotFound, nil
 	}
 
-	// Parse the template.
-	t, err := te.postTemplate(r, mainTemplate)
+	// Parse the main template with the functions.
+	t, err := te.generateTemplate(r, mainTemplate)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -120,8 +136,15 @@ func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, assets 
 	// Set the status to OK starting out.
 	status = http.StatusOK
 
-	// Parse the template.
-	t, err := te.pluginTemplate(r, assets, "layout/dashboard", partialTemplate)
+	// Parse the main template with the functions.
+	// FIXME: Shouldn't just use the dashboard layout.
+	t, err := te.generateTemplate(r, "layout/dashboard")
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// Parse the plugin template.
+	t, err = t.ParseFS(assets, partialTemplate)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -142,4 +165,33 @@ func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, assets 
 	buf.WriteTo(w)
 
 	return
+}
+
+func (te *Engine) generateTemplate(r *http.Request, mainTemplate string) (*template.Template, error) {
+	// Functions available in the templates.
+	fm := html.FuncMap(r, te.storage, te.sess)
+
+	// Generate list of templates.
+	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
+	templates := []string{
+		baseTemplate,
+		"partial/head.tmpl",
+		"partial/header.tmpl",
+		"partial/nav.tmpl",
+		"partial/footer.tmpl",
+	}
+
+	// Parse the main template with the functions.
+	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(html.Templates, templates...)
+	if err != nil {
+		return nil, err
+	}
+
+	// Inject the plugins.
+	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames, r.URL.Path)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
 }
