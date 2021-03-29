@@ -33,7 +33,7 @@ func (te *Engine) partialTemplate(r *http.Request, mainTemplate string, partialT
 		return nil, err
 	}
 
-	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames, "")
+	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames, r.URL.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (te *Engine) pluginTemplate(r *http.Request, assets embed.FS, mainTemplate 
 		return nil, err
 	}
 
-	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames, "")
+	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames, r.URL.Path)
 	if err != nil {
 		return nil, err
 	}
