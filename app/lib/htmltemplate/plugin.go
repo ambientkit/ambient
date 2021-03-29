@@ -29,6 +29,7 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 	}
 
 	// Parse the plugin template.
+	// FIXME: Should parse separately for added security.
 	t, err = t.ParseFS(assets, fmt.Sprintf("%v.tmpl", partialTemplate))
 	if err != nil {
 		return http.StatusInternalServerError, err
