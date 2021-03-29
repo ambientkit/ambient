@@ -112,14 +112,13 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 }
 
 // PluginTemplate -
-func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, assets embed.FS,
-	partialTemplate string, vars map[string]interface{}) (status int, err error) {
+func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, mainTemplate string,
+	assets embed.FS, partialTemplate string, vars map[string]interface{}) (status int, err error) {
 	// Set the status to OK starting out.
 	status = http.StatusOK
 
 	// Parse the main template with the functions.
-	// FIXME: Shouldn't just use the dashboard layout.
-	t, err := te.generateTemplate(r, "layout/dashboard")
+	t, err := te.generateTemplate(r, mainTemplate)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
