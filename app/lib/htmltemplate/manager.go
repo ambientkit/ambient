@@ -41,7 +41,7 @@ func (te *Engine) partialTemplate(r *http.Request, mainTemplate string, partialT
 	return t, nil
 }
 
-func (te *Engine) postTemplate(r *http.Request, mainTemplate string, pageURL string) (*template.Template, error) {
+func (te *Engine) postTemplate(r *http.Request, mainTemplate string) (*template.Template, error) {
 	// Functions available in the templates.
 	fm := html.FuncMap(r, te.storage, te.sess)
 
@@ -57,7 +57,7 @@ func (te *Engine) postTemplate(r *http.Request, mainTemplate string, pageURL str
 		return nil, err
 	}
 
-	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames, pageURL)
+	t, err = te.assetInjector.InjectPlugins(t, r, te.pluginNames, r.URL.Path)
 	if err != nil {
 		return nil, err
 	}
