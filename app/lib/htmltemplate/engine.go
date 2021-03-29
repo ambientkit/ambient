@@ -124,7 +124,7 @@ func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, mainTem
 	}
 
 	// Parse the plugin template.
-	t, err = t.ParseFS(assets, partialTemplate)
+	t, err = t.ParseFS(assets, fmt.Sprintf("%v.tmpl", partialTemplate))
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}

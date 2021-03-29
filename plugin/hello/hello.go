@@ -42,5 +42,5 @@ func (p *Plugin) Routes() {
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	vars := make(map[string]interface{})
 	vars["title"] = "Plugins"
-	return p.Render.PluginTemplate(w, r, "layout/dashboard", assets, "template/hello.tmpl", vars)
+	return p.Render.PluginTemplate(w, r, "layout/dashboard", assets, "template/hello", vars)
 }
