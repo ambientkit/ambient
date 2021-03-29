@@ -27,7 +27,8 @@ func NewPlugininjector(storage *datastorage.Storage, sess *websession.Session, p
 }
 
 // Inject will return a template and an error.
-func (c *PluginInjector) Inject(t *template.Template, r *http.Request, pluginNames []string, pageURL string) (*template.Template, error) {
+func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
+	pluginNames []string, layoutType string) (*template.Template, error) {
 	pluginHead := ""
 	pluginMain := ""
 	pluginBody := ""
@@ -58,6 +59,20 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request, pluginNam
 				continue
 			}
 
+			// Determine if the asset is allowed on the current page type.
+			if len(file.LayoutOnly) > 0 {
+				allowed := false
+				for _, layout := range file.LayoutOnly {
+					if string(layout) == layoutType {
+						allowed = true
+						break
+					}
+				}
+				if !allowed {
+					continue
+				}
+			}
+
 			// Convert the asset to an element.
 			txt := file.Element(v, assets)
 
@@ -80,7 +95,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request, pluginNam
 	// Expose the variables to the plugin templates.
 	data := map[string]interface{}{
 		"SiteURL": c.storage.Site.SiteURL(),
-		"PageURL": pageURL,
+		"PageURL": r.URL.Path,
 	}
 
 	head, err := templatebuffer.ParseTemplate(pluginHead, data)

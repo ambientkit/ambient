@@ -14,12 +14,12 @@ import (
 // TemplateManager represents a function map for templates.
 type TemplateManager interface {
 	FuncMap(r *http.Request) template.FuncMap
-	Templates() embed.FS
+	Templates() *embed.FS
 }
 
 // AssetInjector represents code that can inject files into a template.
 type AssetInjector interface {
-	Inject(t *template.Template, r *http.Request, pluginNames []string, pageURL string) (*template.Template, error)
+	Inject(t *template.Template, r *http.Request, pluginNames []string, layoutType string) (*template.Template, error)
 }
 
 // Engine represents a HTML template engine.
@@ -40,29 +40,40 @@ func New(allowUnsafeHTML bool, templateManager TemplateManager, assetInjector As
 	}
 }
 
-// Template renders HTML to a response writer and returns a 200 status code and
-// an error if one occurs.
-func (te *Engine) Template(w http.ResponseWriter, r *http.Request, mainTemplate string,
-	partialTemplate string, vars map[string]interface{}) (status int, err error) {
-	return te.partial(w, r, mainTemplate, partialTemplate, http.StatusOK, vars)
+// Post renders using the post layout.
+func (te *Engine) Post(w http.ResponseWriter, r *http.Request, postContent string, vars map[string]interface{}) (status int, err error) {
+	return te.post(w, r, "layout/post", "post", postContent, vars)
 }
 
-// ErrorTemplate renders HTML to a response writer and returns a 404 status code
+// Page renders using the page layout.
+func (te *Engine) Page(w http.ResponseWriter, r *http.Request, postContent string, vars map[string]interface{}) (status int, err error) {
+	return te.post(w, r, "layout/page", "page", postContent, vars)
+}
+
+// Bloglist renders using the bloglist layout.
+func (te *Engine) Bloglist(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
+	return te.partial(w, r, "layout/bloglist", "bloglist", partialTemplate, http.StatusOK, vars)
+}
+
+// Dashboard renders using the dashboard layout.
+func (te *Engine) Dashboard(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
+	return te.partial(w, r, "layout/dashboard", "dashboard", partialTemplate, http.StatusOK, vars)
+}
+
+// Error renders HTML to a response writer and returns a 404 status code
 // and an error if one occurs.
-func (te *Engine) ErrorTemplate(w http.ResponseWriter, r *http.Request, mainTemplate string,
-	partialTemplate string, vars map[string]interface{}) (status int, err error) {
-	return te.partial(w, r, mainTemplate, partialTemplate, http.StatusNotFound, vars)
+func (te *Engine) Error(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
+	return te.partial(w, r, "layout/page", "page", partialTemplate, http.StatusNotFound, vars)
 }
 
 // partialTemplate converts content from markdown to HTML and then outputs to
 // a response writer. Returns an HTTP status code and an error if one occurs.
-func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate string,
-	partialTemplate string, statusCode int, vars map[string]interface{}) (status int, err error) {
+func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, partialTemplate string, statusCode int, vars map[string]interface{}) (status int, err error) {
 	// Set the status to passed in value.
 	status = statusCode
 
 	// Parse the main template with the functions.
-	t, err := te.generateTemplate(r, mainTemplate)
+	t, err := te.generateTemplate(r, mainTemplate, layoutType)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -85,13 +96,12 @@ func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate s
 
 // Post converts a site post from markdown to HTML and then outputs to response
 // writer. Returns an HTTP status code and an error if one occurs.
-func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate string,
-	postContent string, vars map[string]interface{}) (status int, err error) {
+func (te *Engine) post(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, postContent string, vars map[string]interface{}) (status int, err error) {
 	// Set the status to OK starting out.
 	status = http.StatusOK
 
 	// Parse the main template with the functions.
-	t, err := te.generateTemplate(r, mainTemplate)
+	t, err := te.generateTemplate(r, mainTemplate, layoutType)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -112,13 +122,13 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 }
 
 // PluginTemplate -
-func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, mainTemplate string,
-	assets embed.FS, partialTemplate string, vars map[string]interface{}) (status int, err error) {
+func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, mainTemplate string, assets embed.FS, partialTemplate string, vars map[string]interface{}) (status int, err error) {
 	// Set the status to OK starting out.
 	status = http.StatusOK
 
 	// Parse the main template with the functions.
-	t, err := te.generateTemplate(r, mainTemplate)
+	// FIXME: This shouldn't be dashboard.
+	t, err := te.generateTemplate(r, mainTemplate, "dashboard")
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -138,7 +148,7 @@ func (te *Engine) PluginTemplate(w http.ResponseWriter, r *http.Request, mainTem
 	return
 }
 
-func (te *Engine) generateTemplate(r *http.Request, mainTemplate string) (*template.Template, error) {
+func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutType string) (*template.Template, error) {
 	// Functions available in the templates.
 	fm := te.templateManager.FuncMap(r)
 
@@ -159,7 +169,7 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string) (*templ
 	}
 
 	// Inject the plugins.
-	t, err = te.assetInjector.Inject(t, r, te.pluginNames, r.URL.Path)
+	t, err = te.assetInjector.Inject(t, r, te.pluginNames, layoutType)
 	if err != nil {
 		return nil, err
 	}

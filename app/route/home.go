@@ -31,7 +31,7 @@ func (c *HomePost) show(w http.ResponseWriter, r *http.Request) (status int, err
 	}
 
 	vars := make(map[string]interface{})
-	return c.Render.Post(w, r, "layout/page", p.Content, vars)
+	return c.Render.Page(w, r, p.Content, vars)
 }
 
 func (c *HomePost) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -55,7 +55,7 @@ func (c *HomePost) edit(w http.ResponseWriter, r *http.Request) (status int, err
 	vars["loginurl"] = c.Storage.Site.LoginURL
 	vars["footer"] = c.Storage.Site.Footer
 
-	return c.Render.Template(w, r, "layout/dashboard", "home_edit", vars)
+	return c.Render.Dashboard(w, r, "home_edit", vars)
 }
 
 func (c *HomePost) update(w http.ResponseWriter, r *http.Request) (status int, err error) {

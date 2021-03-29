@@ -31,8 +31,8 @@ func NewTemplateManager(storage *datastorage.Storage, sess *websession.Session) 
 }
 
 // Templates returns the embedded templates.
-func (f *TemplateManager) Templates() embed.FS {
-	return templates
+func (f *TemplateManager) Templates() *embed.FS {
+	return &templates
 }
 
 // FuncMap returns a map of template functions that can be used in templates.

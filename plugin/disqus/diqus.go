@@ -55,45 +55,36 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		return nil, nil
 	}
 
-	// URL, err := p.Site.URL()
-	// if err != nil || len(disqusID) == 0 {
-	// 	// Otherwise don't set the assets.
-	// 	return nil, nil
-	// }
-
 	return []core.Asset{
 		{
 			Path:     "css/disqus.css",
 			Filetype: core.AssetStylesheet,
 			Location: core.LocationHead,
+			LayoutOnly: []core.LayoutType{
+				core.Post,
+			},
 		},
 		{
 			Path:     "js/disqus.js",
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
-			Inline:   true,
+			LayoutOnly: []core.LayoutType{
+				core.Post,
+			},
+			Inline: true,
 			Replace: []core.Replace{
 				{
 					Find:    "{{DisqusID}}",
 					Replace: disqusID,
 				},
-				// {
-				// 	Find:    "{{SiteURL}}",
-				// 	Replace: URL,
-				// },
-				// {
-				// 	Find:    "{{.posturl}}",
-				// 	Replace: "789",
-				// },
-				// {
-				// 	Find:    "{{.id}}",
-				// 	Replace: "101",
-				// },
 			},
 		},
 		{
-			Filetype:   core.AssetGeneric,
-			Location:   core.LocationMain,
+			Filetype: core.AssetGeneric,
+			Location: core.LocationMain,
+			LayoutOnly: []core.LayoutType{
+				core.Post,
+			},
 			TagName:    "div",
 			ClosingTag: true,
 			Attributes: []core.Attribute{

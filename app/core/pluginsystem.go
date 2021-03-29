@@ -90,7 +90,7 @@ type Snippet struct {
 	Embedded bool          `json:"embedded"`
 	Replace  []Replace     `json:"replace"`
 	Auth     AuthType      `json:"auth"`
-	Layout   LayoutType    `json:"layout"`
+	//Layout   LayoutType    `json:"layout"`
 	//Attributes []Attribute   `json:"attributes"`
 }
 
@@ -100,6 +100,7 @@ type Asset struct {
 	Location   AssetLocation `json:"location"`
 	Auth       AuthType      `json:"auth"`
 	Attributes []Attribute   `json:"attributes"`
+	LayoutOnly []LayoutType  `json:"layout"`
 
 	TagName    string `json:"tagname"`
 	ClosingTag bool   `json:"closingtag"`

@@ -36,7 +36,7 @@ func (c *AuthUtil) login(w http.ResponseWriter, r *http.Request) (status int, er
 	vars["title"] = "Login"
 	vars["token"] = c.Sess.SetCSRF(r)
 
-	return c.Render.Template(w, r, "layout/page", "login", vars)
+	return c.Render.Page(w, r, "login", vars)
 }
 
 func (c *AuthUtil) loginPost(w http.ResponseWriter, r *http.Request) (status int, err error) {
