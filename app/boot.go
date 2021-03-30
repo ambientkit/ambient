@@ -28,6 +28,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/rssfeed"
 	"github.com/josephspurrier/ambient/plugin/sitemap"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
+	"github.com/josephspurrier/ambient/plugin/styles"
 )
 
 var (
@@ -118,6 +119,7 @@ func Boot() (http.Handler, error) {
 		robots.New(),
 		sitemap.New(),
 		rssfeed.New(),
+		styles.New(),
 	}
 
 	pluginNames := make([]string, 0)

@@ -15,7 +15,6 @@ import (
 func Register(c *core.App) {
 	// Register routes.
 	registerHomePost(&HomePost{c})
-	registerStyles(&Styles{c})
 	registerAuthUtil(&AuthUtil{c})
 	registerAdminPost(&AdminPost{c})
 
