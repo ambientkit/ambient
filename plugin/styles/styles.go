@@ -50,6 +50,10 @@ func (p *Plugin) Fields() []core.Field {
 		{
 			Name: Styles,
 			Type: core.Textarea,
+			Description: core.FieldDescription{
+				Text: "No-class css themes.",
+				URL:  "https://www.cssbed.com/",
+			},
 		},
 	}
 }

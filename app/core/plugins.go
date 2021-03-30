@@ -83,6 +83,15 @@ func fieldArrayEqual(a []model.Field, b []Field) bool {
 		if v.Name != b[i].Name {
 			return false
 		}
+		if string(v.Type) != string(b[i].Type) {
+			return false
+		}
+		if v.Description.Text != b[i].Description.Text {
+			return false
+		}
+		if v.Description.URL != b[i].Description.URL {
+			return false
+		}
 	}
 	return true
 }
@@ -136,6 +145,7 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	}
 
 	// If the fields are different, then update it for saving.
+	// FIXME: This is highly coupled, may just want to save on each load.
 	if !fieldArrayEqual(plugin.Fields, v.Fields()) {
 		shouldSave = true
 		plugin.Fields = FieldList(v.Fields()).ModelFields()

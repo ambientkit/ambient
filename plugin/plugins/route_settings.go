@@ -9,9 +9,11 @@ import (
 
 // Field -
 type Field struct {
-	Index int
-	Name  string
-	Value string
+	Index       int
+	Name        string
+	Value       string
+	FieldType   model.FieldType
+	Description model.FieldDescription
 }
 
 func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -39,9 +41,11 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 		}
 
 		arr = append(arr, Field{
-			Index: i,
-			Name:  v.Name,
-			Value: curVal,
+			Index:       i,
+			Name:        v.Name,
+			Value:       curVal,
+			FieldType:   v.Type,
+			Description: v.Description,
 		})
 	}
 

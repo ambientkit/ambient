@@ -6,7 +6,20 @@
             {{range $id, $p := .settings}}
             <p>
                 <label for="id_field{{.Index}}">{{.Name}}:</label>
+                {{if eq .FieldType "textarea"}}
+                <textarea name="field{{.Index}}" id="id_field{{.Index}}" cols="40" rows="20">{{.Value}}</textarea>
+                {{else}}
                 <input type="input" name="field{{.Index}}" id="id_field{{.Index}}" value="{{.Value}}">
+                {{end}}
+                {{if .Description.Text}}
+                <span class="helptext">
+                    {{ if .Description.URL}}
+                    <a href='{{.Description.URL}}' target='_blank'>{{.Description.Text}}</a>
+                    {{else}}
+                    {{.Description.Text}}
+                    {{end}}
+                </span>
+                {{end}}
             </p>
             {{end}}
             <button type="submit" class="save btn btn-default">Save</button>
