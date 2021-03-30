@@ -146,6 +146,10 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	grants["plugin:setneighborfield"] = true
 	grants["plugin:getneighborfield"] = true
 	grants["site.url:read"] = true
+	grants["site.updated:read"] = true
+	grants["site.postsandpages:read"] = true
+	grants["site.tags:read"] = true
+	grants["site.description:read"] = true
 
 	recorder := router.NewRecorder(c.Router)
 
@@ -164,6 +168,7 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	}
 
 	// Load the routes.
+	fmt.Println("Loading routes!")
 	v.Routes()
 
 	// Load the assets.

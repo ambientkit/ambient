@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/router"
@@ -45,6 +46,16 @@ func (ss *SecureSite) Error(err error) (status int, errr error) {
 	default:
 		return http.StatusInternalServerError, err
 	}
+}
+
+// ErrorAccessDenied return true if the error is AccessDenied.
+func (ss *SecureSite) ErrorAccessDenied(err error) bool {
+	return err == ErrAccessDenied
+}
+
+// ErrorNotFound return true if the error is NotFound.
+func (ss *SecureSite) ErrorNotFound(err error) bool {
+	return err == ErrNotFound
 }
 
 // Authorized determines if the current context has access.
@@ -273,12 +284,46 @@ func (ss *SecureSite) NeighborPluginField(pluginName string, name string) (strin
 	return value, nil
 }
 
-// ErrorAccessDenied return true if the error is AccessDenied.
-func (ss *SecureSite) ErrorAccessDenied(err error) bool {
-	return err == ErrAccessDenied
+// Updated returns the home last updated timestamp.
+func (ss *SecureSite) Updated() (time.Time, error) {
+	grant := "site.updated:read"
+
+	if !ss.Authorized(grant) {
+		return time.Now(), ErrAccessDenied
+	}
+
+	return ss.storage.Site.Updated, nil
 }
 
-// ErrorNotFound return true if the error is NotFound.
-func (ss *SecureSite) ErrorNotFound(err error) bool {
-	return err == ErrNotFound
+// PostsAndPages returns the list of posts and pages.
+func (ss *SecureSite) PostsAndPages(onlyPublished bool) (model.PostWithIDList, error) {
+	grant := "site.postsandpages:read"
+
+	if !ss.Authorized(grant) {
+		return nil, ErrAccessDenied
+	}
+
+	return ss.storage.Site.PostsAndPages(onlyPublished), nil
+}
+
+// Tags returns the list of tags.
+func (ss *SecureSite) Tags(onlyPublished bool) (model.TagList, error) {
+	grant := "site.tags:read"
+
+	if !ss.Authorized(grant) {
+		return nil, ErrAccessDenied
+	}
+
+	return ss.storage.Site.Tags(onlyPublished), nil
+}
+
+// Description returns the site description.
+func (ss *SecureSite) Description() (string, error) {
+	grant := "site.description:read"
+
+	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	return ss.storage.Site.Description, nil
 }

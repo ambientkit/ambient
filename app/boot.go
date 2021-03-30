@@ -25,6 +25,8 @@ import (
 	"github.com/josephspurrier/ambient/plugin/plugins"
 	"github.com/josephspurrier/ambient/plugin/prism"
 	"github.com/josephspurrier/ambient/plugin/robots"
+	"github.com/josephspurrier/ambient/plugin/rssfeed"
+	"github.com/josephspurrier/ambient/plugin/sitemap"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
 )
 
@@ -114,6 +116,8 @@ func Boot() (http.Handler, error) {
 		disqus.New(),
 		hello.New(),
 		robots.New(),
+		sitemap.New(),
+		rssfeed.New(),
 	}
 
 	pluginNames := make([]string, 0)
