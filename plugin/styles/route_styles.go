@@ -1,6 +1,23 @@
 package styles
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
+
+// index returns CSS file.
+func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	// Get the styles.
+	s, err := p.Site.PluginField(Styles)
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
+	w.Header().Set("Content-Type", "text/css")
+
+	fmt.Fprint(w, s)
+	return
+}
 
 func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	// Get the favicon.

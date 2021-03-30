@@ -62,9 +62,6 @@ func (f *TemplateManager) FuncMap(r *http.Request) template.FuncMap {
 	fm["SiteAuthor"] = func() string {
 		return f.storage.Site.Author
 	}
-	fm["SiteFavicon"] = func() string {
-		return f.storage.Site.Favicon
-	}
 	fm["Authenticated"] = func() bool {
 		// If user is not authenticated, don't allow them to access the page.
 		_, loggedIn := f.sess.User(r)
@@ -75,9 +72,6 @@ func (f *TemplateManager) FuncMap(r *http.Request) template.FuncMap {
 	}
 	fm["MFAEnabled"] = func() bool {
 		return len(os.Getenv("AMB_MFA_KEY")) > 0
-	}
-	fm["SiteStyles"] = func() template.CSS {
-		return template.CSS(f.storage.Site.Styles)
 	}
 
 	return fm

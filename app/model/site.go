@@ -12,7 +12,6 @@ type Site struct {
 	Title          string                    `json:"title"`
 	Subtitle       string                    `json:"subtitle"`
 	Author         string                    `json:"author"`
-	Favicon        string                    `json:"favicon"`
 	Description    string                    `json:"description"`
 	Footer         string                    `json:"footer"`
 	Scheme         string                    `json:"scheme"`
@@ -21,7 +20,6 @@ type Site struct {
 	Created        time.Time                 `json:"created"`
 	Updated        time.Time                 `json:"updated"`
 	Content        string                    `json:"content"` // Home content.
-	Styles         string                    `json:"styles"`
 	PluginSettings map[string]PluginSettings `json:"plugins"`
 	PluginFields   map[string]PluginFields   `json:"pluginfields"`
 	Posts          map[string]Post           `json:"posts"`
