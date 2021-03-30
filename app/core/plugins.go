@@ -208,8 +208,8 @@ func embeddedAssets(mux IRouter, sess *websession.Session, pluginName string, fi
 		// https://golang.org/doc/faq#closures_and_goroutines
 		file := unsafeFile
 
-		// Skip files that are not embedded.
-		if file.External || file.Inline {
+		// Skip files that are external, inline, or generic,
+		if !file.Routable() {
 			continue
 		}
 

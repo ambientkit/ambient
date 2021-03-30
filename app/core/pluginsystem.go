@@ -111,6 +111,15 @@ type Asset struct {
 	Replace  []Replace `json:"replace"`
 }
 
+// Routable returns true if the file can be served from the embedded filesystem.
+func (file Asset) Routable() bool {
+	if file.External || file.Inline || file.Filetype == AssetGeneric {
+		return false
+	}
+
+	return true
+}
+
 // SanitizedPath returns an HTML escaped asset path.
 func (file Asset) SanitizedPath() string {
 	return html.EscapeString(file.Path)
