@@ -41,9 +41,11 @@ const (
 )
 
 // Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []string {
-	return []string{
-		TrackingID,
+func (p *Plugin) Fields() []core.Field {
+	return []core.Field{
+		{
+			Name: TrackingID,
+		},
 	}
 }
 

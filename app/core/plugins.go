@@ -73,6 +73,20 @@ func (c *App) LoadAllPluginPages() error {
 	return nil
 }
 
+// fieldArrayEqual tells whether a and b contain the same elements.
+// A nil argument is equivalent to an empty slice.
+func fieldArrayEqual(a []model.Field, b []Field) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if v.Name != b[i].Name {
+			return false
+		}
+	}
+	return true
+}
+
 // stringArrayEqual tells whether a and b contain the same elements.
 // A nil argument is equivalent to an empty slice.
 func stringArrayEqual(a, b []string) bool {
@@ -122,9 +136,9 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	}
 
 	// If the fields are different, then update it for saving.
-	if !stringArrayEqual(plugin.Fields, v.Fields()) {
+	if !fieldArrayEqual(plugin.Fields, v.Fields()) {
 		shouldSave = true
-		plugin.Fields = v.Fields()
+		plugin.Fields = FieldList(v.Fields()).ModelFields()
 		c.Storage.Site.PluginSettings[name] = plugin
 	}
 

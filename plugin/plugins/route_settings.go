@@ -33,14 +33,14 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 
 	arr := make([]Field, 0)
 	for i, v := range settings.Fields {
-		curVal, err := p.Site.NeighborPluginField(pluginName, v)
+		curVal, err := p.Site.NeighborPluginField(pluginName, v.Name)
 		if p.Site.ErrorAccessDenied(err) {
 			return p.Site.Error(err)
 		}
 
 		arr = append(arr, Field{
 			Index: i,
-			Name:  v,
+			Name:  v.Name,
 			Value: curVal,
 		})
 	}
@@ -73,9 +73,9 @@ func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status 
 	}
 
 	// Loop through each plugin to get the settings then save.
-	for index, name := range settings.Fields {
+	for index, field := range settings.Fields {
 		val := r.FormValue(fmt.Sprintf("field%v", index))
-		err := p.Site.SetNeighborPluginField(pluginName, name, val)
+		err := p.Site.SetNeighborPluginField(pluginName, field.Name, val)
 		if p.Site.ErrorAccessDenied(err) {
 			return p.Site.Error(err)
 		}

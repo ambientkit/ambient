@@ -42,10 +42,15 @@ const (
 )
 
 // Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []string {
-	return []string{
-		Favicon,
-		Styles,
+func (p *Plugin) Fields() []core.Field {
+	return []core.Field{
+		{
+			Name: Favicon,
+		},
+		{
+			Name: Styles,
+			Type: core.Textarea,
+		},
 	}
 }
 

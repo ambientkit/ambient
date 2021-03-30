@@ -40,9 +40,11 @@ const (
 )
 
 // Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []string {
-	return []string{
-		DisqusID,
+func (p *Plugin) Fields() []core.Field {
+	return []core.Field{
+		{
+			Name: DisqusID,
+		},
 	}
 }
 
