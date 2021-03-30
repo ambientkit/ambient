@@ -327,3 +327,14 @@ func (ss *SecureSite) Description() (string, error) {
 
 	return ss.storage.Site.Description, nil
 }
+
+// Content returns the site home page content.
+func (ss *SecureSite) Content() (string, error) {
+	grant := "site.content:read"
+
+	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	return ss.storage.Site.Content, nil
+}

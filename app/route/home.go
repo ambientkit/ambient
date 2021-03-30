@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/model"
 )
 
 // HomePost -
@@ -14,24 +13,9 @@ type HomePost struct {
 }
 
 func registerHomePost(c *HomePost) {
-	c.Router.Get("/", c.show)
 	c.Router.Get("/dashboard", c.edit)
 	c.Router.Post("/dashboard", c.update)
 	c.Router.Get("/dashboard/reload", c.reload)
-}
-
-func (c *HomePost) show(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	p := model.Post{
-		Content: c.Storage.Site.Content,
-		URL:     "/",
-	}
-
-	if p.Content == "" {
-		p.Content = "*No content yet.*"
-	}
-
-	vars := make(map[string]interface{})
-	return c.Render.Page(w, r, p.Content, vars)
 }
 
 func (c *HomePost) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {

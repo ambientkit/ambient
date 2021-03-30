@@ -174,6 +174,7 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	grants["site.postsandpages:read"] = true
 	grants["site.tags:read"] = true
 	grants["site.description:read"] = true
+	grants["site.content:read"] = true
 
 	recorder := router.NewRecorder(c.Router)
 

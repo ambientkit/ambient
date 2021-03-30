@@ -22,6 +22,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/disqus"
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/hello"
+	"github.com/josephspurrier/ambient/plugin/home"
 	"github.com/josephspurrier/ambient/plugin/plugins"
 	"github.com/josephspurrier/ambient/plugin/prism"
 	"github.com/josephspurrier/ambient/plugin/robots"
@@ -120,6 +121,7 @@ func Boot() (http.Handler, error) {
 		sitemap.New(),
 		rssfeed.New(),
 		styles.New(),
+		home.New(),
 	}
 
 	pluginNames := make([]string, 0)
