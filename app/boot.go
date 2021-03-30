@@ -19,6 +19,7 @@ import (
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
+	"github.com/josephspurrier/ambient/plugin/charset"
 	"github.com/josephspurrier/ambient/plugin/disqus"
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/hello"
@@ -30,6 +31,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/sitemap"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
 	"github.com/josephspurrier/ambient/plugin/styles"
+	"github.com/josephspurrier/ambient/plugin/viewport"
 )
 
 var (
@@ -110,6 +112,8 @@ func Boot() (http.Handler, error) {
 
 	// Define the plugins.
 	arrPlugins := []core.IPlugin{
+		charset.New(),
+		viewport.New(),
 		bearcss.New(),
 		plugins.New(),
 		prism.New(),
