@@ -318,15 +318,15 @@ func (ss *SecureSite) Tags(onlyPublished bool) (model.TagList, error) {
 }
 
 // Description returns the site description.
-func (ss *SecureSite) Description() (string, error) {
-	grant := "site.description:read"
+// func (ss *SecureSite) Description() (string, error) {
+// 	grant := "site.description:read"
 
-	if !ss.Authorized(grant) {
-		return "", ErrAccessDenied
-	}
+// 	if !ss.Authorized(grant) {
+// 		return "", ErrAccessDenied
+// 	}
 
-	return ss.storage.Site.Description, nil
-}
+// 	return ss.storage.Site.Description, nil
+// }
 
 // Content returns the site home page content.
 func (ss *SecureSite) Content() (string, error) {

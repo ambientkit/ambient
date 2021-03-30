@@ -1,7 +1,6 @@
 {{define "head"}}
 <head>
     <title>{{if .title}}{{.title}} | {{end}}{{SiteTitle}}</title>
-    <meta name="description" content="{{if .metadescription}}{{.metadescription}}{{else}}{{SiteDescription}}{{end}}">
     {{if .canonical}}<link rel="canonical" href="{{.canonical}}" />{{end}}
     {{block "PluginHeadContent" ""}}{{end}}
 </head>

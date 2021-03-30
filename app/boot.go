@@ -21,6 +21,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
 	"github.com/josephspurrier/ambient/plugin/charset"
+	"github.com/josephspurrier/ambient/plugin/description"
 	"github.com/josephspurrier/ambient/plugin/disqus"
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/hello"
@@ -116,6 +117,7 @@ func Boot() (http.Handler, error) {
 		charset.New(),
 		viewport.New(),
 		author.New(),
+		description.New(),
 		bearcss.New(),
 		plugins.New(),
 		prism.New(),
