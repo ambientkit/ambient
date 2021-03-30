@@ -63,7 +63,9 @@ func (r *Router) Handle(method, pattern string, handler http.Handler) {
 		prefix:  strings.HasSuffix(pattern, "/") || strings.HasSuffix(pattern, "..."),
 	}
 	r.routes = append(r.routes, route)
-	sort.Sort(sort.Reverse(r.routes))
+
+	// Sort so the routes are in the proper order.
+	sort.Sort(r.routes)
 }
 
 // HandleFunc is the http.HandlerFunc alternative to http.Handle.
@@ -111,14 +113,26 @@ type routeList []*route
 func (s routeList) Len() int {
 	return len(s)
 }
+
 func (s routeList) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
+
 func (s routeList) Less(i, j int) bool {
 	var si string = s[i].pattern
 	var sj string = s[j].pattern
 	var siLower = strings.ToLower(si)
 	var sjLower = strings.ToLower(sj)
+	if strings.HasPrefix(sjLower, "/:") {
+		return true
+	} else if strings.HasPrefix(siLower, "/:") {
+		return false
+	} else if strings.Contains(sjLower, ":") && !strings.Contains(siLower, ":") {
+		return true
+	} else if !strings.Contains(sjLower, ":") && strings.Contains(siLower, ":") {
+		return false
+	}
+
 	if siLower == sjLower {
 		return si < sj
 	}

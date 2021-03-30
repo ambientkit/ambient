@@ -22,15 +22,26 @@ type routeList []route
 func (s routeList) Len() int {
 	return len(s)
 }
+
 func (s routeList) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
+
 func (s routeList) Less(i, j int) bool {
-	//return s[i].pattern < s[j].pattern
 	var si string = s[i].pattern
 	var sj string = s[j].pattern
 	var siLower = strings.ToLower(si)
 	var sjLower = strings.ToLower(sj)
+	if strings.HasPrefix(sjLower, "/:") {
+		return true
+	} else if strings.HasPrefix(siLower, "/:") {
+		return false
+	} else if strings.Contains(sjLower, ":") && !strings.Contains(siLower, ":") {
+		return true
+	} else if !strings.Contains(sjLower, ":") && strings.Contains(siLower, ":") {
+		return false
+	}
+
 	if siLower == sjLower {
 		return si < sj
 	}
@@ -45,6 +56,26 @@ func TestMain(t *testing.T) {
 		},
 		{
 			method:  "GET",
+			pattern: "/",
+		},
+		{
+			method:  "GET",
+			pattern: "/cool/balloon",
+		},
+		{
+			method:  "GET",
+			pattern: "/cool/:slug",
+		},
+		{
+			method:  "GET",
+			pattern: "/cool/another",
+		},
+		{
+			method:  "GET",
+			pattern: "/rss/:ok",
+		},
+		{
+			method:  "GET",
 			pattern: "/cool",
 		},
 		{
@@ -54,6 +85,12 @@ func TestMain(t *testing.T) {
 	}
 
 	assert.Equal(t, arr[0].pattern, "/:slug")
-	sort.Sort(sort.Reverse(arr))
-	assert.Equal(t, arr[2].pattern, "/:slug")
+	//sort.Sort(sort.Reverse(arr))
+	sort.Sort(arr)
+	assert.Equal(t, arr[0].pattern, "/")
+	assert.Equal(t, arr[len(arr)-1].pattern, "/:slug")
+
+	// for _, v := range arr {
+	// 	fmt.Println(v.method, v.pattern)
+	// }
 }
