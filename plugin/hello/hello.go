@@ -3,7 +3,6 @@ package hello
 
 import (
 	"embed"
-	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
@@ -37,10 +36,4 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
 	p.Router.Get("/dashboard/hello", p.index)
-}
-
-func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	vars := make(map[string]interface{})
-	vars["title"] = "Plugins"
-	return p.Render.PluginDashboard(w, r, assets, "template/hello", vars)
 }
