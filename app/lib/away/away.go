@@ -4,6 +4,7 @@ package away
 import (
 	"context"
 	"net/http"
+	"sort"
 	"strings"
 )
 
@@ -13,7 +14,7 @@ type wayContextKey string
 
 // Router routes HTTP requests.
 type Router struct {
-	routes []*route
+	routes routeList
 	// NotFound is the http.Handler to call when no routes
 	// match. By default uses http.NotFoundHandler().
 	NotFound http.Handler
@@ -62,6 +63,7 @@ func (r *Router) Handle(method, pattern string, handler http.Handler) {
 		prefix:  strings.HasSuffix(pattern, "/") || strings.HasSuffix(pattern, "..."),
 	}
 	r.routes = append(r.routes, route)
+	sort.Sort(sort.Reverse(r.routes))
 }
 
 // HandleFunc is the http.HandlerFunc alternative to http.Handle.
@@ -102,6 +104,25 @@ type route struct {
 	segs    []string
 	handler http.Handler
 	prefix  bool
+}
+
+type routeList []*route
+
+func (s routeList) Len() int {
+	return len(s)
+}
+func (s routeList) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s routeList) Less(i, j int) bool {
+	var si string = s[i].pattern
+	var sj string = s[j].pattern
+	var siLower = strings.ToLower(si)
+	var sjLower = strings.ToLower(sj)
+	if siLower == sjLower {
+		return si < sj
+	}
+	return siLower < sjLower
 }
 
 func (r *route) match(ctx context.Context, router *Router, segs []string) (context.Context, bool) {

@@ -168,7 +168,6 @@ func (c *App) LoadSinglePluginPages(name string) bool {
 	}
 
 	// Load the routes.
-	fmt.Println("Loading routes!")
 	v.Routes()
 
 	// Load the assets.
