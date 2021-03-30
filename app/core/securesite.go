@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
@@ -58,6 +59,20 @@ func (ss *SecureSite) ErrorNotFound(err error) bool {
 	return err == ErrNotFound
 }
 
+func escapeValue(s string) string {
+	last := s
+	before := s
+	after := ""
+	for before != after {
+		before = last
+		after = last
+		after = strings.ReplaceAll(after, "{{", "")
+		after = strings.ReplaceAll(after, "}}", "")
+		last = after
+	}
+	return after
+}
+
 // Authorized determines if the current context has access.
 func (ss *SecureSite) Authorized(grant string) bool {
 	//return true
@@ -89,7 +104,7 @@ func (ss *SecureSite) SetTitle(title string) error {
 		return ErrAccessDenied
 	}
 
-	ss.storage.Site.Title = title
+	ss.storage.Site.Title = escapeValue(title)
 
 	return ss.storage.Save()
 }
@@ -215,7 +230,7 @@ func (ss *SecureSite) SetPluginField(name string, value string) error {
 		}
 	}
 
-	fields.Fields[name] = value
+	fields.Fields[name] = escapeValue(value)
 	ss.storage.Site.PluginFields[ss.pluginName] = fields
 
 	return ss.storage.Save()
@@ -257,7 +272,7 @@ func (ss *SecureSite) SetNeighborPluginField(pluginName string, name string, val
 		}
 	}
 
-	fields.Fields[name] = value
+	fields.Fields[name] = escapeValue(value)
 	ss.storage.Site.PluginFields[pluginName] = fields
 
 	return ss.storage.Save()
