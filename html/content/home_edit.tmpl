@@ -10,10 +10,6 @@
         <input type="text" name="subtitle" value="{{.subtitle}}" maxlength="200" id="id_subtitle" required>
     </p>
     <p>
-        <label for="id_author">Site author:</label>
-        <input type="text" name="author" value="{{.pauthor}}" id="id_author" required>
-    </p>
-    <p>
         <label for="id_domain">Site url:</label>
         <select name="scheme" id="id_scheme" required>
             <option value="http" {{ if eq .scheme "http" }}selected{{ end }}>http</option>

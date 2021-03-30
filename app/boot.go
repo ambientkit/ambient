@@ -18,6 +18,7 @@ import (
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
+	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
 	"github.com/josephspurrier/ambient/plugin/charset"
 	"github.com/josephspurrier/ambient/plugin/disqus"
@@ -114,6 +115,7 @@ func Boot() (http.Handler, error) {
 	arrPlugins := []core.IPlugin{
 		charset.New(),
 		viewport.New(),
+		author.New(),
 		bearcss.New(),
 		plugins.New(),
 		prism.New(),

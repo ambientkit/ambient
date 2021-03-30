@@ -34,7 +34,6 @@ func (c *HomePost) edit(w http.ResponseWriter, r *http.Request) (status int, err
 	}
 
 	vars["scheme"] = c.Storage.Site.Scheme
-	vars["pauthor"] = c.Storage.Site.Author
 	vars["pdescription"] = c.Storage.Site.Description
 	vars["loginurl"] = c.Storage.Site.LoginURL
 	vars["footer"] = c.Storage.Site.Footer
@@ -56,7 +55,6 @@ func (c *HomePost) update(w http.ResponseWriter, r *http.Request) (status int, e
 	c.Storage.Site.URL = r.FormValue("domain")
 	c.Storage.Site.Content = r.FormValue("content")
 	c.Storage.Site.Scheme = r.FormValue("scheme")
-	c.Storage.Site.Author = r.FormValue("author")
 	c.Storage.Site.Description = r.FormValue("pdescription")
 	c.Storage.Site.LoginURL = r.FormValue("loginurl")
 	c.Storage.Site.Footer = r.FormValue("footer")

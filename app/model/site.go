@@ -11,7 +11,6 @@ import (
 type Site struct {
 	Title          string                    `json:"title"`
 	Subtitle       string                    `json:"subtitle"`
-	Author         string                    `json:"author"`
 	Description    string                    `json:"description"`
 	Footer         string                    `json:"footer"`
 	Scheme         string                    `json:"scheme"`
