@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/josephspurrier/ambient/app/lib/cachecontrol"
 	"github.com/oxtoacart/bpool"
 )
 
@@ -37,7 +38,7 @@ func ParseTemplate(body string, data map[string]interface{}) (string, error) {
 }
 
 // ParseExistingTemplate will parse a template and return the string and an error.
-func ParseExistingTemplate(w http.ResponseWriter, tmpl *template.Template, status int, data map[string]interface{}) error {
+func ParseExistingTemplate(w http.ResponseWriter, r *http.Request, tmpl *template.Template, status int, data map[string]interface{}) error {
 	// Write temporarily to a buffer pool.
 	buf := bufpool.Get()
 	defer bufpool.Put(buf)
@@ -48,11 +49,19 @@ func ParseExistingTemplate(w http.ResponseWriter, tmpl *template.Template, statu
 		return err
 	}
 
+	ff := buf.Bytes()
+
+	// Set the etag for cache control.
+	handled := cachecontrol.Handle(w, r, ff)
+	if handled {
+		return nil
+	}
+
 	// Output the status code.
 	w.WriteHeader(status)
 
 	// Write out the template.
-	_, err = w.Write(buf.Bytes())
+	_, err = w.Write(ff)
 
 	return err
 }

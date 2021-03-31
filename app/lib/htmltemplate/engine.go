@@ -69,9 +69,6 @@ func (te *Engine) Error(w http.ResponseWriter, r *http.Request, partialTemplate 
 // partialTemplate converts content from markdown to HTML and then outputs to
 // a response writer. Returns an HTTP status code and an error if one occurs.
 func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, partialTemplate string, statusCode int, vars map[string]interface{}) (status int, err error) {
-	// Set the status to passed in value.
-	status = statusCode
-
 	// Parse the main template with the functions.
 	t, err := te.generateTemplate(r, mainTemplate, layoutType)
 	if err != nil {
@@ -86,7 +83,7 @@ func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate s
 	}
 
 	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, t, status, vars)
+	err = templatebuffer.ParseExistingTemplate(w, r, t, statusCode, vars)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -97,9 +94,6 @@ func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate s
 // Post converts a site post from markdown to HTML and then outputs to response
 // writer. Returns an HTTP status code and an error if one occurs.
 func (te *Engine) post(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, postContent string, vars map[string]interface{}) (status int, err error) {
-	// Set the status to OK starting out.
-	status = http.StatusOK
-
 	// Parse the main template with the functions.
 	t, err := te.generateTemplate(r, mainTemplate, layoutType)
 	if err != nil {
@@ -113,7 +107,7 @@ func (te *Engine) post(w http.ResponseWriter, r *http.Request, mainTemplate stri
 	}
 
 	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, t, status, vars)
+	err = templatebuffer.ParseExistingTemplate(w, r, t, http.StatusOK, vars)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}

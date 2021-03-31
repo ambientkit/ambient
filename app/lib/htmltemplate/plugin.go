@@ -24,9 +24,6 @@ func (te *Engine) PluginPageContent(w http.ResponseWriter, r *http.Request, cont
 }
 
 func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, assets embed.FS, partialTemplate string, vars map[string]interface{}) (status int, err error) {
-	// Set the status to OK starting out.
-	status = http.StatusOK
-
 	// Parse the main template with the functions.
 	t, err := te.generateTemplate(r, mainTemplate, layoutType)
 	if err != nil {
@@ -41,7 +38,7 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 	}
 
 	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, t, status, vars)
+	err = templatebuffer.ParseExistingTemplate(w, r, t, http.StatusOK, vars)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -52,9 +49,6 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 // pluginContent converts a site post from markdown to HTML and then outputs to response
 // writer. Returns an HTTP status code and an error if one occurs.
 func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, postContent string, vars map[string]interface{}) (status int, err error) {
-	// Set the status to OK starting out.
-	status = http.StatusOK
-
 	// Parse the main template with the functions.
 	t, err := te.generateTemplate(r, mainTemplate, layoutType)
 	if err != nil {
@@ -68,7 +62,7 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 	}
 
 	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, t, status, vars)
+	err = templatebuffer.ParseExistingTemplate(w, r, t, http.StatusOK, vars)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}

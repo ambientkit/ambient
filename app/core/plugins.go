@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/josephspurrier/ambient/app/lib/cachecontrol"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/app/lib/websession"
@@ -266,6 +267,12 @@ func embeddedAssets(mux IRouter, sess *websession.Session, pluginName string, fi
 			ff, status, err := file.Contents(assets)
 			if status != http.StatusOK {
 				return status, err
+			}
+
+			// Set the etag for cache control.
+			handled := cachecontrol.Handle(w, r, ff)
+			if handled {
+				return
 			}
 
 			// Assets all have the same time so it's pointless to use the FS
