@@ -26,6 +26,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/hello"
 	"github.com/josephspurrier/ambient/plugin/home"
+	"github.com/josephspurrier/ambient/plugin/navigation"
 	"github.com/josephspurrier/ambient/plugin/plugins"
 	"github.com/josephspurrier/ambient/plugin/prism"
 	"github.com/josephspurrier/ambient/plugin/robots"
@@ -130,6 +131,7 @@ func Boot() (http.Handler, error) {
 		rssfeed.New(),
 		styles.New(),
 		home.New(),
+		navigation.New(),
 	}
 
 	pluginNames := make([]string, 0)

@@ -1,0 +1,37 @@
+
+
+<ul id="items">
+	<li>item 1</li>
+	<li>item 2</li>
+	<li>item 3</li>
+</ul>
+
+<hr>
+
+<ul id="items2">
+	<li>item 4</li>
+	<li>item 5</li>
+	<li>item 6</li>
+</ul>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+var list1 = document.getElementById('items');
+//var sortable = Sortable.create(l1);
+
+var list2 = document.getElementById('items2');
+//var sortable2 = Sortable.create(l2);
+
+new Sortable(list1, {
+    group: 'shared', // set both lists to same group
+    animation: 150
+});
+
+new Sortable(list2, {
+    group: 'shared',
+    animation: 150
+});
+
+
+</script>
