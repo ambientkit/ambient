@@ -46,6 +46,13 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 				return http.StatusInternalServerError, err
 			}
 		} else if !enable && info.Enabled {
+			// Call the Disable() function on the plugin.
+			err = p.PluginLoader.DisableSinglePlugin(name)
+			if err != nil {
+				return http.StatusInternalServerError, err
+			}
+
+			// Disable the plugin in the system.
 			err = p.Site.DisablePlugin(name)
 			if err != nil {
 				return p.Site.Error(err)

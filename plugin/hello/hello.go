@@ -3,6 +3,8 @@ package hello
 
 import (
 	"embed"
+	"fmt"
+	"time"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
@@ -30,10 +32,45 @@ func New() *Plugin {
 // Enable accepts the toolkit.
 func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
+	startBackgroundTask()
+	return nil
+}
+
+// Disable the plugin background tasks.
+func (p *Plugin) Disable() error {
+	stopBackgroundTask()
 	return nil
 }
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
 	p.Router.Get("/dashboard/hello", p.index)
+}
+
+var (
+	done   chan bool
+	ticker *time.Ticker
+)
+
+func stopBackgroundTask() {
+	done <- true
+	ticker.Stop()
+}
+
+func startBackgroundTask() {
+	ticker = time.NewTicker(500 * time.Millisecond)
+	done = make(chan bool)
+	go func() {
+		for {
+			select {
+			case <-done:
+				fmt.Println("Background task stopped")
+				return
+			case t := <-ticker.C:
+				fmt.Println("Tick at", t)
+			}
+		}
+	}()
+
+	fmt.Println("Background task started")
 }

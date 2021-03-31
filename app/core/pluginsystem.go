@@ -326,6 +326,7 @@ type ISecurity interface {
 // IPluginLoader -
 type IPluginLoader interface {
 	LoadSinglePlugin(name string) error
+	DisableSinglePlugin(name string) error
 }
 
 // Toolkit -

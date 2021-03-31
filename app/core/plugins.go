@@ -57,7 +57,7 @@ func (c *App) LoadAllPluginPages() error {
 	// Set up the plugin routes.
 	shouldSave := false
 	for name := range c.Storage.Site.PluginSettings {
-		bl := c.LoadSinglePluginPages(name)
+		bl := c.loadSinglePluginPages(name)
 		if bl {
 			shouldSave = true
 		}
@@ -111,10 +111,21 @@ func stringArrayEqual(a, b []string) bool {
 	return true
 }
 
+// DisableSinglePlugin will disable a plugin and return an error if one occured.
+func (c *App) DisableSinglePlugin(name string) error {
+	// Determine if the plugin that is in stored is found in the system.
+	v, found := c.Plugins.Plugins[name]
+	if !found {
+		return nil
+	}
+
+	return v.Disable()
+}
+
 // LoadSinglePlugin -
 // FIXME: Need to add security to this so not any plugin can call it.
 func (c *App) LoadSinglePlugin(name string) error {
-	save := c.LoadSinglePluginPages(name)
+	save := c.loadSinglePluginPages(name)
 	if save {
 		err := c.Storage.Save()
 		if err != nil {
@@ -125,8 +136,7 @@ func (c *App) LoadSinglePlugin(name string) error {
 	return nil
 }
 
-// LoadSinglePluginPages -
-func (c *App) LoadSinglePluginPages(name string) bool {
+func (c *App) loadSinglePluginPages(name string) bool {
 	shouldSave := false
 
 	// Return if the plug isn't found.
