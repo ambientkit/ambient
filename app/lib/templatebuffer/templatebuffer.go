@@ -4,7 +4,9 @@ package templatebuffer
 
 import (
 	"html/template"
+	"io/fs"
 	"net/http"
+	"path"
 
 	"github.com/josephspurrier/ambient/app/lib/cachecontrol"
 	"github.com/oxtoacart/bpool"
@@ -24,6 +26,29 @@ func ParseTemplate(body string, data map[string]interface{}) (string, error) {
 	tmpl, err := template.New("root").Funcs(template.FuncMap{
 		//"OK": func() string { return "hello" },
 	}).Parse(body)
+	if err != nil {
+		return "", err
+	}
+
+	// Execute the template.
+	err = tmpl.Execute(buf, data)
+	if err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
+}
+
+// ParseTemplateFS will parse a template and return the string and an error.
+func ParseTemplateFS(assets fs.FS, templatePath string, data map[string]interface{}) (string, error) {
+	// Write temporarily to a buffer pool.
+	buf := bufpool.Get()
+	defer bufpool.Put(buf)
+
+	// Parse the template.
+	tmpl, err := template.New(path.Base(templatePath)).Funcs(template.FuncMap{
+		//"OK": func() string { return "hello" },
+	}).ParseFS(assets, templatePath)
 	if err != nil {
 		return "", err
 	}

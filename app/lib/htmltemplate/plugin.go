@@ -30,9 +30,14 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 		return http.StatusInternalServerError, err
 	}
 
-	// Parse the plugin template.
-	// FIXME: Should parse separately for added security.
-	t, err = t.ParseFS(assets, fmt.Sprintf("%v.tmpl", partialTemplate))
+	// Parse the plugin template separately for security.
+	content, err := templatebuffer.ParseTemplateFS(assets, fmt.Sprintf("%v.tmpl", partialTemplate), vars)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
+	t, err = t.Parse(safeContent)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -55,8 +60,14 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 		return http.StatusInternalServerError, err
 	}
 
-	// Parse the content.
-	t, err = te.sanitizedContent(t, postContent)
+	// Parse the plugin template separately for security.
+	content, err := templatebuffer.ParseTemplate(te.sanitized(postContent), vars)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
+	t, err = t.Parse(safeContent)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}

@@ -49,3 +49,18 @@ func (te *Engine) sanitizedContent(t *template.Template, content string) (*templ
 	t = t.Delims("{{", "}}")
 	return t, nil
 }
+
+// sanitized returns a sanitized content block or an error is one occurs.
+func (te *Engine) sanitized(content string) string {
+	b := []byte(content)
+	// Ensure unit line endings are used when pulling out of JSON.
+	markdownWithUnixLineEndings := strings.Replace(string(b), "\r\n", "\n", -1)
+	htmlCode := blackfriday.Run([]byte(markdownWithUnixLineEndings))
+
+	// Sanitize by removing HTML if true.
+	if !te.allowUnsafeHTML {
+		htmlCode = bluemonday.UGCPolicy().SanitizeBytes(htmlCode)
+	}
+
+	return string(htmlCode)
+}
