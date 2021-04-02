@@ -171,16 +171,20 @@ func Boot() (http.Handler, error) {
 	// Setup the routes.
 	route.Register(c)
 
-	// Set up the router and middleware.
-	var mw http.Handler
-	mw = c.Router
+	// Setup the middleware.
 	h := middleware.NewHandler(c.Render, c.Sess, c.Router, c.Storage.Site.URL, c.Storage.Site.Scheme)
-	mw = h.Redirect(mw)
-	mw = middleware.Head(mw)
-	mw = h.DisallowAnon(mw)
-	mw = sessionManager.LoadAndSave(mw)
-	mw = middleware.Gzip(mw)
-	mw = h.LogRequest(mw)
+	var mw http.Handler = c.Router
+	arrMiddleware := []func(next http.Handler) http.Handler{
+		h.Redirect,
+		middleware.Head,
+		h.DisallowAnon,
+		sessionManager.LoadAndSave,
+		middleware.Gzip,
+		h.LogRequest,
+	}
+	for _, v := range arrMiddleware {
+		mw = v(mw)
+	}
 
 	return mw, nil
 }
