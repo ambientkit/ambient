@@ -4,9 +4,18 @@ import (
 	"net/http"
 )
 
+// IRouter represents a router.
+type IRouter interface {
+	Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	Error(status int, w http.ResponseWriter, r *http.Request)
+	Param(r *http.Request, param string) string
+	ServeHTTP(w http.ResponseWriter, r *http.Request)
+}
+
 // Recorder -
 type Recorder struct {
-	mux *Mux
+	mux IRouter
 
 	routes []Route
 }
@@ -18,7 +27,7 @@ type Route struct {
 }
 
 // NewRecorder is a route recorder for plugins.
-func NewRecorder(mux *Mux) *Recorder {
+func NewRecorder(mux IRouter) *Recorder {
 	return &Recorder{
 		mux: mux,
 	}

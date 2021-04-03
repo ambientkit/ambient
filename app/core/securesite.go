@@ -8,7 +8,6 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/logger"
-	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -24,13 +23,13 @@ type SecureSite struct {
 	pluginName string
 	storage    *datastorage.Storage
 	sess       ISession
-	mux        *router.Mux
+	mux        IAppRouter
 	grants     map[string]bool
 	log        *logger.Logger
 }
 
 // NewSecureSite -
-func NewSecureSite(pluginName string, log *logger.Logger, storage *datastorage.Storage, session ISession, mux *router.Mux, grants map[string]bool) *SecureSite {
+func NewSecureSite(pluginName string, log *logger.Logger, storage *datastorage.Storage, session ISession, mux IAppRouter, grants map[string]bool) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
 		storage:    storage,
