@@ -281,7 +281,7 @@ type IPlugin interface {
 	Assets() ([]Asset, *embed.FS)
 	Fields() []Field
 	Middleware() []func(next http.Handler) http.Handler
-	SessionManager() (ISession, error)
+	SessionManager(ss SessionStorer, secretKey string) (ISession, error)
 	//Header() string
 	//Body() string
 	//SetSettings()
@@ -344,6 +344,12 @@ type ILogger interface {
 	Fatal(format string, v ...interface{})
 }
 
+// SessionStorer reads and writes data to an object.
+type SessionStorer interface {
+	Save([]byte) error
+	Load() ([]byte, error)
+}
+
 // Toolkit -
 type Toolkit struct {
 	Render       IRender
@@ -399,6 +405,6 @@ func (p *PluginMeta) Middleware() []func(next http.Handler) http.Handler {
 }
 
 // SessionManager -
-func (p *PluginMeta) SessionManager() (ISession, error) {
+func (p *PluginMeta) SessionManager(ss SessionStorer, secretKey string) (ISession, error) {
 	return nil, nil
 }

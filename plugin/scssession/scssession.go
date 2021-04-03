@@ -4,14 +4,11 @@ package scssession
 
 import (
 	"embed"
-	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/websession"
 )
 
@@ -52,19 +49,8 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 	}
 }
 
-// SessionManager -
-func (p *Plugin) SessionManager() (core.ISession, error) {
-
-	storageSessionPath := "storage/session.bin"
-
-	// Get the environment variables.
-	secretKey := os.Getenv("AMB_SESSION_KEY")
-	if len(secretKey) == 0 {
-		return nil, fmt.Errorf("environment variable missing: %v", "AMB_SESSION_KEY")
-	}
-
-	var ss websession.Sessionstorer = datastorage.NewLocalStorage(storageSessionPath)
-
+// SessionManager return the session manager.
+func (p *Plugin) SessionManager(ss core.SessionStorer, secretKey string) (core.ISession, error) {
 	// Set up the session storage provider.
 	en := websession.NewEncryptedStorage(secretKey)
 	store, err := websession.NewJSONSession(ss, en)

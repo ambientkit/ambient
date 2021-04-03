@@ -12,6 +12,7 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/logger"
+	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
@@ -42,8 +43,8 @@ import (
 )
 
 var (
-	storageSitePath = "storage/site.json"
-	sessionName     = "session"
+	storageSitePath    = "storage/site.json"
+	storageSessionPath = "storage/session.bin"
 )
 
 // Boot returns a router with the application ready to be started.
@@ -52,11 +53,6 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	sitePath := os.Getenv("AMB_SITE_PATH")
 	if len(sitePath) > 0 {
 		storageSitePath = sitePath
-	}
-
-	sname := os.Getenv("AMB_SESSION_NAME")
-	if len(sname) > 0 {
-		sessionName = sname
 	}
 
 	// Get the environment variables.
@@ -79,16 +75,16 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	site := &model.Site{}
 
 	var ds datastorage.Datastorer
-	//var ss websession.Sessionstorer
+	var ss websession.Sessionstorer
 
 	if !envdetect.RunningLocalDev() {
 		// Use Google when running in GCP.
 		ds = datastorage.NewGCPStorage(bucket, storageSitePath)
-		//ss = datastorage.NewGCPStorage(bucket, storageSessionPath)
+		ss = datastorage.NewGCPStorage(bucket, storageSessionPath)
 	} else {
 		// Use local filesytem when developing.
 		ds = datastorage.NewLocalStorage(storageSitePath)
-		//ss = datastorage.NewLocalStorage(storageSessionPath)
+		ss = datastorage.NewLocalStorage(storageSessionPath)
 	}
 
 	// Set up the data storage provider.
@@ -154,9 +150,8 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 			continue
 		}
 
-		//pluginNames = append(pluginNames, v.PluginName())
-		// TODO:  Need to get the sess from here.
-		sm, err := v.SessionManager()
+		// Get the session manager.
+		sm, err := v.SessionManager(ss, secretKey)
 		if err != nil {
 			l.Error("", err.Error())
 		} else if sm != nil {
