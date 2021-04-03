@@ -7,18 +7,17 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
-	"github.com/josephspurrier/ambient/app/lib/websession"
 )
 
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
 	storage *datastorage.Storage
-	sess    *websession.Session
+	sess    ISession
 	plugins *PluginSystem
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(storage *datastorage.Storage, sess *websession.Session, plugins *PluginSystem) *PluginInjector {
+func NewPlugininjector(storage *datastorage.Storage, sess ISession, plugins *PluginSystem) *PluginInjector {
 	return &PluginInjector{
 		storage: storage,
 		sess:    sess,
@@ -52,7 +51,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 			continue
 		}
 
-		_, loggedIn := c.sess.User(r)
+		loggedIn, _ := c.sess.UserAuthenticated(r)
 		for _, file := range files {
 			// Handle authentication on resources without changing resources.
 			if !authAssetAllowed(loggedIn, file) {

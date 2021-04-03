@@ -27,6 +27,13 @@ func New(name string, manager *scs.SessionManager) *Session {
 	}
 }
 
+// UserAuthenticated -
+// FIXME: This should be handled better.
+func (s *Session) UserAuthenticated(r *http.Request) (bool, error) {
+	_, ok := s.User(r)
+	return ok, nil
+}
+
 // RememberMe -
 func (s *Session) RememberMe(r *http.Request, value bool) {
 	s.manager.Cookie.Persist = value

@@ -4,12 +4,12 @@ package html
 import (
 	"embed"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -19,11 +19,16 @@ var templates embed.FS
 // TemplateManager represents an object that returns templates and a FuncMap.
 type TemplateManager struct {
 	storage *datastorage.Storage
-	sess    *websession.Session
+	sess    ISession
+}
+
+// ISession represents a user session.
+type ISession interface {
+	UserAuthenticated(r *http.Request) (bool, error)
 }
 
 // NewTemplateManager returns a TemplateManager.
-func NewTemplateManager(storage *datastorage.Storage, sess *websession.Session) *TemplateManager {
+func NewTemplateManager(storage *datastorage.Storage, sess ISession) *TemplateManager {
 	return &TemplateManager{
 		storage: storage,
 		sess:    sess,
@@ -58,7 +63,11 @@ func (f *TemplateManager) FuncMap(r *http.Request) template.FuncMap {
 	}
 	fm["Authenticated"] = func() bool {
 		// If user is not authenticated, don't allow them to access the page.
-		_, loggedIn := f.sess.User(r)
+		loggedIn, err := f.sess.UserAuthenticated(r)
+		if err != nil {
+			// TODO: Need to switch over to the logger.
+			log.Println(err)
+		}
 		return loggedIn
 	}
 	fm["SiteFooter"] = func() string {

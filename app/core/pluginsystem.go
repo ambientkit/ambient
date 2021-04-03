@@ -281,6 +281,7 @@ type IPlugin interface {
 	Assets() ([]Asset, *embed.FS)
 	Fields() []Field
 	Middleware() []func(next http.Handler) http.Handler
+	SessionManager() (ISession, error)
 	//Header() string
 	//Body() string
 	//SetSettings()
@@ -339,6 +340,11 @@ type ILogger interface {
 	Fatal(format string, v ...interface{})
 }
 
+// ISession represents a user session.
+type ISession interface {
+	UserAuthenticated(r *http.Request) (bool, error)
+}
+
 // Toolkit -
 type Toolkit struct {
 	Render       IRender
@@ -391,4 +397,9 @@ func (p *PluginMeta) PluginVersion() string {
 // Middleware -
 func (p *PluginMeta) Middleware() []func(next http.Handler) http.Handler {
 	return nil
+}
+
+// SessionManager -
+func (p *PluginMeta) SessionManager() (ISession, error) {
+	return nil, nil
 }
