@@ -2,13 +2,14 @@ package core
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
+	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/app/lib/router"
+	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -23,29 +24,33 @@ var (
 type SecureSite struct {
 	pluginName string
 	storage    *datastorage.Storage
+	sess       *websession.Session
 	mux        *router.Mux
 	grants     map[string]bool
+	log        *logger.Logger
 }
 
 // NewSecureSite -
-func NewSecureSite(pluginName string, storage *datastorage.Storage, mux *router.Mux, grants map[string]bool) *SecureSite {
+func NewSecureSite(pluginName string, log *logger.Logger, storage *datastorage.Storage, session *websession.Session, mux *router.Mux, grants map[string]bool) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
 		storage:    storage,
+		sess:       session,
 		mux:        mux,
 		grants:     grants,
+		log:        log,
 	}
 }
 
 // Error handles returning the proper error.
-func (ss *SecureSite) Error(err error) (status int, errr error) {
-	switch err {
+func (ss *SecureSite) Error(siteError error) (status int, err error) {
+	switch siteError {
 	case ErrAccessDenied:
-		return http.StatusForbidden, err
+		return http.StatusForbidden, siteError
 	case ErrNotFound:
-		return http.StatusNotFound, err
+		return http.StatusNotFound, siteError
 	default:
-		return http.StatusInternalServerError, err
+		return http.StatusInternalServerError, siteError
 	}
 }
 
@@ -80,7 +85,7 @@ func (ss *SecureSite) Authorized(grant string) bool {
 		return true
 	}
 
-	log.Printf("denied plugin (%v) access to the data action: %v\n", ss.pluginName, grant)
+	ss.log.Info("securesite: denied plugin (%v) access to the data action: %v\n", ss.pluginName, grant)
 
 	return false
 }
@@ -352,4 +357,17 @@ func (ss *SecureSite) Content() (string, error) {
 	}
 
 	return ss.storage.Site.Content, nil
+}
+
+// UserAuthenticated returns if the current user is authenticated.
+func (ss *SecureSite) UserAuthenticated(r *http.Request) (bool, error) {
+	grant := "user.authenticated:read"
+
+	if !ss.Authorized(grant) {
+		return false, ErrAccessDenied
+	}
+
+	_, loggedIn := ss.sess.User(r)
+
+	return loggedIn, nil
 }

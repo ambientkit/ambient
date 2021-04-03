@@ -15,7 +15,6 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/app/lib/websession"
-	"github.com/josephspurrier/ambient/app/middleware"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
@@ -36,9 +35,11 @@ import (
 	"github.com/josephspurrier/ambient/plugin/redirecttourl"
 	"github.com/josephspurrier/ambient/plugin/robots"
 	"github.com/josephspurrier/ambient/plugin/rssfeed"
+	"github.com/josephspurrier/ambient/plugin/securedashboard"
 	"github.com/josephspurrier/ambient/plugin/sitemap"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
 	"github.com/josephspurrier/ambient/plugin/styles"
+	"github.com/josephspurrier/ambient/plugin/uptimerobotok"
 	"github.com/josephspurrier/ambient/plugin/viewport"
 )
 
@@ -140,6 +141,8 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 
 		// Middleware - executes bottom to top.
 		notrailingslash.New(),
+		uptimerobotok.New(),
+		securedashboard.New(),
 		redirecttourl.New(),
 		gzipresponse.New(),
 		logrequest.New(),
@@ -177,20 +180,17 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	route.Register(c)
 
 	// Setup the middleware.
-	mw := middleware.NewHandler(c.Render, c.Sess, c.Router, c.Storage.Site.URL, c.Storage.Site.Scheme)
 	var h http.Handler = c.Router
 	arrMiddleware := []func(next http.Handler) http.Handler{
-		//mw.Redirect,
-		middleware.Head,
-		mw.DisallowAnon,
 		sessionManager.LoadAndSave,
-	}
-	for _, v := range arrMiddleware {
-		h = v(h)
 	}
 
 	// Enable the middleware from the plugins.
 	h = c.LoadAllPluginMiddleware(h, arrPlugins)
+
+	for _, v := range arrMiddleware {
+		h = v(h)
+	}
 
 	return h, nil
 }
