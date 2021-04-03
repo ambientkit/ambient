@@ -38,11 +38,11 @@ func (l *Logger) logentry() *logrus.Entry {
 }
 
 // SetLevel will set the logger output level.
-func (l *Logger) SetLevel(level logrus.Level) {
+func (l *Logger) SetLevel(level uint32) {
 	// Set log level temporarily to info.
 	l.Level = logrus.InfoLevel
 	l.logentry().Println("log level set to:", level)
-	l.Level = level
+	l.Level = logrus.Level(level)
 }
 
 // Debug is equivalent to log.Printf() + "\n" if format is not empty.

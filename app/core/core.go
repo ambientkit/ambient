@@ -5,14 +5,13 @@ import (
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 )
 
 // App represents the app dependencies.
 type App struct {
 	Log     IAppLogger
 	Plugins *PluginSystem
-	Render  *htmltemplate.Engine
+	Render  IAppRender
 	Router  IAppRouter
 	Sess    ISession
 	Storage *datastorage.Storage
@@ -21,7 +20,7 @@ type App struct {
 // NewApp returns a new application.
 func NewApp(logger IAppLogger,
 	plugins *PluginSystem,
-	render *htmltemplate.Engine,
+	render IAppRender,
 	mux IAppRouter,
 	sess ISession,
 	storage *datastorage.Storage) *App {
@@ -33,6 +32,16 @@ func NewApp(logger IAppLogger,
 		Sess:    sess,
 		Storage: storage,
 	}
+}
+
+// IAppRender represents a renderer.
+type IAppRender interface {
+	IRender
+
+	Dashboard(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
+	Page(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
+	Post(w http.ResponseWriter, r *http.Request, postContent string, vars map[string]interface{}) (status int, err error)
+	Bloglist(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
 }
 
 // IAppRouter represents a router.
