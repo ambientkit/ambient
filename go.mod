@@ -11,6 +11,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c
 	github.com/russross/blackfriday/v2 v2.1.0
+	github.com/sirupsen/logrus v1.8.1
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/stretchr/testify v1.5.1
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9

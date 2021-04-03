@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/josephspurrier/ambient/app"
+	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/app/lib/timezone"
+	"github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -18,7 +19,15 @@ func init() {
 }
 
 func main() {
-	mux, err := app.Boot()
+	// Create the logger.
+	l := logger.NewLogger("ambient", "1.0")
+	l.SetLevel(logrus.DebugLevel)
+	// l.SetLevel(logrus.InfoLevel)
+	// l.SetLevel(logrus.ErrorLevel)
+	// l.SetLevel(logrus.FatalLevel)
+
+	// Set up the application services.
+	mux, err := app.Boot(l)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -29,6 +38,6 @@ func main() {
 		port = "8080"
 	}
 
-	fmt.Println("Web server running on port:", port)
-	log.Fatalln(http.ListenAndServe(":"+port, mux))
+	l.Info("web server listening on port: %v", port)
+	l.Fatal("", http.ListenAndServe(":"+port, mux))
 }

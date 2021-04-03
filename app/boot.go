@@ -13,6 +13,7 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
+	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/middleware"
 	"github.com/josephspurrier/ambient/app/model"
@@ -24,8 +25,10 @@ import (
 	"github.com/josephspurrier/ambient/plugin/description"
 	"github.com/josephspurrier/ambient/plugin/disqus"
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
+	"github.com/josephspurrier/ambient/plugin/gzipresponse"
 	"github.com/josephspurrier/ambient/plugin/hello"
 	"github.com/josephspurrier/ambient/plugin/home"
+	"github.com/josephspurrier/ambient/plugin/logrequest"
 	"github.com/josephspurrier/ambient/plugin/navigation"
 	"github.com/josephspurrier/ambient/plugin/plugins"
 	"github.com/josephspurrier/ambient/plugin/prism"
@@ -44,7 +47,7 @@ var (
 )
 
 // Boot returns a router with the application ready to be started.
-func Boot() (http.Handler, error) {
+func Boot(l *logger.Logger) (http.Handler, error) {
 	// Set the storage and session environment variables.
 	sitePath := os.Getenv("AMB_SITE_PATH")
 	if len(sitePath) > 0 {
@@ -132,6 +135,10 @@ func Boot() (http.Handler, error) {
 		styles.New(),
 		home.New(),
 		navigation.New(),
+
+		// Middleware - executes bottom to top.
+		gzipresponse.New(),
+		logrequest.New(),
 	}
 
 	pluginNames := make([]string, 0)
@@ -154,13 +161,7 @@ func Boot() (http.Handler, error) {
 	mux := route.SetupRouter(tmpl)
 
 	// Create core app.
-	c := &core.App{
-		Router:  mux,
-		Storage: storage,
-		Render:  tmpl,
-		Sess:    sess,
-		Plugins: plugs,
-	}
+	c := core.NewApp(l, plugs, tmpl, mux, sess, storage)
 
 	// Load the plugin pages.
 	err = c.LoadAllPluginPages()
@@ -172,19 +173,20 @@ func Boot() (http.Handler, error) {
 	route.Register(c)
 
 	// Setup the middleware.
-	h := middleware.NewHandler(c.Render, c.Sess, c.Router, c.Storage.Site.URL, c.Storage.Site.Scheme)
-	var mw http.Handler = c.Router
+	mw := middleware.NewHandler(c.Render, c.Sess, c.Router, c.Storage.Site.URL, c.Storage.Site.Scheme)
+	var h http.Handler = c.Router
 	arrMiddleware := []func(next http.Handler) http.Handler{
-		h.Redirect,
+		mw.Redirect,
 		middleware.Head,
-		h.DisallowAnon,
+		mw.DisallowAnon,
 		sessionManager.LoadAndSave,
-		middleware.Gzip,
-		h.LogRequest,
 	}
 	for _, v := range arrMiddleware {
-		mw = v(mw)
+		h = v(h)
 	}
 
-	return mw, nil
+	// Enable the middleware from the plugins.
+	h = c.LoadAllPluginMiddleware(h, arrPlugins)
+
+	return h, nil
 }

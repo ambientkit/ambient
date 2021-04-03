@@ -280,6 +280,7 @@ type IPlugin interface {
 	Disable() error
 	Assets() ([]Asset, *embed.FS)
 	Fields() []Field
+	Middleware() []func(next http.Handler) http.Handler
 	//Header() string
 	//Body() string
 	//SetSettings()
@@ -329,14 +330,22 @@ type IPluginLoader interface {
 	DisableSinglePlugin(name string) error
 }
 
+// ILogger representer the log service for the application.
+type ILogger interface {
+	Debug(format string, v ...interface{})
+	Info(format string, v ...interface{})
+	Error(format string, v ...interface{})
+	Fatal(format string, v ...interface{})
+}
+
 // Toolkit -
 type Toolkit struct {
-	Render   IRender
-	Router   IRouter
-	Security ISecurity
-	Site     *SecureSite
-	//Variable     Variables
+	Render       IRender
+	Router       IRouter
+	Security     ISecurity
+	Site         *SecureSite
 	PluginLoader IPluginLoader
+	Log          ILogger
 }
 
 // type Variables struct{}
@@ -376,4 +385,9 @@ func (p *PluginMeta) PluginName() string {
 // PluginVersion -
 func (p *PluginMeta) PluginVersion() string {
 	return p.Version
+}
+
+// Middleware -
+func (p *PluginMeta) Middleware() []func(next http.Handler) http.Handler {
+	return nil
 }
