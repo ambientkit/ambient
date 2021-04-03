@@ -12,7 +12,6 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/logger"
-	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
@@ -176,13 +175,13 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	mux := route.SetupRouter(tmpl)
 
 	// FIXME: App needs to use the handler better.
-	ws, ok := sess.(*websession.Session)
-	if !ok {
-		fmt.Println("Websession error")
-	}
+	// ws, ok := sess.(*websession.Session)
+	// if !ok {
+	// 	fmt.Println("Websession error")
+	// }
 
 	// Create core app.
-	c := core.NewApp(l, plugs, tmpl, mux, ws, storage)
+	c := core.NewApp(l, plugs, tmpl, mux, sess, storage)
 
 	// Load the plugin pages.
 	err = c.LoadAllPluginPages()

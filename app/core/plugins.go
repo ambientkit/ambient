@@ -14,7 +14,6 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/cachecontrol"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/router"
-	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -291,7 +290,7 @@ func saveRoutesForPlugin(name string, recorder *router.Recorder, storage *datast
 	storage.PluginRoutes.Routes[name] = arr
 }
 
-func embeddedAssets(mux IRouter, sess *websession.Session, pluginName string, files []Asset, assets *embed.FS) error {
+func embeddedAssets(mux IRouter, sess ISession, pluginName string, files []Asset, assets *embed.FS) error {
 	for _, unsafeFile := range files {
 		// Recreate the variable when using closures:
 		// https://golang.org/doc/faq#closures_and_goroutines
@@ -318,7 +317,7 @@ func embeddedAssets(mux IRouter, sess *websession.Session, pluginName string, fi
 			}
 
 			// Handle authentication on resources without changing resources.
-			_, loggedIn := sess.User(r)
+			loggedIn, _ := sess.UserAuthenticated(r)
 			if !authAssetAllowed(loggedIn, file) {
 				return http.StatusNotFound, nil
 			}

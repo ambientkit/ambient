@@ -9,7 +9,6 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/app/lib/router"
-	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -24,14 +23,14 @@ var (
 type SecureSite struct {
 	pluginName string
 	storage    *datastorage.Storage
-	sess       *websession.Session
+	sess       ISession
 	mux        *router.Mux
 	grants     map[string]bool
 	log        *logger.Logger
 }
 
 // NewSecureSite -
-func NewSecureSite(pluginName string, log *logger.Logger, storage *datastorage.Storage, session *websession.Session, mux *router.Mux, grants map[string]bool) *SecureSite {
+func NewSecureSite(pluginName string, log *logger.Logger, storage *datastorage.Storage, session ISession, mux *router.Mux, grants map[string]bool) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
 		storage:    storage,
@@ -367,7 +366,5 @@ func (ss *SecureSite) UserAuthenticated(r *http.Request) (bool, error) {
 		return false, ErrAccessDenied
 	}
 
-	_, loggedIn := ss.sess.User(r)
-
-	return loggedIn, nil
+	return ss.sess.UserAuthenticated(r)
 }

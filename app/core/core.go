@@ -6,7 +6,6 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/app/lib/router"
-	"github.com/josephspurrier/ambient/app/lib/websession"
 )
 
 // NewApp returns a new application.
@@ -14,7 +13,7 @@ func NewApp(logger *logger.Logger,
 	plugins *PluginSystem,
 	render *htmltemplate.Engine,
 	mux *router.Mux,
-	sess *websession.Session,
+	sess ISession,
 	storage *datastorage.Storage) *App {
 	return &App{
 		Log:     logger,
@@ -32,6 +31,6 @@ type App struct {
 	Plugins *PluginSystem
 	Render  *htmltemplate.Engine
 	Router  *router.Mux
-	Sess    *websession.Session
+	Sess    ISession
 	Storage *datastorage.Storage
 }

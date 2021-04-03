@@ -320,10 +320,14 @@ type IRender interface {
 	PluginPageContent(w http.ResponseWriter, r *http.Request, content string, vars map[string]interface{}) (status int, err error)
 }
 
-// ISecurity -
-type ISecurity interface {
+// ISession represents a user session.
+type ISession interface {
 	SetCSRF(r *http.Request) string
 	CSRF(r *http.Request) bool
+	UserAuthenticated(r *http.Request) (bool, error)
+	SetUser(r *http.Request, username string)
+	RememberMe(r *http.Request, remember bool)
+	Logout(r *http.Request)
 }
 
 // IPluginLoader -
@@ -340,16 +344,11 @@ type ILogger interface {
 	Fatal(format string, v ...interface{})
 }
 
-// ISession represents a user session.
-type ISession interface {
-	UserAuthenticated(r *http.Request) (bool, error)
-}
-
 // Toolkit -
 type Toolkit struct {
 	Render       IRender
 	Router       IRouter
-	Security     ISecurity
+	Security     ISession
 	Site         *SecureSite
 	PluginLoader IPluginLoader
 	Log          ILogger
