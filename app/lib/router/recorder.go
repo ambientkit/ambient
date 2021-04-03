@@ -11,6 +11,7 @@ type Recorder struct {
 	routes []Route
 }
 
+// Route -
 type Route struct {
 	Method string
 	Path   string
@@ -49,4 +50,9 @@ func (rec *Recorder) Post(path string, fn func(http.ResponseWriter, *http.Reques
 // Param -
 func (rec *Recorder) Param(r *http.Request, name string) string {
 	return rec.mux.Param(r, name)
+}
+
+// Error -
+func (rec *Recorder) Error(status int, w http.ResponseWriter, r *http.Request) {
+	rec.mux.Error(status, w, r)
 }

@@ -309,6 +309,7 @@ type IRouter interface {
 	Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Param(r *http.Request, name string) string
+	Error(status int, w http.ResponseWriter, r *http.Request)
 }
 
 // IRender represents a template rendered.

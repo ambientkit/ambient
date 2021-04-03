@@ -30,8 +30,10 @@ import (
 	"github.com/josephspurrier/ambient/plugin/home"
 	"github.com/josephspurrier/ambient/plugin/logrequest"
 	"github.com/josephspurrier/ambient/plugin/navigation"
+	"github.com/josephspurrier/ambient/plugin/notrailingslash"
 	"github.com/josephspurrier/ambient/plugin/plugins"
 	"github.com/josephspurrier/ambient/plugin/prism"
+	"github.com/josephspurrier/ambient/plugin/redirecttourl"
 	"github.com/josephspurrier/ambient/plugin/robots"
 	"github.com/josephspurrier/ambient/plugin/rssfeed"
 	"github.com/josephspurrier/ambient/plugin/sitemap"
@@ -137,6 +139,8 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		navigation.New(),
 
 		// Middleware - executes bottom to top.
+		notrailingslash.New(),
+		redirecttourl.New(),
 		gzipresponse.New(),
 		logrequest.New(),
 	}
@@ -176,7 +180,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	mw := middleware.NewHandler(c.Render, c.Sess, c.Router, c.Storage.Site.URL, c.Storage.Site.Scheme)
 	var h http.Handler = c.Router
 	arrMiddleware := []func(next http.Handler) http.Handler{
-		mw.Redirect,
+		//mw.Redirect,
 		middleware.Head,
 		mw.DisallowAnon,
 		sessionManager.LoadAndSave,

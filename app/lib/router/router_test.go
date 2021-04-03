@@ -284,7 +284,7 @@ func TestNotFound(t *testing.T) {
 
 	r := httptest.NewRequest("GET", "/unknown", nil)
 	w := httptest.NewRecorder()
-	mux.NotFound(w, r)
+	mux.Error(http.StatusNotFound, w, r)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
 }
@@ -294,7 +294,7 @@ func TestBadRequest(t *testing.T) {
 
 	r := httptest.NewRequest("GET", "/unknown", nil)
 	w := httptest.NewRecorder()
-	mux.BadRequest(w, r)
+	mux.Error(http.StatusBadRequest, w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 }

@@ -1,3 +1,4 @@
+// Package router provides request handling capabilities.
 package router
 
 import (
@@ -32,7 +33,7 @@ func (m *Mux) Clear(method string, path string) {
 	m.router.Remove(method, path)
 }
 
-// Routes will return the number of routes from the router.
+// Count will return the number of routes from the router.
 func (m *Mux) Count() int {
 	return m.router.Count()
 }
@@ -43,14 +44,9 @@ func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.router.ServeHTTP(w, r)
 }
 
-// NotFound shows the 404 page.
-func (m *Mux) NotFound(w http.ResponseWriter, r *http.Request) {
-	m.customServeHTTP(w, r, http.StatusNotFound, nil)
-}
-
-// BadRequest shows the 400 page.
-func (m *Mux) BadRequest(w http.ResponseWriter, r *http.Request) {
-	m.customServeHTTP(w, r, http.StatusBadRequest, nil)
+// Error shows error page based on the status code.
+func (m *Mux) Error(status int, w http.ResponseWriter, r *http.Request) {
+	m.customServeHTTP(w, r, status, nil)
 }
 
 // Param returns a URL parameter.
