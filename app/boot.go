@@ -174,12 +174,6 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	// Set up the router.
 	mux := route.SetupRouter(tmpl)
 
-	// FIXME: App needs to use the handler better.
-	// ws, ok := sess.(*websession.Session)
-	// if !ok {
-	// 	fmt.Println("Websession error")
-	// }
-
 	// Create core app.
 	c := core.NewApp(l, plugs, tmpl, mux, sess, storage)
 

@@ -11,6 +11,10 @@ import (
 
 // Handle returns true if handled.
 func Handle(w http.ResponseWriter, r *http.Request, content []byte) bool {
+	// FIXME: Be able to control when cache control is turned on.
+	// Also, move it to a plugin.
+	return false
+
 	// Set the etag for cache control.
 	etag := fmt.Sprintf(`"%x"`, md5.Sum(content))
 	w.Header().Set("Etag", etag)

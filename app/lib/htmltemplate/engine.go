@@ -46,8 +46,8 @@ func (te *Engine) Post(w http.ResponseWriter, r *http.Request, postContent strin
 }
 
 // Page renders using the page layout.
-func (te *Engine) Page(w http.ResponseWriter, r *http.Request, postContent string, vars map[string]interface{}) (status int, err error) {
-	return te.post(w, r, "layout/page", "page", postContent, vars)
+func (te *Engine) Page(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
+	return te.partial(w, r, "layout/bloglist", "page", partialTemplate, http.StatusOK, vars)
 }
 
 // Bloglist renders using the bloglist layout.
