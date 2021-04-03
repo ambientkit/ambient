@@ -6,12 +6,11 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
-	"github.com/josephspurrier/ambient/app/lib/logger"
 )
 
-// App -
+// App represents the app dependencies.
 type App struct {
-	Log     *logger.Logger
+	Log     IAppLogger
 	Plugins *PluginSystem
 	Render  *htmltemplate.Engine
 	Router  IAppRouter
@@ -20,7 +19,7 @@ type App struct {
 }
 
 // NewApp returns a new application.
-func NewApp(logger *logger.Logger,
+func NewApp(logger IAppLogger,
 	plugins *PluginSystem,
 	render *htmltemplate.Engine,
 	mux IAppRouter,
@@ -36,12 +35,17 @@ func NewApp(logger *logger.Logger,
 	}
 }
 
-// IAppRouter -
+// IAppRouter represents a router.
 type IAppRouter interface {
-	Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
-	Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
-	Error(status int, w http.ResponseWriter, r *http.Request)
-	Param(r *http.Request, param string) string
+	IRouter
+
 	ServeHTTP(w http.ResponseWriter, r *http.Request)
 	Clear(method string, path string)
+}
+
+// IAppLogger represents a logger.
+type IAppLogger interface {
+	ILogger
+
+	SetLevel(level uint32)
 }
