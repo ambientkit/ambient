@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
-	"io/fs"
 	"log"
 	"net/http"
 	"path"
@@ -122,43 +121,6 @@ func (c *App) LoadAllPluginMiddleware(h http.Handler, plugins []IPlugin) http.Ha
 	}
 
 	return h
-}
-
-// fieldArrayEqual tells whether a and b contain the same elements.
-// A nil argument is equivalent to an empty slice.
-func fieldArrayEqual(a []model.Field, b []Field) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, v := range a {
-		if v.Name != b[i].Name {
-			return false
-		}
-		if string(v.Type) != string(b[i].Type) {
-			return false
-		}
-		if v.Description.Text != b[i].Description.Text {
-			return false
-		}
-		if v.Description.URL != b[i].Description.URL {
-			return false
-		}
-	}
-	return true
-}
-
-// stringArrayEqual tells whether a and b contain the same elements.
-// A nil argument is equivalent to an empty slice.
-func stringArrayEqual(a, b []string) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
-	}
-	return true
 }
 
 // DisableSinglePlugin will disable a plugin and return an error if one occured.
@@ -347,22 +309,4 @@ func embeddedAssets(mux IRouter, sess ISession, pluginName string, files []Asset
 	}
 
 	return nil
-}
-
-// fileExists determines if an embedded file exists.
-func fileExists(assets *embed.FS, filename string) bool {
-	// Use the root directory.
-	fsys, err := fs.Sub(assets, ".")
-	if err != nil {
-		return false
-	}
-
-	// Open the file.
-	f, err := fsys.Open(filename)
-	if err != nil {
-		return false
-	}
-	defer f.Close()
-
-	return true
 }
