@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/app/lib/websession"
+	"github.com/josephspurrier/ambient/plugin/scssession/websession"
 	"github.com/stretchr/testify/assert"
 )
 

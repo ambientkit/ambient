@@ -12,7 +12,6 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/logger"
-	"github.com/josephspurrier/ambient/app/lib/websession"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
@@ -75,7 +74,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	site := &model.Site{}
 
 	var ds datastorage.Datastorer
-	var ss websession.Sessionstorer
+	var ss core.SessionStorer
 
 	if !envdetect.RunningLocalDev() {
 		// Use Google when running in GCP.

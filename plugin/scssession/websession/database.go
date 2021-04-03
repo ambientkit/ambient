@@ -37,7 +37,7 @@ func (sd *SessionDatabase) Load(ss Sessionstorer, en Encrypter) error {
 	}
 
 	if sd.Records == nil {
-		sd.Records = make(map[string]SessionData, 0)
+		sd.Records = make(map[string]SessionData)
 	}
 
 	return nil

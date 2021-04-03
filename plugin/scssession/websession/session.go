@@ -1,3 +1,4 @@
+// Package websession provides session management.
 package websession
 
 import (
