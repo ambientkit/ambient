@@ -1,4 +1,4 @@
-// Package gcpbucketstorage provides a router using a forked version of way
+// Package gcpbucketstorage provides GCP storage and local when AMB_LOCAL is set
 // for an Ambient application.
 package gcpbucketstorage
 

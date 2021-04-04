@@ -4,7 +4,9 @@ package scssession
 
 import (
 	"embed"
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -50,7 +52,13 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 }
 
 // SessionManager return the session manager.
-func (p *Plugin) SessionManager(ss core.SessionStorer, secretKey string) (core.ISession, error) {
+func (p *Plugin) SessionManager(ss core.SessionStorer) (core.ISession, error) {
+	// Get the environment variables.
+	secretKey := os.Getenv("AMB_SESSION_KEY")
+	if len(secretKey) == 0 {
+		return nil, fmt.Errorf("environment variable missing: %v", "AMB_SESSION_KEY")
+	}
+
 	// Set up the session storage provider.
 	en := websession.NewEncryptedStorage(secretKey)
 	store, err := websession.NewJSONSession(ss, en)

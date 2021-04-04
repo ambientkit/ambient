@@ -60,7 +60,7 @@ func (p *PluginMeta) Middleware() []func(next http.Handler) http.Handler {
 }
 
 // SessionManager -
-func (p *PluginMeta) SessionManager(ss SessionStorer, secretKey string) (ISession, error) {
+func (p *PluginMeta) SessionManager(ss SessionStorer) (ISession, error) {
 	return nil, nil
 }
 

@@ -43,12 +43,6 @@ import (
 
 // Boot returns a router with the application ready to be started.
 func Boot(l *logger.Logger) (http.Handler, error) {
-	// Get the environment variables.
-	secretKey := os.Getenv("AMB_SESSION_KEY")
-	if len(secretKey) == 0 {
-		return nil, fmt.Errorf("environment variable missing: %v", "AMB_SESSION_KEY")
-	}
-
 	allowHTML, err := strconv.ParseBool(os.Getenv("AMB_ALLOW_HTML"))
 	if err != nil {
 		return nil, fmt.Errorf("environment variable not able to parse as bool: %v", "AMB_ALLOW_HTML")
@@ -170,10 +164,10 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		}
 
 		// Get the session manager.
-		sm, err := v.SessionManager(ss, secretKey)
+		sm, err := v.SessionManager(ss)
 		if err != nil {
 			l.Error("", err.Error())
-		} else if sm != nil && sess == nil {
+		} else if sm != nil {
 			// Only set the session manager once.
 			l.Info("boot: using session manager from plugin: %v", v.PluginName())
 			sess = sm

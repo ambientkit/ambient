@@ -15,7 +15,7 @@ type IPlugin interface {
 	Assets() ([]Asset, *embed.FS)
 	Fields() []Field
 	Middleware() []func(next http.Handler) http.Handler
-	SessionManager(ss SessionStorer, secretKey string) (ISession, error)
+	SessionManager(ss SessionStorer) (ISession, error)
 	Router(te IRender) (IAppRouter, error)
 	Storage() (DataStorer, SessionStorer, error)
 	//Header() string
