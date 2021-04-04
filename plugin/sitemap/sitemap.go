@@ -36,5 +36,5 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
-	p.Router.Get("/sitemap.xml", p.index)
+	p.Mux.Get("/sitemap.xml", p.index)
 }

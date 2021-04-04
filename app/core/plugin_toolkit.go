@@ -8,7 +8,7 @@ import (
 // Toolkit provides utilities to plugins.
 type Toolkit struct {
 	Render       IRender
-	Router       IRouter
+	Mux          IRouter
 	Security     ISession
 	Site         *SecureSite
 	PluginLoader IPluginLoader
@@ -20,6 +20,7 @@ type IRender interface {
 	PluginDashboard(w http.ResponseWriter, r *http.Request, assets embed.FS, templateName string, vars map[string]interface{}) (status int, err error)
 	PluginPage(w http.ResponseWriter, r *http.Request, assets embed.FS, templateName string, vars map[string]interface{}) (status int, err error)
 	PluginPageContent(w http.ResponseWriter, r *http.Request, content string, vars map[string]interface{}) (status int, err error)
+	Error(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
 }
 
 // IRouter represents a router.

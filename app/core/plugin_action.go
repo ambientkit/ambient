@@ -76,48 +76,56 @@ func (c *App) LoadAllPluginPages() error {
 // middlware from the plugins.
 func (c *App) LoadAllPluginMiddleware(h http.Handler, plugins []IPlugin) http.Handler {
 	for _, plugin := range plugins {
-		// Skip if the plugin isn't found.
-		_, ok := c.Storage.Site.PluginSettings[plugin.PluginName()]
-		if !ok {
-			c.Log.Debug("plugin middleware: plugin not found: %v \n", plugin.PluginName())
-			continue
-		}
+		h = c.LoadSinglePluginMiddleware(h, plugin)
+	}
 
-		// Loop through each piece of middleware.
-		arrHandlers := plugin.Middleware()
-		if len(arrHandlers) > 0 {
-			c.Log.Debug("plugin middleware: loading %v middleware for plugin: %v \n", len(plugin.Middleware()), plugin.PluginName())
-		}
+	return h
+}
 
-		for i, pluginMiddleware := range arrHandlers {
-			// Wrap each middleware with a conditional to only use it if the
-			// plugin is enabled.
-			h = func(next http.Handler) http.Handler {
-				// Get plugin name outside of the closure because closures in
-				// Go capture variables by reference.
-				safePlugin := plugin
-				safePluginMiddleware := pluginMiddleware
-				middlewareIndex := i
-				return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					// If the plugin is not found in the settings, then skip it.
-					safePluginSettings, ok := c.Storage.Site.PluginSettings[safePlugin.PluginName()]
-					if !ok {
-						c.Log.Debug("plugin middleware: plugin %v not found\n", safePlugin.PluginName())
-						next.ServeHTTP(w, r)
-						return
-					}
+// LoadSinglePluginMiddleware returns a handler that is wrapped in conditional
+// middlware from the plugins.
+func (c *App) LoadSinglePluginMiddleware(h http.Handler, plugin IPlugin) http.Handler {
+	// Skip if the plugin isn't found.
+	_, ok := c.Storage.Site.PluginSettings[plugin.PluginName()]
+	if !ok {
+		c.Log.Debug("plugin middleware: plugin not found: %v \n", plugin.PluginName())
+		return h
+	}
 
-					// If the plugin is enabled, then wrap with the middleware.
-					if safePluginSettings.Enabled {
-						c.Log.Debug("plugin middleware: running (enabled) middleware %v by plugin: %v\n", middlewareIndex, safePlugin.PluginName())
-						safePluginMiddleware(next).ServeHTTP(w, r)
-					} else {
-						c.Log.Debug("plugin middleware: skipping (disabled) middleware %v by plugin: %v\n", middlewareIndex, safePlugin.PluginName())
-						next.ServeHTTP(w, r)
-					}
-				})
-			}(h)
-		}
+	// Loop through each piece of middleware.
+	arrHandlers := plugin.Middleware()
+	if len(arrHandlers) > 0 {
+		c.Log.Debug("plugin middleware: loading %v middleware for plugin: %v \n", len(plugin.Middleware()), plugin.PluginName())
+	}
+
+	for i, pluginMiddleware := range arrHandlers {
+		// Wrap each middleware with a conditional to only use it if the
+		// plugin is enabled.
+		h = func(next http.Handler) http.Handler {
+			// Get plugin name outside of the closure because closures in
+			// Go capture variables by reference.
+			safePlugin := plugin
+			safePluginMiddleware := pluginMiddleware
+			middlewareIndex := i
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// If the plugin is not found in the settings, then skip it.
+				safePluginSettings, ok := c.Storage.Site.PluginSettings[safePlugin.PluginName()]
+				if !ok {
+					c.Log.Debug("plugin middleware: plugin %v not found\n", safePlugin.PluginName())
+					next.ServeHTTP(w, r)
+					return
+				}
+
+				// If the plugin is enabled, then wrap with the middleware.
+				if safePluginSettings.Enabled {
+					c.Log.Debug("plugin middleware: running (enabled) middleware %v by plugin: %v\n", middlewareIndex, safePlugin.PluginName())
+					safePluginMiddleware(next).ServeHTTP(w, r)
+				} else {
+					c.Log.Debug("plugin middleware: skipping (disabled) middleware %v by plugin: %v\n", middlewareIndex, safePlugin.PluginName())
+					next.ServeHTTP(w, r)
+				}
+			})
+		}(h)
 	}
 
 	return h
@@ -203,7 +211,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	recorder := routerrecorder.NewRecorder(c.Router)
 
 	toolkit := &Toolkit{
-		Router:       recorder,
+		Mux:          recorder,
 		Render:       c.Render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
 		Security:     c.Sess,
 		Site:         NewSecureSite(name, c.Log, c.Storage, c.Sess, c.Router, grants),

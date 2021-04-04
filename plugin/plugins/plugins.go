@@ -35,9 +35,9 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
-	p.Router.Get("/dashboard/plugins", p.edit)
-	p.Router.Post("/dashboard/plugins", p.update)
-	p.Router.Get("/dashboard/plugins/:id/delete", p.destroy)
-	p.Router.Get("/dashboard/plugins/:id/settings", p.settingsEdit)
-	p.Router.Post("/dashboard/plugins/:id/settings", p.settingsUpdate)
+	p.Mux.Get("/dashboard/plugins", p.edit)
+	p.Mux.Post("/dashboard/plugins", p.update)
+	p.Mux.Get("/dashboard/plugins/:id/delete", p.destroy)
+	p.Mux.Get("/dashboard/plugins/:id/settings", p.settingsEdit)
+	p.Mux.Post("/dashboard/plugins/:id/settings", p.settingsUpdate)
 }

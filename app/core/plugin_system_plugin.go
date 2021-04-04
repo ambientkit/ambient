@@ -16,6 +16,7 @@ type IPlugin interface {
 	Fields() []Field
 	Middleware() []func(next http.Handler) http.Handler
 	SessionManager(ss SessionStorer, secretKey string) (ISession, error)
+	Router(te IRender) (IAppRouter, error)
 	//Header() string
 	//Body() string
 	//SetSettings()

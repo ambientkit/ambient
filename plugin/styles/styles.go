@@ -101,7 +101,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
-	p.Router.Get("/plugins/styles/css/style.css", p.index)
-	p.Router.Get("/dashboard/styles", p.edit)
-	p.Router.Post("/dashboard/styles", p.update)
+	p.Mux.Get("/plugins/styles/css/style.css", p.index)
+	p.Mux.Get("/dashboard/styles", p.edit)
+	p.Mux.Post("/dashboard/styles", p.update)
 }

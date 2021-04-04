@@ -44,7 +44,7 @@ func (p *Plugin) Disable() error {
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
-	p.Router.Get("/dashboard/hello", p.index)
+	p.Mux.Get("/dashboard/hello", p.index)
 }
 
 var (

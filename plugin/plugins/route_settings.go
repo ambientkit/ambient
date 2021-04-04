@@ -17,7 +17,7 @@ type Field struct {
 }
 
 func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	pluginName := p.Router.Param(r, "id")
+	pluginName := p.Mux.Param(r, "id")
 
 	vars := make(map[string]interface{})
 	vars["title"] = "Edit settings for: " + pluginName
@@ -55,7 +55,7 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 }
 
 func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	pluginName := p.Router.Param(r, "id")
+	pluginName := p.Mux.Param(r, "id")
 	r.ParseForm()
 
 	// CSRF protection.

@@ -63,3 +63,8 @@ func (p *PluginMeta) Middleware() []func(next http.Handler) http.Handler {
 func (p *PluginMeta) SessionManager(ss SessionStorer, secretKey string) (ISession, error) {
 	return nil, nil
 }
+
+// Router -
+func (p *PluginMeta) Router(te IRender) (IAppRouter, error) {
+	return nil, nil
+}

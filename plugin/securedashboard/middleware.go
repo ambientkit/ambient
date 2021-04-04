@@ -15,7 +15,7 @@ func (p *Plugin) DisallowAnon(h http.Handler) http.Handler {
 			// If there was an error, then return error.
 			if err != nil {
 				status, _ := p.Site.Error(err)
-				p.Router.Error(status, w, r)
+				p.Mux.Error(status, w, r)
 				return
 			}
 			if !loggedIn {

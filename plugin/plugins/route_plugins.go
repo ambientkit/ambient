@@ -71,7 +71,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 }
 
 func (p *Plugin) destroy(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	ID := p.Router.Param(r, "id")
+	ID := p.Mux.Param(r, "id")
 
 	plugins, err := p.Site.Plugins()
 	if err != nil {

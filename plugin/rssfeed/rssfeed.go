@@ -75,5 +75,5 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
-	p.Router.Get(rssURL, p.index)
+	p.Mux.Get(rssURL, p.index)
 }

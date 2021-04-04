@@ -36,5 +36,5 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
-	p.Router.Get("/dashboard/plugins/navigation", p.index)
+	p.Mux.Get("/dashboard/plugins/navigation", p.index)
 }

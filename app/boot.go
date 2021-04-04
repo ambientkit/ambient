@@ -12,11 +12,11 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/logger"
-	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
 	"github.com/josephspurrier/ambient/plugin/author"
+	"github.com/josephspurrier/ambient/plugin/awayrouter"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
 	"github.com/josephspurrier/ambient/plugin/charset"
 	"github.com/josephspurrier/ambient/plugin/description"
@@ -95,6 +95,8 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 
 	// Define the plugins.
 	arrPlugins := []core.IPlugin{
+		awayrouter.New(),
+
 		charset.New(),
 		viewport.New(),
 		author.New(),
@@ -136,8 +138,9 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 
 	// TODO: Need to have a default session handler that just throws messages.
 	var sess core.ISession
+	var mux core.IAppRouter
 
-	// Get the session from the plugins.
+	// Get the session manager from the plugins.
 	for _, v := range arrPlugins {
 		// Skip if the plugin isn't found.
 		ps, ok := storage.Site.PluginSettings[v.PluginName()]
@@ -154,23 +157,71 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		sm, err := v.SessionManager(ss, secretKey)
 		if err != nil {
 			l.Error("", err.Error())
-		} else if sm != nil {
+		} else if sm != nil && sess == nil {
+			// Only set the session manager once.
+			l.Info("boot: using session manager from plugin: %v", v.PluginName())
 			sess = sm
-			// Break because should only have a single session manager.
 			break
 		}
 	}
+
+	// FIXME: Need to fail gracefully.
+	if sess == nil {
+		l.Fatal("boot: no default session manager found")
+	}
+
+	// Set the session manager if one doesn't exist.
+	// var defaultSessionManager *scssession.Plugin
+	// if sess == nil {
+	// 	// Set up the default session manager.
+	// 	defaultSessionManager = scssession.New()
+	// 	sess, err = defaultSessionManager.SessionManager(ss, secretKey)
+	// 	if err != nil {
+	// 		l.Fatal("boot: default session manager cannot be loaded: %v", err.Error())
+	// 	}
+	// }
 
 	// Set up the template engine.
 	tm := html.NewTemplateManager(storage, sess)
 	pi := core.NewPlugininjector(storage, sess, plugs)
 	tmpl := htmltemplate.New(allowHTML, tm, pi, pluginNames)
 
-	// Set up the router.
-	mux := router.New()
+	// Get the router from the plugins.
+	for _, v := range arrPlugins {
+		// Skip if the plugin isn't found.
+		ps, ok := storage.Site.PluginSettings[v.PluginName()]
+		if !ok {
+			continue
+		}
 
-	// Set the NotFound and custom ServeHTTP handler.
-	route.SetupRouter(mux, tmpl)
+		// Skip if the plugin isn't enable.
+		if !ps.Enabled {
+			continue
+		}
+
+		// Get the router.
+		rm, err := v.Router(tmpl)
+		if err != nil {
+			l.Error("", err.Error())
+		} else if rm != nil {
+			// Only set the router once.
+			l.Info("boot: using router (mux) from plugin: %v", v.PluginName())
+			mux = rm
+			break
+		}
+	}
+
+	// FIXME: Need to fail gracefully.
+	if mux == nil {
+		l.Fatal("boot: no default router found")
+	}
+
+	// Set the router if one doesn't exist.
+	// if mux == nil {
+	// 	// Set up the default router.
+	// 	ar := awayrouter.New()
+	// 	ar.Router(tmpl)
+	// }
 
 	// Create core app.
 	c := core.NewApp(l, plugs, tmpl, mux, sess, storage)
