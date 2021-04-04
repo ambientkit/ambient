@@ -5,8 +5,11 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
+	"os"
 	"path"
+	"strconv"
 
 	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
 )
@@ -30,8 +33,14 @@ type Engine struct {
 	pluginNames     []string
 }
 
-// New returns a HTML template engine.
-func New(allowUnsafeHTML bool, templateManager TemplateManager, assetInjector AssetInjector, pluginNames []string) *Engine {
+// NewTemplateEngine returns a HTML template engine.
+func NewTemplateEngine(templateManager TemplateManager, assetInjector AssetInjector, pluginNames []string) *Engine {
+	allowUnsafeHTML, err := strconv.ParseBool(os.Getenv("AMB_ALLOW_HTML"))
+	if err != nil {
+		log.Printf("environment variable not able to parse as bool: %v", "AMB_ALLOW_HTML")
+		return nil
+	}
+
 	return &Engine{
 		allowUnsafeHTML: allowUnsafeHTML,
 		templateManager: templateManager,

@@ -4,9 +4,11 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
-	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
+	"github.com/russross/blackfriday/v2"
+	"jaytaylor.com/html2text"
 )
 
 // Returns a page for web crawlers.
@@ -79,7 +81,7 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 	}
 
 	for _, v := range postAndPages {
-		plaintext := htmltemplate.PlaintextBlurb(v.Post.Content)
+		plaintext := plaintextBlurb(v.Post.Content)
 		m.Items = append(m.Items, Item{
 			Title:       v.Title,
 			Link:        siteURL + "/" + v.FullURL(),
@@ -100,4 +102,19 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 	w.Header().Set("Content-Type", "application/xml")
 	fmt.Fprint(w, string(output))
 	return
+}
+
+// plaintextBlurb returns a plaintext blurb from markdown content.
+func plaintextBlurb(s string) string {
+	unsafeHTML := blackfriday.Run([]byte(s))
+	plaintext, err := html2text.FromString(string(unsafeHTML))
+	if err != nil {
+		plaintext = s
+	}
+	period := strings.Index(plaintext, ". ")
+	if period > 0 {
+		plaintext = plaintext[:period+1]
+	}
+
+	return plaintext
 }

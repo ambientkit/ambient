@@ -73,3 +73,8 @@ func (p *PluginMeta) Router(te IRender) (IAppRouter, error) {
 func (p *PluginMeta) Storage() (DataStorer, SessionStorer, error) {
 	return nil, nil, nil
 }
+
+// TemplateEngine -
+func (p *PluginMeta) TemplateEngine(tm TemplateManager, pi *PluginInjector, pluginNames []string) (IAppRender, error) {
+	return nil, nil
+}

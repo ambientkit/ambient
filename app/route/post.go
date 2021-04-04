@@ -5,8 +5,9 @@ import (
 	"strings"
 
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/model"
+	"github.com/russross/blackfriday/v2"
+	"jaytaylor.com/html2text"
 )
 
 // Post -
@@ -78,7 +79,22 @@ func (c *Post) show(w http.ResponseWriter, r *http.Request) (status int, err err
 	vars["canonical"] = p.Canonical
 	vars["id"] = p.ID
 	vars["posturl"] = p.URL
-	vars["metadescription"] = htmltemplate.PlaintextBlurb(p.Content)
+	vars["metadescription"] = plaintextBlurb(p.Content)
 
 	return c.Render.Post(w, r, p.Post.Content, vars)
+}
+
+// plaintextBlurb returns a plaintext blurb from markdown content.
+func plaintextBlurb(s string) string {
+	unsafeHTML := blackfriday.Run([]byte(s))
+	plaintext, err := html2text.FromString(string(unsafeHTML))
+	if err != nil {
+		plaintext = s
+	}
+	period := strings.Index(plaintext, ". ")
+	if period > 0 {
+		plaintext = plaintext[:period+1]
+	}
+
+	return plaintext
 }

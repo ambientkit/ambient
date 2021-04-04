@@ -2,13 +2,9 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
-	"os"
-	"strconv"
 
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
@@ -24,6 +20,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/gzipresponse"
 	"github.com/josephspurrier/ambient/plugin/hello"
 	"github.com/josephspurrier/ambient/plugin/home"
+	"github.com/josephspurrier/ambient/plugin/htmltemplate"
 	"github.com/josephspurrier/ambient/plugin/logrequest"
 	"github.com/josephspurrier/ambient/plugin/navigation"
 	"github.com/josephspurrier/ambient/plugin/notrailingslash"
@@ -43,15 +40,12 @@ import (
 
 // Boot returns a router with the application ready to be started.
 func Boot(l *logger.Logger) (http.Handler, error) {
-	allowHTML, err := strconv.ParseBool(os.Getenv("AMB_ALLOW_HTML"))
-	if err != nil {
-		return nil, fmt.Errorf("environment variable not able to parse as bool: %v", "AMB_ALLOW_HTML")
-	}
 
 	// Define the plugins.
 	arrPlugins := []core.IPlugin{
-		gcpbucketstorage.New(),
-		awayrouter.New(), // Router.
+		gcpbucketstorage.New(), // Storage.
+		htmltemplate.New(),     // Template engine.
+		awayrouter.New(),       // Router.
 
 		charset.New(),
 		viewport.New(),
@@ -192,9 +186,10 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	// }
 
 	// Set up the template engine.
-	tm := html.NewTemplateManager(storage, sess)
 	pi := core.NewPlugininjector(storage, sess, plugs)
-	tmpl := htmltemplate.New(allowHTML, tm, pi, pluginNames)
+	templateManager := html.NewTemplateManager(storage, sess)
+
+	var te core.IAppRender
 
 	// Get the router from the plugins.
 	for _, v := range arrPlugins {
@@ -210,7 +205,37 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		}
 
 		// Get the router.
-		rm, err := v.Router(tmpl)
+		tt, err := v.TemplateEngine(templateManager, pi, pluginNames)
+		if err != nil {
+			l.Error("", err.Error())
+		} else if tt != nil {
+			// Only set the router once.
+			l.Info("boot: using template engine from plugin: %v", v.PluginName())
+			te = tt
+			break
+		}
+	}
+
+	// FIXME: Need to fail gracefully.
+	if te == nil {
+		l.Fatal("boot: no default template engine found")
+	}
+
+	// Get the router from the plugins.
+	for _, v := range arrPlugins {
+		// Skip if the plugin isn't found.
+		ps, ok := storage.Site.PluginSettings[v.PluginName()]
+		if !ok {
+			continue
+		}
+
+		// Skip if the plugin isn't enabled.
+		if !ps.Enabled {
+			continue
+		}
+
+		// Get the router.
+		rm, err := v.Router(te)
 		if err != nil {
 			l.Error("", err.Error())
 		} else if rm != nil {
@@ -234,7 +259,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	// }
 
 	// Create core app.
-	c := core.NewApp(l, plugs, tmpl, mux, sess, storage)
+	c := core.NewApp(l, plugs, te, mux, sess, storage)
 
 	// Load the plugin pages.
 	err = c.LoadAllPluginPages()
