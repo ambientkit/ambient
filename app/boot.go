@@ -43,9 +43,10 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 
 	// Define the plugins.
 	arrPlugins := []core.IPlugin{
-		gcpbucketstorage.New(), // Storage.
-		htmltemplate.New(),     // Template engine.
-		awayrouter.New(),       // Router.
+		gcpbucketstorage.New(), // Storage - this plugin must always come first.
+
+		htmltemplate.New(), // Template engine.
+		awayrouter.New(),   // Router.
 
 		charset.New(),
 		viewport.New(),
@@ -81,35 +82,21 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		pluginNames = append(pluginNames, v.PluginName())
 	}
 
-	// Create new store object with the defaults.
-	site := &model.Site{}
-
 	var ds core.DataStorer
 	var ss core.SessionStorer
 
-	// Get the session manager from the plugins.
-	for _, v := range arrPlugins {
-		// // Skip if the plugin isn't found.
-		// ps, ok := storage.Site.PluginSettings[v.PluginName()]
-		// if !ok {
-		// 	continue
-		// }
-
-		// // Skip if the plugin isn't enabled.
-		// if !ps.Enabled {
-		// 	continue
-		// }
-
+	// Get the storage manager from the plugins.
+	// This must be the first plugin or else it fails.
+	if len(arrPlugins) > 0 {
+		firstPlugin := arrPlugins[0]
 		// Get the storage system.
-		pds, pss, err := v.Storage()
+		pds, pss, err := firstPlugin.Storage()
 		if err != nil {
 			l.Error("", err.Error())
 		} else if pds != nil && pss != nil {
-			// Only set the storage once.
-			l.Info("boot: using storage from plugin: %v", v.PluginName())
+			l.Info("boot: using storage from first plugin: %v", firstPlugin.PluginName())
 			ds = pds
 			ss = pss
-			break
 		}
 	}
 
@@ -118,15 +105,8 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		l.Fatal("boot: no default storage found")
 	}
 
-	// if !envdetect.RunningLocalDev() {
-	// 	// Use Google when running in GCP.
-	// 	ds = datastorage.NewGCPStorage(bucket, storageSitePath)
-	// 	ss = datastorage.NewGCPStorage(bucket, storageSessionPath)
-	// } else {
-	// 	// Use local filesytem when developing.
-	// 	ds = datastorage.NewLocalStorage(storageSitePath)
-	// 	ss = datastorage.NewLocalStorage(storageSessionPath)
-	// }
+	// Create new store object with the defaults.
+	site := &model.Site{}
 
 	// Set up the data storage provider.
 	storage, err := core.NewDatastore(ds, site)
