@@ -26,5 +26,5 @@ func Register(c *core.App) {
 	registerAdminPost(&AdminPost{c})
 
 	// This should be last because it catches all other pages at the root.
-	registerPost(&Post{c})
+	//registerPost(&Post{c})
 }

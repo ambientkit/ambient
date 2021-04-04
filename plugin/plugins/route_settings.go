@@ -51,7 +51,7 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 
 	vars["settings"] = arr
 
-	return p.Render.PluginDashboard(w, r, assets, "template/settings_edit", vars)
+	return p.Render.PluginDashboard(w, r, assets, "template/settings_edit", nil, vars)
 }
 
 func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status int, err error) {

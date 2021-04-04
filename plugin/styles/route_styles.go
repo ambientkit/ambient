@@ -38,7 +38,7 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	vars["favicon"] = favicon
 	vars["styles"] = s
 
-	return p.Render.PluginDashboard(w, r, assets, "styles_edit", vars)
+	return p.Render.PluginDashboard(w, r, assets, "styles_edit", nil, vars)
 }
 
 func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err error) {

@@ -17,15 +17,13 @@ import (
 var bufpool *bpool.BufferPool = bpool.NewBufferPool(64)
 
 // ParseTemplate will parse a template and return the string and an error.
-func ParseTemplate(body string, data map[string]interface{}) (string, error) {
+func ParseTemplate(body string, fm template.FuncMap, data map[string]interface{}) (string, error) {
 	// Write temporarily to a buffer pool.
 	buf := bufpool.Get()
 	defer bufpool.Put(buf)
 
 	// Parse the template.
-	tmpl, err := template.New("root").Funcs(template.FuncMap{
-		//"OK": func() string { return "hello" },
-	}).Parse(body)
+	tmpl, err := template.New("root").Funcs(fm).Parse(body)
 	if err != nil {
 		return "", err
 	}
@@ -40,15 +38,13 @@ func ParseTemplate(body string, data map[string]interface{}) (string, error) {
 }
 
 // ParseTemplateFS will parse a template and return the string and an error.
-func ParseTemplateFS(assets fs.FS, templatePath string, data map[string]interface{}) (string, error) {
+func ParseTemplateFS(assets fs.FS, templatePath string, fm template.FuncMap, data map[string]interface{}) (string, error) {
 	// Write temporarily to a buffer pool.
 	buf := bufpool.Get()
 	defer bufpool.Put(buf)
 
 	// Parse the template.
-	tmpl, err := template.New(path.Base(templatePath)).Funcs(template.FuncMap{
-		//"OK": func() string { return "hello" },
-	}).ParseFS(assets, templatePath)
+	tmpl, err := template.New(path.Base(templatePath)).Funcs(fm).ParseFS(assets, templatePath)
 	if err != nil {
 		return "", err
 	}

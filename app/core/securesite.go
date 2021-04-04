@@ -322,6 +322,17 @@ func (ss *SecureSite) PostsAndPages(onlyPublished bool) (model.PostWithIDList, e
 	return ss.storage.Site.PostsAndPages(onlyPublished), nil
 }
 
+// PublishedPosts returns the list of posts.
+func (ss *SecureSite) PublishedPosts() ([]model.Post, error) {
+	grant := "site.posts:read" // TODO: Differentiate between posts and published posts?
+
+	if !ss.Authorized(grant) {
+		return nil, ErrAccessDenied
+	}
+
+	return ss.storage.Site.PublishedPosts(), nil
+}
+
 // Tags returns the list of tags.
 func (ss *SecureSite) Tags(onlyPublished bool) (model.TagList, error) {
 	grant := "site.tags:read"
@@ -364,4 +375,15 @@ func (ss *SecureSite) UserAuthenticated(r *http.Request) (bool, error) {
 	}
 
 	return ss.sess.UserAuthenticated(r)
+}
+
+// Footer returns the site footer.
+func (ss *SecureSite) Footer() (string, error) {
+	grant := "site.footer:read"
+
+	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	return ss.storage.Site.Footer, nil
 }

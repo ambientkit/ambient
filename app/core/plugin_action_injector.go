@@ -96,7 +96,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 		"PageURL": r.URL.Path,
 	}
 
-	head, err := templatebuffer.ParseTemplate(pluginHead, data)
+	head, err := templatebuffer.ParseTemplate(pluginHead, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 		return nil, err
 	}
 
-	main, err := templatebuffer.ParseTemplate(pluginMain, data)
+	main, err := templatebuffer.ParseTemplate(pluginMain, nil, data)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 		return nil, err
 	}
 
-	body, err := templatebuffer.ParseTemplate(pluginBody, data)
+	body, err := templatebuffer.ParseTemplate(pluginBody, nil, data)
 	if err != nil {
 		return nil, err
 	}

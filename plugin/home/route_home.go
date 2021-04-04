@@ -15,5 +15,5 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 	}
 
 	vars := make(map[string]interface{})
-	return p.Render.PluginPageContent(w, r, content, vars)
+	return p.Render.PluginPageContent(w, r, content, nil, vars)
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/josephspurrier/ambient/html"
 	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/awayrouter"
+	"github.com/josephspurrier/ambient/plugin/bearblog"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
 	"github.com/josephspurrier/ambient/plugin/charset"
 	"github.com/josephspurrier/ambient/plugin/description"
@@ -48,6 +49,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		awayrouter.New(),       // Request router.
 
 		// Additional plugins.
+		bearblog.New(),
 		charset.New(),
 		viewport.New(),
 		author.New(),
