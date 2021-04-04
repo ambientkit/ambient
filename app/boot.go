@@ -95,7 +95,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 
 	// Define the plugins.
 	arrPlugins := []core.IPlugin{
-		awayrouter.New(),
+		awayrouter.New(), // Router.
 
 		charset.New(),
 		viewport.New(),
@@ -122,7 +122,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		redirecttourl.New(),
 		gzipresponse.New(),
 		logrequest.New(),
-		scssession.New(),
+		scssession.New(), // Session manager.
 	}
 
 	pluginNames := make([]string, 0)
@@ -148,7 +148,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 			continue
 		}
 
-		// Skip if the plugin isn't enable.
+		// Skip if the plugin isn't enabled.
 		if !ps.Enabled {
 			continue
 		}
@@ -194,7 +194,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 			continue
 		}
 
-		// Skip if the plugin isn't enable.
+		// Skip if the plugin isn't enabled.
 		if !ps.Enabled {
 			continue
 		}
