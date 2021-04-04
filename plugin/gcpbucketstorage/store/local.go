@@ -1,4 +1,5 @@
-package datastorage
+// Package store provides read and write access to a system.
+package store
 
 import (
 	"io/ioutil"

@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -18,7 +18,7 @@ var templates embed.FS
 
 // TemplateManager represents an object that returns templates and a FuncMap.
 type TemplateManager struct {
-	storage *datastorage.Storage
+	storage *core.Storage
 	sess    ISession
 }
 
@@ -28,7 +28,7 @@ type ISession interface {
 }
 
 // NewTemplateManager returns a TemplateManager.
-func NewTemplateManager(storage *datastorage.Storage, sess ISession) *TemplateManager {
+func NewTemplateManager(storage *core.Storage, sess ISession) *TemplateManager {
 	return &TemplateManager{
 		storage: storage,
 		sess:    sess,

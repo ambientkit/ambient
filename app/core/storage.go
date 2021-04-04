@@ -1,5 +1,4 @@
-// Package datastorage provides mechanisms to store the app data.
-package datastorage
+package core
 
 import (
 	"encoding/json"
@@ -8,22 +7,16 @@ import (
 	"github.com/josephspurrier/ambient/app/model"
 )
 
-// Datastorer reads and writes data to an object.
-type Datastorer interface {
-	Save([]byte) error
-	Load() ([]byte, error)
-}
-
 // Storage represents a writable and readable object.
 type Storage struct {
 	Site         *model.Site
 	PluginRoutes *model.PluginRoutes
-	datastorer   Datastorer
+	datastorer   DataStorer
 }
 
-// New returns a writable and readable site object. Returns an error if the
+// NewDatastore returns a writable and readable site object. Returns an error if the
 // object cannot be initially read.
-func New(ds Datastorer, site *model.Site) (*Storage, error) {
+func NewDatastore(ds DataStorer, site *model.Site) (*Storage, error) {
 	s := &Storage{
 		Site:       site,
 		datastorer: ds,

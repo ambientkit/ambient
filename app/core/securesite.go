@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -20,7 +19,7 @@ var (
 // SecureSite is a secure data access for the site.
 type SecureSite struct {
 	pluginName string
-	storage    *datastorage.Storage
+	storage    *Storage
 	sess       ISession
 	mux        IAppRouter
 	grants     map[string]bool
@@ -28,7 +27,7 @@ type SecureSite struct {
 }
 
 // NewSecureSite -
-func NewSecureSite(pluginName string, log IAppLogger, storage *datastorage.Storage, session ISession, mux IAppRouter, grants map[string]bool) *SecureSite {
+func NewSecureSite(pluginName string, log IAppLogger, storage *Storage, session ISession, mux IAppRouter, grants map[string]bool) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
 		storage:    storage,

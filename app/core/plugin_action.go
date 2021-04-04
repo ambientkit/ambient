@@ -11,13 +11,12 @@ import (
 	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/cachecontrol"
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/routerrecorder"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
 // RegisterPlugins into storage.
-func RegisterPlugins(arr []IPlugin, storage *datastorage.Storage) (*PluginSystem, error) {
+func RegisterPlugins(arr []IPlugin, storage *Storage) (*PluginSystem, error) {
 	// Create the plugin system.
 	pluginsys := NewPluginSystem()
 
@@ -248,7 +247,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	return shouldSave
 }
 
-func saveRoutesForPlugin(name string, recorder *routerrecorder.Recorder, storage *datastorage.Storage) {
+func saveRoutesForPlugin(name string, recorder *routerrecorder.Recorder, storage *Storage) {
 	// Save the routes.
 	arr := make([]model.Route, 0)
 	for _, route := range recorder.Routes() {

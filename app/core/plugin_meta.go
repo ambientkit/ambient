@@ -68,3 +68,8 @@ func (p *PluginMeta) SessionManager(ss SessionStorer, secretKey string) (ISessio
 func (p *PluginMeta) Router(te IRender) (IAppRouter, error) {
 	return nil, nil
 }
+
+// Storage -
+func (p *PluginMeta) Storage() (DataStorer, SessionStorer, error) {
+	return nil, nil, nil
+}

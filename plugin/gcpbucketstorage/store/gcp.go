@@ -1,4 +1,4 @@
-package datastorage
+package store
 
 import (
 	"bytes"

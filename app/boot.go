@@ -8,8 +8,6 @@ import (
 	"strconv"
 
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/app/model"
@@ -21,6 +19,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/charset"
 	"github.com/josephspurrier/ambient/plugin/description"
 	"github.com/josephspurrier/ambient/plugin/disqus"
+	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage"
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/gzipresponse"
 	"github.com/josephspurrier/ambient/plugin/hello"
@@ -42,28 +41,12 @@ import (
 	"github.com/josephspurrier/ambient/plugin/viewport"
 )
 
-var (
-	storageSitePath    = "storage/site.json"
-	storageSessionPath = "storage/session.bin"
-)
-
 // Boot returns a router with the application ready to be started.
 func Boot(l *logger.Logger) (http.Handler, error) {
-	// Set the storage and session environment variables.
-	sitePath := os.Getenv("AMB_SITE_PATH")
-	if len(sitePath) > 0 {
-		storageSitePath = sitePath
-	}
-
 	// Get the environment variables.
 	secretKey := os.Getenv("AMB_SESSION_KEY")
 	if len(secretKey) == 0 {
 		return nil, fmt.Errorf("environment variable missing: %v", "AMB_SESSION_KEY")
-	}
-
-	bucket := os.Getenv("AMB_GCP_BUCKET_NAME")
-	if len(bucket) == 0 {
-		return nil, fmt.Errorf("environment variable missing: %v", "AMB_GCP_BUCKET_NAME")
 	}
 
 	allowHTML, err := strconv.ParseBool(os.Getenv("AMB_ALLOW_HTML"))
@@ -71,30 +54,9 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		return nil, fmt.Errorf("environment variable not able to parse as bool: %v", "AMB_ALLOW_HTML")
 	}
 
-	// Create new store object with the defaults.
-	site := &model.Site{}
-
-	var ds datastorage.Datastorer
-	var ss core.SessionStorer
-
-	if !envdetect.RunningLocalDev() {
-		// Use Google when running in GCP.
-		ds = datastorage.NewGCPStorage(bucket, storageSitePath)
-		ss = datastorage.NewGCPStorage(bucket, storageSessionPath)
-	} else {
-		// Use local filesytem when developing.
-		ds = datastorage.NewLocalStorage(storageSitePath)
-		ss = datastorage.NewLocalStorage(storageSessionPath)
-	}
-
-	// Set up the data storage provider.
-	storage, err := datastorage.New(ds, site)
-	if err != nil {
-		return nil, err
-	}
-
 	// Define the plugins.
 	arrPlugins := []core.IPlugin{
+		gcpbucketstorage.New(),
 		awayrouter.New(), // Router.
 
 		charset.New(),
@@ -125,9 +87,63 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		scssession.New(), // Session manager.
 	}
 
+	// Create a list of the plugin names.
 	pluginNames := make([]string, 0)
 	for _, v := range arrPlugins {
 		pluginNames = append(pluginNames, v.PluginName())
+	}
+
+	// Create new store object with the defaults.
+	site := &model.Site{}
+
+	var ds core.DataStorer
+	var ss core.SessionStorer
+
+	// Get the session manager from the plugins.
+	for _, v := range arrPlugins {
+		// // Skip if the plugin isn't found.
+		// ps, ok := storage.Site.PluginSettings[v.PluginName()]
+		// if !ok {
+		// 	continue
+		// }
+
+		// // Skip if the plugin isn't enabled.
+		// if !ps.Enabled {
+		// 	continue
+		// }
+
+		// Get the storage system.
+		pds, pss, err := v.Storage()
+		if err != nil {
+			l.Error("", err.Error())
+		} else if pds != nil && pss != nil {
+			// Only set the storage once.
+			l.Info("boot: using storage from plugin: %v", v.PluginName())
+			ds = pds
+			ss = pss
+			break
+		}
+	}
+
+	// FIXME: Need to fail gracefully.
+	if ds == nil || ss == nil {
+		l.Fatal("boot: no default storage found")
+	}
+
+	// if !envdetect.RunningLocalDev() {
+	// 	// Use Google when running in GCP.
+	// 	ds = datastorage.NewGCPStorage(bucket, storageSitePath)
+	// 	ss = datastorage.NewGCPStorage(bucket, storageSessionPath)
+	// } else {
+	// 	// Use local filesytem when developing.
+	// 	ds = datastorage.NewLocalStorage(storageSitePath)
+	// 	ss = datastorage.NewLocalStorage(storageSessionPath)
+	// }
+
+	// Set up the data storage provider.
+	storage, err := core.NewDatastore(ds, site)
+	if err != nil {
+		return nil, err
 	}
 
 	// Register the plugins.

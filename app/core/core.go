@@ -3,8 +3,6 @@ package core
 
 import (
 	"net/http"
-
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
 )
 
 // App represents the app dependencies.
@@ -14,7 +12,7 @@ type App struct {
 	Render  IAppRender
 	Router  IAppRouter
 	Sess    ISession
-	Storage *datastorage.Storage
+	Storage *Storage
 }
 
 // NewApp returns a new application.
@@ -23,7 +21,7 @@ func NewApp(logger IAppLogger,
 	render IAppRender,
 	mux IAppRouter,
 	sess ISession,
-	storage *datastorage.Storage) *App {
+	storage *Storage) *App {
 	return &App{
 		Log:     logger,
 		Plugins: plugins,

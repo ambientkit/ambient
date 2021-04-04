@@ -5,19 +5,18 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
 	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
 )
 
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
-	storage *datastorage.Storage
+	storage *Storage
 	sess    ISession
 	plugins *PluginSystem
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(storage *datastorage.Storage, sess ISession, plugins *PluginSystem) *PluginInjector {
+func NewPlugininjector(storage *Storage, sess ISession, plugins *PluginSystem) *PluginInjector {
 	return &PluginInjector{
 		storage: storage,
 		sess:    sess,

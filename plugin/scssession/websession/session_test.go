@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/josephspurrier/ambient/app/lib/datastorage"
+	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage/store"
 	"github.com/josephspurrier/ambient/plugin/scssession/websession"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +20,7 @@ func TestNewSession(t *testing.T) {
 	f := "data.bin"
 	err := ioutil.WriteFile(f, []byte(""), 0644)
 	assert.NoError(t, err)
-	ss := datastorage.NewLocalStorage(f)
+	ss := store.NewLocalStorage(f)
 	secretkey := "82a18fbbfed2694bb15d512a70c53b1a088e669966918d3d474564b2ac44349b"
 	en := websession.NewEncryptedStorage(secretkey)
 	store, err := websession.NewJSONSession(ss, en)
