@@ -77,13 +77,6 @@ func (p *Plugin) Routes() {
 
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
-	// Get the Disqus ID.
-	footer, err := p.Site.PluginField(Footer)
-	if err != nil || len(footer) == 0 {
-		// Otherwise don't set the assets.
-		return nil, nil
-	}
-
 	return []core.Asset{
 		{
 			Path:     "template/partial/nav.tmpl",
