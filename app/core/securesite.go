@@ -398,3 +398,14 @@ func (ss *SecureSite) Footer() (string, error) {
 
 	return ss.storage.Site.Footer, nil
 }
+
+// LoginURL returns the login URL.
+func (ss *SecureSite) LoginURL() (string, error) {
+	grant := "site.loginurl:read"
+
+	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	return ss.storage.Site.LoginURL, nil
+}

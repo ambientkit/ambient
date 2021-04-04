@@ -38,4 +38,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 func (p *Plugin) Routes() {
 	p.Mux.Get("/blog", p.postIndex)
 	p.Mux.Get("/:slug", p.postShow)
+
+	p.Mux.Get("/login/:slug", p.login)
+	p.Mux.Post("/login/:slug", p.loginPost)
+	p.Mux.Get("/dashboard/logout", p.logout)
 }

@@ -22,9 +22,5 @@ type ITemplateEngine interface {
 func Register(c *core.App) {
 	// Register routes.
 	registerHomePost(&HomePost{c})
-	registerAuthUtil(&AuthUtil{c})
 	registerAdminPost(&AdminPost{c})
-
-	// This should be last because it catches all other pages at the root.
-	//registerPost(&Post{c})
 }

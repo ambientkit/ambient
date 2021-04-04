@@ -1,4 +1,4 @@
-package route
+package bearblog
 
 import (
 	"encoding/base64"
@@ -8,47 +8,45 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/passhash"
 	"github.com/josephspurrier/ambient/app/lib/totp"
 )
 
-// AuthUtil -
-type AuthUtil struct {
-	*core.App
-}
-
-func registerAuthUtil(c *AuthUtil) {
-	c.Router.Get("/login/:slug", c.login)
-	c.Router.Post("/login/:slug", c.loginPost)
-	c.Router.Get("/dashboard/logout", c.logout)
-}
-
 // login allows a user to login to the dashboard.
-func (c *AuthUtil) login(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	slug := c.Router.Param(r, "slug")
-	if slug != c.Storage.Site.LoginURL {
+func (p *Plugin) login(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	slug := p.Mux.Param(r, "slug")
+	loginURL, err := p.Site.LoginURL()
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
+	if slug != loginURL {
 		return http.StatusNotFound, nil
 	}
 
 	vars := make(map[string]interface{})
 	vars["title"] = "Login"
-	vars["token"] = c.Sess.SetCSRF(r)
+	vars["token"] = p.Security.SetCSRF(r)
 
-	return c.Render.Page(w, r, "login", vars)
+	return p.Render.PluginPage(w, r, assets, "template/login", p.FuncMap(r), vars)
 }
 
-func (c *AuthUtil) loginPost(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	slug := c.Router.Param(r, "slug")
-	if slug != c.Storage.Site.LoginURL {
+func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	slug := p.Mux.Param(r, "slug")
+	loginURL, err := p.Site.LoginURL()
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
+	if slug != loginURL {
 		return http.StatusNotFound, nil
 	}
 
 	r.ParseForm()
 
 	// CSRF protection.
-	success := c.Sess.CSRF(r)
+	success := p.Security.CSRF(r)
 	if !success {
 		return http.StatusBadRequest, nil
 	}
@@ -112,19 +110,19 @@ func (c *AuthUtil) loginPost(w http.ResponseWriter, r *http.Request) (status int
 
 	fmt.Printf("Login attempt successful.\n")
 
-	c.Sess.SetUser(r, username)
+	p.Security.SetUser(r, username)
 	if remember == "on" {
-		c.Sess.RememberMe(r, true)
+		p.Security.RememberMe(r, true)
 	} else {
-		c.Sess.RememberMe(r, false)
+		p.Security.RememberMe(r, false)
 	}
 
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 	return
 }
 
-func (c *AuthUtil) logout(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	c.Sess.Logout(r)
+func (p *Plugin) logout(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	p.Security.Logout(r)
 
 	http.Redirect(w, r, "/", http.StatusFound)
 	return
