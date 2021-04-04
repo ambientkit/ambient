@@ -109,15 +109,15 @@ func (ss *SecureSite) Title() (string, error) {
 }
 
 // Subtitle returns the subtitle.
-func (ss *SecureSite) Subtitle() (string, error) {
-	grant := "site.subtitle:read"
+// func (ss *SecureSite) Subtitle() (string, error) {
+// 	grant := "site.subtitle:read"
 
-	if !ss.Authorized(grant) {
-		return "", ErrAccessDenied
-	}
+// 	if !ss.Authorized(grant) {
+// 		return "", ErrAccessDenied
+// 	}
 
-	return ss.storage.Site.Subtitle, nil
-}
+// 	return ss.storage.Site.Subtitle, nil
+// }
 
 // Scheme returns the site scheme.
 func (ss *SecureSite) Scheme() (string, error) {
@@ -144,17 +144,17 @@ func (ss *SecureSite) SetTitle(title string) error {
 }
 
 // SetSubtitle sets the subsite.
-func (ss *SecureSite) SetSubtitle(subtitle string) error {
-	grant := "site.subtitle:write"
+// func (ss *SecureSite) SetSubtitle(subtitle string) error {
+// 	grant := "site.subtitle:write"
 
-	if !ss.Authorized(grant) {
-		return ErrAccessDenied
-	}
+// 	if !ss.Authorized(grant) {
+// 		return ErrAccessDenied
+// 	}
 
-	ss.storage.Site.Subtitle = escapeValue(subtitle)
+// 	ss.storage.Site.Subtitle = escapeValue(subtitle)
 
-	return ss.storage.Save()
-}
+// 	return ss.storage.Save()
+// }
 
 // URL returns the site URL.
 func (ss *SecureSite) URL() (string, error) {
@@ -368,7 +368,7 @@ func (ss *SecureSite) PostsAndPages(onlyPublished bool) (model.PostWithIDList, e
 	return ss.storage.Site.PostsAndPages(onlyPublished), nil
 }
 
-// PublishedPosts returns the list of posts.
+// PublishedPosts returns the list of published posts.
 func (ss *SecureSite) PublishedPosts() ([]model.Post, error) {
 	grant := "site.posts:read" // TODO: Differentiate between posts and published posts?
 
@@ -377,6 +377,17 @@ func (ss *SecureSite) PublishedPosts() ([]model.Post, error) {
 	}
 
 	return ss.storage.Site.PublishedPosts(), nil
+}
+
+// PublishedPages returns the list of published pages.
+func (ss *SecureSite) PublishedPages() ([]model.Post, error) {
+	grant := "site.pages:read" // TODO: Differentiate between posts and published posts?
+
+	if !ss.Authorized(grant) {
+		return nil, ErrAccessDenied
+	}
+
+	return ss.storage.Site.PublishedPages(), nil
 }
 
 // PostBySlug returns the post by slug.

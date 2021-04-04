@@ -8,7 +8,7 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 )
 
-//go:embed template/*.tmpl
+//go:embed template/partial/*.tmpl template/content/*.tmpl
 var assets embed.FS
 
 // Plugin represents an Ambient plugin.
@@ -38,6 +38,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 const (
 	// LoginURL allows user to set the login URL.
 	LoginURL = "Login URL"
+	// Subtitle allows user to set the Subtitle.
+	Subtitle = "Subtitle"
 	// Footer allows user to set the footer.
 	Footer = "Footer"
 )
@@ -48,6 +50,9 @@ func (p *Plugin) Fields() []core.Field {
 		{
 			Name:    LoginURL,
 			Default: "admin", // FIXME: Need to add logic for this.
+		},
+		{
+			Name: Subtitle,
 		},
 		{
 			Name: Footer,
@@ -68,4 +73,31 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/dashboard", p.edit)
 	p.Mux.Post("/dashboard", p.update)
 	p.Mux.Get("/dashboard/reload", p.reload)
+}
+
+// Assets returns a list of assets and an embedded filesystem.
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+	// Get the Disqus ID.
+	footer, err := p.Site.PluginField(Footer)
+	if err != nil || len(footer) == 0 {
+		// Otherwise don't set the assets.
+		return nil, nil
+	}
+
+	return []core.Asset{
+		{
+			Path:     "template/partial/nav.tmpl",
+			Filetype: core.AssetGeneric,
+			Location: core.LocationHeader,
+			Inline:   true,
+			FuncMap:  p.FuncMap,
+		},
+		{
+			Path:     "template/partial/footer.tmpl",
+			Filetype: core.AssetGeneric,
+			Location: core.LocationFooter,
+			Inline:   true,
+			FuncMap:  p.FuncMap,
+		},
+	}, &assets
 }

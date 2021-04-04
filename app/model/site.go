@@ -9,9 +9,9 @@ import (
 
 // Site -
 type Site struct {
-	Title    string `json:"title"`
-	Subtitle string `json:"subtitle"`
-	Content  string `json:"content"` // Home content.
+	Title string `json:"title"`
+	//Subtitle string `json:"subtitle"`
+	Content string `json:"content"` // Home content.
 	//Footer         string                    `json:"footer"`
 	Scheme         string                    `json:"scheme"`
 	URL            string                    `json:"url"`
@@ -48,11 +48,6 @@ func (s Site) SiteURL() string {
 // SiteTitle -
 func (s Site) SiteTitle() string {
 	return fmt.Sprintf("%v", s.Title)
-}
-
-// SiteSubtitle -
-func (s Site) SiteSubtitle() string {
-	return fmt.Sprintf("%v", s.Subtitle)
 }
 
 // PublishedPosts -

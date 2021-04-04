@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html"
+	"html/template"
 	"io/fs"
 	"io/ioutil"
 	"net/http"
@@ -28,10 +29,14 @@ type FieldType string
 const (
 	// LocationHead is at the bottom of the HTML <head> section.
 	LocationHead AssetLocation = "head"
-	// LocationBody is at the bottom of the HTML <body> section.
-	LocationBody AssetLocation = "body"
+	// LocationHeader is at the top the HTML <header> section.
+	LocationHeader AssetLocation = "header"
 	// LocationMain is at the bottom of the HTML <main> section.
 	LocationMain AssetLocation = "main"
+	// LocationFooter is in the HTML <footer> section.
+	LocationFooter AssetLocation = "footer"
+	// LocationBody is at the bottom of the HTML <body> section.
+	LocationBody AssetLocation = "body"
 
 	// AssetStylesheet is a stylesheet element.
 	AssetStylesheet AssetType = "stylesheet"
@@ -72,6 +77,8 @@ type Asset struct {
 	Inline   bool      `json:"inline"`
 	Path     string    `json:"path"`
 	Replace  []Replace `json:"replace"`
+
+	FuncMap func(r *http.Request) template.FuncMap `json:"funcmap"`
 }
 
 // Replace represents text to find and replace.
@@ -153,10 +160,25 @@ func (file *Asset) Element(v IPlugin, assets fs.FS) string {
 			}
 		}
 	case AssetGeneric:
-		if file.ClosingTag {
-			txt = fmt.Sprintf(`<%v%v></%v>`, html.EscapeString(file.TagName), attrsJoined, html.EscapeString(file.TagName))
+		if file.Inline {
+			ff, status, err := file.Contents(assets)
+			if status != http.StatusOK {
+				// FIXME: Do something with these.
+				fmt.Println(err.Error())
+				return ""
+			}
+			if file.TagName == "" {
+				txt = fmt.Sprintf(`%v`, string(ff))
+			} else {
+				txt = fmt.Sprintf(`<%v%v>%v</%v>`, html.EscapeString(file.TagName), attrsJoined, string(ff), html.EscapeString(file.TagName))
+			}
 		} else {
-			txt = fmt.Sprintf(`<%v%v>`, html.EscapeString(file.TagName), attrsJoined)
+			// FIXME: The closing tag could be false but the inline above will still add one.
+			if file.ClosingTag {
+				txt = fmt.Sprintf(`<%v%v></%v>`, html.EscapeString(file.TagName), attrsJoined, html.EscapeString(file.TagName))
+			} else {
+				txt = fmt.Sprintf(`<%v%v>`, html.EscapeString(file.TagName), attrsJoined)
+			}
 		}
 	default:
 		fmt.Printf("unsupported asset filetype for plugin (%v): %v", v.PluginName(), file.Filetype)

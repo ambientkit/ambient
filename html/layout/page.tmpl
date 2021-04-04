@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-{{template "head" .}}
+<head>
+    {{block "PluginHeadContent" ""}}{{end}}
+</head>
 <body>
-    {{template "header" .}}
+    <header>
+        {{block "PluginHeaderContent" ""}}{{end}}
+    </header>
     <main>
         {{template "content" .}}
         {{block "PluginMainContent" ""}}{{end}}
     </main>
-    {{template "footer" .}}
+    <footer>
+        {{block "PluginFooterContent" ""}}{{end}}
+    </footer>
     {{block "PluginBodyContent" ""}}{{end}}
 </body>
 </html>

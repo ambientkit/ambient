@@ -28,8 +28,12 @@ func NewPlugininjector(storage *Storage, sess ISession, plugins *PluginSystem) *
 func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 	pluginNames []string, layoutType string) (*template.Template, error) {
 	pluginHead := ""
+	pluginHeader := ""
 	pluginMain := ""
+	pluginFooter := ""
 	pluginBody := ""
+
+	fm := template.FuncMap{}
 
 	// Loop through each of the plugins.
 	// Use the plugin names because it's ordered.
@@ -77,17 +81,26 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 			switch file.Location {
 			case LocationHead:
 				pluginHead += txt + "\n    "
-			case LocationBody:
-				pluginBody += txt + "\n    "
+			case LocationHeader:
+				pluginHeader += txt + "\n    "
 			case LocationMain:
 				pluginMain += txt + "\n    "
+			case LocationFooter:
+				pluginFooter += txt + "\n    "
+			case LocationBody:
+				pluginBody += txt + "\n    "
 			default:
 				fmt.Printf("unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
 			}
-		}
 
-		//pluginHeader += v.Header()
-		//pluginBody += v.Body()
+			// If a FuncMap exists, pass request into FuncMap.
+			if file.FuncMap != nil {
+				afm := file.FuncMap(r)
+				for k, v := range afm {
+					fm[k] = v
+				}
+			}
+		}
 	}
 
 	// Expose the variables to the plugin templates.
@@ -96,7 +109,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 		"PageURL": r.URL.Path,
 	}
 
-	head, err := templatebuffer.ParseTemplate(pluginHead, nil, data)
+	head, err := templatebuffer.ParseTemplate(pluginHead, fm, data)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +120,18 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 		return nil, err
 	}
 
-	main, err := templatebuffer.ParseTemplate(pluginMain, nil, data)
+	header, err := templatebuffer.ParseTemplate(pluginHeader, fm, data)
+	if err != nil {
+		return nil, err
+	}
+
+	content = fmt.Sprintf(`{{define "PluginHeaderContent"}}%s{{end}}`, header)
+	t, err = t.Parse(content)
+	if err != nil {
+		return nil, err
+	}
+
+	main, err := templatebuffer.ParseTemplate(pluginMain, fm, data)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +142,18 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 		return nil, err
 	}
 
-	body, err := templatebuffer.ParseTemplate(pluginBody, nil, data)
+	footer, err := templatebuffer.ParseTemplate(pluginFooter, fm, data)
+	if err != nil {
+		return nil, err
+	}
+
+	content = fmt.Sprintf(`{{define "PluginFooterContent"}}%s{{end}}`, footer)
+	t, err = t.Parse(content)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := templatebuffer.ParseTemplate(pluginBody, fm, data)
 	if err != nil {
 		return nil, err
 	}

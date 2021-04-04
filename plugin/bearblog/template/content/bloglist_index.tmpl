@@ -1,3 +1,9 @@
+{{if .query}}
+<h3 style="margin-bottom:0">Filtering for "{{.query}}"</h3>
+<small>
+    <a href="/blog">Remove filter</a>
+</small>
+{{end}}
 <ul class="blog-posts">
     {{if .posts }}
         {{range $p := .posts}}

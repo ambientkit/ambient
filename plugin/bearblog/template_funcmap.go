@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/josephspurrier/ambient/app/model"
 )
 
 // FuncMap returns a map of template functions that can be used in templates.
@@ -17,18 +19,22 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 	fm["StampFriendly"] = func(t time.Time) string {
 		return t.Format("02 Jan, 2006")
 	}
-	// fm["PublishedPages"] = func() []model.Post {
-	// 	return f.storage.Site.PublishedPages()
-	// }
-	// fm["SiteURL"] = func() string {
-	// 	return f.storage.Site.SiteURL()
-	// }
-	// fm["SiteTitle"] = func() string {
-	// 	return f.storage.Site.SiteTitle()
-	// }
-	// fm["SiteSubtitle"] = func() string {
-	// 	return f.storage.Site.SiteSubtitle()
-	// }
+	fm["PublishedPages"] = func() []model.Post {
+		arr, err := p.Site.PublishedPages()
+		if err != nil {
+			// TODO: Need to switch over to the logger.
+			log.Println(err)
+		}
+		return arr
+	}
+	fm["SiteSubtitle"] = func() string {
+		subtitle, err := p.Site.PluginField(Subtitle)
+		if err != nil {
+			// TODO: Need to switch over to the logger.
+			log.Println(err)
+		}
+		return subtitle
+	}
 	fm["Authenticated"] = func() bool {
 		// If user is not authenticated, don't allow them to access the page.
 		loggedIn, err := p.Site.UserAuthenticated(r)

@@ -132,10 +132,6 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutT
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	templates := []string{
 		baseTemplate,
-		"partial/head.tmpl",
-		"partial/header.tmpl",
-		"partial/nav.tmpl",
-		"partial/footer.tmpl",
 	}
 
 	// Parse the main template with the functions.

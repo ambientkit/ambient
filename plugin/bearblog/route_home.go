@@ -15,7 +15,7 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 		return p.Site.Error(err)
 	}
 
-	siteSubtitle, err := p.Site.Subtitle()
+	siteSubtitle, err := p.Site.PluginField(Subtitle)
 	if err != nil {
 		return p.Site.Error(err)
 	}
@@ -75,7 +75,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		return p.Site.Error(err)
 	}
 
-	err = p.Site.SetSubtitle(r.FormValue("subtitle"))
+	err = p.Site.SetPluginField(Subtitle, r.FormValue("subtitle"))
 	if err != nil {
 		return p.Site.Error(err)
 	}

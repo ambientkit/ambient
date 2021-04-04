@@ -1,7 +1,0 @@
-{{define "head"}}
-<head>
-    <title>{{if .title}}{{.title}} | {{end}}{{SiteTitle}}</title>
-    {{if .canonical}}<link rel="canonical" href="{{.canonical}}" />{{end}}
-    {{block "PluginHeadContent" ""}}{{end}}
-</head>
-{{end}}

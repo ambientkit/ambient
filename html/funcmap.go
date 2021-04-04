@@ -58,9 +58,6 @@ func (f *TemplateManager) FuncMap(r *http.Request) template.FuncMap {
 	fm["SiteTitle"] = func() string {
 		return f.storage.Site.SiteTitle()
 	}
-	fm["SiteSubtitle"] = func() string {
-		return f.storage.Site.SiteSubtitle()
-	}
 	fm["Authenticated"] = func() bool {
 		// If user is not authenticated, don't allow them to access the page.
 		loggedIn, err := f.sess.UserAuthenticated(r)
