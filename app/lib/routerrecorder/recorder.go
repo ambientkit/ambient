@@ -1,4 +1,5 @@
-package router
+// Package routerrecorder provides recording functionality.
+package routerrecorder
 
 import (
 	"net/http"

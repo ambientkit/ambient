@@ -12,7 +12,7 @@ import (
 
 	"github.com/josephspurrier/ambient/app/lib/cachecontrol"
 	"github.com/josephspurrier/ambient/app/lib/datastorage"
-	"github.com/josephspurrier/ambient/app/lib/router"
+	"github.com/josephspurrier/ambient/app/lib/routerrecorder"
 	"github.com/josephspurrier/ambient/app/model"
 )
 
@@ -200,11 +200,11 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	grants["site.content:read"] = true
 	grants["user.authenticated:read"] = true
 
-	recorder := router.NewRecorder(c.Router)
+	recorder := routerrecorder.NewRecorder(c.Router)
 
 	toolkit := &Toolkit{
 		Router:       recorder,
-		Render:       c.Render,
+		Render:       c.Render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
 		Security:     c.Sess,
 		Site:         NewSecureSite(name, c.Log, c.Storage, c.Sess, c.Router, grants),
 		PluginLoader: c,
@@ -240,7 +240,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	return shouldSave
 }
 
-func saveRoutesForPlugin(name string, recorder *router.Recorder, storage *datastorage.Storage) {
+func saveRoutesForPlugin(name string, recorder *routerrecorder.Recorder, storage *datastorage.Storage) {
 	// Save the routes.
 	arr := make([]model.Route, 0)
 	for _, route := range recorder.Routes() {

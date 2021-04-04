@@ -36,7 +36,7 @@ func NewApp(logger IAppLogger,
 
 // IAppRender represents a renderer.
 type IAppRender interface {
-	IRender
+	IRender // FIXME: Should probably remove this since the app isn't going to use the plugin functions.
 
 	Dashboard(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
 	Page(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
