@@ -16,16 +16,22 @@ type Mux struct {
 }
 
 // New returns an instance of the router.
-func New(csh func(w http.ResponseWriter, r *http.Request, status int, err error), notFound http.Handler) *Mux {
+func New() *Mux {
 	r := away.NewRouter()
-	if notFound != nil {
-		r.NotFound = notFound
-	}
 
 	return &Mux{
-		router:          r,
-		customServeHTTP: csh,
+		router: r,
 	}
+}
+
+// SetServeHTTP sets the ServeHTTP function.
+func (m *Mux) SetServeHTTP(csh func(w http.ResponseWriter, r *http.Request, status int, err error)) {
+	m.customServeHTTP = csh
+}
+
+// SetNotFound sets the NotFound function.
+func (m *Mux) SetNotFound(notFound http.Handler) {
+	m.router.NotFound = notFound
 }
 
 // Clear will remove a method and path from the router.

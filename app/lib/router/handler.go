@@ -4,9 +4,8 @@ import (
 	"net/http"
 )
 
-// handler is a internal handler.
 type handler struct {
-	HandlerFunc
+	HandlerFunc     func(w http.ResponseWriter, r *http.Request) (status int, err error)
 	CustomServeHTTP func(w http.ResponseWriter, r *http.Request, status int, err error)
 }
 
@@ -15,7 +14,3 @@ func (fn handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	status, err := fn.HandlerFunc(w, r)
 	fn.CustomServeHTTP(w, r, status, err)
 }
-
-// HandlerFunc is used to wrapper all endpoint functions so they work with generic
-// routers.
-type HandlerFunc func(http.ResponseWriter, *http.Request) (int, error)

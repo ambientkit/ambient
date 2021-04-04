@@ -12,6 +12,7 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
 	"github.com/josephspurrier/ambient/app/lib/logger"
+	"github.com/josephspurrier/ambient/app/lib/router"
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
@@ -166,7 +167,10 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	tmpl := htmltemplate.New(allowHTML, tm, pi, pluginNames)
 
 	// Set up the router.
-	mux := route.SetupRouter(tmpl)
+	mux := router.New()
+
+	// Set the NotFound and custom ServeHTTP handler.
+	route.SetupRouter(mux, tmpl)
 
 	// Create core app.
 	c := core.NewApp(l, plugs, tmpl, mux, sess, storage)

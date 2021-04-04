@@ -1,3 +1,4 @@
+// Package datastorage provides mechanisms to store the app data.
 package datastorage
 
 import (

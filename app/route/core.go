@@ -7,9 +7,18 @@ import (
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/htmltemplate"
-	"github.com/josephspurrier/ambient/app/lib/router"
 )
+
+// IRouter represents a router.
+type IRouter interface {
+	SetServeHTTP(csh func(w http.ResponseWriter, r *http.Request, status int, err error))
+	SetNotFound(notFound http.Handler)
+}
+
+// ITemplateEngine represents a template engine.
+type ITemplateEngine interface {
+	Error(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
+}
 
 // Register all routes.
 func Register(c *core.App) {
@@ -24,7 +33,7 @@ func Register(c *core.App) {
 
 // SetupRouter returns a router with the NotFound handler and the default
 // handler set.
-func SetupRouter(tmpl *htmltemplate.Engine) *router.Mux {
+func SetupRouter(mux IRouter, tmpl ITemplateEngine) {
 	// Set the handling of all responses.
 	customServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
 		// Handle only errors.
@@ -71,7 +80,6 @@ func SetupRouter(tmpl *htmltemplate.Engine) *router.Mux {
 	})
 
 	// Set up the router.
-	rr := router.New(customServeHTTP, notFound)
-
-	return rr
+	mux.SetServeHTTP(customServeHTTP)
+	mux.SetNotFound(notFound)
 }

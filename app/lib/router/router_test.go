@@ -28,12 +28,13 @@ var defaultServeHTTP = func(w http.ResponseWriter, r *http.Request, status int,
 }
 
 func TestParams(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
-	mux.Get("/user/:name", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			assert.Equal(t, "john", mux.Param(r, "name"))
-			return http.StatusOK, nil
-		}))
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
+
+	mux.Get("/user/:name", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		assert.Equal(t, "john", mux.Param(r, "name"))
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("GET", "/user/john", nil)
 	w := httptest.NewRecorder()
@@ -41,13 +42,13 @@ func TestParams(t *testing.T) {
 }
 
 func TestInstance(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
-	mux.Get("/user/:name", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			assert.Equal(t, "john", mux.Param(r, "name"))
-			return http.StatusOK, nil
-		}))
+	mux.Get("/user/:name", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		assert.Equal(t, "john", mux.Param(r, "name"))
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("GET", "/user/john", nil)
 	w := httptest.NewRecorder()
@@ -55,17 +56,17 @@ func TestInstance(t *testing.T) {
 }
 
 func TestPostForm(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	form := url.Values{}
 	form.Add("username", "jsmith")
 
-	mux.Post("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			r.ParseForm()
-			assert.Equal(t, "jsmith", r.FormValue("username"))
-			return http.StatusOK, nil
-		}))
+	mux.Post("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		r.ParseForm()
+		assert.Equal(t, "jsmith", r.FormValue("username"))
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("POST", "/user", strings.NewReader(form.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -74,21 +75,21 @@ func TestPostForm(t *testing.T) {
 }
 
 func TestPostJSON(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	j, err := json.Marshal(map[string]interface{}{
 		"username": "jsmith",
 	})
 	assert.Nil(t, err)
 
-	mux.Post("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			b, err := ioutil.ReadAll(r.Body)
-			assert.Nil(t, err)
-			r.Body.Close()
-			assert.Equal(t, `{"username":"jsmith"}`, string(b))
-			return http.StatusOK, nil
-		}))
+	mux.Post("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		b, err := ioutil.ReadAll(r.Body)
+		assert.Nil(t, err)
+		r.Body.Close()
+		assert.Equal(t, `{"username":"jsmith"}`, string(b))
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("POST", "/user", bytes.NewBuffer(j))
 	r.Header.Set("Content-Type", "application/json")
@@ -97,15 +98,15 @@ func TestPostJSON(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	called := false
 
-	mux.Get("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			called = true
-			return http.StatusOK, nil
-		}))
+	mux.Get("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		called = true
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("GET", "/user", nil)
 	w := httptest.NewRecorder()
@@ -115,15 +116,15 @@ func TestGet(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	called := false
 
-	mux.Delete("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			called = true
-			return http.StatusOK, nil
-		}))
+	mux.Delete("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		called = true
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("DELETE", "/user", nil)
 	w := httptest.NewRecorder()
@@ -133,15 +134,15 @@ func TestDelete(t *testing.T) {
 }
 
 func TestHead(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	called := false
 
-	mux.Head("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			called = true
-			return http.StatusOK, nil
-		}))
+	mux.Head("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		called = true
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("HEAD", "/user", nil)
 	w := httptest.NewRecorder()
@@ -151,15 +152,15 @@ func TestHead(t *testing.T) {
 }
 
 func TestOptions(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	called := false
 
-	mux.Options("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			called = true
-			return http.StatusOK, nil
-		}))
+	mux.Options("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		called = true
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("OPTIONS", "/user", nil)
 	w := httptest.NewRecorder()
@@ -169,15 +170,15 @@ func TestOptions(t *testing.T) {
 }
 
 func TestPatch(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	called := false
 
-	mux.Patch("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			called = true
-			return http.StatusOK, nil
-		}))
+	mux.Patch("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		called = true
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("PATCH", "/user", nil)
 	w := httptest.NewRecorder()
@@ -187,15 +188,15 @@ func TestPatch(t *testing.T) {
 }
 
 func TestPut(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	called := false
 
-	mux.Put("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			called = true
-			return http.StatusOK, nil
-		}))
+	mux.Put("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		called = true
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("PUT", "/user", nil)
 	w := httptest.NewRecorder()
@@ -205,15 +206,15 @@ func TestPut(t *testing.T) {
 }
 
 func Test404(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	called := false
 
-	mux.Get("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			called = true
-			return http.StatusOK, nil
-		}))
+	mux.Get("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		called = true
+		return http.StatusOK, nil
+	})
 
 	r := httptest.NewRequest("GET", "/badroute", nil)
 	w := httptest.NewRecorder()
@@ -224,15 +225,15 @@ func Test404(t *testing.T) {
 }
 
 func Test500NoError(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	called := true
 
-	mux.Get("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			called = true
-			return http.StatusInternalServerError, nil
-		}))
+	mux.Get("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		called = true
+		return http.StatusInternalServerError, nil
+	})
 
 	r := httptest.NewRequest("GET", "/user", nil)
 	w := httptest.NewRecorder()
@@ -243,16 +244,16 @@ func Test500NoError(t *testing.T) {
 }
 
 func Test500WithError(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	called := true
 	specificError := errors.New("specific error")
 
-	mux.Get("/user", HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			called = true
-			return http.StatusInternalServerError, specificError
-		}))
+	mux.Get("/user", func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		called = true
+		return http.StatusInternalServerError, specificError
+	})
 
 	r := httptest.NewRequest("GET", "/user", nil)
 	w := httptest.NewRecorder()
@@ -264,13 +265,14 @@ func Test500WithError(t *testing.T) {
 }
 
 func Test400(t *testing.T) {
-	notFound := http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusNotFound)
-		},
+	notFound := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	},
 	)
 
-	mux := New(defaultServeHTTP, notFound)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
+	mux.SetNotFound(notFound)
 
 	r := httptest.NewRequest("GET", "/unknown", nil)
 	w := httptest.NewRecorder()
@@ -280,7 +282,8 @@ func Test400(t *testing.T) {
 }
 
 func TestNotFound(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	r := httptest.NewRequest("GET", "/unknown", nil)
 	w := httptest.NewRecorder()
@@ -290,7 +293,8 @@ func TestNotFound(t *testing.T) {
 }
 
 func TestBadRequest(t *testing.T) {
-	mux := New(defaultServeHTTP, nil)
+	mux := New()
+	mux.SetServeHTTP(defaultServeHTTP)
 
 	r := httptest.NewRequest("GET", "/unknown", nil)
 	w := httptest.NewRecorder()
