@@ -12,5 +12,10 @@ type handler struct {
 // ServeHTTP handles all the errors from the HTTP handlers.
 func (fn handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	status, err := fn.handlerFunc(w, r)
+
+	if fn.customServeHTTP == nil {
+		return
+	}
+
 	fn.customServeHTTP(w, r, status, err)
 }
