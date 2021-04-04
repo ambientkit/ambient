@@ -207,6 +207,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	grants["site.content:read"] = true
 	grants["user.authenticated:read"] = true
 	grants["site.posts:read"] = true
+	grants["site.pages:read"] = true
 	grants["site.postbyslug:read"] = true
 	grants["site.loginurl:read"] = true
 	grants["site.scheme:read"] = true
