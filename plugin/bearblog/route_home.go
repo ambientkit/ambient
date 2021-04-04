@@ -35,7 +35,7 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 		return p.Site.Error(err)
 	}
 
-	footer, err := p.Site.Footer()
+	footer, err := p.Site.PluginField(Footer)
 	if err != nil {
 		return p.Site.Error(err)
 	}

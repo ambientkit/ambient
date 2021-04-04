@@ -71,7 +71,8 @@ func (f *TemplateManager) FuncMap(r *http.Request) template.FuncMap {
 		return loggedIn
 	}
 	fm["SiteFooter"] = func() string {
-		return f.storage.Site.Footer
+		//return f.storage.Site.Footer
+		return ""
 	}
 	fm["MFAEnabled"] = func() bool {
 		return len(os.Getenv("AMB_MFA_KEY")) > 0

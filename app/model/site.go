@@ -9,10 +9,10 @@ import (
 
 // Site -
 type Site struct {
-	Title          string                    `json:"title"`
-	Subtitle       string                    `json:"subtitle"`
-	Content        string                    `json:"content"` // Home content.
-	Footer         string                    `json:"footer"`
+	Title    string `json:"title"`
+	Subtitle string `json:"subtitle"`
+	Content  string `json:"content"` // Home content.
+	//Footer         string                    `json:"footer"`
 	Scheme         string                    `json:"scheme"`
 	URL            string                    `json:"url"`
 	Updated        time.Time                 `json:"updated"`

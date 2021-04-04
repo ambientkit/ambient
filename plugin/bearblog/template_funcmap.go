@@ -39,7 +39,7 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 		return loggedIn
 	}
 	fm["SiteFooter"] = func() string {
-		f, err := p.Site.Footer()
+		f, err := p.Site.PluginField(Footer)
 		if err != nil {
 			// TODO: Need to switch over to the logger.
 			log.Println(err)

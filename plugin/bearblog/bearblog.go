@@ -38,6 +38,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 const (
 	// LoginURL allows user to set the login URL.
 	LoginURL = "Login URL"
+	// Footer allows user to set the footer.
+	Footer = "Footer"
 )
 
 // Fields returns a list of user settable fields.
@@ -46,6 +48,10 @@ func (p *Plugin) Fields() []core.Field {
 		{
 			Name:    LoginURL,
 			Default: "admin", // FIXME: Need to add logic for this.
+		},
+		{
+			Name: Footer,
+			Type: core.Textarea,
 		},
 	}
 }

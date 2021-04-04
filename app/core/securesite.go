@@ -433,14 +433,3 @@ func (ss *SecureSite) UserAuthenticated(r *http.Request) (bool, error) {
 
 	return ss.sess.UserAuthenticated(r)
 }
-
-// Footer returns the site footer.
-func (ss *SecureSite) Footer() (string, error) {
-	grant := "site.footer:read"
-
-	if !ss.Authorized(grant) {
-		return "", ErrAccessDenied
-	}
-
-	return ss.storage.Site.Footer, nil
-}

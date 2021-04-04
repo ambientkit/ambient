@@ -4,12 +4,8 @@
 <body>
     {{template "header" .}}
     <main>
-        {{if .title}}
-        <h1>{{.title}}</h1>
-        {{end}}
-        <content>
-            {{template "content" .}}
-        </content>
+        {{template "content" .}}
+        {{block "PluginMainContent" ""}}{{end}}
     </main>
     {{template "footer" .}}
     {{block "PluginBodyContent" ""}}{{end}}
