@@ -40,14 +40,14 @@ import (
 
 // Boot returns a router with the application ready to be started.
 func Boot(l *logger.Logger) (http.Handler, error) {
-
-	// Define the plugins.
+	// Define the plugins - order does matter.
 	arrPlugins := []core.IPlugin{
-		gcpbucketstorage.New(), // Storage - this plugin must always come first.
+		// Core plugins required to use the system.
+		gcpbucketstorage.New(), // GCP and local Storage - storage plugin must always come first.
+		htmltemplate.New(),     // HTML template engine.
+		awayrouter.New(),       // Request router.
 
-		htmltemplate.New(), // Template engine.
-		awayrouter.New(),   // Router.
-
+		// Additional plugins.
 		charset.New(),
 		viewport.New(),
 		author.New(),
@@ -67,13 +67,13 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		navigation.New(),
 
 		// Middleware - executes bottom to top.
-		notrailingslash.New(),
-		uptimerobotok.New(),
-		securedashboard.New(),
-		redirecttourl.New(),
-		gzipresponse.New(),
-		logrequest.New(),
-		scssession.New(), // Session manager.
+		notrailingslash.New(), // Redirect all request swith trailing slash.
+		uptimerobotok.New(),   // Provide 200 on HEAD /.
+		securedashboard.New(), // Descure all /dashboard routes.
+		redirecttourl.New(),   // Redirect to production URL.
+		gzipresponse.New(),    // Compress all HTTP response.
+		logrequest.New(),      // Log every request as INFO.
+		scssession.New(),      // Session manager.
 	}
 
 	// Create a list of the plugin names.
@@ -82,6 +82,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		pluginNames = append(pluginNames, v.PluginName())
 	}
 
+	// Define the storage managers.
 	var ds core.DataStorer
 	var ss core.SessionStorer
 
@@ -99,8 +100,6 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 			ss = pss
 		}
 	}
-
-	// FIXME: Need to fail gracefully.
 	if ds == nil || ss == nil {
 		l.Fatal("boot: no default storage found")
 	}
@@ -120,11 +119,8 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		return nil, err
 	}
 
-	// TODO: Need to have a default session handler that just throws messages.
-	var sess core.ISession
-	var mux core.IAppRouter
-
 	// Get the session manager from the plugins.
+	var sess core.ISession
 	for _, v := range arrPlugins {
 		// Skip if the plugin isn't found.
 		ps, ok := storage.Site.PluginSettings[v.PluginName()]
@@ -154,24 +150,12 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		l.Fatal("boot: no default session manager found")
 	}
 
-	// Set the session manager if one doesn't exist.
-	// var defaultSessionManager *scssession.Plugin
-	// if sess == nil {
-	// 	// Set up the default session manager.
-	// 	defaultSessionManager = scssession.New()
-	// 	sess, err = defaultSessionManager.SessionManager(ss, secretKey)
-	// 	if err != nil {
-	// 		l.Fatal("boot: default session manager cannot be loaded: %v", err.Error())
-	// 	}
-	// }
-
 	// Set up the template engine.
 	pi := core.NewPlugininjector(storage, sess, plugs)
 	templateManager := html.NewTemplateManager(storage, sess)
 
-	var te core.IAppRender
-
 	// Get the router from the plugins.
+	var te core.IAppRender
 	for _, v := range arrPlugins {
 		// Skip if the plugin isn't found.
 		ps, ok := storage.Site.PluginSettings[v.PluginName()]
@@ -195,13 +179,12 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 			break
 		}
 	}
-
-	// FIXME: Need to fail gracefully.
 	if te == nil {
 		l.Fatal("boot: no default template engine found")
 	}
 
 	// Get the router from the plugins.
+	var mux core.IAppRouter
 	for _, v := range arrPlugins {
 		// Skip if the plugin isn't found.
 		ps, ok := storage.Site.PluginSettings[v.PluginName()]
@@ -225,18 +208,9 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 			break
 		}
 	}
-
-	// FIXME: Need to fail gracefully.
 	if mux == nil {
 		l.Fatal("boot: no default router found")
 	}
-
-	// Set the router if one doesn't exist.
-	// if mux == nil {
-	// 	// Set up the default router.
-	// 	ar := awayrouter.New()
-	// 	ar.Router(tmpl)
-	// }
 
 	// Create core app.
 	c := core.NewApp(l, plugs, te, mux, sess, storage)
