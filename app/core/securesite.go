@@ -74,6 +74,17 @@ func escapeValue(s string) string {
 	return after
 }
 
+// Load forces a reload of the data.
+func (ss *SecureSite) Load() error {
+	grant := "site.load:write"
+
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
+
+	return ss.storage.Load()
+}
+
 // Authorized determines if the current context has access.
 func (ss *SecureSite) Authorized(grant string) bool {
 	//return true
@@ -97,6 +108,28 @@ func (ss *SecureSite) Title() (string, error) {
 	return ss.storage.Site.Title, nil
 }
 
+// Subtitle returns the subtitle.
+func (ss *SecureSite) Subtitle() (string, error) {
+	grant := "site.subtitle:read"
+
+	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	return ss.storage.Site.Subtitle, nil
+}
+
+// Scheme returns the site scheme.
+func (ss *SecureSite) Scheme() (string, error) {
+	grant := "site.scheme:read"
+
+	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	return ss.storage.Site.Scheme, nil
+}
+
 // SetTitle sets the title.
 func (ss *SecureSite) SetTitle(title string) error {
 	grant := "site.title:write"
@@ -106,6 +139,19 @@ func (ss *SecureSite) SetTitle(title string) error {
 	}
 
 	ss.storage.Site.Title = escapeValue(title)
+
+	return ss.storage.Save()
+}
+
+// SetSubtitle sets the subsite.
+func (ss *SecureSite) SetSubtitle(subtitle string) error {
+	grant := "site.subtitle:write"
+
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
+
+	ss.storage.Site.Subtitle = escapeValue(subtitle)
 
 	return ss.storage.Save()
 }

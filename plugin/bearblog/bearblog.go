@@ -42,4 +42,8 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/login/:slug", p.login)
 	p.Mux.Post("/login/:slug", p.loginPost)
 	p.Mux.Get("/dashboard/logout", p.logout)
+
+	p.Mux.Get("/dashboard", p.edit)
+	p.Mux.Post("/dashboard", p.update)
+	p.Mux.Get("/dashboard/reload", p.reload)
 }
