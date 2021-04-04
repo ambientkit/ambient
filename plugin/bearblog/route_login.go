@@ -29,7 +29,7 @@ func (p *Plugin) login(w http.ResponseWriter, r *http.Request) (status int, err 
 	vars["title"] = "Login"
 	vars["token"] = p.Security.SetCSRF(r)
 
-	return p.Render.PluginPage(w, r, assets, "template/login", p.FuncMap(r), vars)
+	return p.Render.PluginPage(w, r, assets, "template/content/login", p.FuncMap(r), vars)
 }
 
 func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, err error) {

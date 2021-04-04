@@ -55,7 +55,7 @@ func (p *Plugin) postIndex(w http.ResponseWriter, r *http.Request) (status int, 
 		vars["posts"] = pubPosts
 	}
 
-	return p.Render.PluginPage(w, r, assets, "template/bloglist_index", p.FuncMap(r), vars)
+	return p.Render.PluginPage(w, r, assets, "template/content/bloglist_index", p.FuncMap(r), vars)
 }
 
 func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -91,7 +91,7 @@ func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, e
 	//vars["metadescription"] = plaintextBlurb(post.Content)
 	vars["postcontent"] = sanitized(post.Post.Content)
 
-	return p.Render.PluginPage(w, r, assets, "template/post", p.FuncMap(r), vars)
+	return p.Render.PluginPage(w, r, assets, "template/content/post", p.FuncMap(r), vars)
 }
 
 // sanitized returns a sanitized content block or an error is one occurs.

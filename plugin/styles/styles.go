@@ -8,9 +8,6 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 )
 
-//go:embed *
-var assets embed.FS
-
 // Plugin represents an Ambient plugin.
 type Plugin struct {
 	*core.PluginMeta
@@ -96,12 +93,10 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		})
 	}
 
-	return arr, &assets
+	return arr, nil
 }
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
 	p.Mux.Get("/plugins/styles/css/style.css", p.index)
-	p.Mux.Get("/dashboard/styles", p.edit)
-	p.Mux.Post("/dashboard/styles", p.update)
 }

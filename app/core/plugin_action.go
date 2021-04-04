@@ -174,6 +174,12 @@ func (c *App) loadSinglePluginPages(name string) bool {
 		c.Storage.Site.PluginSettings[name] = plugin
 	}
 
+	// If not found - which means there is data, but the plugin is no longer
+	// installed, then save that the plugin is no longer found.
+	if !found {
+		return true
+	}
+
 	// If the fields are different, then update it for saving.
 	// FIXME: This is highly coupled, may just want to save on each load.
 	if !fieldArrayEqual(plugin.Fields, v.Fields()) {

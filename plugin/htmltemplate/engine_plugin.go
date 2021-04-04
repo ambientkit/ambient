@@ -9,11 +9,6 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
 )
 
-// PluginDashboard renders using the dashboard layout.
-func (te *Engine) PluginDashboard(w http.ResponseWriter, r *http.Request, assets embed.FS, partialTemplate string, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
-	return te.pluginPartial(w, r, "layout/dashboard", "dashboard", assets, partialTemplate, fm, vars)
-}
-
 // PluginPage renders using the page layout.
 func (te *Engine) PluginPage(w http.ResponseWriter, r *http.Request, assets embed.FS, partialTemplate string, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
 	return te.pluginPartial(w, r, "layout/page", "page", assets, partialTemplate, fm, vars)

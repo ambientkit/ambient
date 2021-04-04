@@ -4,6 +4,21 @@ import (
 	"net/http"
 )
 
+func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	content, err := p.Site.Content()
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
+	if content == "" {
+		content = "*No content yet.*"
+	}
+
+	vars := make(map[string]interface{})
+	vars["postcontent"] = sanitized(content)
+	return p.Render.PluginPage(w, r, assets, "template/content/post", nil, vars)
+}
+
 func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	siteContent, err := p.Site.Content()
 	if err != nil {
@@ -58,7 +73,7 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	vars["loginurl"] = loginURL
 	vars["footer"] = footer
 
-	return p.Render.PluginDashboard(w, r, assets, "template/home_edit", p.FuncMap(r), vars)
+	return p.Render.PluginPage(w, r, assets, "template/content/home_edit", p.FuncMap(r), vars)
 }
 
 func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err error) {

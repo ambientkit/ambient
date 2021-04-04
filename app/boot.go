@@ -20,7 +20,6 @@ import (
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/gzipresponse"
 	"github.com/josephspurrier/ambient/plugin/hello"
-	"github.com/josephspurrier/ambient/plugin/home"
 	"github.com/josephspurrier/ambient/plugin/htmltemplate"
 	"github.com/josephspurrier/ambient/plugin/logrequest"
 	"github.com/josephspurrier/ambient/plugin/navigation"
@@ -65,7 +64,6 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		sitemap.New(),
 		rssfeed.New(),
 		styles.New(),
-		home.New(),
 		navigation.New(),
 
 		// Middleware - executes bottom to top.
