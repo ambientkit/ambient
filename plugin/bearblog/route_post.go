@@ -1,12 +1,12 @@
 package bearblog
 
 import (
+	"html/template"
 	"net/http"
 	"strings"
 
 	"github.com/josephspurrier/ambient/app/model"
 	"github.com/russross/blackfriday/v2"
-	"jaytaylor.com/html2text"
 )
 
 func (p *Plugin) postIndex(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -58,48 +58,68 @@ func (p *Plugin) postIndex(w http.ResponseWriter, r *http.Request) (status int, 
 	return p.Render.PluginPage(w, r, assets, "template/bloglist_index", p.FuncMap(r), vars)
 }
 
-// func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, err error) {
-// 	slug := c.Router.Param(r, "slug")
-// 	p := c.Storage.Site.PostBySlug(slug)
+func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	slug := p.Mux.Param(r, "slug")
 
-// 	// Determine if in preview mode.
-// 	preview := false
-// 	if q := r.URL.Query().Get("preview"); len(q) > 0 && strings.ToLower(q) == "true" {
-// 		preview = true
-// 	}
-
-// 	// Show 404 if not published and not in preview mode.
-// 	if !p.Published && !preview {
-// 		return http.StatusNotFound, nil
-// 	}
-
-// 	vars := make(map[string]interface{})
-// 	// Don't show certain items on pages.
-// 	if !p.Page {
-// 		vars["title"] = p.Title
-// 		vars["pubdate"] = p.Timestamp
-// 	}
-
-// 	vars["tags"] = p.Tags
-// 	vars["canonical"] = p.Canonical
-// 	vars["id"] = p.ID
-// 	vars["posturl"] = p.URL
-// 	vars["metadescription"] = plaintextBlurb(p.Content)
-
-// 	return c.Render.Post(w, r, p.Post.Content, vars)
-// }
-
-// plaintextBlurb returns a plaintext blurb from markdown content.
-func plaintextBlurb(s string) string {
-	unsafeHTML := blackfriday.Run([]byte(s))
-	plaintext, err := html2text.FromString(string(unsafeHTML))
+	post, err := p.Site.PostBySlug(slug)
 	if err != nil {
-		plaintext = s
-	}
-	period := strings.Index(plaintext, ". ")
-	if period > 0 {
-		plaintext = plaintext[:period+1]
+		return p.Site.Error(err)
 	}
 
-	return plaintext
+	// Determine if in preview mode.
+	preview := false
+	if q := r.URL.Query().Get("preview"); len(q) > 0 && strings.ToLower(q) == "true" {
+		preview = true
+	}
+
+	// Show 404 if not published and not in preview mode.
+	if !post.Published && !preview {
+		return http.StatusNotFound, nil
+	}
+
+	vars := make(map[string]interface{})
+	// Don't show certain items on pages.
+	if !post.Page {
+		vars["title"] = post.Title
+		vars["pubdate"] = post.Timestamp
+	}
+
+	vars["tags"] = post.Tags
+	//vars["canonical"] = post.Canonical
+	vars["id"] = post.ID
+	vars["posturl"] = post.URL
+	//vars["metadescription"] = plaintextBlurb(post.Content)
+	vars["postcontent"] = sanitized(post.Post.Content)
+
+	return p.Render.PluginPage(w, r, assets, "template/post", p.FuncMap(r), vars)
 }
+
+// sanitized returns a sanitized content block or an error is one occurs.
+func sanitized(content string) template.HTML {
+	b := []byte(content)
+	// Ensure unit line endings are used when pulling out of JSON.
+	markdownWithUnixLineEndings := strings.Replace(string(b), "\r\n", "\n", -1)
+	htmlCode := blackfriday.Run([]byte(markdownWithUnixLineEndings))
+
+	// Sanitize by removing HTML if true.
+	// if !te.allowUnsafeHTML {
+	// 	htmlCode = bluemonday.UGCPolicy().SanitizeBytes(htmlCode)
+	// }
+
+	return template.HTML(htmlCode)
+}
+
+// // plaintextBlurb returns a plaintext blurb from markdown content.
+// func plaintextBlurb(s string) string {
+// 	unsafeHTML := blackfriday.Run([]byte(s))
+// 	plaintext, err := html2text.FromString(string(unsafeHTML))
+// 	if err != nil {
+// 		plaintext = s
+// 	}
+// 	period := strings.Index(plaintext, ". ")
+// 	if period > 0 {
+// 		plaintext = plaintext[:period+1]
+// 	}
+
+// 	return plaintext
+// }

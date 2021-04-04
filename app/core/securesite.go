@@ -333,6 +333,17 @@ func (ss *SecureSite) PublishedPosts() ([]model.Post, error) {
 	return ss.storage.Site.PublishedPosts(), nil
 }
 
+// PostBySlug returns the post by slug.
+func (ss *SecureSite) PostBySlug(slug string) (model.PostWithID, error) {
+	grant := "site.postbyslug:read"
+
+	if !ss.Authorized(grant) {
+		return model.PostWithID{}, ErrAccessDenied
+	}
+
+	return ss.storage.Site.PostBySlug(slug), nil
+}
+
 // Tags returns the list of tags.
 func (ss *SecureSite) Tags(onlyPublished bool) (model.TagList, error) {
 	grant := "site.tags:read"

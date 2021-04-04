@@ -1,0 +1,20 @@
+<p>
+    <i>
+        <time datetime="{{.pubdate | Stamp}}" pubdate>
+            {{.pubdate | StampFriendly}}
+        </time>
+        {{if Authenticated}}<a href="/dashboard/posts/{{.id}}">edit</a>{{end}}
+    </i>
+</p>
+<content>
+    {{.postcontent}}
+</content>
+{{if .tags}}
+<small>
+    <div>
+        {{range $p := .tags}}
+        <a href="/blog?q={{.Name}}">#{{.Name}}</a>
+        {{end}}
+    </div>
+</small>
+{{end}}

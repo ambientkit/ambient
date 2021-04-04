@@ -37,5 +37,5 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
 	p.Mux.Get("/blog", p.postIndex)
-	//p.Mux.Get("/:slug", p.postShow)
+	p.Mux.Get("/:slug", p.postShow)
 }
