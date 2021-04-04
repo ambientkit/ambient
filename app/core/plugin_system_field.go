@@ -31,6 +31,7 @@ type Field struct {
 	Name        string           `json:"name"`
 	Type        FieldType        `json:"type"`
 	Description FieldDescription `json:"description"`
+	Default     string           `json:"default"`
 }
 
 // FieldDescription is a type of description.

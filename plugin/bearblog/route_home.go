@@ -30,7 +30,7 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 		return p.Site.Error(err)
 	}
 
-	loginURL, err := p.Site.LoginURL()
+	loginURL, err := p.Site.PluginField(LoginURL)
 	if err != nil {
 		return p.Site.Error(err)
 	}

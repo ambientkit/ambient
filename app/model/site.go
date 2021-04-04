@@ -11,13 +11,11 @@ import (
 type Site struct {
 	Title          string                    `json:"title"`
 	Subtitle       string                    `json:"subtitle"`
+	Content        string                    `json:"content"` // Home content.
 	Footer         string                    `json:"footer"`
 	Scheme         string                    `json:"scheme"`
 	URL            string                    `json:"url"`
-	LoginURL       string                    `json:"loginurl"`
-	Created        time.Time                 `json:"created"`
 	Updated        time.Time                 `json:"updated"`
-	Content        string                    `json:"content"` // Home content.
 	PluginSettings map[string]PluginSettings `json:"plugins"`
 	PluginFields   map[string]PluginFields   `json:"pluginfields"`
 	Posts          map[string]Post           `json:"posts"`
@@ -39,10 +37,6 @@ func (s *Site) Correct() {
 	// Ensure redirects don't try to happen if the scheme is empty.
 	if s.Scheme == "" {
 		s.Scheme = "http"
-	}
-	// Ensure it's set to the login page works.
-	if s.LoginURL == "" {
-		s.LoginURL = "admin"
 	}
 }
 

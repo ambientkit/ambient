@@ -31,7 +31,23 @@ func New() *Plugin {
 // Enable accepts the toolkit.
 func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
+
 	return nil
+}
+
+const (
+	// LoginURL allows user to set the login URL.
+	LoginURL = "Login URL"
+)
+
+// Fields returns a list of user settable fields.
+func (p *Plugin) Fields() []core.Field {
+	return []core.Field{
+		{
+			Name:    LoginURL,
+			Default: "admin", // FIXME: Need to add logic for this.
+		},
+	}
 }
 
 // Routes gets routes for the plugin.

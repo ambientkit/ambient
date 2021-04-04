@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
 	"github.com/josephspurrier/ambient/app/model"
@@ -43,6 +44,9 @@ func NewDatastore(ds DataStorer, site *model.Site) (*Storage, error) {
 func (s *Storage) Save() error {
 	var b []byte
 	var err error
+
+	// Save the updated timestamp.
+	s.Site.Updated = time.Now()
 
 	if envdetect.RunningLocalDev() {
 		// Indent so the data is easy to read.
