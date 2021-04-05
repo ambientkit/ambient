@@ -153,7 +153,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	templateManager := html.NewTemplateManager(storage, sess)
 
 	// Get the router from the plugins.
-	var te core.IAppRender
+	var te core.IRender
 	for _, v := range arrPlugins {
 		// Skip if the plugin isn't found.
 		ps, ok := storage.Site.PluginSettings[v.PluginName()]

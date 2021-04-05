@@ -19,7 +19,7 @@ type IPlugin interface {
 	SessionManager(ss SessionStorer) (ISession, error)
 	Router(te IRender) (IAppRouter, error)
 	Storage() (DataStorer, SessionStorer, error)
-	TemplateEngine(tm TemplateManager, pi *PluginInjector, pluginNames []string) (IAppRender, error)
+	TemplateEngine(tm TemplateManager, pi *PluginInjector, pluginNames []string) (IRender, error)
 	//Header() string
 	//Body() string
 	//SetSettings()

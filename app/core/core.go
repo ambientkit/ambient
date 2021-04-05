@@ -9,7 +9,7 @@ import (
 type App struct {
 	Log     IAppLogger
 	Plugins *PluginSystem
-	Render  IAppRender
+	Render  IRender
 	Router  IAppRouter
 	Sess    ISession
 	Storage *Storage
@@ -18,7 +18,7 @@ type App struct {
 // NewApp returns a new application.
 func NewApp(logger IAppLogger,
 	plugins *PluginSystem,
-	render IAppRender,
+	render IRender,
 	mux IAppRouter,
 	sess ISession,
 	storage *Storage) *App {
@@ -30,14 +30,6 @@ func NewApp(logger IAppLogger,
 		Sess:    sess,
 		Storage: storage,
 	}
-}
-
-// IAppRender represents a renderer.
-type IAppRender interface {
-	IRender // FIXME: Should probably remove this since the app isn't going to use the plugin functions.
-
-	Dashboard(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
-	Page(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
 }
 
 // IAppRouter represents a router.

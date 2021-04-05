@@ -54,11 +54,6 @@ func (te *Engine) Page(w http.ResponseWriter, r *http.Request, partialTemplate s
 	return te.partial(w, r, "layout/bloglist", "page", partialTemplate, http.StatusOK, vars)
 }
 
-// Dashboard renders using the dashboard layout.
-func (te *Engine) Dashboard(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
-	return te.partial(w, r, "layout/dashboard", "dashboard", partialTemplate, http.StatusOK, vars)
-}
-
 // Error renders HTML to a response writer and returns a 404 status code
 // and an error if one occurs.
 func (te *Engine) Error(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
