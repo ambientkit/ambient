@@ -13,7 +13,7 @@ import (
 	"github.com/josephspurrier/ambient/app/model"
 )
 
-//go:embed *
+//go:embed layout/page.tmpl
 var templates embed.FS
 
 // TemplateManager represents an object that returns templates and a FuncMap.
