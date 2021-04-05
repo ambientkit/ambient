@@ -1,6 +1,7 @@
 package htmltemplate
 
 import (
+	"crypto/rand"
 	"embed"
 	"fmt"
 	"html/template"
@@ -10,30 +11,20 @@ import (
 	"path"
 	"strconv"
 
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
 )
-
-// TemplateManager represents a function map for templates.
-type TemplateManager interface {
-	FuncMap(r *http.Request) template.FuncMap
-	Templates() *embed.FS
-}
-
-// AssetInjector represents code that can inject files into a template.
-type AssetInjector interface {
-	Inject(t *template.Template, r *http.Request, pluginNames []string, layoutType string) (*template.Template, error)
-}
 
 // Engine represents a HTML template engine.
 type Engine struct {
 	allowUnsafeHTML bool
-	templateManager TemplateManager
-	assetInjector   AssetInjector
+	templateManager core.TemplateManager
+	assetInjector   core.AssetInjector
 	pluginNames     []string
 }
 
 // NewTemplateEngine returns a HTML template engine.
-func NewTemplateEngine(templateManager TemplateManager, assetInjector AssetInjector, pluginNames []string) *Engine {
+func NewTemplateEngine(templateManager core.TemplateManager, assetInjector core.AssetInjector, pluginNames []string) *Engine {
 	allowUnsafeHTML, err := strconv.ParseBool(os.Getenv("AMB_ALLOW_HTML"))
 	if err != nil {
 		log.Printf("environment variable not able to parse as bool: %v", "AMB_ALLOW_HTML")
@@ -161,10 +152,19 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutT
 
 // escapeContent returns an escaped content block or an error is one occurs.
 func escapeContent(t *template.Template, content string) (*template.Template, error) {
+	// Generate a random UUID.
+	uuid, err := generateUUID()
+	if err != nil {
+		return nil, err
+	}
+
+	// Choose random delimiters that systems wouldn't use or guess for security.
+	startDelim := uuid + "[{[{"
+	endDelim := "}]}]" + uuid
+
 	// Change delimiters temporarily so code samples can use Go blocks.
-	safeContent := fmt.Sprintf(`[{[{define "content"}]}]%s[{[{end}]}]`, string(content))
-	t = t.Delims("[{[{", "}]}]")
-	var err error
+	safeContent := fmt.Sprintf(`%sdefine "content"%s%s%send%s`, startDelim, endDelim, string(content), startDelim, endDelim)
+	t = t.Delims(startDelim, endDelim)
 	t, err = t.Parse(safeContent)
 	if err != nil {
 		return nil, err
@@ -172,4 +172,15 @@ func escapeContent(t *template.Template, content string) (*template.Template, er
 	// Reset delimiters
 	t = t.Delims("{{", "}}")
 	return t, nil
+}
+
+// generateUUID for use as an random identifier.
+func generateUUID() (string, error) {
+	b := make([]byte, 16)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:]), nil
 }

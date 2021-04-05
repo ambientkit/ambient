@@ -8,6 +8,11 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
 )
 
+// AssetInjector represents code that can inject files into a template.
+type AssetInjector interface {
+	Inject(t *template.Template, r *http.Request, pluginNames []string, layoutType string) (*template.Template, error)
+}
+
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
 	storage *Storage
