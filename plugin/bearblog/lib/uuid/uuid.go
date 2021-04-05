@@ -1,3 +1,4 @@
+// Package uuid generates a UUID.
 package uuid
 
 import (
