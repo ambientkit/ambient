@@ -89,7 +89,7 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 	}
 
 	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, r, t, statusCode, nil)
+	err = templatebuffer.ParseExistingTemplateWithResponse(w, r, t, statusCode, nil)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -121,7 +121,7 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 	}
 
 	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, r, t, statusCode, nil)
+	err = templatebuffer.ParseExistingTemplateWithResponse(w, r, t, statusCode, nil)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -143,7 +143,7 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutT
 	}
 
 	// Inject the plugins.
-	t, err = te.assetInjector.Inject(t, r, te.pluginNames, layoutType, vars)
+	t, err = te.assetInjector.Inject(te, t, r, te.pluginNames, layoutType, vars)
 	if err != nil {
 		return nil, err
 	}
@@ -175,7 +175,7 @@ func (te *Engine) escapeContent(t *template.Template, name string, content strin
 	endDelim := "}]}]" + uuid
 
 	// Change delimiters temporarily so code samples can use Go blocks.
-	safeContent := fmt.Sprintf(`%sdefine "content"%s%s%send%s`, startDelim, endDelim, string(content), startDelim, endDelim)
+	safeContent := fmt.Sprintf(`%sdefine "%s"%s%s%send%s`, startDelim, name, endDelim, string(content), startDelim, endDelim)
 	t = t.Delims(startDelim, endDelim)
 	t, err = t.Parse(safeContent)
 	if err != nil {

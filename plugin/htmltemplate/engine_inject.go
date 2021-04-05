@@ -7,7 +7,7 @@ import (
 )
 
 func (te *Engine) inject(t *template.Template, field string, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error) {
-	body, err := templatebuffer.ParseTemplate(content, nil, data)
+	body, err := templatebuffer.ParseTemplate(content, fm, data)
 	if err != nil {
 		return nil, err
 	}

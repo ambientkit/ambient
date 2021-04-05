@@ -58,8 +58,8 @@ func ParseTemplateFS(assets fs.FS, templatePath string, fm template.FuncMap, dat
 	return buf.String(), nil
 }
 
-// ParseExistingTemplate will parse a template and return the string and an error.
-func ParseExistingTemplate(w http.ResponseWriter, r *http.Request, tmpl *template.Template, status int, data map[string]interface{}) error {
+// ParseExistingTemplateWithResponse will parse a template and return the string and an error.
+func ParseExistingTemplateWithResponse(w http.ResponseWriter, r *http.Request, tmpl *template.Template, status int, data map[string]interface{}) error {
 	// Write temporarily to a buffer pool.
 	buf := bufpool.Get()
 	defer bufpool.Put(buf)
