@@ -73,9 +73,6 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		scssession.New(),      // Session manager.
 	}
 
-	// Create a list of the plugin names.
-	pluginNames := arrPlugins.PluginNames()
-
 	// Define the storage managers.
 	var ds core.DataStorer
 	var ss core.SessionStorer
@@ -145,7 +142,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	}
 
 	// Set up the template injector.
-	pi := core.NewPlugininjector(l, storage, sess, plugs)
+	pi := core.NewPlugininjector(l, storage, sess, plugs, arrPlugins)
 
 	// Get the router from the plugins.
 	var te core.IRender
@@ -162,7 +159,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		}
 
 		// Get the router.
-		tt, err := v.TemplateEngine(l, pi, pluginNames)
+		tt, err := v.TemplateEngine(l, pi)
 		if err != nil {
 			l.Error("", err.Error())
 		} else if tt != nil {

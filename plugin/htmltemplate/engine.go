@@ -18,13 +18,12 @@ import (
 type Engine struct {
 	allowUnsafeHTML bool
 	assetInjector   core.AssetInjector
-	pluginNames     []string
 	escape          bool
 	log             core.ILogger
 }
 
 // NewTemplateEngine returns a HTML template engine.
-func NewTemplateEngine(logger core.ILogger, assetInjector core.AssetInjector, pluginNames []string) *Engine {
+func NewTemplateEngine(logger core.ILogger, assetInjector core.AssetInjector) *Engine {
 	allowHTML := os.Getenv("AMB_ALLOW_HTML")
 	allowUnsafeHTML, err := strconv.ParseBool(allowHTML)
 	if err != nil {
@@ -37,7 +36,6 @@ func NewTemplateEngine(logger core.ILogger, assetInjector core.AssetInjector, pl
 	return &Engine{
 		allowUnsafeHTML: allowUnsafeHTML,
 		assetInjector:   assetInjector,
-		pluginNames:     pluginNames,
 		escape:          true,
 		log:             logger,
 	}
@@ -143,7 +141,7 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutT
 	}
 
 	// Inject the plugins.
-	t, err = te.assetInjector.Inject(te, t, r, te.pluginNames, layoutType, vars)
+	t, err = te.assetInjector.Inject(te, t, r, layoutType, vars)
 	if err != nil {
 		return nil, err
 	}

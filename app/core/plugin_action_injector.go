@@ -7,7 +7,7 @@ import (
 
 // AssetInjector represents code that can inject files into a template.
 type AssetInjector interface {
-	Inject(ti TemplateInjector, t *template.Template, r *http.Request, pluginNames []string, layoutType string, vars map[string]interface{}) (*template.Template, error)
+	Inject(ti TemplateInjector, t *template.Template, r *http.Request, layoutType string, vars map[string]interface{}) (*template.Template, error)
 }
 
 // TemplateInjector represents an injector that the AssetInjector will call to inject assets in the correct place.
@@ -21,25 +21,26 @@ type TemplateInjector interface {
 
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
-	storage *Storage
-	sess    ISession
-	plugins *PluginSystem
-	log     ILogger
+	storage        *Storage
+	sess           ISession
+	plugins        *PluginSystem
+	log            ILogger
+	pluginSettings IPluginList
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger ILogger, storage *Storage, sess ISession, plugins *PluginSystem) *PluginInjector {
+func NewPlugininjector(logger ILogger, storage *Storage, sess ISession, plugins *PluginSystem, pluginSettings IPluginList) *PluginInjector {
 	return &PluginInjector{
-		storage: storage,
-		sess:    sess,
-		plugins: plugins,
-		log:     logger,
+		storage:        storage,
+		sess:           sess,
+		plugins:        plugins,
+		log:            logger,
+		pluginSettings: pluginSettings,
 	}
 }
 
 // Inject will return a template and an error.
-func (c *PluginInjector) Inject(ti TemplateInjector, t *template.Template, r *http.Request,
-	pluginNames []string, layoutType string, vars map[string]interface{}) (*template.Template, error) {
+func (c *PluginInjector) Inject(ti TemplateInjector, t *template.Template, r *http.Request, layoutType string, vars map[string]interface{}) (*template.Template, error) {
 	pluginHead := ""
 	pluginHeader := ""
 	pluginMain := ""
@@ -50,6 +51,7 @@ func (c *PluginInjector) Inject(ti TemplateInjector, t *template.Template, r *ht
 
 	// Loop through each of the plugins.
 	// Use the plugin names because it's ordered.
+	pluginNames := c.pluginSettings.PluginNames()
 	for _, name := range pluginNames {
 		plugin, ok := c.storage.Site.PluginSettings[name]
 		if !ok || !plugin.Enabled || !plugin.Found {

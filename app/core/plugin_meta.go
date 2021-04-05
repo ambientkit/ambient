@@ -76,6 +76,6 @@ func (p *PluginMeta) Storage(logger ILogger) (DataStorer, SessionStorer, error) 
 }
 
 // TemplateEngine -
-func (p *PluginMeta) TemplateEngine(logger ILogger, pi *PluginInjector, pluginNames []string) (IRender, error) {
+func (p *PluginMeta) TemplateEngine(logger ILogger, pi *PluginInjector) (IRender, error) {
 	return nil, nil
 }
