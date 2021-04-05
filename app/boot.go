@@ -38,7 +38,7 @@ import (
 // Boot returns a router with the application ready to be started.
 func Boot(l *logger.Logger) (http.Handler, error) {
 	// Define the plugins - order does matter.
-	arrPlugins := []core.IPlugin{
+	arrPlugins := core.IPluginList{
 		// Core plugins required to use the system.
 		gcpbucketstorage.New(), // GCP and local Storage - storage plugin must always come first.
 		htmltemplate.New(),     // HTML template engine.
@@ -74,10 +74,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	}
 
 	// Create a list of the plugin names.
-	pluginNames := make([]string, 0)
-	for _, v := range arrPlugins {
-		pluginNames = append(pluginNames, v.PluginName())
-	}
+	pluginNames := arrPlugins.PluginNames()
 
 	// Define the storage managers.
 	var ds core.DataStorer
@@ -147,7 +144,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		l.Fatal("boot: no default session manager found")
 	}
 
-	// Set up the template engine.
+	// Set up the template injector.
 	pi := core.NewPlugininjector(l, storage, sess, plugs)
 
 	// Get the router from the plugins.

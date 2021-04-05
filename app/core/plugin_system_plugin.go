@@ -29,3 +29,16 @@ type IPlugin interface {
 	// Deactivate() error
 	// Uninstall() error
 }
+
+// IPluginList is a list of IPlugins.
+type IPluginList []IPlugin
+
+// PluginNames return an list of plugin names.
+func (arr IPluginList) PluginNames() []string {
+	pluginNames := make([]string, 0)
+	for _, v := range arr {
+		pluginNames = append(pluginNames, v.PluginName())
+	}
+
+	return pluginNames
+}
