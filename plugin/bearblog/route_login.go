@@ -8,9 +8,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/josephspurrier/ambient/app/lib/envdetect"
-	"github.com/josephspurrier/ambient/app/lib/passhash"
-	"github.com/josephspurrier/ambient/app/lib/totp"
+	"github.com/josephspurrier/ambient/plugin/bearblog/lib/passhash"
+	"github.com/josephspurrier/ambient/plugin/bearblog/lib/totp"
 )
 
 // login allows a user to login to the dashboard.
@@ -89,9 +88,9 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 	}
 
 	// When running locally, let any MFA pass.
-	if envdetect.RunningLocalDev() {
-		mfaSuccess = true
-	}
+	// if envdetect.RunningLocalDev() {
+	// 	mfaSuccess = true
+	// }
 
 	// Decode the hash - this is to allow it to be stored easily since dollar
 	// signs are difficult to work with.

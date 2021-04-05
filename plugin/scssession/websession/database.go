@@ -2,9 +2,8 @@ package websession
 
 import (
 	"encoding/json"
+	"os"
 	"time"
-
-	"github.com/josephspurrier/ambient/app/lib/envdetect"
 )
 
 // SessionDatabase -
@@ -48,7 +47,7 @@ func (sd *SessionDatabase) Save(ss Sessionstorer, en Encrypter) error {
 	var b []byte
 	var err error
 
-	if envdetect.RunningLocalDev() {
+	if RunningLocalDev() {
 		// Indent so the data is easy to read.
 		b, err = json.MarshalIndent(sd, "", "    ")
 	} else {
@@ -70,4 +69,10 @@ func (sd *SessionDatabase) Save(ss Sessionstorer, en Encrypter) error {
 	}
 
 	return nil
+}
+
+// RunningLocalDev returns true if the AMB_LOCAL environment variable is set.
+func RunningLocalDev() bool {
+	s := os.Getenv("AMB_LOCAL")
+	return len(s) > 0
 }

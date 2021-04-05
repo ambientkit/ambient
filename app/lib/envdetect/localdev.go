@@ -1,3 +1,4 @@
+// Package envdetect provides flag based on environment variable being set.
 package envdetect
 
 import (

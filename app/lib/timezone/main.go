@@ -1,3 +1,4 @@
+// Package timezone allows setting the timezone for the application.
 package timezone
 
 import "os"

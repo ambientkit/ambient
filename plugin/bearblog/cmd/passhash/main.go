@@ -6,15 +6,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/josephspurrier/ambient/app/lib/passhash"
-	"github.com/josephspurrier/ambient/app/lib/timezone"
+	"github.com/josephspurrier/ambient/plugin/bearblog/lib/passhash"
 )
 
 func init() {
 	// Verbose logging with file name and line number.
 	log.SetFlags(log.Lshortfile)
 	// Set the time zone.
-	timezone.Set()
+	SetTimezone()
 }
 
 func main() {
@@ -30,4 +29,17 @@ func main() {
 
 	sss := base64.StdEncoding.EncodeToString([]byte(s))
 	fmt.Printf("AMB_PASSWORD_HASH=%v\n", sss)
+}
+
+// SetTimezone the time zone based on the AMB_TIMEZONE environment variable or use
+// EST time by default.
+func SetTimezone() {
+	// Get the time zone.
+	tz := os.Getenv("AMB_TIMEZONE")
+	if len(tz) == 0 {
+		// Set the default to eastern time.
+		tz = "America/New_York"
+	}
+
+	os.Setenv("TZ", tz)
 }
