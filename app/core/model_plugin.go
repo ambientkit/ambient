@@ -8,6 +8,8 @@ const (
 	Input FieldType = "input"
 	// Textarea is a textarea field.
 	Textarea FieldType = "textarea"
+	// Checkbox is a checkbox field.
+	Checkbox FieldType = "checkbox"
 )
 
 // PluginSettings -

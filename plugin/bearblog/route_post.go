@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/josephspurrier/ambient/app/core"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday/v2"
 )
 
@@ -89,22 +90,28 @@ func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, e
 	vars["id"] = post.ID
 	vars["posturl"] = post.URL
 	//vars["metadescription"] = plaintextBlurb(post.Content)
-	vars["postcontent"] = sanitized(post.Post.Content)
+	vars["postcontent"] = p.sanitized(post.Post.Content)
 
 	return p.Render.Post(w, r, assets, "template/content/post", p.FuncMap(r), vars)
 }
 
 // sanitized returns a sanitized content block or an error is one occurs.
-func sanitized(content string) template.HTML {
+func (p *Plugin) sanitized(content string) template.HTML {
 	b := []byte(content)
 	// Ensure unit line endings are used when pulling out of JSON.
 	markdownWithUnixLineEndings := strings.Replace(string(b), "\r\n", "\n", -1)
 	htmlCode := blackfriday.Run([]byte(markdownWithUnixLineEndings))
 
-	// Sanitize by removing HTML if true.
-	// if !te.allowUnsafeHTML {
-	// 	htmlCode = bluemonday.UGCPolicy().SanitizeBytes(htmlCode)
-	// }
+	// Determine if raw HTML is allowed.
+	allowed, err := p.Site.PluginFieldChecked(AllowHTMLinMarkdown)
+	if err != nil {
+		p.Log.Debug("plugins: error in sanitized() getting plugin field: %v", err)
+	}
+
+	// Sanitize by removing HTML if allowed.
+	if !allowed {
+		htmlCode = bluemonday.UGCPolicy().SanitizeBytes(htmlCode)
+	}
 
 	return template.HTML(htmlCode)
 }

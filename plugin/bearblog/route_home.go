@@ -15,7 +15,7 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 	}
 
 	vars := make(map[string]interface{})
-	vars["postcontent"] = sanitized(content)
+	vars["postcontent"] = p.sanitized(content)
 	return p.Render.Page(w, r, assets, "template/content/home", p.FuncMap(r), vars)
 }
 

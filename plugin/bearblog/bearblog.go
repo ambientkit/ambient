@@ -44,6 +44,8 @@ const (
 	Subtitle = "Subtitle"
 	// Footer allows user to set the footer.
 	Footer = "Footer"
+	// AllowHTMLinMarkdown allows user to set if they allow HTML in markdown.
+	AllowHTMLinMarkdown = "Allow HTML in Markdown"
 )
 
 // Fields returns a list of user settable fields.
@@ -59,6 +61,10 @@ func (p *Plugin) Fields() []core.Field {
 		{
 			Name: Footer,
 			Type: core.Textarea,
+		},
+		{
+			Name: AllowHTMLinMarkdown,
+			Type: core.Checkbox,
 		},
 	}
 }

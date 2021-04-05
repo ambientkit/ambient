@@ -283,6 +283,27 @@ func (ss *SecureSite) SetPluginField(name string, value string) error {
 	return ss.storage.Save()
 }
 
+// PluginFieldChecked gets a checked variable for the plugin.
+func (ss *SecureSite) PluginFieldChecked(name string) (bool, error) {
+	grant := "plugin:getfield"
+
+	if !ss.Authorized(grant) {
+		return false, ErrAccessDenied
+	}
+
+	fields, ok := ss.storage.Site.PluginFields[ss.pluginName]
+	if !ok {
+		return false, ErrNotFound
+	}
+
+	value, ok := fields.Fields[name]
+	if !ok {
+		return false, ErrNotFound
+	}
+
+	return value == "true", nil
+}
+
 // PluginField gets a variable for the plugin.
 func (ss *SecureSite) PluginField(name string) (string, error) {
 	grant := "plugin:getfield"
