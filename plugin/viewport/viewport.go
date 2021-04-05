@@ -4,6 +4,8 @@ package viewport
 
 import (
 	"embed"
+	"html/template"
+	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
@@ -59,11 +61,11 @@ func (p *Plugin) Fields() []core.Field {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	vp, err := p.Site.PluginField(Viewport)
 	if err != nil || len(vp) == 0 {
 		// Otherwise don't set the assets.
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	return []core.Asset{
@@ -83,5 +85,5 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 				},
 			},
 		},
-	}, &assets
+	}, &assets, nil
 }

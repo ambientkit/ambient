@@ -49,9 +49,17 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 			continue
 		}
 
-		files, assets := v.Assets()
+		files, assets, funcMap := v.Assets()
 		if files == nil {
 			continue
+		}
+
+		// If a FuncMap exists, pass request into FuncMap.
+		if funcMap != nil {
+			afm := funcMap(r)
+			for k, v := range afm {
+				fm[k] = v
+			}
 		}
 
 		loggedIn, _ := c.sess.UserAuthenticated(r)
@@ -91,14 +99,6 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 				pluginBody += txt + "\n    "
 			default:
 				fmt.Printf("unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
-			}
-
-			// If a FuncMap exists, pass request into FuncMap.
-			if file.FuncMap != nil {
-				afm := file.FuncMap(r)
-				for k, v := range afm {
-					fm[k] = v
-				}
 			}
 		}
 	}

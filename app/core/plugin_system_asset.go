@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"html"
-	"html/template"
 	"io/fs"
 	"io/ioutil"
 	"net/http"
@@ -77,8 +76,6 @@ type Asset struct {
 	Inline   bool      `json:"inline"`
 	Path     string    `json:"path"`
 	Replace  []Replace `json:"replace"`
-
-	FuncMap func(r *http.Request) template.FuncMap `json:"funcmap"`
 }
 
 // Replace represents text to find and replace.

@@ -4,6 +4,8 @@ package styles
 
 import (
 	"embed"
+	"html/template"
+	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
@@ -60,7 +62,7 @@ func (p *Plugin) Fields() []core.Field {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	arr := make([]core.Asset, 0)
 
 	favicon, err := p.Site.PluginField(Favicon)
@@ -93,7 +95,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		})
 	}
 
-	return arr, nil
+	return arr, nil, nil
 }
 
 // Routes gets routes for the plugin.

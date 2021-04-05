@@ -3,6 +3,7 @@ package core
 import (
 	"embed"
 	"html"
+	"html/template"
 	"net/http"
 )
 
@@ -35,8 +36,8 @@ func (p *PluginMeta) Disable() error {
 func (p *PluginMeta) Routes() {}
 
 // Assets -
-func (p *PluginMeta) Assets() ([]Asset, *embed.FS) {
-	return nil, nil
+func (p *PluginMeta) Assets() ([]Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
+	return nil, nil, nil
 }
 
 // Fields -

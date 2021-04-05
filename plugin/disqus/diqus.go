@@ -4,6 +4,8 @@ package disqus
 
 import (
 	"embed"
+	"html/template"
+	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
@@ -49,12 +51,12 @@ func (p *Plugin) Fields() []core.Field {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	// Get the Disqus ID.
 	disqusID, err := p.Site.PluginField(DisqusID)
 	if err != nil || len(disqusID) == 0 {
 		// Otherwise don't set the assets.
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	return []core.Asset{
@@ -96,5 +98,5 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 				},
 			},
 		},
-	}, &assets
+	}, &assets, nil
 }

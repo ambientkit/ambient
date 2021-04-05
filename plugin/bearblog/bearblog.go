@@ -4,6 +4,8 @@ package bearblog
 
 import (
 	"embed"
+	"html/template"
+	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
@@ -77,21 +79,19 @@ func (p *Plugin) Routes() {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	return []core.Asset{
 		{
 			Path:     "template/partial/nav.tmpl",
 			Filetype: core.AssetGeneric,
 			Location: core.LocationHeader,
 			Inline:   true,
-			FuncMap:  p.FuncMap,
 		},
 		{
 			Path:     "template/partial/footer.tmpl",
 			Filetype: core.AssetGeneric,
 			Location: core.LocationFooter,
 			Inline:   true,
-			FuncMap:  p.FuncMap,
 		},
-	}, &assets
+	}, &assets, p.FuncMap
 }

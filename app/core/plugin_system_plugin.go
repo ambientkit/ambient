@@ -2,6 +2,7 @@ package core
 
 import (
 	"embed"
+	"html/template"
 	"net/http"
 )
 
@@ -12,7 +13,7 @@ type IPlugin interface {
 	Routes()
 	Enable(*Toolkit) error
 	Disable() error
-	Assets() ([]Asset, *embed.FS)
+	Assets() ([]Asset, *embed.FS, func(r *http.Request) template.FuncMap)
 	Fields() []Field
 	Middleware() []func(next http.Handler) http.Handler
 	SessionManager(ss SessionStorer) (ISession, error)
