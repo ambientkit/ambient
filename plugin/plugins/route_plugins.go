@@ -13,7 +13,7 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	}
 	vars["plugins"] = plugins
 
-	return p.Render.PluginPage(w, r, assets, "template/plugins_edit", nil, vars)
+	return p.Render.Page(w, r, assets, "template/plugins_edit", nil, vars)
 }
 
 func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err error) {

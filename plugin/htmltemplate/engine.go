@@ -10,8 +10,6 @@ import (
 	"os"
 	"path"
 	"strconv"
-
-	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
 )
 
 // TemplateManager represents a function map for templates.
@@ -47,66 +45,6 @@ func NewTemplateEngine(templateManager TemplateManager, assetInjector AssetInjec
 		assetInjector:   assetInjector,
 		pluginNames:     pluginNames,
 	}
-}
-
-// Page renders using the page layout.
-func (te *Engine) Page(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
-	return te.partial(w, r, "layout/bloglist", "page", partialTemplate, http.StatusOK, vars)
-}
-
-// Error renders HTML to a response writer and returns a 404 status code
-// and an error if one occurs.
-func (te *Engine) Error(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
-	return te.partial(w, r, "layout/page", "page", partialTemplate, http.StatusNotFound, vars)
-}
-
-// partialTemplate converts content from markdown to HTML and then outputs to
-// a response writer. Returns an HTTP status code and an error if one occurs.
-func (te *Engine) partial(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, partialTemplate string, statusCode int, vars map[string]interface{}) (status int, err error) {
-	// Parse the main template with the functions.
-	t, err := te.generateTemplate(r, mainTemplate, layoutType)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	// Parse the partial template.
-	contentTemplate := fmt.Sprintf("content/%v.tmpl", partialTemplate)
-	t, err = t.ParseFS(te.templateManager.Templates(), contentTemplate)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, r, t, statusCode, vars)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	return
-}
-
-// Post converts a site post from markdown to HTML and then outputs to response
-// writer. Returns an HTTP status code and an error if one occurs.
-func (te *Engine) post(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, postContent string, vars map[string]interface{}) (status int, err error) {
-	// Parse the main template with the functions.
-	t, err := te.generateTemplate(r, mainTemplate, layoutType)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	// Parse the content.
-	t, err = te.sanitizedContent(t, postContent)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, r, t, http.StatusOK, vars)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	return
 }
 
 func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutType string) (*template.Template, error) {
