@@ -3,7 +3,7 @@ package htmltemplate
 import (
 	"html/template"
 
-	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
+	"github.com/josephspurrier/ambient/plugin/htmltemplate/lib/templatebuffer"
 )
 
 func (te *Engine) inject(t *template.Template, field string, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error) {

@@ -11,7 +11,7 @@ import (
 	"strconv"
 
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
+	"github.com/josephspurrier/ambient/plugin/htmltemplate/lib/templatebuffer"
 )
 
 // Engine represents a HTML template engine.

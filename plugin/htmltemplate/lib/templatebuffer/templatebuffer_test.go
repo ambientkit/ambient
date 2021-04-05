@@ -3,7 +3,7 @@ package templatebuffer_test
 import (
 	"testing"
 
-	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
+	"github.com/josephspurrier/ambient/plugin/htmltemplate/lib/templatebuffer"
 	"github.com/stretchr/testify/assert"
 )
 
