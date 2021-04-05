@@ -66,13 +66,13 @@ func fileExists(assets *embed.FS, filename string) bool {
 // authAssetAllowed return true if the user has access to the asset.
 func authAssetAllowed(loggedIn bool, f Asset) bool {
 	switch true {
-	case f.Auth == AuthenticatedOnly && !loggedIn:
+	case f.Auth == AuthOnly && !loggedIn:
 		return false
-	case f.Auth == AuthenticatedOnly && loggedIn:
+	case f.Auth == AuthOnly && loggedIn:
 		return true
-	case f.Auth == AnonymousOnly && !loggedIn:
+	case f.Auth == AuthAnonymousOnly && !loggedIn:
 		return true
-	case f.Auth == AnonymousOnly && loggedIn:
+	case f.Auth == AuthAnonymousOnly && loggedIn:
 		return false
 	}
 

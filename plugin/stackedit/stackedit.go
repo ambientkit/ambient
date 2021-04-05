@@ -44,13 +44,13 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
 			External: true,
-			Auth:     core.AuthenticatedOnly,
+			Auth:     core.AuthOnly,
 		},
 		{
 			Path:     "js/stackedit.js",
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
-			Auth:     core.AuthenticatedOnly,
+			Auth:     core.AuthOnly,
 		},
 	}, &assets, nil
 }

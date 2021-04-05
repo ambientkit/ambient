@@ -8,16 +8,14 @@ import (
 
 // Site -
 type Site struct {
-	Title string `json:"title"`
-	//Subtitle string `json:"subtitle"`
-	Content string `json:"content"` // Home content.
-	//Footer         string                    `json:"footer"`
-	Scheme         string                    `json:"scheme"`
-	URL            string                    `json:"url"`
-	Updated        time.Time                 `json:"updated"`
-	PluginSettings map[string]PluginSettings `json:"plugins"`
-	PluginFields   map[string]PluginFields   `json:"pluginfields"`
-	Posts          map[string]Post           `json:"posts"`
+	Title          string                    `json:"title"`        // Title of the site.
+	Content        string                    `json:"content"`      // Home or default content.
+	Scheme         string                    `json:"scheme"`       // http or https
+	URL            string                    `json:"url"`          // URL without scheme and without trailing slash.
+	Updated        time.Time                 `json:"updated"`      // Save time the data was saved (not only changed).
+	Posts          map[string]Post           `json:"posts"`        // List of posts.
+	PluginSettings map[string]PluginSettings `json:"plugins"`      // List of plugins, whether they are found, enabled, and what fields they support.
+	PluginFields   map[string]PluginFields   `json:"pluginfields"` // List of saved values for fields in plugins.
 }
 
 // Correct will fill in the missing defaults.
@@ -32,10 +30,6 @@ func (s *Site) Correct() {
 	}
 	if s.PluginFields == nil {
 		s.PluginFields = make(map[string]PluginFields)
-	}
-	// Ensure redirects don't try to happen if the scheme is empty.
-	if s.Scheme == "" {
-		s.Scheme = "http"
 	}
 }
 

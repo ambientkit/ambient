@@ -66,7 +66,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
 			External: true,
-			Auth:     core.AnonymousOnly,
+			Auth:     core.AuthAnonymousOnly,
 			Attributes: []core.Attribute{
 				{
 					Name:  "async",
@@ -78,7 +78,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			Path:     "js/ga.js",
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
-			Auth:     core.AnonymousOnly,
+			Auth:     core.AuthAnonymousOnly,
 			Replace: []core.Replace{
 				{
 					Find:    "{{TrackingID}}",

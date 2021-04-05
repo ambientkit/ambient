@@ -41,12 +41,12 @@ const (
 	// AssetGeneric is a generic element.
 	AssetGeneric AssetType = "generic"
 
-	// AllAuth is both anonymous and authenticated users.
-	AllAuth AuthType = "all" // Default.
-	// AnonymousOnly is only non-authenticated users.
-	AnonymousOnly AuthType = "anonymous"
-	// AuthenticatedOnly is only authenticated users.
-	AuthenticatedOnly AuthType = "authenticated"
+	// AuthAll is both anonymous and authenticated users.
+	AuthAll AuthType = "all" // Default.
+	// AuthAnonymousOnly is only non-authenticated users.
+	AuthAnonymousOnly AuthType = "anonymous"
+	// AuthOnly is only authenticated users.
+	AuthOnly AuthType = "authenticated"
 
 	// LayoutPage is a page layout.
 	LayoutPage LayoutType = "page"
