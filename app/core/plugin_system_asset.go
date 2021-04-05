@@ -98,7 +98,7 @@ func (file Asset) SanitizedPath() string {
 }
 
 // Element returns an HTML element.
-func (file *Asset) Element(v IPlugin, assets fs.FS) string {
+func (file *Asset) Element(logger ILogger, v IPlugin, assets fs.FS) string {
 	// Build the attributes.
 	attrs := make([]string, 0)
 	for _, attr := range file.Attributes {
@@ -120,15 +120,13 @@ func (file *Asset) Element(v IPlugin, assets fs.FS) string {
 		if file.Inline {
 			ff, status, err := file.Contents(assets)
 			if status != http.StatusOK {
-				// FIXME: Do something with these.
-				fmt.Println(err.Error())
+				logger.Error("plugin injector: error getting file contents: %v", err.Error())
 				return ""
 			}
 			txt = fmt.Sprintf("<style>%v</style>", string(ff))
 		} else {
 			if file.External {
 				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
-
 			} else {
 				txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?v=%v"%v>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
 			}
@@ -137,8 +135,7 @@ func (file *Asset) Element(v IPlugin, assets fs.FS) string {
 		if file.Inline {
 			ff, status, err := file.Contents(assets)
 			if status != http.StatusOK {
-				// FIXME: Do something with these.
-				fmt.Println(err.Error())
+				logger.Error("plugin injector: error getting file contents: %v", err.Error())
 				return ""
 			}
 			txt = fmt.Sprintf("<script>%v</script>", string(ff))
@@ -153,8 +150,7 @@ func (file *Asset) Element(v IPlugin, assets fs.FS) string {
 		if file.Inline {
 			ff, status, err := file.Contents(assets)
 			if status != http.StatusOK {
-				// FIXME: Do something with these.
-				fmt.Println(err.Error())
+				logger.Error("plugin injector: error getting file contents: %v", err.Error())
 				return ""
 			}
 			if file.TagName == "" {
@@ -171,7 +167,7 @@ func (file *Asset) Element(v IPlugin, assets fs.FS) string {
 			}
 		}
 	default:
-		fmt.Printf("unsupported asset filetype for plugin (%v): %v", v.PluginName(), file.Filetype)
+		logger.Error("plugin injector: unsupported asset filetype for plugin (%v): %v", v.PluginName(), file.Filetype)
 	}
 
 	return txt

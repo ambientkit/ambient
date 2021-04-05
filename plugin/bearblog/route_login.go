@@ -2,7 +2,6 @@ package bearblog
 
 import (
 	"encoding/base64"
-	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -101,12 +100,12 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 
 	// If the username and password don't match, then just redirect.
 	if username != allowedUsername || !passMatch || !mfaSuccess {
-		fmt.Printf("Login attempt failed. Username: %v (expected: %v) | Password match: %v | MFA success: %v\n", username, allowedUsername, passMatch, mfaSuccess)
+		p.Log.Info("Login attempt failed. Username: %v (expected: %v) | Password match: %v | MFA success: %v\n", username, allowedUsername, passMatch, mfaSuccess)
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 
-	fmt.Printf("Login attempt successful.\n")
+	p.Log.Info("", "Login attempt successful.")
 
 	p.Security.SetUser(r, username)
 	if remember == "on" {

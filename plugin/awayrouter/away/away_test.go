@@ -85,12 +85,7 @@ func TestMain(t *testing.T) {
 	}
 
 	assert.Equal(t, arr[0].pattern, "/:slug")
-	//sort.Sort(sort.Reverse(arr))
 	sort.Sort(arr)
 	assert.Equal(t, arr[0].pattern, "/")
 	assert.Equal(t, arr[len(arr)-1].pattern, "/:slug")
-
-	// for _, v := range arr {
-	// 	fmt.Println(v.method, v.pattern)
-	// }
 }

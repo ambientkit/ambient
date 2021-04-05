@@ -148,7 +148,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	}
 
 	// Set up the template engine.
-	pi := core.NewPlugininjector(storage, sess, plugs)
+	pi := core.NewPlugininjector(l, storage, sess, plugs)
 
 	// Get the router from the plugins.
 	var te core.IRender

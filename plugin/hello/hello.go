@@ -3,7 +3,6 @@ package hello
 
 import (
 	"embed"
-	"fmt"
 	"time"
 
 	"github.com/josephspurrier/ambient/app/core"
@@ -32,7 +31,7 @@ func New() *Plugin {
 // Enable accepts the toolkit.
 func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
-	startBackgroundTask()
+	p.startBackgroundTask()
 	return nil
 }
 
@@ -57,20 +56,20 @@ func stopBackgroundTask() {
 	ticker.Stop()
 }
 
-func startBackgroundTask() {
+func (p *Plugin) startBackgroundTask() {
 	ticker = time.NewTicker(500 * time.Millisecond)
 	done = make(chan bool)
 	go func() {
 		for {
 			select {
 			case <-done:
-				fmt.Println("Background task stopped")
+				p.Log.Info("", "Background task stopped")
 				return
 			case t := <-ticker.C:
-				fmt.Println("Tick at", t)
+				p.Log.Info("Tick at %v", t)
 			}
 		}
 	}()
 
-	fmt.Println("Background task started")
+	p.Log.Info("", "Background task started")
 }

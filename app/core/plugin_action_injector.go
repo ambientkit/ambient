@@ -18,14 +18,16 @@ type PluginInjector struct {
 	storage *Storage
 	sess    ISession
 	plugins *PluginSystem
+	log     ILogger
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(storage *Storage, sess ISession, plugins *PluginSystem) *PluginInjector {
+func NewPlugininjector(logger ILogger, storage *Storage, sess ISession, plugins *PluginSystem) *PluginInjector {
 	return &PluginInjector{
 		storage: storage,
 		sess:    sess,
 		plugins: plugins,
+		log:     logger,
 	}
 }
 
@@ -50,7 +52,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 
 		v, found := c.plugins.Plugins[name]
 		if !found {
-			fmt.Println("Plugin is missing - should never see this:", name)
+			c.log.Error("plugin injector: plug is missing: %v", name)
 			continue
 		}
 
@@ -89,7 +91,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 			}
 
 			// Convert the asset to an element.
-			txt := file.Element(v, assets)
+			txt := file.Element(c.log, v, assets)
 
 			switch file.Location {
 			case LocationHead:
@@ -103,7 +105,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 			case LocationBody:
 				pluginBody += txt + "\n    "
 			default:
-				fmt.Printf("unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
+				c.log.Error("plugin injector: unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
 			}
 		}
 	}

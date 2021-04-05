@@ -15,5 +15,4 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.True(t, len(s) > 0)
-	//fmt.Println(s)
 }
