@@ -81,6 +81,12 @@ func (t TagList) Less(i, j int) bool {
 	return t[i].Name < t[j].Name
 }
 
+// Tag -
+type Tag struct {
+	Name      string    `json:"name"`
+	Timestamp time.Time `json:"timestamp"`
+}
+
 // String -
 func (t TagList) String() string {
 	arr := make([]string, 0)
