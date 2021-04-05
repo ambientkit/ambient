@@ -20,6 +20,7 @@ type Engine struct {
 	allowUnsafeHTML bool
 	assetInjector   core.AssetInjector
 	pluginNames     []string
+	escape          bool
 }
 
 // NewTemplateEngine returns a HTML template engine.
@@ -30,10 +31,13 @@ func NewTemplateEngine(assetInjector core.AssetInjector, pluginNames []string) *
 		return nil
 	}
 
+	//TODO: Add a setting to enable or disable escaping.
+
 	return &Engine{
 		allowUnsafeHTML: allowUnsafeHTML,
 		assetInjector:   assetInjector,
 		pluginNames:     pluginNames,
+		escape:          true,
 	}
 }
 
@@ -76,13 +80,8 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 		return http.StatusInternalServerError, err
 	}
 
-	// safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
-	// t, err = t.Parse(safeContent)
-	// if err != nil {
-	// 	return http.StatusInternalServerError, err
-	// }
-
-	t, err = escapeContent(t, content)
+	// Escape the content.
+	t, err = te.escapeContent(t, content)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -108,18 +107,13 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 	//TODO: If we were going to use a filter on content, this is where it would go.
 
 	// Parse the plugin template separately for security.
-	// content, err := templatebuffer.ParseTemplate(postContent, fm, vars)
-	// if err != nil {
-	// 	return http.StatusInternalServerError, err
-	// }
+	content, err := templatebuffer.ParseTemplate(postContent, fm, vars)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
 
-	// safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
-	// t, err = t.Parse(safeContent)
-	// if err != nil {
-	// 	return http.StatusInternalServerError, err
-	// }
-
-	t, err = escapeContent(t, postContent)
+	// Escape the content.
+	t, err = te.escapeContent(t, content)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -156,7 +150,18 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutT
 }
 
 // escapeContent returns an escaped content block or an error is one occurs.
-func escapeContent(t *template.Template, content string) (*template.Template, error) {
+func (te *Engine) escapeContent(t *template.Template, content string) (*template.Template, error) {
+	if !te.escape {
+		safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
+		var err error
+		t, err = t.Parse(safeContent)
+		if err != nil {
+			return nil, err
+		}
+
+		return t, nil
+	}
+
 	// Generate a random UUID.
 	uuid, err := generateUUID()
 	if err != nil {
