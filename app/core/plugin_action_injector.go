@@ -109,6 +109,7 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 	}
 
 	// Expose the variables to the plugin templates.
+	// TODO: Should we export these variables? Or let plugins set themselves.
 	data := map[string]interface{}{
 		"SiteURL": c.storage.Site.SiteURL(),
 		"PageURL": r.URL.Path,
