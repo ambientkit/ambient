@@ -10,7 +10,7 @@ import (
 
 // AssetInjector represents code that can inject files into a template.
 type AssetInjector interface {
-	Inject(t *template.Template, r *http.Request, pluginNames []string, layoutType string) (*template.Template, error)
+	Inject(t *template.Template, r *http.Request, pluginNames []string, layoutType string, vars map[string]interface{}) (*template.Template, error)
 }
 
 // PluginInjector represents a plugin injector.
@@ -32,8 +32,7 @@ func NewPlugininjector(logger ILogger, storage *Storage, sess ISession, plugins 
 }
 
 // Inject will return a template and an error.
-func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
-	pluginNames []string, layoutType string) (*template.Template, error) {
+func (c *PluginInjector) Inject(t *template.Template, r *http.Request, pluginNames []string, layoutType string, vars map[string]interface{}) (*template.Template, error) {
 	pluginHead := ""
 	pluginHeader := ""
 	pluginMain := ""
@@ -117,11 +116,17 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request,
 		"PageURL": r.URL.Path,
 	}
 
+	// Add the local variables.
+	for k, v := range vars {
+		data[k] = v
+	}
+
 	head, err := templatebuffer.ParseTemplate(pluginHead, fm, data)
 	if err != nil {
 		return nil, err
 	}
 
+	// TODO: These probably all need to be template safe.
 	content := fmt.Sprintf(`{{define "PluginHeadContent"}}%s{{end}}`, head)
 	t, err = t.Parse(content)
 	if err != nil {

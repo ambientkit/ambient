@@ -71,7 +71,7 @@ func (te *Engine) Error(w http.ResponseWriter, r *http.Request, content string, 
 
 func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, assets embed.FS, partialTemplate string, statusCode int, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
 	// Parse the main template with the functions.
-	t, err := te.generateTemplate(r, mainTemplate, layoutType)
+	t, err := te.generateTemplate(r, mainTemplate, layoutType, vars)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -89,7 +89,7 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 	}
 
 	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, r, t, statusCode, vars)
+	err = templatebuffer.ParseExistingTemplate(w, r, t, statusCode, nil)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -101,7 +101,7 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 // writer. Returns an HTTP status code and an error if one occurs.
 func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, postContent string, statusCode int, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
 	// Parse the main template with the functions.
-	t, err := te.generateTemplate(r, mainTemplate, layoutType)
+	t, err := te.generateTemplate(r, mainTemplate, layoutType, vars)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -121,7 +121,7 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 	}
 
 	// Execute the template and write out if no error.
-	err = templatebuffer.ParseExistingTemplate(w, r, t, statusCode, vars)
+	err = templatebuffer.ParseExistingTemplate(w, r, t, statusCode, nil)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -129,7 +129,7 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 	return
 }
 
-func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutType string) (*template.Template, error) {
+func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutType string, vars map[string]interface{}) (*template.Template, error) {
 	// Generate list of templates.
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	templates := []string{
@@ -143,7 +143,7 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutT
 	}
 
 	// Inject the plugins.
-	t, err = te.assetInjector.Inject(t, r, te.pluginNames, layoutType)
+	t, err = te.assetInjector.Inject(t, r, te.pluginNames, layoutType, vars)
 	if err != nil {
 		return nil, err
 	}

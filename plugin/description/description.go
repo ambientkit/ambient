@@ -4,6 +4,7 @@ package description
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -49,8 +50,8 @@ func (p *Plugin) Fields() []core.Field {
 
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
-	desc, err := p.Site.PluginField(Description)
-	if err != nil || len(desc) == 0 {
+	siteDescription, err := p.Site.PluginField(Description)
+	if err != nil || len(siteDescription) == 0 {
 		// Otherwise don't set the assets.
 		return nil, nil, nil
 	}
@@ -68,7 +69,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 				},
 				{
 					Name:  "content",
-					Value: desc, //     <meta name="description" content="{{if .metadescription}}{{.metadescription}}{{else}}{{SiteDescription}}{{end}}">
+					Value: fmt.Sprintf("{{if .pagedescription}}{{.pagedescription}}{{else}}%v{{end}}", siteDescription),
 				},
 			},
 		},

@@ -8,6 +8,7 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday/v2"
+	"jaytaylor.com/html2text"
 )
 
 func (p *Plugin) postIndex(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -89,10 +90,25 @@ func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, e
 	//vars["canonical"] = post.Canonical
 	vars["id"] = post.ID
 	vars["posturl"] = post.URL
-	//vars["metadescription"] = plaintextBlurb(post.Content)
-	vars["postcontent"] = p.sanitized(post.Post.Content)
+	vars["pagedescription"] = plaintextBlurb(post.Content)
+	vars["postcontent"] = p.sanitized(post.Content)
 
 	return p.Render.Post(w, r, assets, "template/content/post", p.FuncMap(r), vars)
+}
+
+// plaintextBlurb returns a plaintext blurb from markdown content.
+func plaintextBlurb(s string) string {
+	unsafeHTML := blackfriday.Run([]byte(s))
+	plaintext, err := html2text.FromString(string(unsafeHTML))
+	if err != nil {
+		plaintext = s
+	}
+	period := strings.Index(plaintext, ". ")
+	if period > 0 {
+		plaintext = plaintext[:period+1]
+	}
+
+	return plaintext
 }
 
 // sanitized returns a sanitized content block or an error is one occurs.
