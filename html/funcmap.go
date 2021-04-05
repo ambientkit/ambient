@@ -6,11 +6,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
-	"time"
 
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/model"
 )
 
 //go:embed layout/page.tmpl
@@ -43,21 +40,6 @@ func (f *TemplateManager) Templates() *embed.FS {
 // FuncMap returns a map of template functions that can be used in templates.
 func (f *TemplateManager) FuncMap(r *http.Request) template.FuncMap {
 	fm := make(template.FuncMap)
-	fm["Stamp"] = func(t time.Time) string {
-		return t.Format("2006-01-02")
-	}
-	fm["StampFriendly"] = func(t time.Time) string {
-		return t.Format("02 Jan, 2006")
-	}
-	fm["PublishedPages"] = func() []model.Post {
-		return f.storage.Site.PublishedPages()
-	}
-	fm["SiteURL"] = func() string {
-		return f.storage.Site.SiteURL()
-	}
-	fm["SiteTitle"] = func() string {
-		return f.storage.Site.SiteTitle()
-	}
 	fm["Authenticated"] = func() bool {
 		// If user is not authenticated, don't allow them to access the page.
 		loggedIn, err := f.sess.UserAuthenticated(r)
@@ -66,13 +48,6 @@ func (f *TemplateManager) FuncMap(r *http.Request) template.FuncMap {
 			log.Println(err)
 		}
 		return loggedIn
-	}
-	fm["SiteFooter"] = func() string {
-		//return f.storage.Site.Footer
-		return ""
-	}
-	fm["MFAEnabled"] = func() bool {
-		return len(os.Getenv("AMB_MFA_KEY")) > 0
 	}
 
 	return fm
