@@ -1,30 +1,30 @@
-{{define "content"}}
+<h1>{{.title}}</h1>
 <form method="POST" class="post-form">
     <input type="hidden" name="token" value="{{.token}}">
     <p>
-        <label for="id_title">Title</label>
-        <input type="text" name="title" value="{{.ptitle}}" maxlength="200" required id="id_title">
+        <label for="id_title">Title:</label>
+        <input type="text" name="title" maxlength="200" required id="id_title">
     </p>
     <p>
         <label for="id_slug">Permalink:</label>
-        <input type="text" name="slug" value="{{.url}}" required id="id_slug">
+        <input type="text" name="slug" required id="id_slug">
         <span class="helptext">eg: 'why-i-like-sunny-days'</span>
     </p>
     <p>
         <label for="id_canonical_url">Canonical url (optional):</label>
-        <input type="text" name="canonical_url" id="id_canonical_url" value="{{.canonical}}">
+        <input type="text" name="canonical_url" id="id_canonical_url">
         <span class="helptext">
             <a href='https://ahrefs.com/blog/canonical-tags/#what-is-a-canonical-tag' target='_blank'>Learn more</a>
         </span>
     </p>
     <p>
         <label for="id_published_date">Date:</label>
-        <input type="date" name="published_date" value="{{.timestamp | Stamp}}" id="id_published_date">
+        <input type="date" name="published_date" id="id_published_date">
         <span class="helptext">eg: '2021-03-31' (leave empty to post now)</span>
     </p>
     <p>
         <label for="id_content">Content (markdown):</label>
-        <textarea name="content" cols="40" rows="20" required id="id_content">{{.body}}</textarea>
+        <textarea name="content" cols="40" rows="20" required id="id_content"></textarea>
         <span class="helptext">
             <a href='https://www.markdownguide.org/cheat-sheet/' target='_blank'>Markdown cheatsheet</a>
         </span>
@@ -35,21 +35,16 @@
     </p>
     <p>
         <label for="id_tags">Tags:</label>
-        <input type="text" name="tags" id="id_tags" value="{{.tags}}">
+        <input type="text" name="tags" id="id_tags">
         <span class="helptext">A comma-separated list of tags.</span>
     </p>
     <p>
         <label for="id_is_page">Is page:</label>
-        <input type="checkbox" name="is_page" id="id_is_page" {{if .page}}checked{{end}}>
+        <input type="checkbox" name="is_page" id="id_is_page">
     </p>
     <p>
         <label for="id_publish">Publish:</label>
-        <input type="checkbox" name="publish" id="id_publish" {{if .published}}checked{{end}}>
+        <input type="checkbox" name="publish" id="id_publish">
     </p>
     <button type="submit" class="save btn btn-default">Save</button>
 </form>
-<p>
-    <a href="/{{.url}}?preview=true" target="_blank">Preview post</a> |
-    <a href="/dashboard/posts/{{.id}}/delete">Delete post</a>
-</p>
-{{end}}

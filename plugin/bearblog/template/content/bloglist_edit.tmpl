@@ -1,4 +1,4 @@
-{{define "content"}}
+<h1>{{.title}}</h1>
 <a href="/dashboard/posts/new">New post</a>
 <ul class="post-list">
     {{range $id, $p := .posts}}
@@ -17,4 +17,3 @@
     </li>
     {{end}}
 </ul>
-{{end}}

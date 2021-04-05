@@ -7,7 +7,6 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/app/model"
-	"github.com/josephspurrier/ambient/app/route"
 	"github.com/josephspurrier/ambient/html"
 	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/awayrouter"
@@ -220,9 +219,6 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// Setup the routes.
-	route.Register(c)
 
 	// Enable the middleware from the plugins.
 	var h http.Handler = c.Router

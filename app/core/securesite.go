@@ -357,6 +357,19 @@ func (ss *SecureSite) Updated() (time.Time, error) {
 	return ss.storage.Site.Updated, nil
 }
 
+// SavePost saves a post.
+func (ss *SecureSite) SavePost(ID string, post model.Post) error {
+	grant := "site.post:write"
+
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
+
+	ss.storage.Site.Posts[ID] = post
+
+	return ss.storage.Save()
+}
+
 // PostsAndPages returns the list of posts and pages.
 func (ss *SecureSite) PostsAndPages(onlyPublished bool) (model.PostWithIDList, error) {
 	grant := "site.postsandpages:read"
@@ -399,6 +412,22 @@ func (ss *SecureSite) PostBySlug(slug string) (model.PostWithID, error) {
 	}
 
 	return ss.storage.Site.PostBySlug(slug), nil
+}
+
+// PostByID returns the post by ID.
+func (ss *SecureSite) PostByID(ID string) (model.Post, error) {
+	grant := "site.postbyid:read"
+
+	if !ss.Authorized(grant) {
+		return model.Post{}, ErrAccessDenied
+	}
+
+	post, ok := ss.storage.Site.Posts[ID]
+	if !ok {
+		return model.Post{}, ErrNotFound
+	}
+
+	return post, nil
 }
 
 // Tags returns the list of tags.
