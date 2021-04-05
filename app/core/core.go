@@ -38,8 +38,6 @@ type IAppRender interface {
 
 	Dashboard(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
 	Page(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
-	Post(w http.ResponseWriter, r *http.Request, postContent string, vars map[string]interface{}) (status int, err error)
-	Bloglist(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error)
 }
 
 // IAppRouter represents a router.

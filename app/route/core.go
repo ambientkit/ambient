@@ -21,6 +21,5 @@ type ITemplateEngine interface {
 // Register all routes.
 func Register(c *core.App) {
 	// Register routes.
-	//registerHomePost(&HomePost{c})
 	registerAdminPost(&AdminPost{c})
 }

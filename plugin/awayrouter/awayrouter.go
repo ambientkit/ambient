@@ -56,25 +56,27 @@ func setupRouter(mux core.IAppRouter, te core.IRender) {
 	customServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
 		// Handle only errors.
 		if status >= 400 {
-			vars := make(map[string]interface{})
-			vars["title"] = fmt.Sprint(status)
-
-			errTemplate := "400"
+			errText := http.StatusText(status)
 
 			switch status {
 			case 403:
 				// Already logged on plugin access denials.
-				errTemplate = "403"
+				errText = "A plugin has been denied permission."
 			case 404:
 				// No need to log.
-				errTemplate = "404"
+				errText = "Darn, we cannot find the page."
+			case 400:
+				errText = "Darn, something went wrong."
+				if err != nil {
+					fmt.Println(err.Error())
+				}
 			default:
 				if err != nil {
 					fmt.Println(err.Error())
 				}
 			}
 
-			status, err = te.Error(w, r, errTemplate, vars)
+			status, err = te.PluginPageContent(w, r, fmt.Sprintf("# %v\n%v", status, errText), nil, nil)
 			if err != nil {
 				if err != nil {
 					log.Println(err.Error())

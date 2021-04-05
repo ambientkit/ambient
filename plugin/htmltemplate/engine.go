@@ -49,19 +49,9 @@ func NewTemplateEngine(templateManager TemplateManager, assetInjector AssetInjec
 	}
 }
 
-// Post renders using the post layout.
-func (te *Engine) Post(w http.ResponseWriter, r *http.Request, postContent string, vars map[string]interface{}) (status int, err error) {
-	return te.post(w, r, "layout/post", "post", postContent, vars)
-}
-
 // Page renders using the page layout.
 func (te *Engine) Page(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
 	return te.partial(w, r, "layout/bloglist", "page", partialTemplate, http.StatusOK, vars)
-}
-
-// Bloglist renders using the bloglist layout.
-func (te *Engine) Bloglist(w http.ResponseWriter, r *http.Request, partialTemplate string, vars map[string]interface{}) (status int, err error) {
-	return te.partial(w, r, "layout/bloglist", "bloglist", partialTemplate, http.StatusOK, vars)
 }
 
 // Dashboard renders using the dashboard layout.
