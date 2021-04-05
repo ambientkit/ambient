@@ -5,7 +5,6 @@ package awayrouter
 import (
 	"embed"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
@@ -39,19 +38,19 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 }
 
 // Router returns a router.
-func (p *Plugin) Router(te core.IRender) (core.IAppRouter, error) {
+func (p *Plugin) Router(logger core.ILogger, te core.IRender) (core.IAppRouter, error) {
 	// Set up the default router.
 	mux := router.New()
 
 	// Set the NotFound and custom ServeHTTP handlers.
-	setupRouter(mux, te)
+	setupRouter(logger, mux, te)
 
 	return mux, nil
 }
 
 // setupRouter returns a router with the NotFound handler and the default
 // handler set.
-func setupRouter(mux core.IAppRouter, te core.IRender) {
+func setupRouter(logger core.ILogger, mux core.IAppRouter, te core.IRender) {
 	// Set the handling of all responses.
 	customServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
 		// Handle only errors.
@@ -68,28 +67,21 @@ func setupRouter(mux core.IAppRouter, te core.IRender) {
 			case 400:
 				errText = "Darn, something went wrong."
 				if err != nil {
-					fmt.Println(err.Error())
+					logger.Info("awayrouter: error (%v): %v", status, err.Error())
 				}
 			default:
 				if err != nil {
-					fmt.Println(err.Error())
+					logger.Info("awayrouter: error (%v): %v", status, err.Error())
 				}
 			}
 
 			status, err = te.Error(w, r, fmt.Sprintf("<h1>%v</h1>%v", status, errText), status, nil, nil)
 			if err != nil {
 				if err != nil {
-					log.Println(err.Error())
+					logger.Info("awayrouter: error in rendering error template (%v): %v", status, err.Error())
 				}
 				http.Error(w, "500 internal server error", http.StatusInternalServerError)
 				return
-			}
-		}
-
-		// Display server errors.
-		if status >= 500 {
-			if err != nil {
-				log.Println(err.Error())
 			}
 		}
 	}

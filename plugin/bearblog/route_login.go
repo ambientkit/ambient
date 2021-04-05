@@ -3,7 +3,6 @@ package bearblog
 import (
 	"encoding/base64"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -57,14 +56,14 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 
 	allowedUsername := os.Getenv("AMB_USERNAME")
 	if len(allowedUsername) == 0 {
-		log.Println("Environment variable missing:", "AMB_USERNAME")
+		p.Log.Error("bearblog: environment variable is missing: %v", "AMB_USERNAME")
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 
 	hash := os.Getenv("AMB_PASSWORD_HASH")
 	if len(hash) == 0 {
-		log.Println("Environment variable missing:", "AMB_PASSWORD_HASH")
+		p.Log.Error("bearblog: environment variable is missing: %v", "AMB_PASSWORD_HASH")
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}

@@ -52,7 +52,7 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 }
 
 // SessionManager return the session manager.
-func (p *Plugin) SessionManager(ss core.SessionStorer) (core.ISession, error) {
+func (p *Plugin) SessionManager(logger core.ILogger, ss core.SessionStorer) (core.ISession, error) {
 	// Get the environment variables.
 	secretKey := os.Getenv("AMB_SESSION_KEY")
 	if len(secretKey) == 0 {

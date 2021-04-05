@@ -2,7 +2,6 @@ package bearblog
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -22,16 +21,14 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 	fm["PublishedPages"] = func() []core.Post {
 		arr, err := p.Site.PublishedPages()
 		if err != nil {
-			// TODO: Need to switch over to the logger.
-			log.Println(err)
+			p.Log.Error("bearblog: error getting published pages: %v", err.Error())
 		}
 		return arr
 	}
 	fm["SiteSubtitle"] = func() string {
 		subtitle, err := p.Site.PluginField(Subtitle)
 		if err != nil {
-			// TODO: Need to switch over to the logger.
-			log.Println(err)
+			p.Log.Error("bearblog: error getting subtitle: %v", err.Error())
 		}
 		return subtitle
 	}
@@ -39,16 +36,14 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 		// If user is not authenticated, don't allow them to access the page.
 		loggedIn, err := p.Site.UserAuthenticated(r)
 		if err != nil {
-			// TODO: Need to switch over to the logger.
-			log.Println(err)
+			p.Log.Error("bearblog: error getting if user is authenticated: %v", err.Error())
 		}
 		return loggedIn
 	}
 	fm["SiteFooter"] = func() string {
 		f, err := p.Site.PluginField(Footer)
 		if err != nil {
-			// TODO: Need to switch over to the logger.
-			log.Println(err)
+			p.Log.Error("bearblog: error getting footer: %v", err.Error())
 		}
 		return f
 	}

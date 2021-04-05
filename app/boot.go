@@ -88,7 +88,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	if len(arrPlugins) > 0 {
 		firstPlugin := arrPlugins[0]
 		// Get the storage system.
-		pds, pss, err := firstPlugin.Storage()
+		pds, pss, err := firstPlugin.Storage(l)
 		if err != nil {
 			l.Error("", err.Error())
 		} else if pds != nil && pss != nil {
@@ -131,7 +131,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		}
 
 		// Get the session manager.
-		sm, err := v.SessionManager(ss)
+		sm, err := v.SessionManager(l, ss)
 		if err != nil {
 			l.Error("", err.Error())
 		} else if sm != nil {
@@ -165,7 +165,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		}
 
 		// Get the router.
-		tt, err := v.TemplateEngine(pi, pluginNames)
+		tt, err := v.TemplateEngine(l, pi, pluginNames)
 		if err != nil {
 			l.Error("", err.Error())
 		} else if tt != nil {
@@ -194,7 +194,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		}
 
 		// Get the router.
-		rm, err := v.Router(te)
+		rm, err := v.Router(l, te)
 		if err != nil {
 			l.Error("", err.Error())
 		} else if rm != nil {

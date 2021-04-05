@@ -61,21 +61,21 @@ func (p *PluginMeta) Middleware() []func(next http.Handler) http.Handler {
 }
 
 // SessionManager -
-func (p *PluginMeta) SessionManager(ss SessionStorer) (ISession, error) {
+func (p *PluginMeta) SessionManager(logger ILogger, ss SessionStorer) (ISession, error) {
 	return nil, nil
 }
 
 // Router -
-func (p *PluginMeta) Router(te IRender) (IAppRouter, error) {
+func (p *PluginMeta) Router(logger ILogger, te IRender) (IAppRouter, error) {
 	return nil, nil
 }
 
 // Storage -
-func (p *PluginMeta) Storage() (DataStorer, SessionStorer, error) {
+func (p *PluginMeta) Storage(logger ILogger) (DataStorer, SessionStorer, error) {
 	return nil, nil, nil
 }
 
 // TemplateEngine -
-func (p *PluginMeta) TemplateEngine(pi *PluginInjector, pluginNames []string) (IRender, error) {
+func (p *PluginMeta) TemplateEngine(logger ILogger, pi *PluginInjector, pluginNames []string) (IRender, error) {
 	return nil, nil
 }

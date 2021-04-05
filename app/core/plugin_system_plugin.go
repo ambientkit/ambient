@@ -16,10 +16,13 @@ type IPlugin interface {
 	Assets() ([]Asset, *embed.FS, func(r *http.Request) template.FuncMap)
 	Fields() []Field
 	Middleware() []func(next http.Handler) http.Handler
-	SessionManager(ss SessionStorer) (ISession, error)
-	Router(te IRender) (IAppRouter, error)
-	Storage() (DataStorer, SessionStorer, error)
-	TemplateEngine(pi *PluginInjector, pluginNames []string) (IRender, error)
+
+	// These are called before the plugin is enabled so they only have access to the logger.
+	SessionManager(logger ILogger, ss SessionStorer) (ISession, error)
+	Router(logger ILogger, te IRender) (IAppRouter, error)
+	Storage(logger ILogger) (DataStorer, SessionStorer, error)
+	TemplateEngine(logger ILogger, pi *PluginInjector, pluginNames []string) (IRender, error)
+
 	//Header() string
 	//Body() string
 	//SetSettings()

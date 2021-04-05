@@ -5,7 +5,6 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"os"
 	"path"
@@ -21,13 +20,15 @@ type Engine struct {
 	assetInjector   core.AssetInjector
 	pluginNames     []string
 	escape          bool
+	log             core.ILogger
 }
 
 // NewTemplateEngine returns a HTML template engine.
-func NewTemplateEngine(assetInjector core.AssetInjector, pluginNames []string) *Engine {
-	allowUnsafeHTML, err := strconv.ParseBool(os.Getenv("AMB_ALLOW_HTML"))
+func NewTemplateEngine(logger core.ILogger, assetInjector core.AssetInjector, pluginNames []string) *Engine {
+	allowHTML := os.Getenv("AMB_ALLOW_HTML")
+	allowUnsafeHTML, err := strconv.ParseBool(allowHTML)
 	if err != nil {
-		log.Printf("environment variable not able to parse as bool: %v", "AMB_ALLOW_HTML")
+		logger.Error("htmltemplate: environment variable is not able to parse as bool (%v=%v): %v", "AMB_ALLOW_HTML", allowHTML, err.Error())
 		return nil
 	}
 
@@ -38,6 +39,7 @@ func NewTemplateEngine(assetInjector core.AssetInjector, pluginNames []string) *
 		assetInjector:   assetInjector,
 		pluginNames:     pluginNames,
 		escape:          true,
+		log:             logger,
 	}
 }
 

@@ -35,7 +35,7 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 }
 
 // TemplateEngine returns a template engine.
-func (p *Plugin) TemplateEngine(pi *core.PluginInjector, pluginNames []string) (core.IRender, error) {
-	tmpl := NewTemplateEngine(pi, pluginNames)
+func (p *Plugin) TemplateEngine(logger core.ILogger, pi *core.PluginInjector, pluginNames []string) (core.IRender, error) {
+	tmpl := NewTemplateEngine(logger, pi, pluginNames)
 	return tmpl, nil
 }

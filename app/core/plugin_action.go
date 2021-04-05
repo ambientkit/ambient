@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
-	"log"
 	"net/http"
 	"path"
 	"strings"
@@ -86,14 +85,14 @@ func (c *App) LoadSinglePluginMiddleware(h http.Handler, plugin IPlugin) http.Ha
 	// Skip if the plugin isn't found.
 	_, ok := c.Storage.Site.PluginSettings[plugin.PluginName()]
 	if !ok {
-		c.Log.Debug("plugin middleware: plugin not found: %v \n", plugin.PluginName())
+		c.Log.Debug("plugin middleware: plugin not found: %v\n", plugin.PluginName())
 		return h
 	}
 
 	// Loop through each piece of middleware.
 	arrHandlers := plugin.Middleware()
 	if len(arrHandlers) > 0 {
-		c.Log.Debug("plugin middleware: loading %v middleware for plugin: %v \n", len(plugin.Middleware()), plugin.PluginName())
+		c.Log.Debug("plugin middleware: loading %v middleware for plugin: %v\n", len(plugin.Middleware()), plugin.PluginName())
 	}
 
 	for i, pluginMiddleware := range arrHandlers {
@@ -241,7 +240,8 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	// Enable the plugin and pass in the toolkit.
 	err := v.Enable(toolkit)
 	if err != nil {
-		log.Printf("problem enabling plugin %v: %v", name, err.Error())
+		c.Log.Error("plugin load: problem enabling plugin %v: %v", name, err.Error())
+		return shouldSave
 	}
 
 	// Load the routes.
@@ -258,7 +258,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	// Handle embedded assets.
 	err = embeddedAssets(recorder, c.Sess, name, assets, files)
 	if err != nil {
-		log.Println(err.Error())
+		c.Log.Error("plugin load: problem loading assets for plugin %v: %v", name, err.Error())
 	}
 
 	// Save the plugin routes so they can be removed if disabled.

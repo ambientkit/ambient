@@ -43,7 +43,7 @@ var (
 )
 
 // Storage returns data and session storage.
-func (p *Plugin) Storage() (core.DataStorer, core.SessionStorer, error) {
+func (p *Plugin) Storage(logger core.ILogger) (core.DataStorer, core.SessionStorer, error) {
 	bucket := os.Getenv("AMB_GCP_BUCKET_NAME")
 	if len(bucket) == 0 {
 		return nil, nil, fmt.Errorf("environment variable missing: %v", "AMB_GCP_BUCKET_NAME")

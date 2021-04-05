@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 
@@ -12,8 +11,6 @@ import (
 )
 
 func init() {
-	// Verbose logging with file name and line number.
-	log.SetFlags(log.Lshortfile)
 	// Set the time zone.
 	timezone.Set()
 }
@@ -29,7 +26,7 @@ func main() {
 	// Set up the application services.
 	mux, err := app.Boot(l)
 	if err != nil {
-		log.Fatalln(err.Error())
+		l.Fatal("", err.Error())
 	}
 
 	// Start the web server.
