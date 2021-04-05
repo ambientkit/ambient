@@ -1,4 +1,4 @@
-package model
+package core
 
 // FieldType is a type of field.
 type FieldType string
@@ -22,6 +22,24 @@ type Field struct {
 	Name        string           `json:"name"`
 	Type        FieldType        `json:"type"`
 	Description FieldDescription `json:"description"`
+	Default     string           `json:"default"`
+}
+
+// FieldList is an array of fields.
+type FieldList []Field
+
+// ModelFields returns array of Field.
+func (fl FieldList) ModelFields() []Field {
+	arr := make([]Field, 0)
+	for _, v := range fl {
+		arr = append(arr, Field{
+			Name:        v.Name,
+			Type:        FieldType(v.Type),
+			Description: FieldDescription(v.Description),
+		})
+	}
+
+	return arr
 }
 
 // FieldDescription is a type of description.

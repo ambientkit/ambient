@@ -16,7 +16,12 @@ func (te *Engine) PluginPage(w http.ResponseWriter, r *http.Request, assets embe
 
 // PluginPageContent renders using the page content.
 func (te *Engine) PluginPageContent(w http.ResponseWriter, r *http.Request, content string, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
-	return te.pluginContent(w, r, "layout/page", "page", content, fm, vars)
+	return te.pluginContent(w, r, "layout/page", "post", content, fm, vars)
+}
+
+// PluginPost renders using the page layout.
+func (te *Engine) PluginPost(w http.ResponseWriter, r *http.Request, assets embed.FS, partialTemplate string, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
+	return te.pluginPartial(w, r, "layout/page", "post", assets, partialTemplate, fm, vars)
 }
 
 func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, assets embed.FS, partialTemplate string, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {

@@ -3,13 +3,11 @@ package core
 import (
 	"embed"
 	"io/fs"
-
-	"github.com/josephspurrier/ambient/app/model"
 )
 
 // fieldArrayEqual tells whether a and b contain the same elements.
 // A nil argument is equivalent to an empty slice.
-func fieldArrayEqual(a []model.Field, b []Field) bool {
+func fieldArrayEqual(a, b []Field) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -24,6 +22,9 @@ func fieldArrayEqual(a []model.Field, b []Field) bool {
 			return false
 		}
 		if v.Description.URL != b[i].Description.URL {
+			return false
+		}
+		if v.Default != b[i].Default {
 			return false
 		}
 	}

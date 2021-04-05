@@ -22,9 +22,6 @@ type AuthType string
 // LayoutType is a type of layout.
 type LayoutType string
 
-// FieldType is a type of field.
-type FieldType string
-
 const (
 	// LocationHead is at the bottom of the HTML <head> section.
 	LocationHead AssetLocation = "head"
@@ -51,14 +48,10 @@ const (
 	// AuthenticatedOnly is only authenticated users.
 	AuthenticatedOnly AuthType = "authenticated"
 
-	// Page is a page layout.
-	Page LayoutType = "page"
-	// Post is a post layout.
-	Post LayoutType = "post"
-	// Dashboard is a dashboard layout.
-	Dashboard LayoutType = "dashboard"
-	// Bloglist is a bloglist layout.
-	Bloglist LayoutType = "bloglist"
+	// LayoutPage is a page layout.
+	LayoutPage LayoutType = "page"
+	// LayoutPost is a post layout.
+	LayoutPost LayoutType = "post"
 )
 
 // Asset represents an HTML asset like a stylesheet or javascript file.

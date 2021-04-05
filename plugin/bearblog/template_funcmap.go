@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/josephspurrier/ambient/app/model"
+	"github.com/josephspurrier/ambient/app/core"
 )
 
 // FuncMap returns a map of template functions that can be used in templates.
@@ -19,7 +19,7 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 	fm["StampFriendly"] = func(t time.Time) string {
 		return t.Format("02 Jan, 2006")
 	}
-	fm["PublishedPages"] = func() []model.Post {
+	fm["PublishedPages"] = func() []core.Post {
 		arr, err := p.Site.PublishedPages()
 		if err != nil {
 			// TODO: Need to switch over to the logger.

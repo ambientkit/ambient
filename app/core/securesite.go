@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/josephspurrier/ambient/app/model"
 )
 
 var (
@@ -168,7 +166,7 @@ func (ss *SecureSite) URL() (string, error) {
 }
 
 // Plugins returns the plugin list.
-func (ss *SecureSite) Plugins() (map[string]model.PluginSettings, error) {
+func (ss *SecureSite) Plugins() (map[string]PluginSettings, error) {
 	grant := "site.plugins:read"
 
 	if !ss.Authorized(grant) {
@@ -272,7 +270,7 @@ func (ss *SecureSite) SetPluginField(name string, value string) error {
 
 	fields, ok := ss.storage.Site.PluginFields[ss.pluginName]
 	if !ok {
-		fields = model.PluginFields{
+		fields = PluginFields{
 			Fields: make(map[string]string),
 		}
 	}
@@ -314,7 +312,7 @@ func (ss *SecureSite) SetNeighborPluginField(pluginName string, name string, val
 
 	fields, ok := ss.storage.Site.PluginFields[pluginName]
 	if !ok {
-		fields = model.PluginFields{
+		fields = PluginFields{
 			Fields: make(map[string]string),
 		}
 	}
@@ -358,7 +356,7 @@ func (ss *SecureSite) Updated() (time.Time, error) {
 }
 
 // SavePost saves a post.
-func (ss *SecureSite) SavePost(ID string, post model.Post) error {
+func (ss *SecureSite) SavePost(ID string, post Post) error {
 	grant := "site.post:write"
 
 	if !ss.Authorized(grant) {
@@ -371,7 +369,7 @@ func (ss *SecureSite) SavePost(ID string, post model.Post) error {
 }
 
 // PostsAndPages returns the list of posts and pages.
-func (ss *SecureSite) PostsAndPages(onlyPublished bool) (model.PostWithIDList, error) {
+func (ss *SecureSite) PostsAndPages(onlyPublished bool) (PostWithIDList, error) {
 	grant := "site.postsandpages:read"
 
 	if !ss.Authorized(grant) {
@@ -382,7 +380,7 @@ func (ss *SecureSite) PostsAndPages(onlyPublished bool) (model.PostWithIDList, e
 }
 
 // PublishedPosts returns the list of published posts.
-func (ss *SecureSite) PublishedPosts() ([]model.Post, error) {
+func (ss *SecureSite) PublishedPosts() ([]Post, error) {
 	grant := "site.posts:read" // TODO: Differentiate between posts and published posts?
 
 	if !ss.Authorized(grant) {
@@ -393,7 +391,7 @@ func (ss *SecureSite) PublishedPosts() ([]model.Post, error) {
 }
 
 // PublishedPages returns the list of published pages.
-func (ss *SecureSite) PublishedPages() ([]model.Post, error) {
+func (ss *SecureSite) PublishedPages() ([]Post, error) {
 	grant := "site.pages:read" // TODO: Differentiate between posts and published posts?
 
 	if !ss.Authorized(grant) {
@@ -404,27 +402,27 @@ func (ss *SecureSite) PublishedPages() ([]model.Post, error) {
 }
 
 // PostBySlug returns the post by slug.
-func (ss *SecureSite) PostBySlug(slug string) (model.PostWithID, error) {
+func (ss *SecureSite) PostBySlug(slug string) (PostWithID, error) {
 	grant := "site.postbyslug:read"
 
 	if !ss.Authorized(grant) {
-		return model.PostWithID{}, ErrAccessDenied
+		return PostWithID{}, ErrAccessDenied
 	}
 
 	return ss.storage.Site.PostBySlug(slug), nil
 }
 
 // PostByID returns the post by ID.
-func (ss *SecureSite) PostByID(ID string) (model.Post, error) {
+func (ss *SecureSite) PostByID(ID string) (Post, error) {
 	grant := "site.postbyid:read"
 
 	if !ss.Authorized(grant) {
-		return model.Post{}, ErrAccessDenied
+		return Post{}, ErrAccessDenied
 	}
 
 	post, ok := ss.storage.Site.Posts[ID]
 	if !ok {
-		return model.Post{}, ErrNotFound
+		return Post{}, ErrNotFound
 	}
 
 	return post, nil
@@ -444,7 +442,7 @@ func (ss *SecureSite) DeletePostByID(ID string) error {
 }
 
 // Tags returns the list of tags.
-func (ss *SecureSite) Tags(onlyPublished bool) (model.TagList, error) {
+func (ss *SecureSite) Tags(onlyPublished bool) (TagList, error) {
 	grant := "site.tags:read"
 
 	if !ss.Authorized(grant) {

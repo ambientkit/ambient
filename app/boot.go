@@ -6,7 +6,6 @@ import (
 
 	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/logger"
-	"github.com/josephspurrier/ambient/app/model"
 	"github.com/josephspurrier/ambient/html"
 	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/awayrouter"
@@ -104,7 +103,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	}
 
 	// Create new store object with the defaults.
-	site := &model.Site{}
+	site := &core.Site{}
 
 	// Set up the data storage provider.
 	storage, err := core.NewDatastore(ds, site)

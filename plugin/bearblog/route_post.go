@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/josephspurrier/ambient/app/model"
+	"github.com/josephspurrier/ambient/app/core"
 	"github.com/russross/blackfriday/v2"
 )
 
@@ -29,7 +29,7 @@ func (p *Plugin) postIndex(w http.ResponseWriter, r *http.Request) (status int, 
 			return p.Site.Error(err)
 		}
 
-		posts := make([]model.PostWithID, 0)
+		posts := make([]core.PostWithID, 0)
 		for _, v := range postsAndPages {
 			match := false
 			for _, tag := range v.Tags {
@@ -91,7 +91,7 @@ func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, e
 	//vars["metadescription"] = plaintextBlurb(post.Content)
 	vars["postcontent"] = sanitized(post.Post.Content)
 
-	return p.Render.PluginPage(w, r, assets, "template/content/post", p.FuncMap(r), vars)
+	return p.Render.PluginPost(w, r, assets, "template/content/post", p.FuncMap(r), vars)
 }
 
 // sanitized returns a sanitized content block or an error is one occurs.

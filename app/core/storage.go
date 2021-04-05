@@ -5,19 +5,18 @@ import (
 	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/envdetect"
-	"github.com/josephspurrier/ambient/app/model"
 )
 
 // Storage represents a writable and readable object.
 type Storage struct {
-	Site         *model.Site
-	PluginRoutes *model.PluginRoutes
+	Site         *Site
+	PluginRoutes *PluginRoutes
 	datastorer   DataStorer
 }
 
 // NewDatastore returns a writable and readable site object. Returns an error if the
 // object cannot be initially read.
-func NewDatastore(ds DataStorer, site *model.Site) (*Storage, error) {
+func NewDatastore(ds DataStorer, site *Site) (*Storage, error) {
 	s := &Storage{
 		Site:       site,
 		datastorer: ds,
@@ -29,8 +28,8 @@ func NewDatastore(ds DataStorer, site *model.Site) (*Storage, error) {
 	}
 
 	// Initialize the data structure.
-	s.PluginRoutes = &model.PluginRoutes{
-		Routes: make(map[string][]model.Route),
+	s.PluginRoutes = &PluginRoutes{
+		Routes: make(map[string][]Route),
 	}
 
 	// Fill in the missing defaults.

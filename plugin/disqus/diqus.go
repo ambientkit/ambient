@@ -65,7 +65,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			Filetype: core.AssetStylesheet,
 			Location: core.LocationHead,
 			LayoutOnly: []core.LayoutType{
-				core.Post,
+				core.LayoutPost,
 			},
 		},
 		{
@@ -73,7 +73,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			Filetype: core.AssetJavaScript,
 			Location: core.LocationBody,
 			LayoutOnly: []core.LayoutType{
-				core.Post,
+				core.LayoutPost,
 			},
 			Inline: true,
 			Replace: []core.Replace{
@@ -87,7 +87,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			Filetype: core.AssetGeneric,
 			Location: core.LocationMain,
 			LayoutOnly: []core.LayoutType{
-				core.Post,
+				core.LayoutPost,
 			},
 			TagName:    "div",
 			ClosingTag: true,

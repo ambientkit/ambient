@@ -1,5 +1,4 @@
-// Package model provides the data structure for the application.
-package model
+package core
 
 import (
 	"fmt"

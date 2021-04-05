@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/model"
+	"github.com/josephspurrier/ambient/app/core"
 )
 
 // Field -
@@ -12,8 +12,8 @@ type Field struct {
 	Index       int
 	Name        string
 	Value       string
-	FieldType   model.FieldType
-	Description model.FieldDescription
+	FieldType   core.FieldType
+	Description core.FieldDescription
 }
 
 func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -30,7 +30,7 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 
 	settings, ok := plugins[pluginName]
 	if !ok {
-		settings = model.PluginSettings{}
+		settings = core.PluginSettings{}
 	}
 
 	arr := make([]Field, 0)
@@ -73,7 +73,7 @@ func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status 
 	// Get a list of the settings for the specified plugin.
 	settings, ok := plugins[pluginName]
 	if !ok {
-		settings = model.PluginSettings{}
+		settings = core.PluginSettings{}
 	}
 
 	// Loop through each plugin to get the settings then save.
