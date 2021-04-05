@@ -8,7 +8,7 @@ import (
 
 // Logger represents a logger.
 type Logger struct {
-	*logrus.Logger
+	log *logrus.Logger
 
 	appName    string
 	appVersion string
@@ -21,7 +21,7 @@ func NewLogger(appName string, appVersion string) *Logger {
 	base.Level = logrus.InfoLevel
 
 	return &Logger{
-		Logger: base,
+		log: base,
 
 		appName:    appName,
 		appVersion: appVersion,
@@ -34,15 +34,15 @@ func (l *Logger) logentry() *logrus.Entry {
 		"version": l.appVersion,
 	}
 
-	return l.WithFields(standardFields)
+	return l.log.WithFields(standardFields)
 }
 
 // SetLevel will set the logger output level.
 func (l *Logger) SetLevel(level uint32) {
 	// Set log level temporarily to info.
-	l.Level = logrus.InfoLevel
+	l.log.Level = logrus.InfoLevel
 	l.logentry().Println("log level set to:", level)
-	l.Level = logrus.Level(level)
+	l.log.Level = logrus.Level(level)
 }
 
 // Debug is equivalent to log.Printf() + "\n" if format is not empty.
