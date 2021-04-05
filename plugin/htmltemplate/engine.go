@@ -18,13 +18,12 @@ import (
 // Engine represents a HTML template engine.
 type Engine struct {
 	allowUnsafeHTML bool
-	templateManager core.TemplateManager
 	assetInjector   core.AssetInjector
 	pluginNames     []string
 }
 
 // NewTemplateEngine returns a HTML template engine.
-func NewTemplateEngine(templateManager core.TemplateManager, assetInjector core.AssetInjector, pluginNames []string) *Engine {
+func NewTemplateEngine(assetInjector core.AssetInjector, pluginNames []string) *Engine {
 	allowUnsafeHTML, err := strconv.ParseBool(os.Getenv("AMB_ALLOW_HTML"))
 	if err != nil {
 		log.Printf("environment variable not able to parse as bool: %v", "AMB_ALLOW_HTML")
@@ -33,7 +32,6 @@ func NewTemplateEngine(templateManager core.TemplateManager, assetInjector core.
 
 	return &Engine{
 		allowUnsafeHTML: allowUnsafeHTML,
-		templateManager: templateManager,
 		assetInjector:   assetInjector,
 		pluginNames:     pluginNames,
 	}
@@ -78,8 +76,13 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 		return http.StatusInternalServerError, err
 	}
 
-	safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
-	t, err = t.Parse(safeContent)
+	// safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
+	// t, err = t.Parse(safeContent)
+	// if err != nil {
+	// 	return http.StatusInternalServerError, err
+	// }
+
+	t, err = escapeContent(t, content)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -105,13 +108,18 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 	//TODO: If we were going to use a filter on content, this is where it would go.
 
 	// Parse the plugin template separately for security.
-	content, err := templatebuffer.ParseTemplate(postContent, fm, vars)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
+	// content, err := templatebuffer.ParseTemplate(postContent, fm, vars)
+	// if err != nil {
+	// 	return http.StatusInternalServerError, err
+	// }
 
-	safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
-	t, err = t.Parse(safeContent)
+	// safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
+	// t, err = t.Parse(safeContent)
+	// if err != nil {
+	// 	return http.StatusInternalServerError, err
+	// }
+
+	t, err = escapeContent(t, postContent)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -126,9 +134,6 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 }
 
 func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutType string) (*template.Template, error) {
-	// Functions available in the templates.
-	fm := te.templateManager.FuncMap(r)
-
 	// Generate list of templates.
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	templates := []string{
@@ -136,7 +141,7 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutT
 	}
 
 	// Parse the main template with the functions.
-	t, err := template.New(path.Base(baseTemplate)).Funcs(fm).ParseFS(te.templateManager.Templates(), templates...)
+	t, err := template.New(path.Base(baseTemplate)).ParseFS(assets, templates...)
 	if err != nil {
 		return nil, err
 	}

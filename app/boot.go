@@ -6,7 +6,6 @@ import (
 
 	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/app/lib/logger"
-	"github.com/josephspurrier/ambient/html"
 	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/awayrouter"
 	"github.com/josephspurrier/ambient/plugin/bearblog"
@@ -150,7 +149,6 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 
 	// Set up the template engine.
 	pi := core.NewPlugininjector(storage, sess, plugs)
-	templateManager := html.NewTemplateManager(storage, sess)
 
 	// Get the router from the plugins.
 	var te core.IRender
@@ -167,7 +165,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		}
 
 		// Get the router.
-		tt, err := v.TemplateEngine(templateManager, pi, pluginNames)
+		tt, err := v.TemplateEngine(pi, pluginNames)
 		if err != nil {
 			l.Error("", err.Error())
 		} else if tt != nil {
