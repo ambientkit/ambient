@@ -100,6 +100,11 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		return p.Site.Error(err)
 	}
 
+	err = p.Site.SetURL(r.FormValue("domain"))
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
 	err = p.Site.SetPluginField(Subtitle, r.FormValue("subtitle"))
 	if err != nil {
 		return p.Site.Error(err)

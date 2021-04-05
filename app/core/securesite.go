@@ -143,18 +143,18 @@ func (ss *SecureSite) SetTitle(title string) error {
 	return ss.storage.Save()
 }
 
-// SetSubtitle sets the subsite.
-// func (ss *SecureSite) SetSubtitle(subtitle string) error {
-// 	grant := "site.subtitle:write"
+// SetURL sets the site URL.
+func (ss *SecureSite) SetURL(URL string) error {
+	grant := "site.url:write"
 
-// 	if !ss.Authorized(grant) {
-// 		return ErrAccessDenied
-// 	}
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
 
-// 	ss.storage.Site.Subtitle = escapeValue(subtitle)
+	ss.storage.Site.URL = URL
 
-// 	return ss.storage.Save()
-// }
+	return ss.storage.Save()
+}
 
 // URL returns the site URL.
 func (ss *SecureSite) URL() (string, error) {
