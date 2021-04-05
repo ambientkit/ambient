@@ -81,8 +81,8 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/dashboard/posts/new", p.postAdminCreate)
 	p.Mux.Post("/dashboard/posts/new", p.postAdminStore)
 	p.Mux.Get("/dashboard/posts/:id", p.postAdminEdit)
-	// p.Mux.Post("/dashboard/posts/:id", p.postAdminUpdate)
-	// p.Mux.Get("/dashboard/posts/:id/delete", p.postAdminDestroy)
+	p.Mux.Post("/dashboard/posts/:id", p.postAdminUpdate)
+	p.Mux.Get("/dashboard/posts/:id/delete", p.postAdminDestroy)
 }
 
 // Assets returns a list of assets and an embedded filesystem.

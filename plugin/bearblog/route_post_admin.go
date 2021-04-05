@@ -98,70 +98,66 @@ func (p *Plugin) postAdminEdit(w http.ResponseWriter, r *http.Request) (status i
 	vars["page"] = post.Page
 	vars["published"] = post.Published
 
-	return p.Render.PluginPage(w, r, assets, "templates/content/post_edit", p.FuncMap(r), vars)
+	return p.Render.PluginPage(w, r, assets, "template/content/post_edit", p.FuncMap(r), vars)
 }
 
-// func (p *Plugin) postAdminUpdate(w http.ResponseWriter, r *http.Request) (status int, err error) {
-// 	ID := p.Router.Param(r, "id")
+func (p *Plugin) postAdminUpdate(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	ID := p.Mux.Param(r, "id")
 
-// 	var p model.Post
-// 	var ok bool
-// 	if p, ok = p.Storage.Site.Posts[ID]; !ok {
-// 		return http.StatusNotFound, nil
-// 	}
+	post, err := p.Site.PostByID(ID)
+	if err != nil {
+		return p.Site.Error(err)
+	}
 
-// 	// Save the site.
-// 	r.ParseForm()
+	// Save the site.
+	r.ParseForm()
 
-// 	// CSRF protection.
-// 	success := p.Sess.CSRF(r)
-// 	if !success {
-// 		return http.StatusBadRequest, nil
-// 	}
+	// CSRF protection.
+	success := p.Security.CSRF(r)
+	if !success {
+		return http.StatusBadRequest, nil
+	}
 
-// 	now := time.Now()
+	now := time.Now()
 
-// 	p.Title = r.FormValue("title")
-// 	p.URL = r.FormValue("slug")
-// 	p.Canonical = r.FormValue("canonical_url")
-// 	p.Updated = now
-// 	pubDate := r.FormValue("published_date")
-// 	ts, err := time.Parse("2006-01-02", pubDate)
-// 	if err != nil {
-// 		return http.StatusInternalServerError, err
-// 	}
-// 	p.Timestamp = ts
-// 	p.Content = r.FormValue("content")
-// 	p.Tags = p.Tags.Split(r.FormValue("tags"))
-// 	p.Page = r.FormValue("is_page") == "on"
-// 	p.Published = r.FormValue("publish") == "on"
+	post.Title = r.FormValue("title")
+	post.URL = r.FormValue("slug")
+	post.Canonical = r.FormValue("canonical_url")
+	post.Updated = now
+	pubDate := r.FormValue("published_date")
+	ts, err := time.Parse("2006-01-02", pubDate)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+	post.Timestamp = ts
+	post.Content = r.FormValue("content")
+	post.Tags = post.Tags.Split(r.FormValue("tags"))
+	post.Page = r.FormValue("is_page") == "on"
+	post.Published = r.FormValue("publish") == "on"
 
-// 	p.Storage.Site.Posts[ID] = p
+	// Save to storage.
+	err = p.Site.SavePost(ID, post)
+	if err != nil {
+		return p.Site.Error(err)
+	}
 
-// 	err = p.Storage.Save()
-// 	if err != nil {
-// 		return http.StatusInternalServerError, err
-// 	}
+	http.Redirect(w, r, "/dashboard/posts/"+ID, http.StatusFound)
+	return
+}
 
-// 	http.Redirect(w, r, "/dashboard/posts/"+ID, http.StatusFound)
-// 	return
-// }
+func (p *Plugin) postAdminDestroy(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	ID := p.Mux.Param(r, "id")
 
-// func (p *Plugin) postAdminDestroy(w http.ResponseWriter, r *http.Request) (status int, err error) {
-// 	ID := p.Mux.Param(r, "id")
+	_, err = p.Site.PostByID(ID)
+	if err != nil {
+		return p.Site.Error(err)
+	}
 
-// 	var ok bool
-// 	if _, ok = p.Storage.Site.Posts[ID]; !ok {
-// 		return http.StatusNotFound, nil
-// 	}
+	err = p.Site.DeletePostByID(ID)
+	if err != nil {
+		return p.Site.Error(err)
+	}
 
-// 	delete(p.Storage.Site.Posts, ID)
-
-// 	err = p.Storage.Save()
-// 	if err != nil {
-// 		return http.StatusInternalServerError, err
-// 	}
-
-// 	http.Redirect(w, r, "/dashboard/posts", http.StatusFound)
-// 	return
-// }
+	http.Redirect(w, r, "/dashboard/posts", http.StatusFound)
+	return
+}

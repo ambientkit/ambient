@@ -222,6 +222,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	grants["site.load:write"] = true
 	grants["site.post:write"] = true
 	grants["site.postbyid:read"] = true
+	grants["site.deletepostbyid:write"] = true
 
 	recorder := routerrecorder.NewRecorder(c.Router)
 

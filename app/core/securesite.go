@@ -430,6 +430,19 @@ func (ss *SecureSite) PostByID(ID string) (model.Post, error) {
 	return post, nil
 }
 
+// DeletePostByID deletes a post.
+func (ss *SecureSite) DeletePostByID(ID string) error {
+	grant := "site.deletepostbyid:write"
+
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
+
+	delete(ss.storage.Site.Posts, ID)
+
+	return ss.storage.Save()
+}
+
 // Tags returns the list of tags.
 func (ss *SecureSite) Tags(onlyPublished bool) (model.TagList, error) {
 	grant := "site.tags:read"
