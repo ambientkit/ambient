@@ -3,13 +3,8 @@
 package sitemap
 
 import (
-	"embed"
-
 	"github.com/josephspurrier/ambient/app/core"
 )
-
-//go:embed *
-var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {

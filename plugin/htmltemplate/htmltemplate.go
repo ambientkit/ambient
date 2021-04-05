@@ -8,7 +8,7 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 )
 
-//go:embed layout/page.tmpl
+//go:embed layout/*.tmpl
 var assets embed.FS
 
 // Plugin represents an Ambient plugin.

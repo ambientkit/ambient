@@ -3,7 +3,6 @@
 package scssession
 
 import (
-	"embed"
 	"fmt"
 	"net/http"
 	"os"
@@ -13,9 +12,6 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/plugin/scssession/websession"
 )
-
-//go:embed *
-var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {

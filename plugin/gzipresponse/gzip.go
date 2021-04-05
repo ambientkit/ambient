@@ -3,14 +3,10 @@
 package gzipresponse
 
 import (
-	"embed"
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
-
-//go:embed *
-var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {

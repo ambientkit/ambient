@@ -3,16 +3,12 @@
 package awayrouter
 
 import (
-	"embed"
 	"fmt"
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/plugin/awayrouter/router"
 )
-
-//go:embed *
-var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {

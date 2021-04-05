@@ -10,7 +10,7 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 )
 
-//go:embed *
+//go:embed css/*.css
 var assets embed.FS
 
 // Plugin represents an Ambient plugin.

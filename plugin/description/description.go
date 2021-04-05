@@ -10,9 +10,6 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 )
 
-//go:embed *
-var assets embed.FS
-
 // Plugin represents an Ambient plugin.
 type Plugin struct {
 	*core.PluginMeta
@@ -75,5 +72,5 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 				},
 			},
 		},
-	}, &assets, nil
+	}, nil, nil
 }

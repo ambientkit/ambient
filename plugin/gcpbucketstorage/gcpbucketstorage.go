@@ -3,16 +3,12 @@
 package gcpbucketstorage
 
 import (
-	"embed"
 	"fmt"
 	"os"
 
 	"github.com/josephspurrier/ambient/app/core"
 	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage/store"
 )
-
-//go:embed *
-var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
