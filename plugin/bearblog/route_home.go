@@ -90,24 +90,30 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		return p.Site.Error(err)
 	}
 
+	err = p.Site.SetContent(r.FormValue("content"))
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
+	err = p.Site.SetScheme(r.FormValue("scheme"))
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
 	err = p.Site.SetPluginField(Subtitle, r.FormValue("subtitle"))
 	if err != nil {
 		return p.Site.Error(err)
 	}
 
-	//c.Storage.Site.Title =
-	//c.Storage.Site.Subtitle = r.FormValue("subtitle")
-	// c.Storage.Site.URL = r.FormValue("domain")
-	// c.Storage.Site.Content = r.FormValue("content")
-	// c.Storage.Site.Scheme = r.FormValue("scheme")
-	// c.Storage.Site.LoginURL = r.FormValue("loginurl")
-	// c.Storage.Site.Footer = r.FormValue("footer")
-	// c.Storage.Site.Updated = time.Now()
+	err = p.Site.SetPluginField(LoginURL, r.FormValue("loginurl"))
+	if err != nil {
+		return p.Site.Error(err)
+	}
 
-	// err = c.Storage.Save()
-	// if err != nil {
-	// 	return http.StatusInternalServerError, err
-	// }
+	err = p.Site.SetPluginField(Footer, r.FormValue("footer"))
+	if err != nil {
+		return p.Site.Error(err)
+	}
 
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 	return

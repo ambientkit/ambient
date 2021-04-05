@@ -106,16 +106,18 @@ func (ss *SecureSite) Title() (string, error) {
 	return ss.storage.Site.Title, nil
 }
 
-// Subtitle returns the subtitle.
-// func (ss *SecureSite) Subtitle() (string, error) {
-// 	grant := "site.subtitle:read"
+// SetScheme sets the site scheme.
+func (ss *SecureSite) SetScheme(scheme string) error {
+	grant := "site.scheme:write"
 
-// 	if !ss.Authorized(grant) {
-// 		return "", ErrAccessDenied
-// 	}
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
 
-// 	return ss.storage.Site.Subtitle, nil
-// }
+	ss.storage.Site.Scheme = scheme
+
+	return ss.storage.Save()
+}
 
 // Scheme returns the site scheme.
 func (ss *SecureSite) Scheme() (string, error) {
@@ -452,16 +454,18 @@ func (ss *SecureSite) Tags(onlyPublished bool) (TagList, error) {
 	return ss.storage.Site.Tags(onlyPublished), nil
 }
 
-// Description returns the site description.
-// func (ss *SecureSite) Description() (string, error) {
-// 	grant := "site.description:read"
+// SetContent sets the home page content.
+func (ss *SecureSite) SetContent(content string) error {
+	grant := "site.content:write"
 
-// 	if !ss.Authorized(grant) {
-// 		return "", ErrAccessDenied
-// 	}
+	if !ss.Authorized(grant) {
+		return ErrAccessDenied
+	}
 
-// 	return ss.storage.Site.Description, nil
-// }
+	ss.storage.Site.Content = content
+
+	return ss.storage.Save()
+}
 
 // Content returns the site home page content.
 func (ss *SecureSite) Content() (string, error) {
