@@ -115,18 +115,3 @@ func (p *Plugin) sanitized(content string) template.HTML {
 
 	return template.HTML(htmlCode)
 }
-
-// // plaintextBlurb returns a plaintext blurb from markdown content.
-// func plaintextBlurb(s string) string {
-// 	unsafeHTML := blackfriday.Run([]byte(s))
-// 	plaintext, err := html2text.FromString(string(unsafeHTML))
-// 	if err != nil {
-// 		plaintext = s
-// 	}
-// 	period := strings.Index(plaintext, ". ")
-// 	if period > 0 {
-// 		plaintext = plaintext[:period+1]
-// 	}
-
-// 	return plaintext
-// }
