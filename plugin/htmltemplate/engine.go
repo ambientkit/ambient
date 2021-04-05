@@ -83,7 +83,7 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 	}
 
 	// Escape the content.
-	t, err = te.escapeContent(t, content)
+	t, err = te.escapeContent(t, "content", content)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -115,7 +115,7 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 	}
 
 	// Escape the content.
-	t, err = te.escapeContent(t, content)
+	t, err = te.escapeContent(t, "content", content)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -152,9 +152,9 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutT
 }
 
 // escapeContent returns an escaped content block or an error is one occurs.
-func (te *Engine) escapeContent(t *template.Template, content string) (*template.Template, error) {
+func (te *Engine) escapeContent(t *template.Template, name string, content string) (*template.Template, error) {
 	if !te.escape {
-		safeContent := fmt.Sprintf(`{{define "content"}}%s{{end}}`, content)
+		safeContent := fmt.Sprintf(`{{define "%s"}}%s{{end}}`, name, content)
 		var err error
 		t, err = t.Parse(safeContent)
 		if err != nil {

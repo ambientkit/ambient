@@ -1,12 +1,18 @@
 package core
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
-
-	"github.com/josephspurrier/ambient/app/lib/templatebuffer"
 )
+
+// TemplateInjector represents an injector that the template enginer must implement.
+type TemplateInjector interface {
+	InjectHead(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+	InjectHeader(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+	InjectMain(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+	InjectFooter(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+	InjectBody(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+}
 
 // AssetInjector represents code that can inject files into a template.
 type AssetInjector interface {
@@ -19,15 +25,17 @@ type PluginInjector struct {
 	sess    ISession
 	plugins *PluginSystem
 	log     ILogger
+	ti      TemplateInjector
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger ILogger, storage *Storage, sess ISession, plugins *PluginSystem) *PluginInjector {
+func NewPlugininjector(logger ILogger, ti TemplateInjector, storage *Storage, sess ISession, plugins *PluginSystem) *PluginInjector {
 	return &PluginInjector{
 		storage: storage,
 		sess:    sess,
 		plugins: plugins,
 		log:     logger,
+		ti:      ti,
 	}
 }
 
@@ -121,58 +129,29 @@ func (c *PluginInjector) Inject(t *template.Template, r *http.Request, pluginNam
 		data[k] = v
 	}
 
-	head, err := templatebuffer.ParseTemplate(pluginHead, fm, data)
+	// Inject.
+	var err error
+	t, err = c.ti.InjectHead(t, pluginHead, fm, data)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: These probably all need to be template safe.
-	content := fmt.Sprintf(`{{define "PluginHeadContent"}}%s{{end}}`, head)
-	t, err = t.Parse(content)
+	t, err = c.ti.InjectHeader(t, pluginHeader, fm, data)
 	if err != nil {
 		return nil, err
 	}
 
-	header, err := templatebuffer.ParseTemplate(pluginHeader, fm, data)
+	t, err = c.ti.InjectMain(t, pluginMain, fm, data)
 	if err != nil {
 		return nil, err
 	}
 
-	content = fmt.Sprintf(`{{define "PluginHeaderContent"}}%s{{end}}`, header)
-	t, err = t.Parse(content)
+	t, err = c.ti.InjectBody(t, pluginBody, fm, data)
 	if err != nil {
 		return nil, err
 	}
 
-	main, err := templatebuffer.ParseTemplate(pluginMain, fm, data)
-	if err != nil {
-		return nil, err
-	}
-
-	content = fmt.Sprintf(`{{define "PluginMainContent"}}%s{{end}}`, main)
-	t, err = t.Parse(content)
-	if err != nil {
-		return nil, err
-	}
-
-	footer, err := templatebuffer.ParseTemplate(pluginFooter, fm, data)
-	if err != nil {
-		return nil, err
-	}
-
-	content = fmt.Sprintf(`{{define "PluginFooterContent"}}%s{{end}}`, footer)
-	t, err = t.Parse(content)
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := templatebuffer.ParseTemplate(pluginBody, fm, data)
-	if err != nil {
-		return nil, err
-	}
-
-	content = fmt.Sprintf(`{{define "PluginBodyContent"}}%s{{end}}`, body)
-	t, err = t.Parse(content)
+	t, err = c.ti.InjectFooter(t, pluginFooter, fm, data)
 	if err != nil {
 		return nil, err
 	}
