@@ -76,7 +76,7 @@ func setupRouter(mux core.IAppRouter, te core.IRender) {
 				}
 			}
 
-			status, err = te.PageContent(w, r, fmt.Sprintf("# %v\n%v", status, errText), nil, nil)
+			status, err = te.Error(w, r, fmt.Sprintf("<h1>%v</h1>%v", status, errText), status, nil, nil)
 			if err != nil {
 				if err != nil {
 					log.Println(err.Error())
