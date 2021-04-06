@@ -2,11 +2,20 @@ package core
 
 import "time"
 
+// SetTitle sets the title.
+func (ss *SecureSite) SetTitle(title string) error {
+	if !ss.Authorized(GrantSiteTitleWrite) {
+		return ErrAccessDenied
+	}
+
+	ss.storage.Site.Title = title
+
+	return ss.storage.Save()
+}
+
 // Title returns the title.
 func (ss *SecureSite) Title() (string, error) {
-	grant := "site.title:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSiteTitleRead) {
 		return "", ErrAccessDenied
 	}
 
@@ -15,9 +24,7 @@ func (ss *SecureSite) Title() (string, error) {
 
 // SetScheme sets the site scheme.
 func (ss *SecureSite) SetScheme(scheme string) error {
-	grant := "site.scheme:write"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSiteSchemeWrite) {
 		return ErrAccessDenied
 	}
 
@@ -28,33 +35,16 @@ func (ss *SecureSite) SetScheme(scheme string) error {
 
 // Scheme returns the site scheme.
 func (ss *SecureSite) Scheme() (string, error) {
-	grant := "site.scheme:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSiteSchemeRead) {
 		return "", ErrAccessDenied
 	}
 
 	return ss.storage.Site.Scheme, nil
 }
 
-// SetTitle sets the title.
-func (ss *SecureSite) SetTitle(title string) error {
-	grant := "site.title:write"
-
-	if !ss.Authorized(grant) {
-		return ErrAccessDenied
-	}
-
-	ss.storage.Site.Title = title
-
-	return ss.storage.Save()
-}
-
 // SetURL sets the site URL.
 func (ss *SecureSite) SetURL(URL string) error {
-	grant := "site.url:write"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSiteURLWrite) {
 		return ErrAccessDenied
 	}
 
@@ -65,9 +55,7 @@ func (ss *SecureSite) SetURL(URL string) error {
 
 // URL returns the URL without the scheme at the beginning.
 func (ss *SecureSite) URL() (string, error) {
-	grant := "site.url:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSiteURLRead) {
 		return "", ErrAccessDenied
 	}
 
@@ -76,10 +64,7 @@ func (ss *SecureSite) URL() (string, error) {
 
 // FullURL returns the URL with the scheme at the beginning.
 func (ss *SecureSite) FullURL() (string, error) {
-	grant1 := "site.url:read"
-	grant2 := "site.scheme:read"
-
-	if !ss.Authorized(grant1) || !ss.Authorized(grant2) {
+	if !ss.Authorized(GrantSiteURLRead) || !ss.Authorized(GrantSiteSchemeRead) {
 		return "", ErrAccessDenied
 	}
 
@@ -88,9 +73,7 @@ func (ss *SecureSite) FullURL() (string, error) {
 
 // Updated returns the home last updated timestamp.
 func (ss *SecureSite) Updated() (time.Time, error) {
-	grant := "site.updated:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSiteUpdatedRead) {
 		return time.Now(), ErrAccessDenied
 	}
 
@@ -99,9 +82,7 @@ func (ss *SecureSite) Updated() (time.Time, error) {
 
 // Tags returns the list of tags.
 func (ss *SecureSite) Tags(onlyPublished bool) (TagList, error) {
-	grant := "site.post:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSitePostRead) {
 		return nil, ErrAccessDenied
 	}
 
@@ -110,9 +91,7 @@ func (ss *SecureSite) Tags(onlyPublished bool) (TagList, error) {
 
 // SetContent sets the home page content.
 func (ss *SecureSite) SetContent(content string) error {
-	grant := "site.content:write"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSiteContentWrite) {
 		return ErrAccessDenied
 	}
 
@@ -123,9 +102,7 @@ func (ss *SecureSite) SetContent(content string) error {
 
 // Content returns the site home page content.
 func (ss *SecureSite) Content() (string, error) {
-	grant := "site.content:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSiteContentRead) {
 		return "", ErrAccessDenied
 	}
 

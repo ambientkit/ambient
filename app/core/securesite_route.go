@@ -2,9 +2,7 @@ package core
 
 // ClearRoute clears out an old route.
 func (ss *SecureSite) ClearRoute(method string, path string) error {
-	grant := "router.route:clear"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantRouterRouteClear) {
 		return ErrAccessDenied
 	}
 
@@ -15,9 +13,7 @@ func (ss *SecureSite) ClearRoute(method string, path string) error {
 
 // ClearAllRoutesForPlugin clears out all the routes for a plugin.
 func (ss *SecureSite) ClearAllRoutesForPlugin(pluginName string) error {
-	grant := "router.neighborroute:clear"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantRouterNeighborRouteClear) {
 		return ErrAccessDenied
 	}
 

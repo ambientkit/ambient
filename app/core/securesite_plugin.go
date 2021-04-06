@@ -4,9 +4,7 @@ import "fmt"
 
 // Plugins returns the plugin list.
 func (ss *SecureSite) Plugins() (map[string]PluginSettings, error) {
-	grant := "site.plugin:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSitePluginRead) {
 		return nil, ErrAccessDenied
 	}
 
@@ -15,9 +13,7 @@ func (ss *SecureSite) Plugins() (map[string]PluginSettings, error) {
 
 // DeletePlugin deletes a plugin.
 func (ss *SecureSite) DeletePlugin(name string) error {
-	grant := "site.plugin:delete"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSitePluginDelete) {
 		return ErrAccessDenied
 	}
 
@@ -28,9 +24,7 @@ func (ss *SecureSite) DeletePlugin(name string) error {
 
 // EnablePlugin enables a plugin.
 func (ss *SecureSite) EnablePlugin(name string) error {
-	grant := "site.plugin:enable"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSitePluginEnable) {
 		return ErrAccessDenied
 	}
 
@@ -47,9 +41,7 @@ func (ss *SecureSite) EnablePlugin(name string) error {
 
 // DisablePlugin disables a plugin.
 func (ss *SecureSite) DisablePlugin(name string) error {
-	grant := "site.plugin:disable"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSitePluginDisable) {
 		return ErrAccessDenied
 	}
 
@@ -66,9 +58,7 @@ func (ss *SecureSite) DisablePlugin(name string) error {
 
 // SetPluginField sets a variable for the plugin.
 func (ss *SecureSite) SetPluginField(name string, value string) error {
-	grant := "plugin.field:write"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantPluginFieldWrite) {
 		return ErrAccessDenied
 	}
 
@@ -109,9 +99,7 @@ func (ss *SecureSite) pluginField(pluginName string, fieldName string) (interfac
 
 // PluginFieldBool returns a plugin field as a bool.
 func (ss *SecureSite) PluginFieldBool(name string) (bool, error) {
-	grant := "plugin.field:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantPluginFieldRead) {
 		return false, ErrAccessDenied
 	}
 
@@ -122,9 +110,7 @@ func (ss *SecureSite) PluginFieldBool(name string) (bool, error) {
 
 // PluginFieldString gets a variable for the plugin as a string.
 func (ss *SecureSite) PluginFieldString(fieldName string) (string, error) {
-	grant := "plugin.field:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantPluginFieldRead) {
 		return "", ErrAccessDenied
 	}
 
@@ -143,9 +129,7 @@ func (ss *SecureSite) PluginFieldString(fieldName string) (string, error) {
 
 // PluginField gets a variable for the plugin as an interface{}.
 func (ss *SecureSite) PluginField(fieldName string) (interface{}, error) {
-	grant := "plugin.field:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantPluginFieldRead) {
 		return "", ErrAccessDenied
 	}
 
@@ -164,9 +148,7 @@ func (ss *SecureSite) PluginField(fieldName string) (interface{}, error) {
 
 // SetNeighborPluginField sets a variable for a neighbor plugin.
 func (ss *SecureSite) SetNeighborPluginField(pluginName string, fieldName string, value string) error {
-	grant := "plugin.neighborfield:write"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantPluginNeighborfieldWrite) {
 		return ErrAccessDenied
 	}
 
@@ -185,9 +167,7 @@ func (ss *SecureSite) SetNeighborPluginField(pluginName string, fieldName string
 
 // NeighborPluginFieldString a variable for a neighbor plugin as a string.
 func (ss *SecureSite) NeighborPluginFieldString(pluginName string, fieldName string) (string, error) {
-	grant := "plugin.neighborfield:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantPluginNeighborfieldRead) {
 		return "", ErrAccessDenied
 	}
 
@@ -206,9 +186,7 @@ func (ss *SecureSite) NeighborPluginFieldString(pluginName string, fieldName str
 
 // NeighborPluginField gets a variable for a neighbor plugin as an interface{}.
 func (ss *SecureSite) NeighborPluginField(pluginName string, fieldName string) (interface{}, error) {
-	grant := "plugin.neighborfield:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantPluginNeighborfieldRead) {
 		return "", ErrAccessDenied
 	}
 

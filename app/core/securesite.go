@@ -15,7 +15,7 @@ var (
 // SecureSite is a secure data access for the site.
 type SecureSite struct {
 	pluginName string
-	grants     map[string]bool
+	grants     map[Grant]bool
 
 	log     IAppLogger
 	storage *Storage
@@ -24,7 +24,7 @@ type SecureSite struct {
 }
 
 // NewSecureSite -
-func NewSecureSite(pluginName string, grants map[string]bool, log IAppLogger, storage *Storage, session ISession, mux IAppRouter) *SecureSite {
+func NewSecureSite(pluginName string, grants map[Grant]bool, log IAppLogger, storage *Storage, session ISession, mux IAppRouter) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
 		grants:     grants,
@@ -60,9 +60,7 @@ func (ss *SecureSite) ErrorNotFound(err error) bool {
 
 // Load forces a reload of the data.
 func (ss *SecureSite) Load() error {
-	grant := "site.load:trigger"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantSiteLoadTrigger) {
 		return ErrAccessDenied
 	}
 
@@ -70,8 +68,13 @@ func (ss *SecureSite) Load() error {
 }
 
 // Authorized determines if the current context has access.
-func (ss *SecureSite) Authorized(grant string) bool {
-	//return true
+func (ss *SecureSite) Authorized(grant Grant) bool {
+	// If has star, then allow all access.
+	if allowed, ok := ss.grants[GrantAll]; ok && allowed {
+		return true
+	}
+
+	// If the grant was found, then allow access.
 	if allowed, ok := ss.grants[grant]; ok && allowed {
 		return true
 	}
@@ -80,17 +83,3 @@ func (ss *SecureSite) Authorized(grant string) bool {
 
 	return false
 }
-
-// func escapeValue(s string) string {
-// 	last := s
-// 	before := s
-// 	after := ""
-// 	for before != after {
-// 		before = last
-// 		after = last
-// 		after = strings.ReplaceAll(after, "{{", "")
-// 		after = strings.ReplaceAll(after, "}}", "")
-// 		last = after
-// 	}
-// 	return after
-// }

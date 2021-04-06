@@ -4,9 +4,7 @@ import "net/http"
 
 // UserAuthenticated returns if the current user is authenticated.
 func (ss *SecureSite) UserAuthenticated(r *http.Request) (bool, error) {
-	grant := "user.authenticated:read"
-
-	if !ss.Authorized(grant) {
+	if !ss.Authorized(GrantUserAuthenticatedRead) {
 		return false, ErrAccessDenied
 	}
 

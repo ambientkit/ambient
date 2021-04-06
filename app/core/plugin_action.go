@@ -200,37 +200,8 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	}
 
 	// FIXME: Need to allows users to grant permissions.
-	grants := make(map[string]bool)
-	grants["site.title:read"] = true
-	grants["site.title:write"] = true
-	grants["site.content:read"] = true
-	grants["site.content:write"] = true
-	grants["site.scheme:read"] = true
-	grants["site.scheme:write"] = true
-	grants["site.url:read"] = true
-	grants["site.url:write"] = true
-	grants["site.updated:read"] = true // This doesn't have a write
-
-	grants["site.load:trigger"] = true // This is a trigger instead of read/write.
-
-	grants["site.post:read"] = true // Allows access to calls like: postsandpages, publishedpages, postbyslug, tags
-	grants["site.post:write"] = true
-	grants["site.post:delete"] = true
-
-	grants["router.route:clear"] = true
-	grants["router.neighborroute:clear"] = true
-
-	grants["site.plugin:read"] = true
-	grants["site.plugin:enable"] = true
-	grants["site.plugin:disable"] = true
-	grants["site.plugin:delete"] = true
-
-	grants["plugin.field:read"] = true
-	grants["plugin.field:write"] = true
-	grants["plugin.neighborfield:read"] = true
-	grants["plugin.neighborfield:write"] = true
-
-	grants["user.authenticated:read"] = true
+	grants := make(map[Grant]bool)
+	grants[GrantAll] = true
 
 	recorder := routerrecorder.NewRecorder(c.Router)
 

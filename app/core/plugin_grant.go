@@ -4,9 +4,10 @@ package core
 type Grant string
 
 const (
+	// GrantAll allows all access.
+	GrantAll Grant = "*"
 	// GrantSiteTitleRead allows read access to the site title.
 	GrantSiteTitleRead Grant = "site.title:read"
-
 	// GrantSiteTitleWrite allows write access to the site title.
 	GrantSiteTitleWrite Grant = "site.title:write"
 	// GrantSiteContentRead allows read access to the site content.
@@ -22,12 +23,14 @@ const (
 	// GrantSiteURLWrite allows write access to the site URL.
 	GrantSiteURLWrite Grant = "site.url:write"
 	// GrantSiteUpdatedRead allows read access to the site updated time.
+	// TODO: This doesn't have a write associated with it.
 	GrantSiteUpdatedRead Grant = "site.updated:read"
 
 	// GrantSiteLoadTrigger allows trigger access to the site load from data storage.
 	GrantSiteLoadTrigger Grant = "site.load:trigger"
 
 	// GrantSitePostRead allows read access to the site posts.
+	// Allows access to calls like: postsandpages, publishedpages, postbyslug, tags.
 	GrantSitePostRead Grant = "site.post:read"
 	// GrantSitePostWrite allows write access to the site posts.
 	GrantSitePostWrite Grant = "site.post:write"
