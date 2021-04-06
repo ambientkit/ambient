@@ -79,7 +79,7 @@ func (ss *SecureSite) Authorized(grant Grant) bool {
 		return true
 	}
 
-	ss.log.Info("securesite: denied plugin (%v) access to the data action: %v\n", ss.pluginName, grant)
+	ss.log.Info("securesite: denied plugin (%v) access to the data item, requires grant: %v\n", ss.pluginName, grant)
 
 	return false
 }

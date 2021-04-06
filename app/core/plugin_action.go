@@ -210,9 +210,14 @@ func (c *App) loadSinglePluginPages(name string) bool {
 		return shouldSave
 	}
 
-	// FIXME: Need to allow users to grant permissions. All permissions are granted now.
+	// Get the plugin grants.
 	grants := make(map[Grant]bool)
-	grants[GrantAll] = true
+	pluginGrants, ok := c.Storage.Site.PluginGrants[name]
+	if ok {
+		grants = pluginGrants.Grants
+	}
+
+	//grants[GrantAll] = true
 
 	recorder := routerrecorder.NewRecorder(c.Router)
 
