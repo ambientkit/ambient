@@ -4,6 +4,7 @@ package bearblog
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -42,6 +43,8 @@ const (
 	LoginURL = "Login URL"
 	// Subtitle allows user to set the Subtitle.
 	Subtitle = "Subtitle"
+	// Description allows user to set the description.
+	Description = "Description"
 	// Footer allows user to set the footer.
 	Footer = "Footer"
 	// AllowHTMLinMarkdown allows user to set if they allow HTML in markdown.
@@ -57,6 +60,10 @@ func (p *Plugin) Fields() []core.Field {
 		},
 		{
 			Name: Subtitle,
+		},
+		{
+			Name: Description,
+			Type: core.Textarea,
 		},
 		{
 			Name: Footer,
@@ -93,18 +100,40 @@ func (p *Plugin) Routes() {
 
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
-	return []core.Asset{
-		{
-			Path:     "template/partial/nav.tmpl",
-			Filetype: core.AssetGeneric,
-			Location: core.LocationHeader,
-			Inline:   true,
-		},
-		{
-			Path:     "template/partial/footer.tmpl",
-			Filetype: core.AssetGeneric,
-			Location: core.LocationFooter,
-			Inline:   true,
-		},
-	}, &assets, p.FuncMap
+	arr := make([]core.Asset, 0)
+	siteDescription, err := p.Site.PluginField(Description)
+	if err == nil && len(siteDescription) > 0 {
+		arr = append(arr, core.Asset{
+			Filetype:   core.AssetGeneric,
+			Location:   core.LocationHead,
+			TagName:    "meta",
+			ClosingTag: false,
+			Attributes: []core.Attribute{
+				{
+					Name:  "name",
+					Value: "description",
+				},
+				{
+					Name:  "content",
+					Value: fmt.Sprintf("{{if .pagedescription}}{{.pagedescription}}{{else}}%v{{end}}", siteDescription),
+				},
+			},
+		})
+	}
+
+	arr = append(arr, core.Asset{
+		Path:     "template/partial/nav.tmpl",
+		Filetype: core.AssetGeneric,
+		Location: core.LocationHeader,
+		Inline:   true,
+	})
+
+	arr = append(arr, core.Asset{
+		Path:     "template/partial/footer.tmpl",
+		Filetype: core.AssetGeneric,
+		Location: core.LocationFooter,
+		Inline:   true,
+	})
+
+	return arr, &assets, p.FuncMap
 }

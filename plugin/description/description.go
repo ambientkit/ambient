@@ -28,16 +28,16 @@ func New() *Plugin {
 	}
 }
 
-const (
-	// Description allows user to set the description.
-	Description = "Description"
-)
-
 // Enable accepts the toolkit.
 func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
+
+const (
+	// Description allows user to set the description.
+	Description = "Description"
+)
 
 // Fields returns a list of user settable fields.
 func (p *Plugin) Fields() []core.Field {
