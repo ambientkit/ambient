@@ -113,7 +113,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 		})
 	}
 
-	siteDescription, err := p.Site.PluginField(Description)
+	siteDescription, err := p.Site.PluginFieldString(Description)
 	if err == nil && len(siteDescription) > 0 {
 		arr = append(arr, core.Asset{
 			Filetype:   core.AssetGeneric,

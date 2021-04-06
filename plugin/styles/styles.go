@@ -65,7 +65,7 @@ func (p *Plugin) Fields() []core.Field {
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	arr := make([]core.Asset, 0)
 
-	favicon, err := p.Site.PluginField(Favicon)
+	favicon, err := p.Site.PluginFieldString(Favicon)
 	if err == nil && len(favicon) > 0 {
 		arr = append(arr, core.Asset{
 			Filetype:   core.AssetGeneric,
@@ -85,7 +85,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 		})
 	}
 
-	s, err := p.Site.PluginField(Styles)
+	s, err := p.Site.PluginFieldString(Styles)
 	if err == nil && len(s) > 0 {
 		arr = append(arr, core.Asset{
 			Path:     "/plugins/styles/css/style.css",

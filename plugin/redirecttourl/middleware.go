@@ -10,14 +10,14 @@ import (
 func (p *Plugin) stripSlash(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the site scheme.
-		siteScheme, err := p.Site.PluginField(SiteScheme)
+		siteScheme, err := p.Site.PluginFieldString(SiteScheme)
 		if err != nil || len(siteScheme) == 0 {
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		// Get the site URL.
-		siteURL, err := p.Site.PluginField(SiteURL)
+		siteURL, err := p.Site.PluginFieldString(SiteURL)
 		if err != nil || len(siteURL) == 0 {
 			next.ServeHTTP(w, r)
 			return

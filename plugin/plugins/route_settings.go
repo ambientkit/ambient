@@ -36,7 +36,7 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 	arr := make([]Field, 0)
 	for index, name := range settings.Order {
 		v := settings.Fields[name]
-		curVal, err := p.Site.NeighborPluginField(pluginName, v.Name)
+		curVal, err := p.Site.NeighborPluginFieldString(pluginName, v.Name)
 		if p.Site.ErrorAccessDenied(err) {
 			return p.Site.Error(err)
 		}

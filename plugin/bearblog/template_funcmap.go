@@ -26,7 +26,7 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 		return arr
 	}
 	fm["SiteSubtitle"] = func() string {
-		subtitle, err := p.Site.PluginField(Subtitle)
+		subtitle, err := p.Site.PluginFieldString(Subtitle)
 		if err != nil {
 			p.Log.Error("bearblog: error getting subtitle: %v", err.Error())
 		}
@@ -41,7 +41,7 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 		return loggedIn
 	}
 	fm["SiteFooter"] = func() string {
-		f, err := p.Site.PluginField(Footer)
+		f, err := p.Site.PluginFieldString(Footer)
 		if err != nil {
 			p.Log.Error("bearblog: error getting footer: %v", err.Error())
 		}

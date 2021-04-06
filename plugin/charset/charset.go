@@ -4,7 +4,6 @@ package charset
 
 import (
 	"embed"
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -51,8 +50,7 @@ func (p *Plugin) Fields() []core.Field {
 
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
-	cs, err := p.Site.PluginField(Charset)
-	fmt.Println("CHARSET:", cs, err)
+	cs, err := p.Site.PluginFieldString(Charset)
 	if err != nil || len(cs) == 0 {
 		// Otherwise don't set the assets.
 		return nil, nil, nil

@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -285,7 +286,7 @@ func (ss *SecureSite) SetPluginField(name string, value string) error {
 	fields, ok := ss.storage.Site.PluginFields[ss.pluginName]
 	if !ok {
 		fields = PluginFields{
-			Fields: make(map[string]string),
+			Fields: make(map[string]interface{}),
 		}
 	}
 
@@ -295,15 +296,13 @@ func (ss *SecureSite) SetPluginField(name string, value string) error {
 	return ss.storage.Save()
 }
 
-func (ss *SecureSite) pluginField(pluginName string, fieldName string) (string, error) {
+func (ss *SecureSite) pluginField(pluginName string, fieldName string) (interface{}, error) {
 	// See if the value is set.
 	fields, ok := ss.storage.Site.PluginFields[pluginName]
 	if ok {
 		value, ok := fields.Fields[fieldName]
 		if ok {
-			if len(value) > 0 {
-				return value, nil
-			}
+			return value, nil
 		}
 	}
 
@@ -312,17 +311,15 @@ func (ss *SecureSite) pluginField(pluginName string, fieldName string) (string, 
 	if ok {
 		field, ok := plugin.Fields[fieldName]
 		if ok {
-			if len(field.Default) > 0 {
-				return field.Default, nil
-			}
+			return field.Default, nil
 		}
 	}
 
 	return "", nil
 }
 
-// PluginFieldChecked gets a checked variable for the plugin.
-func (ss *SecureSite) PluginFieldChecked(name string) (bool, error) {
+// PluginFieldBool returns a plugin field as a bool.
+func (ss *SecureSite) PluginFieldBool(name string) (bool, error) {
 	grant := "plugin:getfield"
 
 	if !ss.Authorized(grant) {
@@ -334,15 +331,46 @@ func (ss *SecureSite) PluginFieldChecked(name string) (bool, error) {
 	return value == "true", err
 }
 
-// PluginField gets a variable for the plugin.
-func (ss *SecureSite) PluginField(fieldName string) (string, error) {
+// PluginFieldString gets a variable for the plugin as a string.
+func (ss *SecureSite) PluginFieldString(fieldName string) (string, error) {
 	grant := "plugin:getfield"
 
 	if !ss.Authorized(grant) {
 		return "", ErrAccessDenied
 	}
 
-	return ss.pluginField(ss.pluginName, fieldName)
+	ival, err := ss.pluginField(ss.pluginName, fieldName)
+	if err != nil {
+		return "", err
+	}
+
+	// Handle nil.
+	if ival == nil {
+		return "", nil
+	}
+
+	return fmt.Sprint(ival), nil
+}
+
+// PluginField gets a variable for the plugin as an interface{}.
+func (ss *SecureSite) PluginField(fieldName string) (interface{}, error) {
+	grant := "plugin:getfield"
+
+	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	ival, err := ss.pluginField(ss.pluginName, fieldName)
+	if err != nil {
+		return "", err
+	}
+
+	// Handle nil.
+	if ival == nil {
+		return "", nil
+	}
+
+	return fmt.Sprint(ival), nil
 }
 
 // SetNeighborPluginField sets a variable for a neighbor plugin.
@@ -356,7 +384,7 @@ func (ss *SecureSite) SetNeighborPluginField(pluginName string, fieldName string
 	fields, ok := ss.storage.Site.PluginFields[pluginName]
 	if !ok {
 		fields = PluginFields{
-			Fields: make(map[string]string),
+			Fields: make(map[string]interface{}),
 		}
 	}
 
@@ -366,8 +394,29 @@ func (ss *SecureSite) SetNeighborPluginField(pluginName string, fieldName string
 	return ss.storage.Save()
 }
 
-// NeighborPluginField gets a variable for a neighbor plugin.
-func (ss *SecureSite) NeighborPluginField(pluginName string, fieldName string) (string, error) {
+// NeighborPluginFieldString a variable for a neighbor plugin as a string.
+func (ss *SecureSite) NeighborPluginFieldString(pluginName string, fieldName string) (string, error) {
+	grant := "plugin:getneighborfield"
+
+	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	ival, err := ss.pluginField(pluginName, fieldName)
+	if err != nil {
+		return "", err
+	}
+
+	// Handle nil.
+	if ival == nil {
+		return "", nil
+	}
+
+	return fmt.Sprint(ival), nil
+}
+
+// NeighborPluginField gets a variable for a neighbor plugin as an interface{}.
+func (ss *SecureSite) NeighborPluginField(pluginName string, fieldName string) (interface{}, error) {
 	grant := "plugin:getneighborfield"
 
 	if !ss.Authorized(grant) {

@@ -25,7 +25,7 @@ type Field struct {
 	Name        string           `json:"name"`
 	Type        FieldType        `json:"type"`
 	Description FieldDescription `json:"description"`
-	Default     string           `json:"default"`
+	Default     interface{}      `json:"default"`
 }
 
 // FieldList is an array of fields.
@@ -49,7 +49,7 @@ type FieldDescription struct {
 
 // PluginFields -
 type PluginFields struct {
-	Fields map[string]string `json:"fields"`
+	Fields map[string]interface{} `json:"fields"`
 }
 
 // PluginRoutes -
