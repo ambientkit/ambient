@@ -60,7 +60,7 @@ func (ss *SecureSite) ErrorNotFound(err error) bool {
 
 // Load forces a reload of the data.
 func (ss *SecureSite) Load() error {
-	grant := "site.load:write"
+	grant := "site.load:trigger"
 
 	if !ss.Authorized(grant) {
 		return ErrAccessDenied

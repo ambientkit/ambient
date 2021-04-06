@@ -59,7 +59,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 			}
 
 			// Clear the plugin routes.
-			err = p.Site.ClearRoutePlugin(name)
+			err = p.Site.ClearAllRoutesForPlugin(name)
 			if err != nil {
 				return p.Site.Error(err)
 			}

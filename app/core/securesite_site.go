@@ -99,7 +99,7 @@ func (ss *SecureSite) Updated() (time.Time, error) {
 
 // Tags returns the list of tags.
 func (ss *SecureSite) Tags(onlyPublished bool) (TagList, error) {
-	grant := "site.tags:read"
+	grant := "site.post:read"
 
 	if !ss.Authorized(grant) {
 		return nil, ErrAccessDenied

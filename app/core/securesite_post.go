@@ -15,7 +15,7 @@ func (ss *SecureSite) SavePost(ID string, post Post) error {
 
 // PostsAndPages returns the list of posts and pages.
 func (ss *SecureSite) PostsAndPages(onlyPublished bool) (PostWithIDList, error) {
-	grant := "site.postsandpages:read"
+	grant := "site.post:read"
 
 	if !ss.Authorized(grant) {
 		return nil, ErrAccessDenied
@@ -26,7 +26,7 @@ func (ss *SecureSite) PostsAndPages(onlyPublished bool) (PostWithIDList, error) 
 
 // PublishedPosts returns the list of published posts.
 func (ss *SecureSite) PublishedPosts() ([]Post, error) {
-	grant := "site.posts:read" // TODO: Differentiate between posts and published posts?
+	grant := "site.post:read"
 
 	if !ss.Authorized(grant) {
 		return nil, ErrAccessDenied
@@ -37,7 +37,7 @@ func (ss *SecureSite) PublishedPosts() ([]Post, error) {
 
 // PublishedPages returns the list of published pages.
 func (ss *SecureSite) PublishedPages() ([]Post, error) {
-	grant := "site.pages:read" // TODO: Differentiate between posts and published posts?
+	grant := "site.post:read"
 
 	if !ss.Authorized(grant) {
 		return nil, ErrAccessDenied
@@ -48,7 +48,7 @@ func (ss *SecureSite) PublishedPages() ([]Post, error) {
 
 // PostBySlug returns the post by slug.
 func (ss *SecureSite) PostBySlug(slug string) (PostWithID, error) {
-	grant := "site.postbyslug:read"
+	grant := "site.post:read"
 
 	if !ss.Authorized(grant) {
 		return PostWithID{}, ErrAccessDenied
@@ -59,7 +59,7 @@ func (ss *SecureSite) PostBySlug(slug string) (PostWithID, error) {
 
 // PostByID returns the post by ID.
 func (ss *SecureSite) PostByID(ID string) (Post, error) {
-	grant := "site.postbyid:read"
+	grant := "site.post:read"
 
 	if !ss.Authorized(grant) {
 		return Post{}, ErrAccessDenied
@@ -75,7 +75,7 @@ func (ss *SecureSite) PostByID(ID string) (Post, error) {
 
 // DeletePostByID deletes a post.
 func (ss *SecureSite) DeletePostByID(ID string) error {
-	grant := "site.deletepostbyid:write"
+	grant := "site.post:delete"
 
 	if !ss.Authorized(grant) {
 		return ErrAccessDenied
