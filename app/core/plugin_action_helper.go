@@ -7,12 +7,18 @@ import (
 
 // fieldArrayEqual tells whether a and b contain the same elements.
 // A nil argument is equivalent to an empty slice.
-func fieldArrayEqual(a, b []Field) bool {
-	if len(a) != len(b) {
+func fieldArrayEqual(a map[string]Field, arrB []Field) bool {
+	if len(a) != len(arrB) {
 		return false
 	}
+
+	b := make(map[string]Field)
+	for _, v := range arrB {
+		b[v.Name] = v
+	}
+
 	for i, v := range a {
-		if v.Name != b[i].Name {
+		if v.Name != b[v.Name].Name {
 			return false
 		}
 		if string(v.Type) != string(b[i].Type) {

@@ -14,9 +14,9 @@ const (
 
 // PluginSettings -
 type PluginSettings struct {
-	Enabled bool    `json:"enabled"`
-	Found   bool    `json:"found"`
-	Fields  []Field `json:"fields"`
+	Enabled bool             `json:"enabled"`
+	Found   bool             `json:"found"`
+	Fields  map[string]Field `json:"fields"`
 }
 
 // Field is a plugin settable field.
@@ -31,14 +31,10 @@ type Field struct {
 type FieldList []Field
 
 // ModelFields returns array of Field.
-func (fl FieldList) ModelFields() []Field {
-	arr := make([]Field, 0)
+func (fl FieldList) ModelFields() map[string]Field {
+	arr := make(map[string]Field)
 	for _, v := range fl {
-		arr = append(arr, Field{
-			Name:        v.Name,
-			Type:        FieldType(v.Type),
-			Description: FieldDescription(v.Description),
-		})
+		arr[v.Name] = v
 	}
 
 	return arr

@@ -4,6 +4,7 @@ package charset
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -35,16 +36,6 @@ const (
 // Enable accepts the toolkit.
 func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
-
-	// Set the default on enable.
-	cs, _ := p.Site.PluginField(Charset)
-	if len(cs) == 0 {
-		err := p.Site.SetPluginField(Charset, "utf-8")
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -52,7 +43,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 func (p *Plugin) Fields() []core.Field {
 	return []core.Field{
 		{
-			Name: Charset,
+			Name:    Charset,
+			Default: "utf-8",
 		},
 	}
 }
@@ -60,6 +52,7 @@ func (p *Plugin) Fields() []core.Field {
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	cs, err := p.Site.PluginField(Charset)
+	fmt.Println("CHARSET:", cs, err)
 	if err != nil || len(cs) == 0 {
 		// Otherwise don't set the assets.
 		return nil, nil, nil

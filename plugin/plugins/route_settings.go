@@ -34,19 +34,21 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 	}
 
 	arr := make([]Field, 0)
-	for i, v := range settings.Fields {
+	index := 0
+	for _, v := range settings.Fields {
 		curVal, err := p.Site.NeighborPluginField(pluginName, v.Name)
 		if p.Site.ErrorAccessDenied(err) {
 			return p.Site.Error(err)
 		}
 
 		arr = append(arr, Field{
-			Index:       i,
+			Index:       index,
 			Name:        v.Name,
 			Value:       curVal,
 			FieldType:   v.Type,
 			Description: v.Description,
 		})
+		index++
 	}
 
 	vars["settings"] = arr
