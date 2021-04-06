@@ -105,12 +105,11 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 	siteTitle, err := p.Site.Title()
 	if err == nil && len(siteTitle) > 0 {
 		arr = append(arr, core.Asset{
-			Filetype:   core.AssetGeneric,
-			Location:   core.LocationHead,
-			TagName:    "title",
-			ClosingTag: true,
-			Inline:     true,
-			Content:    `{{if .pagetitle}}{{.pagetitle}} | {{.Title}}{{else}}{{.Title}}{{end}}`,
+			Filetype: core.AssetGeneric,
+			Location: core.LocationHead,
+			TagName:  "title",
+			Inline:   true,
+			Content:  `{{if .pagetitle}}{{.pagetitle}} | {{.Title}}{{else}}{{.Title}}{{end}}`,
 			Replace: []core.Replace{
 				{
 					Find:    "{{.Title}}",

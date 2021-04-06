@@ -182,7 +182,7 @@ func (file *Asset) Element(logger ILogger, v IPlugin, assets fs.FS) string {
 
 // Contents returns the text of the file to inline in HTML after doing replace.
 func (file *Asset) Contents(assets fs.FS) (ff []byte, status int, err error) {
-	// Get the contents from the content field if it's filled in.
+	// Get the contents from the path if the content field is not filled in.
 	if len(file.Content) == 0 {
 		// Use the root directory.
 		fsys, err := fs.Sub(assets, ".")

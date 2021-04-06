@@ -45,9 +45,9 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 		awayrouter.New(),       // Request router.
 
 		// Additional plugins.
-		bearblog.New(),
 		charset.New(),
 		viewport.New(),
+		bearblog.New(),
 		author.New(),
 		description.New(),
 		bearcss.New(),
