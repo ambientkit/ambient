@@ -28,7 +28,7 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 		XHTML: "http://www.w3.org/1999/xhtml",
 	}
 
-	siteURL, err := p.Site.URL()
+	siteURL, err := p.Site.FullURL()
 	if err != nil {
 		return p.Site.Error(err)
 	}

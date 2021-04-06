@@ -33,14 +33,9 @@ func (s *Site) Correct() {
 	}
 }
 
-// SiteURL -
+// SiteURL returns the URL with the scheme.
 func (s Site) SiteURL() string {
 	return fmt.Sprintf("%v://%v", s.Scheme, s.URL)
-}
-
-// SiteTitle -
-func (s Site) SiteTitle() string {
-	return fmt.Sprintf("%v", s.Title)
 }
 
 // PublishedPosts -

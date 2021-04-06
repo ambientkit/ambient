@@ -118,14 +118,8 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 		}
 	}
 
-	// Expose the variables to the plugin templates.
-	// TODO: Should we export these variables? Or let plugins set themselves.
-	data := map[string]interface{}{
-		"SiteURL": c.storage.Site.SiteURL(),
-		"PageURL": r.URL.Path,
-	}
-
 	// Add the local variables.
+	data := map[string]interface{}{}
 	for k, v := range vars {
 		data[k] = v
 	}

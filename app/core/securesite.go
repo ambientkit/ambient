@@ -156,11 +156,23 @@ func (ss *SecureSite) SetURL(URL string) error {
 	return ss.storage.Save()
 }
 
-// URL returns the site URL.
+// URL returns the URL without the scheme at the beginning.
 func (ss *SecureSite) URL() (string, error) {
 	grant := "site.url:read"
 
 	if !ss.Authorized(grant) {
+		return "", ErrAccessDenied
+	}
+
+	return ss.storage.Site.URL, nil
+}
+
+// FullURL returns the URL with the scheme at the beginning.
+func (ss *SecureSite) FullURL() (string, error) {
+	grant1 := "site.url:read"
+	grant2 := "site.scheme:read"
+
+	if !ss.Authorized(grant1) || !ss.Authorized(grant2) {
 		return "", ErrAccessDenied
 	}
 

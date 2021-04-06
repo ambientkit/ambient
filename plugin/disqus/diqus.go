@@ -59,6 +59,12 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 		return nil, nil, nil
 	}
 
+	siteURL, err := p.Site.FullURL()
+	if err != nil || len(siteURL) == 0 {
+		// Otherwise don't set the assets.
+		return nil, nil, nil
+	}
+
 	return []core.Asset{
 		{
 			Path:     "css/disqus.css",
@@ -78,8 +84,12 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			Inline: true,
 			Replace: []core.Replace{
 				{
-					Find:    "{{DisqusID}}",
+					Find:    "{{.DisqusID}}",
 					Replace: disqusID,
+				},
+				{
+					Find:    "{{.SiteURL}}",
+					Replace: siteURL,
 				},
 			},
 		},
@@ -98,5 +108,14 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 				},
 			},
 		},
-	}, &assets, nil
+	}, &assets, p.funcMap
+}
+
+func (p *Plugin) funcMap(r *http.Request) template.FuncMap {
+	fm := make(template.FuncMap)
+	fm["PageURL"] = func() string {
+		return r.URL.Path
+	}
+
+	return fm
 }

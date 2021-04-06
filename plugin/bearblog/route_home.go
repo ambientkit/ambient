@@ -35,7 +35,7 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 		return p.Site.Error(err)
 	}
 
-	siteURL, err := p.Site.URL()
+	baseURL, err := p.Site.URL()
 	if err != nil {
 		return p.Site.Error(err)
 	}
@@ -63,10 +63,10 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	vars["token"] = p.Security.SetCSRF(r)
 
 	// Help the user set the domain based off the current URL.
-	if siteURL == "" {
+	if baseURL == "" {
 		vars["domain"] = r.Host
 	} else {
-		vars["domain"] = siteURL
+		vars["domain"] = baseURL
 	}
 
 	vars["scheme"] = siteScheme

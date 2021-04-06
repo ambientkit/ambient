@@ -49,7 +49,7 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 		return p.Site.Error(err)
 	}
 
-	siteURL, err := p.Site.URL()
+	siteURL, err := p.Site.FullURL()
 	if err != nil {
 		return p.Site.Error(err)
 	}
