@@ -109,13 +109,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			Location: core.LocationHead,
 			TagName:  "title",
 			Inline:   true,
-			Content:  `{{if .pagetitle}}{{.pagetitle}} | {{.Title}}{{else}}{{.Title}}{{end}}`,
-			Replace: []core.Replace{
-				{
-					Find:    "{{.Title}}",
-					Replace: siteTitle,
-				},
-			},
+			Content:  fmt.Sprintf(`{{if .pagetitle}}{{.pagetitle}} | %v{{else}}%v{{end}}`, siteTitle, siteTitle),
 		})
 	}
 
