@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"path"
 	"time"
 
 	"github.com/josephspurrier/ambient/app/core"
@@ -46,6 +47,14 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 			p.Log.Error("bearblog: error getting footer: %v", err.Error())
 		}
 		return f
+	}
+	fm["PageURL"] = func() string {
+		siteURL, err := p.Site.FullURL()
+		if err != nil {
+			p.Log.Error("bearblog: error getting site URL: %v", err.Error())
+		}
+
+		return path.Join(siteURL, r.URL.Path)
 	}
 	fm["MFAEnabled"] = func() bool {
 		return len(os.Getenv("AMB_MFA_KEY")) > 0

@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+	"path"
 	"strings"
 	"time"
 
@@ -74,7 +75,7 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 		Language:      "en-us",
 		LastBuildDate: time.Now().Format(time.RFC1123Z),
 		AtomLink: AtomLink{
-			Href: siteURL + feedURL,
+			Href: path.Join(siteURL, feedURL),
 			Rel:  "self",
 			Type: "application/rss+xml",
 		},

@@ -138,6 +138,23 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 		})
 	}
 
+	arr = append(arr, core.Asset{
+		Filetype:   core.AssetGeneric,
+		Location:   core.LocationHead,
+		TagName:    "link",
+		ClosingTag: false,
+		Attributes: []core.Attribute{
+			{
+				Name:  "rel",
+				Value: "canonical",
+			},
+			{
+				Name:  "href",
+				Value: `{{if .canonical}}{{.canonical}}{{else}}{{PageURL}}{{end}}`,
+			},
+		},
+	})
+
 	siteAuthor, err := p.Site.PluginFieldString(Author)
 	if err == nil && len(siteAuthor) > 0 {
 		arr = append(arr, core.Asset{

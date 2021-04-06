@@ -87,10 +87,10 @@ func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, e
 	}
 
 	vars["tags"] = post.Tags
-	//vars["canonical"] = post.Canonical
+	vars["canonical"] = post.Canonical
 	vars["id"] = post.ID
 	vars["posturl"] = post.URL
-	vars["pagetitle"] = "Cool Title!"
+	vars["pagetitle"] = post.Title
 	vars["pagedescription"] = plaintextBlurb(post.Content)
 	vars["postcontent"] = p.sanitized(post.Content)
 
