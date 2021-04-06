@@ -138,7 +138,7 @@ func (ss *SecureSite) SetTitle(title string) error {
 		return ErrAccessDenied
 	}
 
-	ss.storage.Site.Title = escapeValue(title)
+	ss.storage.Site.Title = title
 
 	return ss.storage.Save()
 }
@@ -289,7 +289,7 @@ func (ss *SecureSite) SetPluginField(name string, value string) error {
 		}
 	}
 
-	fields.Fields[name] = escapeValue(value)
+	fields.Fields[name] = value
 	ss.storage.Site.PluginFields[ss.pluginName] = fields
 
 	return ss.storage.Save()
@@ -360,7 +360,7 @@ func (ss *SecureSite) SetNeighborPluginField(pluginName string, fieldName string
 		}
 	}
 
-	fields.Fields[fieldName] = escapeValue(value)
+	fields.Fields[fieldName] = value
 	ss.storage.Site.PluginFields[pluginName] = fields
 
 	return ss.storage.Save()
