@@ -35,16 +35,6 @@ const (
 // Enable accepts the toolkit.
 func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	p.Toolkit = toolkit
-
-	// Set the default on enable.
-	cs, _ := p.Site.PluginField(Viewport)
-	if len(cs) == 0 {
-		err := p.Site.SetPluginField(Viewport, "width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0")
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -52,7 +42,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 func (p *Plugin) Fields() []core.Field {
 	return []core.Field{
 		{
-			Name: Viewport,
+			Name:    Viewport,
+			Default: "width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0",
 		},
 	}
 }
