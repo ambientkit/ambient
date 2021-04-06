@@ -179,7 +179,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	}
 
 	// If the fields are different, then update it for saving.
-	// FIXME: This is highly coupled, may just want to save on each load.
+	// Note: This is highly coupled, need to update this if you add fields.
 	if !fieldArrayEqual(plugin, v.Fields()) {
 		shouldSave = true
 		plugin.Fields = FieldList(v.Fields()).ModelFields()
