@@ -210,22 +210,13 @@ func (c *App) loadSinglePluginPages(name string) bool {
 		return shouldSave
 	}
 
-	// Get the plugin grants.
-	grants := make(map[Grant]bool)
-	pluginGrants, ok := c.Storage.Site.PluginGrants[name]
-	if ok {
-		grants = pluginGrants.Grants
-	}
-
-	//grants[GrantAll] = true
-
 	recorder := routerrecorder.NewRecorder(c.Router)
 
 	toolkit := &Toolkit{
 		Mux:          recorder,
 		Render:       c.Render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
 		Security:     c.Sess,
-		Site:         NewSecureSite(name, grants, c.Log, c.Storage, c.Sess, c.Router),
+		Site:         NewSecureSite(name, c.Log, c.Storage, c.Sess, c.Router),
 		PluginLoader: c,
 		Log:          c.Log,
 	}

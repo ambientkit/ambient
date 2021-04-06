@@ -65,6 +65,16 @@ func (l *Logger) Info(format string, v ...interface{}) {
 	}
 }
 
+// Warn is equivalent to log.Printf() + "\n" if format is not empty.
+// It's equivalent to Println() if format is empty.
+func (l *Logger) Warn(format string, v ...interface{}) {
+	if len(format) == 0 {
+		l.logentry().Warnln(v...)
+	} else {
+		l.logentry().Warnf(format, v...)
+	}
+}
+
 // Error is equivalent to log.Printf() + "\n" if format is not empty.
 // It's equivalent to Println() if format is empty.
 func (l *Logger) Error(format string, v ...interface{}) {

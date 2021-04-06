@@ -18,8 +18,8 @@ func init() {
 func main() {
 	// Create the logger.
 	l := logger.NewLogger("ambient", "1.0")
-	l.SetLevel(uint32(logrus.DebugLevel))
-	// l.SetLevel(logrus.InfoLevel)
+	//l.SetLevel(uint32(logrus.DebugLevel))
+	l.SetLevel(uint32(logrus.InfoLevel))
 	// l.SetLevel(logrus.ErrorLevel)
 	// l.SetLevel(logrus.FatalLevel)
 

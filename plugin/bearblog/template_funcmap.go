@@ -22,14 +22,14 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 	fm["PublishedPages"] = func() []core.Post {
 		arr, err := p.Site.PublishedPages()
 		if err != nil {
-			p.Log.Error("bearblog: error getting published pages: %v", err.Error())
+			p.Log.Warn("bearblog: error getting published pages: %v", err.Error())
 		}
 		return arr
 	}
 	fm["SiteSubtitle"] = func() string {
 		subtitle, err := p.Site.PluginFieldString(Subtitle)
 		if err != nil {
-			p.Log.Error("bearblog: error getting subtitle: %v", err.Error())
+			p.Log.Warn("bearblog: error getting subtitle: %v", err.Error())
 		}
 		return subtitle
 	}
@@ -37,21 +37,21 @@ func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
 		// If user is not authenticated, don't allow them to access the page.
 		loggedIn, err := p.Site.UserAuthenticated(r)
 		if err != nil {
-			p.Log.Error("bearblog: error getting if user is authenticated: %v", err.Error())
+			p.Log.Warn("bearblog: error getting if user is authenticated: %v", err.Error())
 		}
 		return loggedIn
 	}
 	fm["SiteFooter"] = func() string {
 		f, err := p.Site.PluginFieldString(Footer)
 		if err != nil {
-			p.Log.Error("bearblog: error getting footer: %v", err.Error())
+			p.Log.Warn("bearblog: error getting footer: %v", err.Error())
 		}
 		return f
 	}
 	fm["PageURL"] = func() string {
 		siteURL, err := p.Site.FullURL()
 		if err != nil {
-			p.Log.Error("bearblog: error getting site URL: %v", err.Error())
+			p.Log.Warn("bearblog: error getting site URL: %v", err.Error())
 		}
 
 		return path.Join(siteURL, r.URL.Path)

@@ -15,7 +15,6 @@ var (
 // SecureSite is a secure data access for the site.
 type SecureSite struct {
 	pluginName string
-	grants     map[Grant]bool
 
 	log     IAppLogger
 	storage *Storage
@@ -24,10 +23,9 @@ type SecureSite struct {
 }
 
 // NewSecureSite -
-func NewSecureSite(pluginName string, grants map[Grant]bool, log IAppLogger, storage *Storage, session ISession, mux IAppRouter) *SecureSite {
+func NewSecureSite(pluginName string, log IAppLogger, storage *Storage, session ISession, mux IAppRouter) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
-		grants:     grants,
 
 		log:     log,
 		storage: storage,
@@ -69,17 +67,25 @@ func (ss *SecureSite) Load() error {
 
 // Authorized determines if the current context has access.
 func (ss *SecureSite) Authorized(grant Grant) bool {
+	grants, ok := ss.storage.Site.PluginGrants[ss.pluginName]
+	if !ok {
+		//ss.log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v\n", ss.pluginName, grant)
+		return false
+	}
+
 	// If has star, then allow all access.
-	if allowed, ok := ss.grants[GrantAll]; ok && allowed {
+	if allowed, ok := grants.Grants[GrantAll]; ok && allowed {
+		ss.log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v\n", ss.pluginName, grant)
 		return true
 	}
 
 	// If the grant was found, then allow access.
-	if allowed, ok := ss.grants[grant]; ok && allowed {
+	if allowed, ok := grants.Grants[grant]; ok && allowed {
+		ss.log.Debug("securesite: granted plugin (%v) access to the data item for grant: %v\n", ss.pluginName, grant)
 		return true
 	}
 
-	ss.log.Info("securesite: denied plugin (%v) access to the data item, requires grant: %v\n", ss.pluginName, grant)
+	ss.log.Warn("securesite: denied plugin (%v) access to the data item, requires grant: %v\n", ss.pluginName, grant)
 
 	return false
 }
