@@ -43,31 +43,31 @@ func NewTemplateEngine(logger core.ILogger, assetInjector core.AssetInjector) *E
 
 // Page renders using the page layout.
 func (te *Engine) Page(w http.ResponseWriter, r *http.Request, assets embed.FS, partialTemplate string, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
-	return te.pluginPartial(w, r, "layout/page", "page", assets, partialTemplate, http.StatusOK, fm, vars)
+	return te.pluginPartial(w, r, "layout/page", core.LayoutPage, assets, partialTemplate, http.StatusOK, fm, vars)
 }
 
 // PageContent renders using the page content.
 func (te *Engine) PageContent(w http.ResponseWriter, r *http.Request, content string, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
-	return te.pluginContent(w, r, "layout/page", "page", content, http.StatusOK, fm, vars)
+	return te.pluginContent(w, r, "layout/page", core.LayoutPage, content, http.StatusOK, fm, vars)
 }
 
 // Post renders using the post layout.
 func (te *Engine) Post(w http.ResponseWriter, r *http.Request, assets embed.FS, partialTemplate string, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
-	return te.pluginPartial(w, r, "layout/page", "post", assets, partialTemplate, http.StatusOK, fm, vars)
+	return te.pluginPartial(w, r, "layout/page", core.LayoutPost, assets, partialTemplate, http.StatusOK, fm, vars)
 }
 
 // PostContent renders using the post content.
 func (te *Engine) PostContent(w http.ResponseWriter, r *http.Request, content string, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
-	return te.pluginContent(w, r, "layout/page", "post", content, http.StatusOK, fm, vars)
+	return te.pluginContent(w, r, "layout/page", core.LayoutPost, content, http.StatusOK, fm, vars)
 }
 
 // Error renders HTML to a response writer and returns a 404 status code
 // and an error if one occurs.
 func (te *Engine) Error(w http.ResponseWriter, r *http.Request, content string, statusCode int, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
-	return te.pluginContent(w, r, "layout/page", "page", content, statusCode, fm, vars)
+	return te.pluginContent(w, r, "layout/page", core.LayoutPage, content, statusCode, fm, vars)
 }
 
-func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, assets embed.FS, partialTemplate string, statusCode int, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
+func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType core.LayoutType, assets embed.FS, partialTemplate string, statusCode int, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
 	// Parse the main template with the functions.
 	t, err := te.generateTemplate(r, mainTemplate, layoutType, vars)
 	if err != nil {
@@ -97,7 +97,7 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 
 // pluginContent converts a site post from markdown to HTML and then outputs to response
 // writer. Returns an HTTP status code and an error if one occurs.
-func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType string, postContent string, statusCode int, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
+func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemplate string, layoutType core.LayoutType, postContent string, statusCode int, fm template.FuncMap, vars map[string]interface{}) (status int, err error) {
 	// Parse the main template with the functions.
 	t, err := te.generateTemplate(r, mainTemplate, layoutType, vars)
 	if err != nil {
@@ -127,7 +127,7 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 	return
 }
 
-func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutType string, vars map[string]interface{}) (*template.Template, error) {
+func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutType core.LayoutType, vars map[string]interface{}) (*template.Template, error) {
 	// Generate list of templates.
 	baseTemplate := fmt.Sprintf("%v.tmpl", mainTemplate)
 	templates := []string{

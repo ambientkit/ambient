@@ -7,16 +7,16 @@ import (
 
 // AssetInjector represents code that can inject files into a template.
 type AssetInjector interface {
-	Inject(ti TemplateInjector, t *template.Template, r *http.Request, layoutType string, vars map[string]interface{}) (*template.Template, error)
+	Inject(injector LayoutInjector, t *template.Template, r *http.Request, layoutType LayoutType, vars map[string]interface{}) (*template.Template, error)
 }
 
-// TemplateInjector represents an injector that the AssetInjector will call to inject assets in the correct place.
-type TemplateInjector interface {
-	InjectHead(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
-	InjectHeader(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
-	InjectMain(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
-	InjectFooter(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
-	InjectBody(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+// LayoutInjector represents an injector that the AssetInjector will call to inject assets in the correct place.
+type LayoutInjector interface {
+	Head(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+	Header(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+	Main(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+	Footer(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
+	Body(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
 }
 
 // PluginInjector represents a plugin injector.
@@ -40,7 +40,7 @@ func NewPlugininjector(logger ILogger, storage *Storage, sess ISession, plugins 
 }
 
 // Inject will return a template and an error.
-func (c *PluginInjector) Inject(ti TemplateInjector, t *template.Template, r *http.Request, layoutType string, vars map[string]interface{}) (*template.Template, error) {
+func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *http.Request, layoutType LayoutType, vars map[string]interface{}) (*template.Template, error) {
 	pluginHead := ""
 	pluginHeader := ""
 	pluginMain := ""
@@ -88,7 +88,7 @@ func (c *PluginInjector) Inject(ti TemplateInjector, t *template.Template, r *ht
 			if len(file.LayoutOnly) > 0 {
 				allowed := false
 				for _, layout := range file.LayoutOnly {
-					if string(layout) == layoutType {
+					if layout == layoutType {
 						allowed = true
 						break
 					}
@@ -130,29 +130,29 @@ func (c *PluginInjector) Inject(ti TemplateInjector, t *template.Template, r *ht
 		data[k] = v
 	}
 
-	// Inject.
+	// Inject into each component.
 	var err error
-	t, err = ti.InjectHead(t, pluginHead, fm, data)
+	t, err = inject.Head(t, pluginHead, fm, data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = ti.InjectHeader(t, pluginHeader, fm, data)
+	t, err = inject.Header(t, pluginHeader, fm, data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = ti.InjectMain(t, pluginMain, fm, data)
+	t, err = inject.Main(t, pluginMain, fm, data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = ti.InjectBody(t, pluginBody, fm, data)
+	t, err = inject.Body(t, pluginBody, fm, data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = ti.InjectFooter(t, pluginFooter, fm, data)
+	t, err = inject.Footer(t, pluginFooter, fm, data)
 	if err != nil {
 		return nil, err
 	}

@@ -21,13 +21,7 @@ type IPlugin interface {
 	SessionManager(logger ILogger, ss SessionStorer) (ISession, error)
 	Router(logger ILogger, te IRender) (IAppRouter, error)
 	Storage(logger ILogger) (DataStorer, SessionStorer, error)
-	TemplateEngine(logger ILogger, pi *PluginInjector) (IRender, error)
-
-	//Header() string
-	//Body() string
-	//SetSettings()
-	// Deactivate() error
-	// Uninstall() error
+	TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error)
 }
 
 // IPluginList is a list of IPlugins.
