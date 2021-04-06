@@ -90,6 +90,7 @@ func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, e
 	//vars["canonical"] = post.Canonical
 	vars["id"] = post.ID
 	vars["posturl"] = post.URL
+	vars["pagetitle"] = "Cool Title!"
 	vars["pagedescription"] = plaintextBlurb(post.Content)
 	vars["postcontent"] = p.sanitized(post.Content)
 
