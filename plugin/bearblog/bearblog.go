@@ -56,7 +56,7 @@ func (p *Plugin) Fields() []core.Field {
 	return []core.Field{
 		{
 			Name:    LoginURL,
-			Default: "admin", // FIXME: Need to add logic for this.
+			Default: "admin",
 		},
 		{
 			Name: Subtitle,
