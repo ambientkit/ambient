@@ -1,0 +1,31 @@
+<h1>{{.title}}</h1>
+<a href="/dashboard/plugins">Back</a>
+<form method="POST" class="post-form">
+    <input type="hidden" name="token" value="{{.token}}">
+        {{if .grants }}
+            {{range $id, $p := .grants}}
+            <p>
+                <label for="id_field{{.Index}}">{{.Name}}</label>
+                <input type="checkbox" name="field{{.Index}}" id="id_field{{.Index}}" value="true" {{if .Granted}}checked{{end}}>
+                {{/* {{if .Description.Text}}
+                <span class="helptext">
+                    {{ if .Description.URL}}
+                    <a href='{{.Description.URL}}' target='_blank'>{{.Description.Text}}</a>
+                    {{else}}
+                    {{.Description.Text}}
+                    {{end}}
+                </span>
+                {{end}} */}}
+            </p>
+            {{end}}
+            <button type="submit" class="save btn btn-default">Save</button>
+        {{else}}
+        <p>
+            <span>
+                <i>
+                    No grants requested.
+                </i>
+            </span>
+        </p>
+        {{end}}
+</form>

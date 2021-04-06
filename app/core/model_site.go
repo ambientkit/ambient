@@ -16,6 +16,7 @@ type Site struct {
 	Posts          map[string]Post           `json:"posts"`        // List of posts.
 	PluginSettings map[string]PluginSettings `json:"plugins"`      // List of plugins, whether they are found, enabled, and what fields they support.
 	PluginFields   map[string]PluginFields   `json:"pluginfields"` // List of saved values for fields in plugins.
+	PluginGrants   map[string]PluginGrants   `json:"plugingrants"` // List of approved grants for fields in plugins.
 }
 
 // Correct will fill in the missing defaults.
@@ -30,6 +31,9 @@ func (s *Site) Correct() {
 	}
 	if s.PluginFields == nil {
 		s.PluginFields = make(map[string]PluginFields)
+	}
+	if s.PluginGrants == nil {
+		s.PluginGrants = make(map[string]PluginGrants)
 	}
 }
 

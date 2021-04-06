@@ -62,6 +62,20 @@ func stringArrayEqual(a, b []string) bool {
 	return true
 }
 
+// grantArrayEqual tells whether a and b contain the same elements.
+// A nil argument is equivalent to an empty slice.
+func grantArrayEqual(a, b []Grant) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
 // fileExists determines if an embedded file exists.
 func fileExists(assets *embed.FS, filename string) bool {
 	// Use the root directory.

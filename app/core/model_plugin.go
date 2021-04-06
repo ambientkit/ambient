@@ -16,6 +16,7 @@ const (
 type PluginSettings struct {
 	Enabled bool             `json:"enabled"`
 	Found   bool             `json:"found"`
+	Grants  []Grant          `json:"grants"`
 	Fields  map[string]Field `json:"fields"`
 	Order   []string         `json:"order"`
 }
@@ -50,6 +51,11 @@ type FieldDescription struct {
 // PluginFields -
 type PluginFields struct {
 	Fields map[string]interface{} `json:"fields"`
+}
+
+// PluginGrants -
+type PluginGrants struct {
+	Grants map[Grant]bool `json:"grants"`
 }
 
 // PluginRoutes -

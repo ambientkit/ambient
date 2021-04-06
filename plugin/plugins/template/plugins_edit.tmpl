@@ -8,7 +8,7 @@
                 <label for="id_{{$name}}">Enable:</label>
                 <input type="checkbox" name="{{$name}}" id="id_{{$name}}" {{if .Enabled}}checked{{end}}>
                 {{if not .Found}}<span class="helptext">Plugin is missing. <a href="/dashboard/plugins/{{$name}}/delete">Delete state</a></span>{{end}}
-                {{if .Fields}}<span class="helptext">Plugin has: <a href="/dashboard/plugins/{{$name}}/settings">Settings</a></span>{{end}}
+                {{if .Fields}}<span class="helptext">Plugin has: <a href="/dashboard/plugins/{{$name}}/settings">Settings</a> <a href="/dashboard/plugins/{{$name}}/grants">Grants</a></span>{{end}}
             </p>
             {{end}}
             <button type="submit" class="save btn btn-default">Save</button>

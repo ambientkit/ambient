@@ -192,3 +192,50 @@ func (ss *SecureSite) NeighborPluginField(pluginName string, fieldName string) (
 
 	return ss.pluginField(pluginName, fieldName)
 }
+
+// NeighborPluginGrantList gets the grants requests for a neighbor plugin.
+func (ss *SecureSite) NeighborPluginGrantList(pluginName string) ([]Grant, error) {
+	if !ss.Authorized(GrantPluginNeighborgrantRead) {
+		return nil, ErrAccessDenied
+	}
+
+	settings, ok := ss.storage.Site.PluginSettings[pluginName]
+	if !ok {
+		return nil, ErrNotFound
+	}
+
+	return settings.Grants, nil
+}
+
+// NeighborPluginGrants gets the map of granted permissions.
+func (ss *SecureSite) NeighborPluginGrants(pluginName string) (map[Grant]bool, error) {
+	if !ss.Authorized(GrantPluginNeighborgrantRead) {
+		return nil, ErrAccessDenied
+	}
+
+	grants, ok := ss.storage.Site.PluginGrants[pluginName]
+	if !ok {
+		return nil, ErrNotFound
+	}
+
+	return grants.Grants, nil
+}
+
+// SetNeighborPluginGrant sets a grant for a neighbor plugin.
+func (ss *SecureSite) SetNeighborPluginGrant(pluginName string, grantName Grant, value bool) error {
+	if !ss.Authorized(GrantPluginNeighborgrantWrite) {
+		return ErrAccessDenied
+	}
+
+	grants, ok := ss.storage.Site.PluginGrants[pluginName]
+	if !ok {
+		grants = PluginGrants{
+			Grants: make(map[Grant]bool),
+		}
+	}
+
+	grants.Grants[grantName] = value
+	ss.storage.Site.PluginGrants[pluginName] = grants
+
+	return ss.storage.Save()
+}

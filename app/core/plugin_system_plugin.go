@@ -22,6 +22,7 @@ type IPlugin interface {
 	Router(logger ILogger, te IRender) (IAppRouter, error)
 	Storage(logger ILogger) (DataStorer, SessionStorer, error)
 	TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error)
+	Grants() []Grant
 }
 
 // IPluginList is a list of IPlugins.

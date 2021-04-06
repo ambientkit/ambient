@@ -79,3 +79,8 @@ func (p *PluginMeta) Storage(logger ILogger) (DataStorer, SessionStorer, error) 
 func (p *PluginMeta) TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error) {
 	return nil, nil
 }
+
+// Grants -
+func (p *PluginMeta) Grants() []Grant {
+	return nil
+}

@@ -19,10 +19,14 @@ func RegisterPlugins(arr []IPlugin, storage *Storage) (*PluginSystem, error) {
 	pluginsys := NewPluginSystem()
 
 	// Load the plugins.
+	// Loop through all of the plugins set in the boot.go file.
 	needSave := false
 	ps := storage.Site.PluginSettings
 	for _, v := range arr {
 		name := v.PluginName()
+
+		// If there is not an entry in the storage for the plugin, then
+		// add a new entry.
 		_, found := ps[name]
 		if !found {
 			ps[name] = PluginSettings{
@@ -178,6 +182,13 @@ func (c *App) loadSinglePluginPages(name string) bool {
 		return true
 	}
 
+	// If the grants are different, then save the new ones.
+	if !grantArrayEqual(v.Grants(), plugin.Grants) {
+		shouldSave = true
+		plugin.Grants = v.Grants()
+		c.Storage.Site.PluginSettings[name] = plugin
+	}
+
 	// If the fields are different, then update it for saving.
 	// Note: This is highly coupled, need to update this if you add fields.
 	if !fieldArrayEqual(plugin, v.Fields()) {
@@ -199,7 +210,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 		return shouldSave
 	}
 
-	// FIXME: Need to allows users to grant permissions.
+	// FIXME: Need to allow users to grant permissions. All permissions are granted now.
 	grants := make(map[Grant]bool)
 	grants[GrantAll] = true
 

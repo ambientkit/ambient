@@ -59,6 +59,10 @@ const (
 	GrantPluginNeighborfieldRead Grant = "plugin.neighborfield:read"
 	// GrantPluginNeighborfieldWrite allows write access to a field in another plugin.
 	GrantPluginNeighborfieldWrite Grant = "plugin.neighborfield:write"
+	// GrantPluginNeighborgrantRead allows read access to a grant in another plugin.
+	GrantPluginNeighborgrantRead Grant = "plugin.neighborgrant:read"
+	// GrantPluginNeighborgrantWrite allows write access to a grant in another plugin.
+	GrantPluginNeighborgrantWrite Grant = "plugin.neighborgrant:write"
 
 	// GrantUserAuthenticatedRead allows read access whether the current user is logged in or not.
 	GrantUserAuthenticatedRead Grant = "user.authenticated:read"
