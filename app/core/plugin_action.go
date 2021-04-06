@@ -184,6 +184,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 		shouldSave = true
 		plugin.Fields = FieldList(v.Fields()).ModelFields()
 
+		// Preserve the order of the fields since maps are not ordered.
 		arr := make([]string, 0)
 		for _, plug := range v.Fields() {
 			arr = append(arr, plug.Name)
