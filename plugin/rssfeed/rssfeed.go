@@ -34,12 +34,37 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 }
 
 const (
-	rssURL = "/rss.xml"
+	// FeedURL allows user to set the feed URL>
+	FeedURL = "Feed URL"
+	// Description allows user to set the description.
+	Description = "Description"
 )
+
+// Fields returns a list of user settable fields.
+func (p *Plugin) Fields() []core.Field {
+	return []core.Field{
+		{
+			Name:    FeedURL,
+			Default: "/rss.xml",
+			Description: core.FieldDescription{
+				Text: "Must start with a slash like this: /rss.xml",
+			},
+		},
+		{
+			Name: Description,
+			Type: core.Textarea,
+		},
+	}
+}
 
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	siteTitle, err := p.Site.Title()
+	if err != nil {
+		return nil, nil, nil
+	}
+
+	feedURL, err := p.Site.PluginFieldString(FeedURL)
 	if err != nil {
 		return nil, nil, nil
 	}
@@ -57,7 +82,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 				},
 				{
 					Name:  "href",
-					Value: rssURL,
+					Value: feedURL,
 				},
 				{
 					Name:  "application",
@@ -74,5 +99,11 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
-	p.Mux.Get(rssURL, p.index)
+	// FIXME: This can't be changed dynamically.
+	feedURL, err := p.Site.PluginFieldString(FeedURL)
+	if err != nil {
+		return
+	}
+
+	p.Mux.Get(feedURL, p.index)
 }

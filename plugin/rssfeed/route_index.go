@@ -54,22 +54,27 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 		return p.Site.Error(err)
 	}
 
-	// description, err := p.Site.Description()
-	// if err != nil {
-	// 	return p.Site.Error(err)
-	// }
+	description, err := p.Site.PluginFieldString(Description)
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
+	feedURL, err := p.Site.PluginFieldString(FeedURL)
+	if err != nil {
+		return p.Site.Error(err)
+	}
 
 	m := &Sitemap{
 		Version:       "2.0",
 		Atom:          "http://www.w3.org/2005/Atom",
 		Title:         title,
 		Link:          siteURL,
-		Description:   "", // FIXME: Should be able to pull from description and centralize.
+		Description:   description,
 		Generator:     "Ambient",
 		Language:      "en-us",
 		LastBuildDate: time.Now().Format(time.RFC1123Z),
 		AtomLink: AtomLink{
-			Href: siteURL + "/rss.xml",
+			Href: siteURL + feedURL,
 			Rel:  "self",
 			Type: "application/rss+xml",
 		},
