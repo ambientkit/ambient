@@ -101,6 +101,25 @@ func (p *Plugin) Routes() {
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	arr := make([]core.Asset, 0)
+
+	siteTitle, err := p.Site.Title()
+	if err == nil && len(siteTitle) > 0 {
+		arr = append(arr, core.Asset{
+			Filetype:   core.AssetGeneric,
+			Location:   core.LocationHead,
+			TagName:    "title",
+			ClosingTag: true,
+			Inline:     true,
+			Path:       "template/content/title.tmpl",
+			Replace: []core.Replace{
+				{
+					Find:    "{{.Title}}",
+					Replace: siteTitle,
+				},
+			},
+		})
+	}
+
 	siteDescription, err := p.Site.PluginField(Description)
 	if err == nil && len(siteDescription) > 0 {
 		arr = append(arr, core.Asset{

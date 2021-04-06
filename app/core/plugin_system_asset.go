@@ -150,7 +150,11 @@ func (file *Asset) Element(logger ILogger, v IPlugin, assets fs.FS) string {
 		if file.Inline {
 			ff, status, err := file.Contents(assets)
 			if status != http.StatusOK {
-				logger.Error("plugin injector: error getting file contents: %v", err.Error())
+				if err != nil {
+					logger.Error("plugin injector: error getting file contents: %v %v", status, err.Error())
+				} else {
+					logger.Error("plugin injector: error getting file contents: %v", status)
+				}
 				return ""
 			}
 			if file.TagName == "" {
