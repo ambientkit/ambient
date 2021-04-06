@@ -15,22 +15,24 @@ var (
 // SecureSite is a secure data access for the site.
 type SecureSite struct {
 	pluginName string
-	storage    *Storage
-	sess       ISession
-	mux        IAppRouter
 	grants     map[string]bool
-	log        IAppLogger
+
+	log     IAppLogger
+	storage *Storage
+	sess    ISession
+	mux     IAppRouter
 }
 
 // NewSecureSite -
-func NewSecureSite(pluginName string, log IAppLogger, storage *Storage, session ISession, mux IAppRouter, grants map[string]bool) *SecureSite {
+func NewSecureSite(pluginName string, grants map[string]bool, log IAppLogger, storage *Storage, session ISession, mux IAppRouter) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
-		storage:    storage,
-		sess:       session,
-		mux:        mux,
 		grants:     grants,
-		log:        log,
+
+		log:     log,
+		storage: storage,
+		sess:    session,
+		mux:     mux,
 	}
 }
 

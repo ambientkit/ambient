@@ -240,7 +240,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 		Mux:          recorder,
 		Render:       c.Render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
 		Security:     c.Sess,
-		Site:         NewSecureSite(name, c.Log, c.Storage, c.Sess, c.Router, grants),
+		Site:         NewSecureSite(name, grants, c.Log, c.Storage, c.Sess, c.Router),
 		PluginLoader: c,
 		Log:          c.Log,
 	}
