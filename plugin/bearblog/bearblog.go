@@ -41,6 +41,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 const (
 	// LoginURL allows user to set the login URL.
 	LoginURL = "Login URL"
+	// Author allows user to set the author.
+	Author = "Author"
 	// Subtitle allows user to set the Subtitle.
 	Subtitle = "Subtitle"
 	// Description allows user to set the description.
@@ -57,6 +59,9 @@ func (p *Plugin) Fields() []core.Field {
 		{
 			Name:    LoginURL,
 			Default: "admin",
+		},
+		{
+			Name: Author,
 		},
 		{
 			Name: Subtitle,
@@ -128,6 +133,26 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 				{
 					Name:  "content",
 					Value: fmt.Sprintf("{{if .pagedescription}}{{.pagedescription}}{{else}}%v{{end}}", siteDescription),
+				},
+			},
+		})
+	}
+
+	siteAuthor, err := p.Site.PluginFieldString(Author)
+	if err == nil && len(siteAuthor) > 0 {
+		arr = append(arr, core.Asset{
+			Filetype:   core.AssetGeneric,
+			Location:   core.LocationHead,
+			TagName:    "meta",
+			ClosingTag: false,
+			Attributes: []core.Attribute{
+				{
+					Name:  "name",
+					Value: "author",
+				},
+				{
+					Name:  "content",
+					Value: siteAuthor,
 				},
 			},
 		})
