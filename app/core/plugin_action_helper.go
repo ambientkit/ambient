@@ -7,13 +7,24 @@ import (
 
 // fieldArrayEqual tells whether a and b contain the same elements.
 // A nil argument is equivalent to an empty slice.
-func fieldArrayEqual(a map[string]Field, arrB []Field) bool {
-	if len(a) != len(arrB) {
+func fieldArrayEqual(pa PluginSettings, arrB []Field) bool {
+	a := pa.Fields
+	if len(pa.Fields) != len(arrB) {
+		return false
+	}
+
+	// Verify the length of the order field.
+	if len(pa.Order) != len(arrB) {
 		return false
 	}
 
 	b := make(map[string]Field)
-	for _, v := range arrB {
+	for index, v := range arrB {
+		// Verify the order of the order field.
+		if pa.Order[index] != v.Name {
+			return false
+		}
+
 		b[v.Name] = v
 	}
 

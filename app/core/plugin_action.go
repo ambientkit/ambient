@@ -180,9 +180,16 @@ func (c *App) loadSinglePluginPages(name string) bool {
 
 	// If the fields are different, then update it for saving.
 	// FIXME: This is highly coupled, may just want to save on each load.
-	if !fieldArrayEqual(plugin.Fields, v.Fields()) {
+	if !fieldArrayEqual(plugin, v.Fields()) {
 		shouldSave = true
 		plugin.Fields = FieldList(v.Fields()).ModelFields()
+
+		arr := make([]string, 0)
+		for _, plug := range v.Fields() {
+			arr = append(arr, plug.Name)
+		}
+		plugin.Order = arr
+
 		c.Storage.Site.PluginSettings[name] = plugin
 	}
 

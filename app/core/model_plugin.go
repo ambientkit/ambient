@@ -1,7 +1,5 @@
 package core
 
-import "sort"
-
 // FieldType is a type of field.
 type FieldType string
 
@@ -16,24 +14,10 @@ const (
 
 // PluginSettings -
 type PluginSettings struct {
-	Enabled bool     `json:"enabled"`
-	Found   bool     `json:"found"`
-	Fields  FieldMap `json:"fields"`
-}
-
-// FieldMap -
-type FieldMap map[string]Field
-
-// SortedNames returns array of Field.
-func (fm FieldMap) SortedNames() []string {
-	arr := make([]string, 0)
-	for _, v := range fm {
-		arr = append(arr, v.Name)
-	}
-
-	sort.Strings(arr)
-
-	return arr
+	Enabled bool             `json:"enabled"`
+	Found   bool             `json:"found"`
+	Fields  map[string]Field `json:"fields"`
+	Order   []string         `json:"order"`
 }
 
 // Field is a plugin settable field.
