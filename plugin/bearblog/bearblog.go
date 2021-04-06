@@ -110,7 +110,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			TagName:    "title",
 			ClosingTag: true,
 			Inline:     true,
-			Path:       "template/content/title.tmpl",
+			Content:    `{{if .pagetitle}}{{.pagetitle}} | {{.Title}}{{else}}{{.Title}}{{end}}`,
 			Replace: []core.Replace{
 				{
 					Find:    "{{.Title}}",

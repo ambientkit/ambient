@@ -69,6 +69,8 @@ type Asset struct {
 	Inline   bool      `json:"inline"`
 	Path     string    `json:"path"`
 	Replace  []Replace `json:"replace"`
+
+	Content string `json:"content"`
 }
 
 // Replace represents text to find and replace.
@@ -157,6 +159,7 @@ func (file *Asset) Element(logger ILogger, v IPlugin, assets fs.FS) string {
 				}
 				return ""
 			}
+
 			if file.TagName == "" {
 				txt = fmt.Sprintf(`%v`, string(ff))
 			} else {
@@ -179,23 +182,28 @@ func (file *Asset) Element(logger ILogger, v IPlugin, assets fs.FS) string {
 
 // Contents returns the text of the file to inline in HTML after doing replace.
 func (file *Asset) Contents(assets fs.FS) (ff []byte, status int, err error) {
-	// Use the root directory.
-	fsys, err := fs.Sub(assets, ".")
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
+	// Get the contents from the content field if it's filled in.
+	if len(file.Content) == 0 {
+		// Use the root directory.
+		fsys, err := fs.Sub(assets, ".")
+		if err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
 
-	// Open the file.
-	f, err := fsys.Open(file.Path)
-	if err != nil {
-		return nil, http.StatusNotFound, nil
-	}
-	defer f.Close()
+		// Open the file.
+		f, err := fsys.Open(file.Path)
+		if err != nil {
+			return nil, http.StatusNotFound, nil
+		}
+		defer f.Close()
 
-	// Get the contents.
-	ff, err = ioutil.ReadAll(f)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		// Get the contents.
+		ff, err = ioutil.ReadAll(f)
+		if err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
+	} else {
+		ff = []byte(file.Content)
 	}
 
 	// Loop over the items to replace.
