@@ -18,8 +18,6 @@ type PluginMeta struct {
 	// AppVersion is the first compatible version of Ambient that the
 	// plugin works with.
 	AppVersion string `json:"appversion"`
-	// Permissions is which permissions the plugin requests.
-	//Permissions []string `json:"permissions"`
 }
 
 // Enable -

@@ -43,6 +43,7 @@ func (p *Plugin) Grants() []core.Grant {
 		core.GrantPluginNeighborfieldWrite,
 		core.GrantPluginNeighborgrantRead,
 		core.GrantPluginNeighborgrantWrite,
+		core.GrantRouterNeighborRouteClear,
 	}
 }
 
