@@ -37,6 +37,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 func (p *Plugin) Grants() []core.Grant {
 	return []core.Grant{
 		core.GrantSitePluginRead,
+		core.GrantSitePluginEnable,
+		core.GrantSitePluginDisable,
 		core.GrantPluginNeighborfieldRead,
 		core.GrantPluginNeighborfieldWrite,
 		core.GrantPluginNeighborgrantRead,
