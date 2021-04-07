@@ -157,36 +157,35 @@ func (c *App) LoadSinglePlugin(name string) error {
 	return nil
 }
 
-func (c *App) loadSinglePluginPages(name string) bool {
-	shouldSave := false
-
+// InitializePluginStorage -
+func InitializePluginStorage(name string, storage *Storage, ps *PluginSystem) (v IPlugin, shouldSave bool, skip bool) {
 	// Return if the plug isn't found.
-	plugin, ok := c.Storage.Site.PluginSettings[name]
+	plugin, ok := storage.Site.PluginSettings[name]
 	if !ok {
-		return shouldSave
+		return nil, false, true
 	}
 
 	// Determine if the plugin that is in stored is found in the system.
-	v, found := c.Plugins.Plugins[name]
+	v, found := ps.Plugins[name]
 
 	// If the found setting is different, then update it for saving.
 	if found != plugin.Found {
 		shouldSave = true
 		plugin.Found = found
-		c.Storage.Site.PluginSettings[name] = plugin
+		storage.Site.PluginSettings[name] = plugin
 	}
 
 	// If not found - which means there is data, but the plugin is no longer
 	// installed, then save that the plugin is no longer found.
 	if !found {
-		return true
+		return nil, true, true
 	}
 
 	// If the grants are different, then save the new ones.
 	if !grantArrayEqual(v.Grants(), plugin.Grants) {
 		shouldSave = true
 		plugin.Grants = v.Grants()
-		c.Storage.Site.PluginSettings[name] = plugin
+		storage.Site.PluginSettings[name] = plugin
 	}
 
 	// If the fields are different, then update it for saving.
@@ -202,11 +201,21 @@ func (c *App) loadSinglePluginPages(name string) bool {
 		}
 		plugin.Order = arr
 
-		c.Storage.Site.PluginSettings[name] = plugin
+		storage.Site.PluginSettings[name] = plugin
 	}
 
 	// If the plugin is not found or not enabled, then skip over it.
 	if !found || !plugin.Enabled {
+		return v, shouldSave, true
+	}
+
+	return v, shouldSave, false
+}
+
+func (c *App) loadSinglePluginPages(name string) bool {
+	// Initialize the plugin storage.
+	v, shouldSave, skip := InitializePluginStorage(name, c.Storage, c.Plugins)
+	if skip {
 		return shouldSave
 	}
 

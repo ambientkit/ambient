@@ -78,3 +78,7 @@ local-init:
 local-run:
 	@echo Starting local server.
 	LOCALDEV=true go run main.go
+
+.PHONY: amb
+amb:
+	go run cmd/amb/main.go

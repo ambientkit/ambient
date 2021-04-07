@@ -35,84 +35,59 @@ import (
 	"github.com/josephspurrier/ambient/plugin/viewport"
 )
 
+// Plugins defines the plugins - order does matter.
+var Plugins = core.IPluginList{
+	// Core plugins required to use the system.
+	gcpbucketstorage.New(), // GCP and local Storage - storage plugin must always come first.
+	htmltemplate.New(),     // HTML template engine.
+	awayrouter.New(),       // Request router.
+
+	// Additional plugins.
+	charset.New(),
+	viewport.New(),
+	bearblog.New(),
+	author.New(),
+	description.New(),
+	bearcss.New(),
+	plugins.New(),
+	prism.New(),
+	stackedit.New(),
+	googleanalytics.New(),
+	disqus.New(),
+	hello.New(),
+	robots.New(),
+	sitemap.New(),
+	rssfeed.New(),
+	styles.New(),
+	navigation.New(),
+
+	// Middleware - executes bottom to top.
+	notrailingslash.New(), // Redirect all request swith trailing slash.
+	uptimerobotok.New(),   // Provide 200 on HEAD /.
+	securedashboard.New(), // Descure all /dashboard routes.
+	redirecttourl.New(),   // Redirect to production URL.
+	gzipresponse.New(),    // Compress all HTTP response.
+	logrequest.New(),      // Log every request as INFO.
+	scssession.New(),      // Session manager.
+}
+
 // Boot returns a router with the application ready to be started.
 func Boot(l *logger.Logger) (http.Handler, error) {
-	// Define the plugins - order does matter.
-	arrPlugins := core.IPluginList{
-		// Core plugins required to use the system.
-		gcpbucketstorage.New(), // GCP and local Storage - storage plugin must always come first.
-		htmltemplate.New(),     // HTML template engine.
-		awayrouter.New(),       // Request router.
-
-		// Additional plugins.
-		charset.New(),
-		viewport.New(),
-		bearblog.New(),
-		author.New(),
-		description.New(),
-		bearcss.New(),
-		plugins.New(),
-		prism.New(),
-		stackedit.New(),
-		googleanalytics.New(),
-		disqus.New(),
-		hello.New(),
-		robots.New(),
-		sitemap.New(),
-		rssfeed.New(),
-		styles.New(),
-		navigation.New(),
-
-		// Middleware - executes bottom to top.
-		notrailingslash.New(), // Redirect all request swith trailing slash.
-		uptimerobotok.New(),   // Provide 200 on HEAD /.
-		securedashboard.New(), // Descure all /dashboard routes.
-		redirecttourl.New(),   // Redirect to production URL.
-		gzipresponse.New(),    // Compress all HTTP response.
-		logrequest.New(),      // Log every request as INFO.
-		scssession.New(),      // Session manager.
-	}
-
-	// Define the storage managers.
-	var ds core.DataStorer
-	var ss core.SessionStorer
-
-	// Get the storage manager from the plugins.
-	// This must be the first plugin or else it fails.
-	if len(arrPlugins) > 0 {
-		firstPlugin := arrPlugins[0]
-		// Get the storage system.
-		pds, pss, err := firstPlugin.Storage(l)
-		if err != nil {
-			l.Error("", err.Error())
-		} else if pds != nil && pss != nil {
-			l.Info("boot: using storage from first plugin: %v", firstPlugin.PluginName())
-			ds = pds
-			ss = pss
-		}
-	}
-	if ds == nil || ss == nil {
-		l.Fatal("boot: no default storage found")
-	}
-
-	// Create new store object with the defaults.
-	site := &core.Site{}
-
-	// Set up the data storage provider.
-	storage, err := core.NewDatastore(ds, site)
+	// Set up the storage.
+	storage, ss, err := Storage(l, Plugins)
 	if err != nil {
 		return nil, err
 	}
 
 	// Register the plugins.
-	plugs, err := core.RegisterPlugins(arrPlugins, storage)
+	plugs, err := core.RegisterPlugins(Plugins, storage)
 	if err != nil {
 		return nil, err
 	}
 
 	// Get the session manager from the plugins.
 	var sess core.ISession
-	for _, v := range arrPlugins {
+	for _, v := range Plugins {
 		// Skip if the plugin isn't found.
 		ps, ok := storage.Site.PluginSettings[v.PluginName()]
 		if !ok {
@@ -142,11 +117,11 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 	}
 
 	// Set up the template injector.
-	pi := core.NewPlugininjector(l, storage, sess, plugs, arrPlugins)
+	pi := core.NewPlugininjector(l, storage, sess, plugs, Plugins)
 
 	// Get the router from the plugins.
 	var te core.IRender
-	for _, v := range arrPlugins {
+	for _, v := range Plugins {
 		// Skip if the plugin isn't found.
 		ps, ok := storage.Site.PluginSettings[v.PluginName()]
 		if !ok {
@@ -175,7 +150,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 
 	// Get the router from the plugins.
 	var mux core.IAppRouter
-	for _, v := range arrPlugins {
+	for _, v := range Plugins {
 		// Skip if the plugin isn't found.
 		ps, ok := storage.Site.PluginSettings[v.PluginName()]
 		if !ok {
@@ -213,7 +188,7 @@ func Boot(l *logger.Logger) (http.Handler, error) {
 
 	// Enable the middleware from the plugins.
 	var h http.Handler = c.Router
-	h = c.LoadAllPluginMiddleware(h, arrPlugins)
+	h = c.LoadAllPluginMiddleware(h, Plugins)
 
 	return h, nil
 }
