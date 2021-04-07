@@ -69,7 +69,7 @@ func (ss *SecureSite) Load() error {
 func (ss *SecureSite) Authorized(grant Grant) bool {
 	grants, ok := ss.storage.Site.PluginGrants[ss.pluginName]
 	if !ok {
-		//ss.log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v\n", ss.pluginName, grant)
+		ss.log.Warn("securesite: denied plugin (%v) access to the data item, requires grant (none found): %v\n", ss.pluginName, grant)
 		return false
 	}
 
