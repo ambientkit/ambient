@@ -114,7 +114,9 @@ func (ss *SecureSite) NeighborPluginSetting(pluginName string, fieldName string)
 func (ss *SecureSite) settingField(pluginName string, settingName string) (interface{}, error) {
 	raw, err := ss.pluginsystem.Setting(pluginName, settingName)
 	if err != nil {
-		return "", err
+		if err != ErrNotFound {
+			return "", err
+		}
 	}
 
 	if raw != nil {

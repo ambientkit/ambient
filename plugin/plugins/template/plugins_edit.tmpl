@@ -7,10 +7,9 @@
                 <h3>{{$name}}</h3>
                 <label for="id_{{$name}}">Enable:</label>
                 <input type="checkbox" name="{{$name}}" id="id_{{$name}}" {{if .Enabled}}checked{{end}}>
-                {{if not .Found}}<span class="helptext">Plugin is missing. <a href="/dashboard/plugins/{{$name}}/delete">Delete state</a></span>{{end}}
                 <span class="helptext">
                 <a href="/dashboard/plugins/{{$name}}/grants">Grants</a>
-                {{if .Fields}}<a href="/dashboard/plugins/{{$name}}/settings">Settings</a>{{end}}
+                {{if .Settings}}<a href="/dashboard/plugins/{{$name}}/settings">Settings</a>{{end}}
                 </span>
             </p>
             {{end}}

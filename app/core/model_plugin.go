@@ -16,11 +16,7 @@ const (
 type PluginData struct {
 	Enabled  bool           `json:"enabled"`
 	Grants   PluginGrants   `json:"grants"`
-	Settings PluginSettings `json:"fields"`
-	//Found   bool             `json:"found"`
-	//Grants []Grant          `json:"grants"`
-	//Fields map[string]Field `json:"fields"`
-	//Order  []string         `json:"order"`
+	Settings PluginSettings `json:"settings"`
 }
 
 // Field is a plugin settable field.
@@ -50,21 +46,11 @@ type FieldDescription struct {
 	URL  string `json:"url"`
 }
 
-// PluginFields -
-// type PluginFields struct {
-// 	Fields map[string]interface{} `json:"fields"`
-// }
-
 // PluginSettings -
 type PluginSettings map[string]interface{}
 
 // PluginGrants -
 type PluginGrants map[Grant]bool
-
-// PluginGrants -
-// type PluginGrants struct {
-// 	Grants map[Grant]bool `json:"grants"`
-// }
 
 // PluginRoutes -
 type PluginRoutes struct {

@@ -60,25 +60,6 @@ func main() {
 	// Set up the secure storage.
 	securestorage = core.NewSecureSite(appName, log, storage, nil, nil, plugins)
 
-	// Initialize plugin storage.
-	shouldSave := false
-	for _, name := range plugins.Names() {
-		_, save, _ := core.InitializePluginStorage(name, storage, plugins)
-		if save {
-			log.Debug("need to save for plugin: %v", name)
-			shouldSave = true
-		}
-	}
-
-	// Save if needed.
-	if shouldSave {
-		log.Info("", "initializing storage")
-		err = storage.Save()
-		if err != nil {
-			log.Error("could not save storage: %v", err.Error())
-		}
-	}
-
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(
 		executer,

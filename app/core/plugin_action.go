@@ -18,6 +18,12 @@ func (c *App) LoadAllPluginPages() error {
 	// Set up the plugin routes.
 	shouldSave := false
 	for name := range c.Storage.Site.PluginStorage {
+		// Skip plugins that are not enabled.
+		if !c.Plugins.Enabled(name) {
+			continue
+		}
+
+		// Load plugin.
 		bl := c.loadSinglePluginPages(name)
 		if bl {
 			shouldSave = true
@@ -119,65 +125,11 @@ func (c *App) LoadSinglePlugin(name string) error {
 	return nil
 }
 
-// InitializePluginStorage -
-func InitializePluginStorage(name string, storage *Storage, ps *PluginSystem) (v IPlugin, shouldSave bool, skip bool) {
-	// Return if the plug isn't found.
-	_, err := ps.Plugin(name)
-	if err != nil {
-		return nil, false, true
-	}
-
-	// TODO: Determine if I need to add logic to detect if a plugin is found or not?
-
-	// // If the found setting is different, then update it for saving.
-	// if found != plugin.Found {
-	// 	shouldSave = true
-	// 	plugin.Found = found
-	// 	storage.Site.PluginSettings[name] = plugin
-	// }
-
-	// If not found - which means there is data, but the plugin is no longer
-	// installed, then save that the plugin is no longer found.
-	// if !found {
-	// 	return nil, true, true
-	// }
-
-	// If the grants are different, then save the new ones.
-	// if !grantArrayEqual(v.Grants(), plugin.Grants) {
-	// 	shouldSave = true
-	// 	plugin.Grants = v.Grants()
-	// 	storage.Site.PluginSettings[name] = plugin
-	// }
-
-	// If the fields are different, then update it for saving.
-	// Note: This is highly coupled, need to update this if you add fields.
-	// if !fieldArrayEqual(plugin, v.Fields()) {
-	// 	shouldSave = true
-	// 	plugin.Fields = FieldList(v.Fields()).ModelFields()
-
-	// 	// Preserve the order of the fields since maps are not ordered.
-	// 	arr := make([]string, 0)
-	// 	for _, plug := range v.Fields() {
-	// 		arr = append(arr, plug.Name)
-	// 	}
-	// 	plugin.Order = arr
-
-	// 	storage.Site.PluginSettings[name] = plugin
-	// }
-
-	// If the plugin is not found or not enabled, then skip over it.
-	// if !found || !plugin.Enabled {
-	// 	return v, shouldSave, true
-	// }
-
-	return v, shouldSave, false
-}
-
 func (c *App) loadSinglePluginPages(name string) bool {
-	// Initialize the plugin storage.
-	v, shouldSave, skip := InitializePluginStorage(name, c.Storage, c.Plugins)
-	if skip {
-		return shouldSave
+	v, err := c.Plugins.Plugin(name)
+	if err != nil {
+		c.Log.Error("plugin load: problem loading plugin %v: %v", name, err.Error())
+		return false
 	}
 
 	recorder := routerrecorder.NewRecorder(c.Router)
@@ -192,10 +144,10 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	}
 
 	// Enable the plugin and pass in the toolkit.
-	err := v.Enable(toolkit)
+	err = v.Enable(toolkit)
 	if err != nil {
 		c.Log.Error("plugin load: problem enabling plugin %v: %v", name, err.Error())
-		return shouldSave
+		return false
 	}
 
 	// Load the routes.
@@ -206,7 +158,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	if files == nil {
 		// Save the plugin routes so they can be removed if disabled.
 		saveRoutesForPlugin(name, recorder, c.Storage)
-		return shouldSave
+		return false
 	}
 
 	// Handle embedded assets.
@@ -218,7 +170,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	// Save the plugin routes so they can be removed if disabled.
 	saveRoutesForPlugin(name, recorder, c.Storage)
 
-	return shouldSave
+	return false
 }
 
 func saveRoutesForPlugin(name string, recorder *routerrecorder.Recorder, storage *Storage) {

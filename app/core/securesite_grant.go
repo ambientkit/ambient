@@ -6,7 +6,7 @@ func (ss *SecureSite) NeighborPluginGrantList(pluginName string) ([]Grant, error
 		return nil, ErrAccessDenied
 	}
 
-	plugin, err := ss.pluginsystem.Plugin(ss.pluginName)
+	plugin, err := ss.pluginsystem.Plugin(pluginName)
 	if err != nil {
 		return nil, ErrNotFound
 	}
@@ -20,14 +20,14 @@ func (ss *SecureSite) NeighborPluginGrants(pluginName string) (map[Grant]bool, e
 		return nil, ErrAccessDenied
 	}
 
-	plugin, err := ss.pluginsystem.Plugin(ss.pluginName)
+	plugin, err := ss.pluginsystem.Plugin(pluginName)
 	if err != nil {
 		return nil, ErrNotFound
 	}
 
 	grants := make(map[Grant]bool)
 	for _, grant := range plugin.Grants() {
-		grants[grant] = ss.pluginsystem.Granted(ss.pluginName, grant)
+		grants[grant] = ss.pluginsystem.Granted(pluginName, grant)
 	}
 
 	return grants, nil
