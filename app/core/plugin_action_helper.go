@@ -7,46 +7,46 @@ import (
 
 // fieldArrayEqual tells whether a and b contain the same elements.
 // A nil argument is equivalent to an empty slice.
-func fieldArrayEqual(pa PluginSettings, arrB []Field) bool {
-	a := pa.Fields
-	if len(pa.Fields) != len(arrB) {
-		return false
-	}
+// func fieldArrayEqual(pa PluginSettings, arrB []Field) bool {
+// 	a := pa.Fields
+// 	if len(pa.Fields) != len(arrB) {
+// 		return false
+// 	}
 
-	// Verify the length of the order field.
-	if len(pa.Order) != len(arrB) {
-		return false
-	}
+// 	// Verify the length of the order field.
+// 	if len(pa.Order) != len(arrB) {
+// 		return false
+// 	}
 
-	b := make(map[string]Field)
-	for index, v := range arrB {
-		// Verify the order of the order field.
-		if pa.Order[index] != v.Name {
-			return false
-		}
+// 	b := make(map[string]Field)
+// 	for index, v := range arrB {
+// 		// Verify the order of the order field.
+// 		if pa.Order[index] != v.Name {
+// 			return false
+// 		}
 
-		b[v.Name] = v
-	}
+// 		b[v.Name] = v
+// 	}
 
-	for i, v := range a {
-		if v.Name != b[v.Name].Name {
-			return false
-		}
-		if string(v.Type) != string(b[i].Type) {
-			return false
-		}
-		if v.Description.Text != b[i].Description.Text {
-			return false
-		}
-		if v.Description.URL != b[i].Description.URL {
-			return false
-		}
-		if v.Default != b[i].Default {
-			return false
-		}
-	}
-	return true
-}
+// 	for i, v := range a {
+// 		if v.Name != b[v.Name].Name {
+// 			return false
+// 		}
+// 		if string(v.Type) != string(b[i].Type) {
+// 			return false
+// 		}
+// 		if v.Description.Text != b[i].Description.Text {
+// 			return false
+// 		}
+// 		if v.Description.URL != b[i].Description.URL {
+// 			return false
+// 		}
+// 		if v.Default != b[i].Default {
+// 			return false
+// 		}
+// 	}
+// 	return true
+// }
 
 // stringArrayEqual tells whether a and b contain the same elements.
 // A nil argument is equivalent to an empty slice.

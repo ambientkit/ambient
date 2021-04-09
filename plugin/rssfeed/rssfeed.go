@@ -64,7 +64,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 		return nil, nil, nil
 	}
 
-	feedURL, err := p.Site.PluginFieldString(FeedURL)
+	feedURL, err := p.Site.PluginSettingString(FeedURL)
 	if err != nil {
 		return nil, nil, nil
 	}
@@ -100,7 +100,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
 	// FIXME: This can't be changed dynamically.
-	feedURL, err := p.Site.PluginFieldString(FeedURL)
+	feedURL, err := p.Site.PluginSettingString(FeedURL)
 	if err != nil {
 		return
 	}

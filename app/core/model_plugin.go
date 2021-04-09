@@ -12,13 +12,15 @@ const (
 	Checkbox FieldType = "checkbox"
 )
 
-// PluginSettings -
-type PluginSettings struct {
-	Enabled bool             `json:"enabled"`
-	Found   bool             `json:"found"`
-	Grants  []Grant          `json:"grants"`
-	Fields  map[string]Field `json:"fields"`
-	Order   []string         `json:"order"`
+// PluginData represents the plugin storage information.
+type PluginData struct {
+	Enabled  bool           `json:"enabled"`
+	Grants   PluginGrants   `json:"grants"`
+	Settings PluginSettings `json:"fields"`
+	//Found   bool             `json:"found"`
+	//Grants []Grant          `json:"grants"`
+	//Fields map[string]Field `json:"fields"`
+	//Order  []string         `json:"order"`
 }
 
 // Field is a plugin settable field.
@@ -49,14 +51,20 @@ type FieldDescription struct {
 }
 
 // PluginFields -
-type PluginFields struct {
-	Fields map[string]interface{} `json:"fields"`
-}
+// type PluginFields struct {
+// 	Fields map[string]interface{} `json:"fields"`
+// }
+
+// PluginSettings -
+type PluginSettings map[string]interface{}
 
 // PluginGrants -
-type PluginGrants struct {
-	Grants map[Grant]bool `json:"grants"`
-}
+type PluginGrants map[Grant]bool
+
+// PluginGrants -
+// type PluginGrants struct {
+// 	Grants map[Grant]bool `json:"grants"`
+// }
 
 // PluginRoutes -
 type PluginRoutes struct {

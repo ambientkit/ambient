@@ -8,24 +8,19 @@ import (
 )
 
 // Storage returns the storage.
-func Storage(l *logger.Logger, arrPlugins core.IPluginList) (*core.Storage, core.SessionStorer, error) {
+func Storage(log *logger.Logger, plugin core.IPlugin) (*core.Storage, core.SessionStorer, error) {
 	// Define the storage managers.
 	var ds core.DataStorer
 	var ss core.SessionStorer
 
 	// Get the storage manager from the plugins.
-	// This must be the first plugin or else it fails.
-	if len(arrPlugins) > 0 {
-		firstPlugin := arrPlugins[0]
-		// Get the storage system.
-		pds, pss, err := firstPlugin.Storage(l)
-		if err != nil {
-			l.Error("", err.Error())
-		} else if pds != nil && pss != nil {
-			l.Info("boot: using storage from first plugin: %v", firstPlugin.PluginName())
-			ds = pds
-			ss = pss
-		}
+	pds, pss, err := plugin.Storage(log)
+	if err != nil {
+		log.Error("", err.Error())
+	} else if pds != nil && pss != nil {
+		log.Info("boot: using storage from first plugin: %v", plugin.PluginName())
+		ds = pds
+		ss = pss
 	}
 	if ds == nil || ss == nil {
 		return nil, nil, fmt.Errorf("boot: no default storage found")

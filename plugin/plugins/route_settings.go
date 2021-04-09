@@ -23,30 +23,24 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 	vars["title"] = "Edit settings for: " + pluginName
 	vars["token"] = p.Security.SetCSRF(r)
 
-	plugins, err := p.Site.Plugins()
+	settings, err := p.Site.PluginNeighborSettingsList(pluginName)
 	if err != nil {
 		return p.Site.Error(err)
 	}
 
-	settings, ok := plugins[pluginName]
-	if !ok {
-		settings = core.PluginSettings{}
-	}
-
 	arr := make([]Field, 0)
-	for index, name := range settings.Order {
-		v := settings.Fields[name]
-		curVal, err := p.Site.NeighborPluginFieldString(pluginName, v.Name)
+	for index, setting := range settings {
+		curVal, err := p.Site.NeighborPluginSettingString(pluginName, setting.Name)
 		if p.Site.ErrorAccessDenied(err) {
 			return p.Site.Error(err)
 		}
 
 		arr = append(arr, Field{
 			Index:       index,
-			Name:        v.Name,
+			Name:        setting.Name,
 			Value:       curVal,
-			FieldType:   v.Type,
-			Description: v.Description,
+			FieldType:   setting.Type,
+			Description: setting.Description,
 		})
 	}
 
@@ -65,23 +59,15 @@ func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status 
 		return http.StatusBadRequest, nil
 	}
 
-	// Get list of plugins.
-	plugins, err := p.Site.Plugins()
+	settings, err := p.Site.PluginNeighborSettingsList(pluginName)
 	if err != nil {
 		return p.Site.Error(err)
 	}
 
-	// Get a list of the settings for the specified plugin.
-	settings, ok := plugins[pluginName]
-	if !ok {
-		settings = core.PluginSettings{}
-	}
-
 	// Loop through each plugin to get the settings then save.
-	for index, name := range settings.Order {
-		v := settings.Fields[name]
+	for index, setting := range settings {
 		val := r.FormValue(fmt.Sprintf("field%v", index))
-		err := p.Site.SetNeighborPluginField(pluginName, v.Name, val)
+		err := p.Site.SetNeighborPluginSetting(pluginName, setting.Name, val)
 		if p.Site.ErrorAccessDenied(err) {
 			return p.Site.Error(err)
 		}

@@ -19,7 +19,6 @@ var (
 			os.Exit(0)
 		},
 	}
-	storage       *core.Storage
 	log           *logger.Logger
 	plugins       *core.PluginSystem
 	securestorage *core.SecureSite
@@ -41,29 +40,29 @@ func main() {
 	//log.SetLevel(uint32(logrus.DebugLevel))
 	log.SetLevel(uint32(logrus.InfoLevel))
 
-	var err error
+	// Ensure there is at least the storage plugin.
+	if len(app.Plugins) == 0 {
+		log.Fatal("", "boot: no plugins found")
+	}
 
 	// Get the plugins and initialize storage.
-	storage, _, err = app.Storage(log, app.Plugins)
+	storage, _, err := app.Storage(log, app.Plugins[0])
 	if err != nil {
 		log.Fatal("", err.Error())
 	}
 
-	// Register the plugins.
-	plugins, err = core.RegisterPlugins(app.Plugins, storage)
-	if err != nil {
-		log.Fatal("", err.Error())
-	}
+	// Initialize the plugin system.
+	plugins = core.NewPluginSystem(log, app.Plugins, storage)
 
 	// Set up the secure storage.
 	securestorage = core.NewSecureSite(appName, log, storage, nil, nil)
 
 	// Initialize plugin storage.
 	shouldSave := false
-	for _, v := range app.Plugins {
-		_, save, _ := core.InitializePluginStorage(v.PluginName(), storage, plugins)
+	for _, name := range plugins.Names() {
+		_, save, _ := core.InitializePluginStorage(name, storage, plugins)
 		if save {
-			log.Debug("need to save: %v", v.PluginName())
+			log.Debug("need to save for plugin: %v", name)
 			shouldSave = true
 		}
 	}
@@ -107,8 +106,12 @@ func enablePlugin(name string) {
 func enableGrants(name string) {
 	log.Info("add plugin grants: %v", name)
 
-	settings := storage.Site.PluginSettings[name]
-	for _, v := range settings.Grants {
+	p, err := plugins.Plugin(name)
+	if err != nil {
+		log.Error("", err.Error())
+	}
+
+	for _, v := range p.Grants() {
 		err := securestorage.SetNeighborPluginGrant(name, v, true)
 		if err != nil {
 			log.Error("", err.Error())
@@ -118,19 +121,21 @@ func enableGrants(name string) {
 
 func addGrantAll(name string) error {
 	// Set the grants for the CLI tool.
-	grants := core.PluginGrants{
-		Grants: map[core.Grant]bool{
-			core.GrantAll: true,
-		},
+	err := plugins.SetGrant(name, core.GrantAll)
+	if err != nil {
+		return err
 	}
-	storage.Site.PluginGrants[name] = grants
-	return storage.Save()
+	return plugins.Save()
 }
 
 func removeGrantAll(name string) error {
 	// Remove the grants for the CLI tool.
-	delete(storage.Site.PluginGrants, name)
-	return storage.Save()
+	err := plugins.RemoveGrant(name, core.GrantAll)
+	if err != nil {
+		return err
+	}
+
+	return plugins.Save()
 }
 
 func enableCLIGrant() bool {

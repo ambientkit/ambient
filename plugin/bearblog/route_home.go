@@ -30,7 +30,7 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 		return p.Site.Error(err)
 	}
 
-	siteSubtitle, err := p.Site.PluginField(Subtitle)
+	siteSubtitle, err := p.Site.PluginSetting(Subtitle)
 	if err != nil {
 		return p.Site.Error(err)
 	}
@@ -45,12 +45,12 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 		return p.Site.Error(err)
 	}
 
-	loginURL, err := p.Site.PluginField(LoginURL)
+	loginURL, err := p.Site.PluginSetting(LoginURL)
 	if err != nil {
 		return p.Site.Error(err)
 	}
 
-	footer, err := p.Site.PluginField(Footer)
+	footer, err := p.Site.PluginSetting(Footer)
 	if err != nil {
 		return p.Site.Error(err)
 	}
@@ -105,17 +105,17 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		return p.Site.Error(err)
 	}
 
-	err = p.Site.SetPluginField(Subtitle, r.FormValue("subtitle"))
+	err = p.Site.SetPluginSetting(Subtitle, r.FormValue("subtitle"))
 	if err != nil {
 		return p.Site.Error(err)
 	}
 
-	err = p.Site.SetPluginField(LoginURL, r.FormValue("loginurl"))
+	err = p.Site.SetPluginSetting(LoginURL, r.FormValue("loginurl"))
 	if err != nil {
 		return p.Site.Error(err)
 	}
 
-	err = p.Site.SetPluginField(Footer, r.FormValue("footer"))
+	err = p.Site.SetPluginSetting(Footer, r.FormValue("footer"))
 	if err != nil {
 		return p.Site.Error(err)
 	}

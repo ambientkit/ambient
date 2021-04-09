@@ -120,7 +120,7 @@ func (p *Plugin) sanitized(content string) template.HTML {
 	htmlCode := blackfriday.Run([]byte(markdownWithUnixLineEndings))
 
 	// Determine if raw HTML is allowed.
-	allowed, err := p.Site.PluginFieldBool(AllowHTMLinMarkdown)
+	allowed, err := p.Site.PluginSettingBool(AllowHTMLinMarkdown)
 	if err != nil {
 		p.Log.Debug("plugins: error in sanitized() getting plugin field: %v", err)
 	}

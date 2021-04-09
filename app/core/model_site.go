@@ -8,15 +8,15 @@ import (
 
 // Site -
 type Site struct {
-	Title          string                    `json:"title"`        // Title of the site.
-	Content        string                    `json:"content"`      // Home or default content.
-	Scheme         string                    `json:"scheme"`       // http or https
-	URL            string                    `json:"url"`          // URL without scheme and without trailing slash.
-	Updated        time.Time                 `json:"updated"`      // Save time the data was saved (not only changed).
-	Posts          map[string]Post           `json:"posts"`        // List of posts.
-	PluginSettings map[string]PluginSettings `json:"plugins"`      // List of plugins, whether they are found, enabled, and what fields they support.
-	PluginFields   map[string]PluginFields   `json:"pluginfields"` // List of saved values for fields in plugins.
-	PluginGrants   map[string]PluginGrants   `json:"plugingrants"` // List of approved grants for fields in plugins.
+	Title         string                `json:"title"`   // Title of the site.
+	Content       string                `json:"content"` // Home or default content.
+	Scheme        string                `json:"scheme"`  // http or https
+	URL           string                `json:"url"`     // URL without scheme and without trailing slash.
+	Updated       time.Time             `json:"updated"` // Save time the data was saved (not only changed).
+	Posts         map[string]Post       `json:"posts"`   // List of posts.
+	PluginStorage map[string]PluginData `json:"plugins"` // List of plugins, whether they are found, enabled, and what fields they support.
+	//PluginFields   map[string]PluginFields   `json:"pluginfields"` // List of saved values for fields in plugins.
+	//PluginGrants   map[string]PluginGrants   `json:"plugingrants"` // List of approved grants for fields in plugins.
 }
 
 // Correct will fill in the missing defaults.
@@ -26,14 +26,8 @@ func (s *Site) Correct() {
 	if s.Posts == nil {
 		s.Posts = make(map[string]Post)
 	}
-	if s.PluginSettings == nil {
-		s.PluginSettings = make(map[string]PluginSettings)
-	}
-	if s.PluginFields == nil {
-		s.PluginFields = make(map[string]PluginFields)
-	}
-	if s.PluginGrants == nil {
-		s.PluginGrants = make(map[string]PluginGrants)
+	if s.PluginStorage == nil {
+		s.PluginStorage = make(map[string]PluginData)
 	}
 }
 

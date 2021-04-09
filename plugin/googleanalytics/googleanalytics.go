@@ -54,7 +54,7 @@ func (p *Plugin) Fields() []core.Field {
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	// Get the tracking ID.
-	trackingID, err := p.Site.PluginFieldString(TrackingID)
+	trackingID, err := p.Site.PluginSettingString(TrackingID)
 	if err != nil || len(trackingID) == 0 {
 		// Otherwise don't set the assets.
 		return nil, nil, nil

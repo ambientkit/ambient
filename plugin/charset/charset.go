@@ -50,7 +50,7 @@ func (p *Plugin) Fields() []core.Field {
 
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
-	cs, err := p.Site.PluginFieldString(Charset)
+	cs, err := p.Site.PluginSettingString(Charset)
 	if err != nil || len(cs) == 0 {
 		// Otherwise don't set the assets.
 		return nil, nil, nil

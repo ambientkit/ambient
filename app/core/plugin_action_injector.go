@@ -23,7 +23,7 @@ type LayoutInjector interface {
 type PluginInjector struct {
 	storage        *Storage
 	sess           ISession
-	plugins        *PluginSystem
+	pluginsystem   *PluginSystem
 	log            ILogger
 	pluginSettings IPluginList
 }
@@ -33,7 +33,7 @@ func NewPlugininjector(logger ILogger, storage *Storage, sess ISession, plugins 
 	return &PluginInjector{
 		storage:        storage,
 		sess:           sess,
-		plugins:        plugins,
+		pluginsystem:   plugins,
 		log:            logger,
 		pluginSettings: pluginSettings,
 	}
@@ -53,14 +53,14 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 	// Use the plugin names because it's ordered.
 	pluginNames := c.pluginSettings.PluginNames()
 	for _, name := range pluginNames {
-		plugin, ok := c.storage.Site.PluginSettings[name]
-		if !ok || !plugin.Enabled || !plugin.Found {
+		plugin, ok := c.storage.Site.PluginStorage[name]
+		if !ok || !plugin.Enabled {
 			continue
 		}
 
-		v, found := c.plugins.Plugins[name]
-		if !found {
-			c.log.Error("plugin injector: plug is missing: %v", name)
+		v, err := c.pluginsystem.Plugin(name)
+		if err != nil {
+			c.log.Error("plugin injector: plugin is missing: %v", name)
 			continue
 		}
 

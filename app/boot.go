@@ -2,6 +2,7 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
@@ -72,113 +73,116 @@ var Plugins = core.IPluginList{
 }
 
 // Boot returns a router with the application ready to be started.
-func Boot(l *logger.Logger) (http.Handler, error) {
+func Boot(log *logger.Logger) (http.Handler, error) {
+	// Ensure there is at least the storage plugin.
+	if len(Plugins) == 0 {
+		return nil, fmt.Errorf("boot: no plugins found")
+	}
+
 	// Set up the storage.
-	storage, ss, err := Storage(l, Plugins)
+	storage, ss, err := Storage(log, Plugins[0])
 	if err != nil {
 		return nil, err
 	}
 
-	// Register the plugins.
-	plugs, err := core.RegisterPlugins(Plugins, storage)
-	if err != nil {
-		return nil, err
-	}
+	// Initialize the plugin system.
+	ps := core.NewPluginSystem(log, Plugins, storage)
 
 	// Get the session manager from the plugins.
 	var sess core.ISession
-	for _, v := range Plugins {
-		// Skip if the plugin isn't found.
-		ps, ok := storage.Site.PluginSettings[v.PluginName()]
-		if !ok {
+	for _, name := range ps.Names() {
+		// Get the plugin.
+		p, err := ps.Plugin(name)
+		if err != nil {
+			log.Error("boot: could not find plugin (%v): %v", name, err.Error())
 			continue
 		}
 
 		// Skip if the plugin isn't enabled.
-		if !ps.Enabled {
+		if !ps.Enabled(name) {
 			continue
 		}
 
 		// Get the session manager.
-		sm, err := v.SessionManager(l, ss)
+		sm, err := p.SessionManager(log, ss)
 		if err != nil {
-			l.Error("", err.Error())
+			log.Error("", err.Error())
 		} else if sm != nil {
 			// Only set the session manager once.
-			l.Info("boot: using session manager from plugin: %v", v.PluginName())
+			log.Info("boot: using session manager from plugin: %v", name)
 			sess = sm
 			break
 		}
 	}
 
-	// FIXME: Need to fail gracefully.
+	// FIXME: Need to fail gracefully?
 	if sess == nil {
-		l.Fatal("boot: no default session manager found")
+		log.Fatal("boot: no default session manager found")
 	}
 
 	// Set up the template injector.
-	pi := core.NewPlugininjector(l, storage, sess, plugs, Plugins)
+	pi := core.NewPlugininjector(log, storage, sess, ps, Plugins)
 
 	// Get the router from the plugins.
 	var te core.IRender
-	for _, v := range Plugins {
+	for _, name := range ps.Names() {
 		// Skip if the plugin isn't found.
-		ps, ok := storage.Site.PluginSettings[v.PluginName()]
-		if !ok {
+		plugin, err := ps.Plugin(name)
+		if err != nil {
 			continue
 		}
 
 		// Skip if the plugin isn't enabled.
-		if !ps.Enabled {
+		if !ps.Enabled(name) {
 			continue
 		}
 
 		// Get the router.
-		tt, err := v.TemplateEngine(l, pi)
+		tt, err := plugin.TemplateEngine(log, pi)
 		if err != nil {
-			l.Error("", err.Error())
+			log.Error("", err.Error())
 		} else if tt != nil {
 			// Only set the router once.
-			l.Info("boot: using template engine from plugin: %v", v.PluginName())
+			log.Info("boot: using template engine from plugin: %v", name)
 			te = tt
 			break
 		}
 	}
 	if te == nil {
-		l.Fatal("boot: no default template engine found")
+		log.Fatal("boot: no default template engine found")
 	}
 
 	// Get the router from the plugins.
 	var mux core.IAppRouter
-	for _, v := range Plugins {
+	for _, name := range ps.Names() {
 		// Skip if the plugin isn't found.
-		ps, ok := storage.Site.PluginSettings[v.PluginName()]
-		if !ok {
+		plugin, err := ps.Plugin(name)
+		if err != nil {
 			continue
 		}
 
 		// Skip if the plugin isn't enabled.
-		if !ps.Enabled {
+		if !ps.Enabled(name) {
 			continue
 		}
 
 		// Get the router.
-		rm, err := v.Router(l, te)
+		rm, err := plugin.Router(log, te)
 		if err != nil {
-			l.Error("", err.Error())
+			log.Error("", err.Error())
 		} else if rm != nil {
 			// Only set the router once.
-			l.Info("boot: using router (mux) from plugin: %v", v.PluginName())
+			log.Info("boot: using router (mux) from plugin: %v", name)
 			mux = rm
 			break
 		}
 	}
 	if mux == nil {
-		l.Fatal("boot: no default router found")
+		log.Fatal("boot: no default router found")
 	}
 
 	// Create core app.
-	c := core.NewApp(l, plugs, te, mux, sess, storage)
+	c := core.NewApp(log, ps, te, mux, sess, storage)
 
 	// Load the plugin pages.
 	err = c.LoadAllPluginPages()

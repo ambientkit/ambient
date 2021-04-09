@@ -53,7 +53,7 @@ func (p *Plugin) Fields() []core.Field {
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
 	// Get the Disqus ID.
-	disqusID, err := p.Site.PluginFieldString(DisqusID)
+	disqusID, err := p.Site.PluginSettingString(DisqusID)
 	if err != nil || len(disqusID) == 0 {
 		// Otherwise don't set the assets.
 		return nil, nil, nil

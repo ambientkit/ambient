@@ -13,7 +13,7 @@ import (
 // login allows a user to login to the dashboard.
 func (p *Plugin) login(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	slug := p.Mux.Param(r, "slug")
-	loginURL, err := p.Site.PluginField(LoginURL)
+	loginURL, err := p.Site.PluginSetting(LoginURL)
 	if err != nil {
 		return p.Site.Error(err)
 	}
@@ -31,7 +31,7 @@ func (p *Plugin) login(w http.ResponseWriter, r *http.Request) (status int, err 
 
 func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	slug := p.Mux.Param(r, "slug")
-	loginURL, err := p.Site.PluginField(LoginURL)
+	loginURL, err := p.Site.PluginSetting(LoginURL)
 	if err != nil {
 		return p.Site.Error(err)
 	}

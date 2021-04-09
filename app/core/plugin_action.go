@@ -13,49 +13,11 @@ import (
 	"github.com/josephspurrier/ambient/app/lib/routerrecorder"
 )
 
-// RegisterPlugins into storage.
-func RegisterPlugins(arr []IPlugin, storage *Storage) (*PluginSystem, error) {
-	// Create the plugin system.
-	pluginsys := NewPluginSystem()
-
-	// Load the plugins.
-	// Loop through all of the plugins set in the boot.go file.
-	needSave := false
-	ps := storage.Site.PluginSettings
-	for _, v := range arr {
-		name := v.PluginName()
-
-		// If there is not an entry in the storage for the plugin, then
-		// add a new entry.
-		_, found := ps[name]
-		if !found {
-			ps[name] = PluginSettings{
-				Enabled: false,
-			}
-			needSave = true
-		}
-
-		// Add to the system.
-		pluginsys.Plugins[name] = v
-	}
-
-	if needSave {
-		// Save the plugins.
-		storage.Site.PluginSettings = ps
-		err := storage.Save()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return pluginsys, nil
-}
-
 // LoadAllPluginPages loads all of the pages from the plugins.
 func (c *App) LoadAllPluginPages() error {
 	// Set up the plugin routes.
 	shouldSave := false
-	for name := range c.Storage.Site.PluginSettings {
+	for name := range c.Storage.Site.PluginStorage {
 		bl := c.loadSinglePluginPages(name)
 		if bl {
 			shouldSave = true
@@ -87,7 +49,7 @@ func (c *App) LoadAllPluginMiddleware(h http.Handler, plugins []IPlugin) http.Ha
 // middlware from the plugins.
 func (c *App) LoadSinglePluginMiddleware(h http.Handler, plugin IPlugin) http.Handler {
 	// Skip if the plugin isn't found.
-	_, ok := c.Storage.Site.PluginSettings[plugin.PluginName()]
+	_, ok := c.Storage.Site.PluginStorage[plugin.PluginName()]
 	if !ok {
 		c.Log.Debug("plugin middleware: plugin not found: %v\n", plugin.PluginName())
 		return h
@@ -110,7 +72,7 @@ func (c *App) LoadSinglePluginMiddleware(h http.Handler, plugin IPlugin) http.Ha
 			middlewareIndex := i
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				// If the plugin is not found in the settings, then skip it.
-				safePluginSettings, ok := c.Storage.Site.PluginSettings[safePlugin.PluginName()]
+				safePluginSettings, ok := c.Storage.Site.PluginStorage[safePlugin.PluginName()]
 				if !ok {
 					c.Log.Debug("plugin middleware: plugin %v not found\n", safePlugin.PluginName())
 					next.ServeHTTP(w, r)
@@ -135,9 +97,9 @@ func (c *App) LoadSinglePluginMiddleware(h http.Handler, plugin IPlugin) http.Ha
 // DisableSinglePlugin will disable a plugin and return an error if one occured.
 func (c *App) DisableSinglePlugin(name string) error {
 	// Determine if the plugin that is in stored is found in the system.
-	v, found := c.Plugins.Plugins[name]
-	if !found {
-		return nil
+	v, err := c.Plugins.Plugin(name)
+	if err != nil {
+		return err
 	}
 
 	return v.Disable()
@@ -160,54 +122,53 @@ func (c *App) LoadSinglePlugin(name string) error {
 // InitializePluginStorage -
 func InitializePluginStorage(name string, storage *Storage, ps *PluginSystem) (v IPlugin, shouldSave bool, skip bool) {
 	// Return if the plug isn't found.
-	plugin, ok := storage.Site.PluginSettings[name]
-	if !ok {
+	_, err := ps.Plugin(name)
+	if err != nil {
 		return nil, false, true
 	}
 
-	// Determine if the plugin that is in stored is found in the system.
-	v, found := ps.Plugins[name]
+	// TODO: Determine if I need to add logic to detect if a plugin is found or not?
 
-	// If the found setting is different, then update it for saving.
-	if found != plugin.Found {
-		shouldSave = true
-		plugin.Found = found
-		storage.Site.PluginSettings[name] = plugin
-	}
+	// // If the found setting is different, then update it for saving.
+	// if found != plugin.Found {
+	// 	shouldSave = true
+	// 	plugin.Found = found
+	// 	storage.Site.PluginSettings[name] = plugin
+	// }
 
 	// If not found - which means there is data, but the plugin is no longer
 	// installed, then save that the plugin is no longer found.
-	if !found {
-		return nil, true, true
-	}
+	// if !found {
+	// 	return nil, true, true
+	// }
 
 	// If the grants are different, then save the new ones.
-	if !grantArrayEqual(v.Grants(), plugin.Grants) {
-		shouldSave = true
-		plugin.Grants = v.Grants()
-		storage.Site.PluginSettings[name] = plugin
-	}
+	// if !grantArrayEqual(v.Grants(), plugin.Grants) {
+	// 	shouldSave = true
+	// 	plugin.Grants = v.Grants()
+	// 	storage.Site.PluginSettings[name] = plugin
+	// }
 
 	// If the fields are different, then update it for saving.
 	// Note: This is highly coupled, need to update this if you add fields.
-	if !fieldArrayEqual(plugin, v.Fields()) {
-		shouldSave = true
-		plugin.Fields = FieldList(v.Fields()).ModelFields()
+	// if !fieldArrayEqual(plugin, v.Fields()) {
+	// 	shouldSave = true
+	// 	plugin.Fields = FieldList(v.Fields()).ModelFields()
 
-		// Preserve the order of the fields since maps are not ordered.
-		arr := make([]string, 0)
-		for _, plug := range v.Fields() {
-			arr = append(arr, plug.Name)
-		}
-		plugin.Order = arr
+	// 	// Preserve the order of the fields since maps are not ordered.
+	// 	arr := make([]string, 0)
+	// 	for _, plug := range v.Fields() {
+	// 		arr = append(arr, plug.Name)
+	// 	}
+	// 	plugin.Order = arr
 
-		storage.Site.PluginSettings[name] = plugin
-	}
+	// 	storage.Site.PluginSettings[name] = plugin
+	// }
 
 	// If the plugin is not found or not enabled, then skip over it.
-	if !found || !plugin.Enabled {
-		return v, shouldSave, true
-	}
+	// if !found || !plugin.Enabled {
+	// 	return v, shouldSave, true
+	// }
 
 	return v, shouldSave, false
 }
