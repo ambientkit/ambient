@@ -24,14 +24,15 @@ type SecureSite struct {
 }
 
 // NewSecureSite -
-func NewSecureSite(pluginName string, log IAppLogger, storage *Storage, session ISession, mux IAppRouter) *SecureSite {
+func NewSecureSite(pluginName string, log IAppLogger, storage *Storage, session ISession, mux IAppRouter, ps *PluginSystem) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
 
-		log:     log,
-		storage: storage,
-		sess:    session,
-		mux:     mux,
+		log:          log,
+		storage:      storage,
+		sess:         session,
+		mux:          mux,
+		pluginsystem: ps,
 	}
 }
 

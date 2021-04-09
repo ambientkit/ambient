@@ -52,10 +52,13 @@ func main() {
 	}
 
 	// Initialize the plugin system.
-	plugins = core.NewPluginSystem(log, app.Plugins, storage)
+	plugins, err = core.NewPluginSystem(log, app.Plugins, storage)
+	if err != nil {
+		log.Fatal("", err.Error())
+	}
 
 	// Set up the secure storage.
-	securestorage = core.NewSecureSite(appName, log, storage, nil, nil)
+	securestorage = core.NewSecureSite(appName, log, storage, nil, nil, plugins)
 
 	// Initialize plugin storage.
 	shouldSave := false
@@ -139,8 +142,15 @@ func removeGrantAll(name string) error {
 }
 
 func enableCLIGrant() bool {
+	// Initialize the plugin in storage.
+	err := plugins.InitializePlugin(appName)
+	if err != nil {
+		log.Error("could not initialize plugin %v: %v", appName, err.Error())
+		return true
+	}
+
 	// Add admin grant for the CLI app.
-	err := addGrantAll(appName)
+	err = addGrantAll(appName)
 	if err != nil {
 		log.Error("could not enable GrantAll on plugin %v: %v", appName, err.Error())
 		return true
@@ -157,6 +167,13 @@ func disableCLIGrant() {
 	if err != nil {
 		log.Error("could not remove GrantAll grant from plugin %v: %v", appName, err.Error())
 	}
+
+	// Remove the plugin from storage.
+	err = plugins.RemovePlugin(appName)
+	if err != nil {
+		log.Error("could not remove plugin %v: %v", appName, err.Error())
+	}
+
 }
 
 // List of core plugins.

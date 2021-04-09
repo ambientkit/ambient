@@ -86,7 +86,10 @@ func Boot(log *logger.Logger) (http.Handler, error) {
 	}
 
 	// Initialize the plugin system.
-	ps := core.NewPluginSystem(log, Plugins, storage)
+	ps, err := core.NewPluginSystem(log, Plugins, storage)
+	if err != nil {
+		return nil, err
+	}
 
 	// Get the session manager from the plugins.
 	var sess core.ISession
