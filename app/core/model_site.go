@@ -15,8 +15,6 @@ type Site struct {
 	Updated       time.Time             `json:"updated"` // Save time the data was saved (not only changed).
 	Posts         map[string]Post       `json:"posts"`   // List of posts.
 	PluginStorage map[string]PluginData `json:"plugins"` // List of plugins, whether they are found, enabled, and what fields they support.
-	//PluginFields   map[string]PluginFields   `json:"pluginfields"` // List of saved values for fields in plugins.
-	//PluginGrants   map[string]PluginGrants   `json:"plugingrants"` // List of approved grants for fields in plugins.
 }
 
 // Correct will fill in the missing defaults.
