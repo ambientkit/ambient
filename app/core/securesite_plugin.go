@@ -9,6 +9,15 @@ func (ss *SecureSite) Plugins() (map[string]PluginData, error) {
 	return ss.storage.Site.PluginStorage, nil
 }
 
+// PluginNames returns the list of plugin name.
+func (ss *SecureSite) PluginNames() ([]string, error) {
+	if !ss.Authorized(GrantSitePluginRead) {
+		return nil, ErrAccessDenied
+	}
+
+	return ss.pluginsystem.names, nil
+}
+
 // DeletePlugin deletes a plugin.
 func (ss *SecureSite) DeletePlugin(name string) error {
 	if !ss.Authorized(GrantSitePluginDelete) {

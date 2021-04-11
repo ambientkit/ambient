@@ -7,8 +7,7 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 )
 
-// Field -
-type Field struct {
+type pluginSetting struct {
 	Index       int
 	Name        string
 	Value       string
@@ -28,14 +27,14 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 		return p.Site.Error(err)
 	}
 
-	arr := make([]Field, 0)
+	arr := make([]pluginSetting, 0)
 	for index, setting := range settings {
 		curVal, err := p.Site.NeighborPluginSettingString(pluginName, setting.Name)
 		if p.Site.ErrorAccessDenied(err) {
 			return p.Site.Error(err)
 		}
 
-		arr = append(arr, Field{
+		arr = append(arr, pluginSetting{
 			Index:       index,
 			Name:        setting.Name,
 			Value:       curVal,

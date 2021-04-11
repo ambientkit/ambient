@@ -89,7 +89,7 @@ func (ss *SecureSite) NeighborPluginSettingString(pluginName string, fieldName s
 		return "", ErrAccessDenied
 	}
 
-	ival, err := ss.settingField(ss.pluginName, fieldName)
+	ival, err := ss.settingField(pluginName, fieldName)
 	if err != nil {
 		return "", err
 	}

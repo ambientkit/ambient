@@ -7,8 +7,7 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 )
 
-// Grant -
-type Grant struct {
+type pluginGrant struct {
 	Index   int
 	Name    core.Grant
 	Granted bool
@@ -32,9 +31,9 @@ func (p *Plugin) grantsEdit(w http.ResponseWriter, r *http.Request) (status int,
 		return p.Site.Error(err)
 	}
 
-	arr := make([]Grant, 0)
+	arr := make([]pluginGrant, 0)
 	for index, name := range grantList {
-		arr = append(arr, Grant{
+		arr = append(arr, pluginGrant{
 			Index:   index,
 			Name:    name,
 			Granted: grants[name],

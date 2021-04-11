@@ -2,14 +2,14 @@
 <form method="POST" class="post-form">
     <input type="hidden" name="token" value="{{.token}}">
         {{if .plugins }}
-            {{range $name, $p := .plugins}}
+            {{range $p := .plugins}}
             <p>
-                <h3>{{$name}}</h3>
-                <label for="id_{{$name}}">Enable:</label>
-                <input type="checkbox" name="{{$name}}" id="id_{{$name}}" {{if .Enabled}}checked{{end}}>
+                <h3>{{.Name}}</h3>
+                <label for="id_{{.Name}}">Enable:</label>
+                <input type="checkbox" name="{{.Name}}" id="id_{{.Name}}" {{if .Enabled}}checked{{end}}>
                 <span class="helptext">
-                <a href="/dashboard/plugins/{{$name}}/grants">Grants</a>
-                {{if .Settings}}<a href="/dashboard/plugins/{{$name}}/settings">Settings</a>{{end}}
+                {{if .Grants}}<a href="/dashboard/plugins/{{.Name}}/grants">Grants</a>{{end}}
+                {{if .Settings}}<a href="/dashboard/plugins/{{.Name}}/settings">Settings</a>{{end}}
                 </span>
             </p>
             {{end}}

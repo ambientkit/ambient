@@ -1,6 +1,18 @@
 package plugins
 
-import "net/http"
+import (
+	"net/http"
+	"sort"
+
+	"github.com/josephspurrier/ambient/app/core"
+)
+
+type pluginWithSettings struct {
+	Name string
+	core.PluginData
+	Settings []core.Field
+	Grants   []core.Grant
+}
 
 func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	vars := make(map[string]interface{})
@@ -11,7 +23,36 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	if err != nil {
 		return p.Site.Error(err)
 	}
-	vars["plugins"] = plugins
+
+	pluginNames, err := p.Site.PluginNames()
+	if err != nil {
+		return p.Site.Error(err)
+	}
+	sort.Strings(pluginNames)
+
+	arr := make([]pluginWithSettings, 0)
+	for _, pluginName := range pluginNames {
+		// Get the list of grants.
+		grantList, err := p.Site.NeighborPluginGrantList(pluginName)
+		if p.Site.ErrorAccessDenied(err) {
+			return p.Site.Error(err)
+		}
+
+		// Get the list of settings.
+		settingsList, err := p.Site.PluginNeighborSettingsList(pluginName)
+		if p.Site.ErrorAccessDenied(err) {
+			return p.Site.Error(err)
+		}
+
+		arr = append(arr, pluginWithSettings{
+			Name:       pluginName,
+			PluginData: plugins[pluginName],
+			Grants:     grantList,
+			Settings:   settingsList,
+		})
+	}
+
+	vars["plugins"] = arr
 
 	return p.Render.Page(w, r, assets, "template/plugins_edit", nil, vars)
 }
