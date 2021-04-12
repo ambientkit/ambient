@@ -97,9 +97,9 @@ func enableGrants(name string) {
 		log.Error("", err.Error())
 	}
 
-	for _, v := range p.Grants() {
-		log.Info("%v - add grant: %v", name, v)
-		err := securestorage.SetNeighborPluginGrant(name, v, true)
+	for _, request := range p.GrantRequests() {
+		log.Info("%v - add grant: %v", name, request.Grant)
+		err := securestorage.SetNeighborPluginGrant(name, request.Grant, true)
 		if err != nil {
 			log.Error("", err.Error())
 		}
