@@ -25,13 +25,6 @@ type IAppRouter interface {
 	SetServeHTTP(h func(w http.ResponseWriter, r *http.Request, status int, err error))
 }
 
-// IAppLogger represents a logger.
-type IAppLogger interface {
-	ILogger
-
-	SetLevel(level uint32)
-}
-
 // IRender represents a template renderer.
 type IRender interface {
 	Page(w http.ResponseWriter, r *http.Request, assets embed.FS, templateName string, fm template.FuncMap, vars map[string]interface{}) (status int, err error)
