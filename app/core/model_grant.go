@@ -1,5 +1,8 @@
 package core
 
+// PluginGrants represents an unordered map of grants.
+type PluginGrants map[Grant]bool
+
 // Grant is a type of permission.
 type Grant string
 

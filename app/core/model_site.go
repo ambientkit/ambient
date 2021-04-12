@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Site -
+// Site represents the site information that is in storage.
 type Site struct {
 	Title         string                `json:"title"`   // Title of the site.
 	Content       string                `json:"content"` // Home or default content.
@@ -15,6 +15,13 @@ type Site struct {
 	Updated       time.Time             `json:"updated"` // Save time the data was saved (not only changed).
 	Posts         map[string]Post       `json:"posts"`   // List of posts.
 	PluginStorage map[string]PluginData `json:"plugins"` // List of plugins, whether they are found, enabled, and what fields they support.
+}
+
+// PluginData represents the plugin storage information.
+type PluginData struct {
+	Enabled  bool           `json:"enabled"`
+	Grants   PluginGrants   `json:"grants"`
+	Settings PluginSettings `json:"settings"`
 }
 
 // Correct will fill in the missing defaults.
