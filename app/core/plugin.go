@@ -10,23 +10,25 @@ import (
 type IPlugin interface {
 	// PluginName should be globally unique. Only lowercase letters, numbers,
 	// and hypens are permitted. Must start with with a letter.
-	PluginName() string
+	PluginName() string // required, read frequently
 	// PluginVersion must follow https://semver.org/.
-	PluginVersion() string
-	Routes()
-	Enable(*Toolkit) error
-	Disable() error
-	Assets() ([]Asset, *embed.FS)
-	FuncMap() func(r *http.Request) template.FuncMap
-	Settings() []Setting
-	Middleware() []func(next http.Handler) http.Handler
-	Grants() []Grant
+	PluginVersion() string // required, read frequently
 
 	// These are called before the plugin is enabled so they only have access to the logger.
-	Storage(logger ILogger) (DataStorer, SessionStorer, error)
-	SessionManager(logger ILogger, ss SessionStorer) (ISession, error)
-	TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error)
-	Router(logger ILogger, te IRender) (IAppRouter, error)
+	Storage(logger ILogger) (DataStorer, SessionStorer, error)                    // optional
+	SessionManager(logger ILogger, sessionStorer SessionStorer) (ISession, error) // optional
+	TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error)       // optional
+	Router(logger ILogger, render IRender) (IAppRouter, error)                    // optional
+
+	// These should all have access to the toolkit.
+	Enable(toolkit *Toolkit) error                      // optional, called during enable
+	Disable() error                                     // optional, called during disable
+	Routes()                                            // optional, called during enable
+	Assets() ([]Asset, *embed.FS)                       // optional, called during enable
+	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
+	Settings() []Setting                                // optional, called during special operations
+	Grants() []Grant                                    // optional, called during every plugin operation against data provider
+	FuncMap() func(r *http.Request) template.FuncMap    // optional, called on every render
 }
 
 // IPluginList is a list of IPlugins.

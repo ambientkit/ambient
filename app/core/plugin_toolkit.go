@@ -8,11 +8,11 @@ import (
 
 // Toolkit provides utilities to plugins.
 type Toolkit struct {
-	Render   IRender
+	Log      ILogger
 	Mux      IRouter
+	Render   IRender
 	Security ISession
 	Site     *SecureSite
-	Log      ILogger
 }
 
 // IAppRouter represents a router.
