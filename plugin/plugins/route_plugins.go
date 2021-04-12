@@ -10,7 +10,7 @@ import (
 type pluginWithSettings struct {
 	Name string
 	core.PluginData
-	Settings []core.Field
+	Settings []core.Setting
 	Grants   []core.Grant
 }
 

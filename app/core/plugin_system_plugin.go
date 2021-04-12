@@ -14,7 +14,7 @@ type IPlugin interface {
 	Enable(*Toolkit) error
 	Disable() error
 	Assets() ([]Asset, *embed.FS, func(r *http.Request) template.FuncMap)
-	Fields() []Field
+	Fields() []Setting
 	Middleware() []func(next http.Handler) http.Handler
 
 	// These are called before the plugin is enabled so they only have access to the logger.

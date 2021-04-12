@@ -39,8 +39,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 }
 
 // Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []core.Field {
-	return []core.Field{
+func (p *Plugin) Fields() []core.Setting {
+	return []core.Setting{
 		{
 			Name:    Viewport,
 			Default: "width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0",

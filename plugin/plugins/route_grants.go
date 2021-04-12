@@ -11,7 +11,7 @@ type pluginGrant struct {
 	Index   int
 	Name    core.Grant
 	Granted bool
-	//Description core.FieldDescription
+	//Description core.SettingDescription
 }
 
 func (p *Plugin) grantsEdit(w http.ResponseWriter, r *http.Request) (status int, err error) {

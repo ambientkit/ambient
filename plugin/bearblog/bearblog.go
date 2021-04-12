@@ -73,8 +73,8 @@ const (
 )
 
 // Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []core.Field {
-	return []core.Field{
+func (p *Plugin) Fields() []core.Setting {
+	return []core.Setting{
 		{
 			Name:    LoginURL,
 			Default: "admin",

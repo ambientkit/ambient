@@ -11,8 +11,8 @@ type pluginSetting struct {
 	Index       int
 	Name        string
 	Value       string
-	FieldType   core.FieldType
-	Description core.FieldDescription
+	FieldType   core.SettingType
+	Description core.SettingDescription
 }
 
 func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status int, err error) {

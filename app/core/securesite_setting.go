@@ -3,7 +3,7 @@ package core
 import "fmt"
 
 // PluginNeighborSettingsList gets the grants requests for a neighbor plugin.
-func (ss *SecureSite) PluginNeighborSettingsList(pluginName string) ([]Field, error) {
+func (ss *SecureSite) PluginNeighborSettingsList(pluginName string) ([]Setting, error) {
 	if !ss.Authorized(GrantPluginNeighborfieldRead) {
 		return nil, ErrAccessDenied
 	}

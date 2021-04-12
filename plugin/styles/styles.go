@@ -41,11 +41,11 @@ const (
 )
 
 // Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []core.Field {
-	return []core.Field{
+func (p *Plugin) Fields() []core.Setting {
+	return []core.Setting{
 		{
 			Name: Favicon,
-			Description: core.FieldDescription{
+			Description: core.SettingDescription{
 				Text: "Emoji cheatsheet",
 				URL:  "https://emojicheatsheet.com/",
 			},
@@ -53,7 +53,7 @@ func (p *Plugin) Fields() []core.Field {
 		{
 			Name: Styles,
 			Type: core.Textarea,
-			Description: core.FieldDescription{
+			Description: core.SettingDescription{
 				Text: "No-class css themes. You can also paste a link like this: @import 'https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css'",
 				URL:  "https://www.cssbed.com/",
 			},

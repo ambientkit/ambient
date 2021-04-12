@@ -39,17 +39,17 @@ const (
 )
 
 // Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []core.Field {
-	return []core.Field{
+func (p *Plugin) Fields() []core.Setting {
+	return []core.Setting{
 		{
 			Name: SiteScheme,
-			Description: core.FieldDescription{
+			Description: core.SettingDescription{
 				Text: "http or https",
 			},
 		},
 		{
 			Name: SiteURL,
-			Description: core.FieldDescription{
+			Description: core.SettingDescription{
 				Text: "example: domain.com",
 			},
 		},

@@ -41,12 +41,12 @@ const (
 )
 
 // Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []core.Field {
-	return []core.Field{
+func (p *Plugin) Fields() []core.Setting {
+	return []core.Setting{
 		{
 			Name:    FeedURL,
 			Default: "/rss.xml",
-			Description: core.FieldDescription{
+			Description: core.SettingDescription{
 				Text: "Must start with a slash like this: /rss.xml",
 			},
 		},

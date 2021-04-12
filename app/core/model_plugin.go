@@ -1,15 +1,15 @@
 package core
 
-// FieldType is a type of field.
-type FieldType string
+// SettingType is an HTML type of setting.
+type SettingType string
 
 const (
 	// Input is a standard text field.
-	Input FieldType = "input"
+	Input SettingType = "input"
 	// Textarea is a textarea field.
-	Textarea FieldType = "textarea"
+	Textarea SettingType = "textarea"
 	// Checkbox is a checkbox field.
-	Checkbox FieldType = "checkbox"
+	Checkbox SettingType = "checkbox"
 )
 
 // PluginData represents the plugin storage information.
@@ -19,38 +19,25 @@ type PluginData struct {
 	Settings PluginSettings `json:"settings"`
 }
 
-// Field is a plugin settable field.
-type Field struct {
-	Name        string           `json:"name"`
-	Type        FieldType        `json:"type"`
-	Description FieldDescription `json:"description"`
-	Default     interface{}      `json:"default"`
+// PluginGrants represents an unordered map of grants.
+type PluginGrants map[Grant]bool
+
+// PluginSettings represents an unordered map of settings.
+type PluginSettings map[string]interface{}
+
+// Setting is a plugin settable field.
+type Setting struct {
+	Name        string             `json:"name"`
+	Type        SettingType        `json:"type"`
+	Description SettingDescription `json:"description"`
+	Default     interface{}        `json:"default"`
 }
 
-// FieldList is an array of fields.
-type FieldList []Field
-
-// ModelFields returns array of Field.
-func (fl FieldList) ModelFields() map[string]Field {
-	arr := make(map[string]Field)
-	for _, v := range fl {
-		arr[v.Name] = v
-	}
-
-	return arr
-}
-
-// FieldDescription is a type of description.
-type FieldDescription struct {
+// SettingDescription is a type of description.
+type SettingDescription struct {
 	Text string `json:"name"`
 	URL  string `json:"url"`
 }
-
-// PluginSettings -
-type PluginSettings map[string]interface{}
-
-// PluginGrants -
-type PluginGrants map[Grant]bool
 
 // PluginRoutes -
 type PluginRoutes struct {
