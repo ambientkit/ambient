@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"github.com/josephspurrier/ambient/app/lib/cachecontrol"
+	"github.com/josephspurrier/ambient/app/lib/pluginlogger"
+	"github.com/josephspurrier/ambient/app/lib/plugintemplateengine"
 	"github.com/josephspurrier/ambient/app/lib/routerrecorder"
 )
 
@@ -113,9 +115,9 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 
 	toolkit := &Toolkit{
 		Mux:    recorder,
-		Render: ss.render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
+		Render: plugintemplateengine.NewRenderer(ss.render),
 		Site:   NewSecureSite(name, ss.log, ss.storage, ss.pluginsystem, ss.sess, ss.mux, ss.render),
-		Log:    ss.log,
+		Log:    pluginlogger.NewPluginLogger(ss.log),
 	}
 
 	// Enable the plugin and pass in the toolkit.

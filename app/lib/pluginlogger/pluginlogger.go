@@ -1,6 +1,6 @@
-// Package logger provides a way to output logging messages.
+// Package pluginlogger provides a way to output logging messages.
 // Reference: https://dzone.com/articles/logging-levels-what-they-are-and-how-they-help-you
-package logger
+package pluginlogger
 
 // Logger represents a plugin logger.
 type Logger struct {
