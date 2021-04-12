@@ -41,7 +41,7 @@ func (s Site) SiteURL() string {
 	return fmt.Sprintf("%v://%v", s.Scheme, s.URL)
 }
 
-// PublishedPosts -
+// PublishedPosts returns published posts (no pages).
 func (s Site) PublishedPosts() []Post {
 	arr := make(PostList, 0)
 	for _, v := range s.Posts {
@@ -55,7 +55,7 @@ func (s Site) PublishedPosts() []Post {
 	return arr
 }
 
-// PublishedPages -
+// PublishedPages returns published posts and pages.
 func (s Site) PublishedPages() []Post {
 	arr := make(PostList, 0)
 	for _, v := range s.Posts {
@@ -69,7 +69,7 @@ func (s Site) PublishedPages() []Post {
 	return arr
 }
 
-// PostsAndPages -
+// PostsAndPages returns list of posts and pages with IDs.
 func (s Site) PostsAndPages(onlyPublished bool) PostWithIDList {
 	arr := make(PostWithIDList, 0)
 	for k, v := range s.Posts {
@@ -86,7 +86,7 @@ func (s Site) PostsAndPages(onlyPublished bool) PostWithIDList {
 	return arr
 }
 
-// Tags -
+// Tags returns a list of tags.
 func (s Site) Tags(onlyPublished bool) TagList {
 	// Get unique values.
 	m := make(map[string]Tag)
@@ -112,9 +112,9 @@ func (s Site) Tags(onlyPublished bool) TagList {
 	return arr
 }
 
-// PostBySlug -
+// PostBySlug returns a post by slug/URL.
 func (s Site) PostBySlug(slug string) PostWithID {
-	// FIXME: This needs to be optimized.
+	// TODO: This needs to be optimized.
 	var p PostWithID
 	for k, v := range s.Posts {
 		if v.URL == slug {

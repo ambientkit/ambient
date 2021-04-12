@@ -90,9 +90,9 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 		plaintext := plaintextBlurb(v.Post.Content)
 		m.Items = append(m.Items, Item{
 			Title:       v.Title,
-			Link:        siteURL + "/" + v.FullURL(),
+			Link:        siteURL + "/" + v.URL,
 			PubDate:     v.Timestamp.Format(time.RFC1123Z),
-			GUID:        siteURL + "/" + v.FullURL(),
+			GUID:        siteURL + "/" + v.URL,
 			Description: plaintext,
 		})
 	}

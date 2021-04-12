@@ -6,63 +6,63 @@ import (
 	"net/http"
 )
 
-// PluginBase represents metadata for a plugin that works with the Ambient system.
+// PluginBase represents a base plugin that works with Ambient.
 type PluginBase struct{}
 
-// Enable -
+// Enable is to enable the plugin. Toolkit should be saved.
 func (p *PluginBase) Enable(*Toolkit) error {
 	return nil
 }
 
-// Disable -
+// Disable is to disable the plugin.
 func (p *PluginBase) Disable() error {
 	return nil
 }
 
-// Routes -
+// Routes sets routes for the plugin.
 func (p *PluginBase) Routes() {}
 
-// Assets -
+// Assets returns a list of assets and an embedded filesystem.
 func (p *PluginBase) Assets() ([]Asset, *embed.FS) {
 	return nil, nil
 }
 
-// FuncMap -
+// FuncMap returns a callable function when passed in a request.
 func (p *PluginBase) FuncMap() func(r *http.Request) template.FuncMap {
 	return nil
 }
 
-// Settings -
+// Settings returns a list of user settable fields.
 func (p *PluginBase) Settings() []Setting {
 	return nil
 }
 
-// Middleware -
+// Middleware returns handler wrapped in middleware.
 func (p *PluginBase) Middleware() []func(next http.Handler) http.Handler {
 	return nil
 }
 
-// SessionManager -
+// SessionManager returns a session manager.
 func (p *PluginBase) SessionManager(logger ILogger, ss SessionStorer) (ISession, error) {
 	return nil, nil
 }
 
-// Router -
+// Router returns a request router.
 func (p *PluginBase) Router(logger ILogger, te IRender) (IAppRouter, error) {
 	return nil, nil
 }
 
-// Storage -
+// Storage returns data and session storage.
 func (p *PluginBase) Storage(logger ILogger) (DataStorer, SessionStorer, error) {
 	return nil, nil, nil
 }
 
-// TemplateEngine -
+// TemplateEngine returns a template engine.
 func (p *PluginBase) TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error) {
 	return nil, nil
 }
 
-// Grants -
+// Grants returns a list of grants requested by the plugin.
 func (p *PluginBase) Grants() []Grant {
 	return nil
 }

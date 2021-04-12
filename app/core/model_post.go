@@ -18,11 +18,6 @@ type Post struct {
 	Tags      TagList   `json:"tags"`
 }
 
-// FullURL -
-func (p *Post) FullURL() string {
-	return p.URL
-}
-
 // PostWithID -
 type PostWithID struct {
 	Post

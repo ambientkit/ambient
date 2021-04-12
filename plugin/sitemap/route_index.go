@@ -51,7 +51,7 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 	}
 	for _, v := range postsAndPages {
 		m.URL = append(m.URL, URL{
-			Location:     siteURL + "/" + v.FullURL(),
+			Location:     siteURL + "/" + v.URL,
 			LastModified: v.Timestamp.Format("2006-01-02"),
 		})
 	}

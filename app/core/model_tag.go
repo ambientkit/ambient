@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// TagList -
+// TagList represents a list of sortable tags.
 type TagList []Tag
 
 func (t TagList) Len() int {
@@ -18,13 +18,13 @@ func (t TagList) Less(i, j int) bool {
 	return t[i].Name < t[j].Name
 }
 
-// Tag -
+// Tag represents a tag on a post or page.
 type Tag struct {
 	Name      string    `json:"name"`
 	Timestamp time.Time `json:"timestamp"`
 }
 
-// String -
+// String returns a comma separated list of tags.
 func (t TagList) String() string {
 	arr := make([]string, 0)
 	for _, v := range t {
@@ -34,7 +34,7 @@ func (t TagList) String() string {
 	return strings.Join(arr, ",")
 }
 
-// Split -
+// Split returns a list of tags from a comma separated list.
 func (t TagList) Split(s string) TagList {
 	trimmed := strings.TrimSpace(s)
 

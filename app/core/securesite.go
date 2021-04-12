@@ -31,7 +31,7 @@ type SecureSite struct {
 	render       IRender
 }
 
-// NewSecureSite -
+// NewSecureSite returns a new secure site.
 func NewSecureSite(pluginName string, log ILogger, storage *Storage, ps *PluginSystem, session ISession, mux IAppRouter, render IRender) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
