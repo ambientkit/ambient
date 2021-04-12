@@ -33,12 +33,6 @@ func (p *Plugin) PluginVersion() string {
 	return "1.0.0"
 }
 
-// Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
-	p.Toolkit = toolkit
-	return nil
-}
-
 // Router returns a router.
 func (p *Plugin) Router(logger core.ILogger, te core.IRender) (core.IAppRouter, error) {
 	// Set up the default router.
@@ -48,6 +42,12 @@ func (p *Plugin) Router(logger core.ILogger, te core.IRender) (core.IAppRouter, 
 	setupRouter(logger, mux, te)
 
 	return mux, nil
+}
+
+// Enable accepts the toolkit.
+func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+	p.Toolkit = toolkit
+	return nil
 }
 
 // setupRouter returns a router with the NotFound handler and the default

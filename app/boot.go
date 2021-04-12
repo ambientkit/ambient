@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/logger"
 	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/awayrouter"
 	"github.com/josephspurrier/ambient/plugin/bearblog"
@@ -20,6 +19,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/hello"
 	"github.com/josephspurrier/ambient/plugin/htmltemplate"
 	"github.com/josephspurrier/ambient/plugin/logrequest"
+	"github.com/josephspurrier/ambient/plugin/logruslogger"
 	"github.com/josephspurrier/ambient/plugin/navigation"
 	"github.com/josephspurrier/ambient/plugin/notrailingslash"
 	"github.com/josephspurrier/ambient/plugin/plugins"
@@ -39,7 +39,8 @@ import (
 // Plugins defines the plugins - order does matter.
 var Plugins = core.IPluginList{
 	// Core plugins required to use the system.
-	gcpbucketstorage.New(), // GCP and local Storage - storage plugin must always come first.
+	logruslogger.New(),     // Logger must be the first plugin.
+	gcpbucketstorage.New(), // GCP and local Storage must be the second plugin.
 	htmltemplate.New(),     // HTML template engine.
 	awayrouter.New(),       // Request router.
 
@@ -73,22 +74,28 @@ var Plugins = core.IPluginList{
 }
 
 // Boot returns a router with the application ready to be started.
-func Boot(log *logger.Logger) (http.Handler, error) {
+func Boot() (core.IAppLogger, http.Handler, error) {
 	// Ensure there is at least the storage plugin.
 	if len(Plugins) == 0 {
-		return nil, fmt.Errorf("boot: no plugins found")
+		return nil, nil, fmt.Errorf("boot: no plugins found")
+	}
+
+	// Set up the logger.
+	log, err := Logger("ambient", "1.0", Plugins[0])
+	if err != nil {
+		return nil, nil, err
 	}
 
 	// Set up the storage.
-	storage, ss, err := Storage(log, Plugins[0])
+	storage, ss, err := Storage(log, Plugins[1])
 	if err != nil {
-		return nil, err
+		return log, nil, err
 	}
 
 	// Initialize the plugin system.
 	ps, err := core.NewPluginSystem(log, Plugins, storage)
 	if err != nil {
-		return nil, err
+		return log, nil, err
 	}
 
 	// Get the session manager from the plugins.
@@ -190,11 +197,11 @@ func Boot(log *logger.Logger) (http.Handler, error) {
 	// Load the plugin pages.
 	err = securesite.LoadAllPluginPages()
 	if err != nil {
-		return nil, err
+		return log, nil, err
 	}
 
 	// Enable the middleware from the plugins.
 	h := securesite.LoadAllPluginMiddleware(mux)
 
-	return h, nil
+	return log, h, nil
 }

@@ -66,3 +66,8 @@ func (p *PluginBase) TemplateEngine(logger ILogger, injector AssetInjector) (IRe
 func (p *PluginBase) Grants() []Grant {
 	return nil
 }
+
+// Logger -
+func (p *PluginBase) Logger(appName string, appVersion string) (IAppLogger, error) {
+	return nil, nil
+}

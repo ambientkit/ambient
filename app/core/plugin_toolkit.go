@@ -37,6 +37,11 @@ type IAppRouter interface {
 type IRouter interface {
 	Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	Patch(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	Put(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	Delete(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	Head(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	Options(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Error(status int, w http.ResponseWriter, r *http.Request)
 	Param(r *http.Request, name string) string
 }
@@ -51,11 +56,18 @@ type IAppSession interface {
 	CSRF(r *http.Request) bool
 }
 
-// ILogger representer the log service for the application.
+// IAppLogger represents the log service for the application.
+type IAppLogger interface {
+	ILogger
+
+	// Fatal is reserved for the application level only.
+	Fatal(format string, v ...interface{})
+}
+
+// ILogger represents the log service for the plugins.
 type ILogger interface {
 	Debug(format string, v ...interface{})
 	Info(format string, v ...interface{})
 	Warn(format string, v ...interface{})
 	Error(format string, v ...interface{})
-	Fatal(format string, v ...interface{})
 }

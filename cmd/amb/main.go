@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
+	syslog "log"
 	"os"
 
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient/app"
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/logger"
-	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -19,7 +18,7 @@ var (
 			os.Exit(0)
 		},
 	}
-	log           *logger.Logger
+	log           core.IAppLogger
 	pluginsystem  *core.PluginSystem
 	securestorage *core.SecureSite
 )
@@ -35,18 +34,20 @@ func init() {
 }
 
 func main() {
-	// Create the logger.
-	log = logger.NewLogger(appName, "1.0")
-	//log.SetLevel(uint32(logrus.DebugLevel))
-	log.SetLevel(uint32(logrus.InfoLevel))
-
 	// Ensure there is at least the storage plugin.
-	if len(app.Plugins) == 0 {
-		log.Fatal("", "boot: no plugins found")
+	if len(app.Plugins) < 2 {
+		syslog.Fatalln("boot: no log and storage plugins found")
+	}
+
+	// Set up the logger.
+	var err error
+	log, err = app.Logger(appName, "1.0", app.Plugins[0])
+	if err != nil {
+		syslog.Fatalln(err.Error())
 	}
 
 	// Get the plugins and initialize storage.
-	storage, _, err := app.Storage(log, app.Plugins[0])
+	storage, _, err := app.Storage(log, app.Plugins[1])
 	if err != nil {
 		log.Fatal("", err.Error())
 	}

@@ -1,10 +1,10 @@
-// Package logger provides a way to output logging messages.
-// Reference: https://dzone.com/articles/logging-levels-what-they-are-and-how-they-help-you
-package logger
+package logruslogger
 
 import (
 	"github.com/sirupsen/logrus"
 )
+
+// Reference: https://dzone.com/articles/logging-levels-what-they-are-and-how-they-help-you
 
 // Logger represents a logger.
 type Logger struct {

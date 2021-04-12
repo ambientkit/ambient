@@ -24,12 +24,12 @@ type PluginInjector struct {
 	storage        *Storage
 	sess           IAppSession
 	pluginsystem   *PluginSystem
-	log            ILogger
+	log            IAppLogger
 	pluginSettings IPluginList
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger ILogger, storage *Storage, sess IAppSession, plugins *PluginSystem, pluginSettings IPluginList) *PluginInjector {
+func NewPlugininjector(logger IAppLogger, storage *Storage, sess IAppSession, plugins *PluginSystem, pluginSettings IPluginList) *PluginInjector {
 	return &PluginInjector{
 		storage:        storage,
 		sess:           sess,

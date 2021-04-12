@@ -13,7 +13,7 @@ var (
 
 // PluginSystem represents loaded plugins.
 type PluginSystem struct {
-	log     ILogger
+	log     IAppLogger
 	storage *Storage
 
 	names   []string
@@ -22,7 +22,7 @@ type PluginSystem struct {
 }
 
 // NewPluginSystem returns a plugin system.
-func NewPluginSystem(log ILogger, arr []IPlugin, storage *Storage) (*PluginSystem, error) {
+func NewPluginSystem(log IAppLogger, arr []IPlugin, storage *Storage) (*PluginSystem, error) {
 	// Get a list of plugin names to maintain order.
 	names := make([]string, 0)
 	plugins := make(map[string]IPlugin)

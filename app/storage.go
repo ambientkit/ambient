@@ -4,11 +4,10 @@ import (
 	"fmt"
 
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/josephspurrier/ambient/app/lib/logger"
 )
 
 // Storage returns the storage.
-func Storage(log *logger.Logger, plugin core.IPlugin) (*core.Storage, core.SessionStorer, error) {
+func Storage(log core.IAppLogger, plugin core.IPlugin) (*core.Storage, core.SessionStorer, error) {
 	// Define the storage managers.
 	var ds core.DataStorer
 	var ss core.SessionStorer
