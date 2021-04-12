@@ -18,7 +18,7 @@ func main() {
 	// Set up the application services.
 	logger, mux, err := app.Boot()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatalln(err.Error())
 	}
 
 	// Start the web server.

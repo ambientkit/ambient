@@ -11,8 +11,9 @@ import (
 )
 
 var (
-	appName = "amb"
-	quit    = prompt.KeyBind{
+	appName    = "amb"
+	appVersion = "1.0"
+	quit       = prompt.KeyBind{
 		Key: prompt.ControlC,
 		Fn: func(b *prompt.Buffer) {
 			os.Exit(0)
@@ -34,14 +35,14 @@ func init() {
 }
 
 func main() {
-	// Ensure there is at least the storage plugin.
+	// Ensure there is at least the logger and storage plugins.
 	if len(app.Plugins) < 2 {
 		syslog.Fatalln("boot: no log and storage plugins found")
 	}
 
 	// Set up the logger.
 	var err error
-	log, err = app.Logger(appName, "1.0", app.Plugins[0])
+	log, err = app.Logger(appName, appVersion, app.Plugins[0])
 	if err != nil {
 		syslog.Fatalln(err.Error())
 	}
