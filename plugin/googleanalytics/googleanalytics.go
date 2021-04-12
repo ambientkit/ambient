@@ -41,6 +41,13 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
+// Grants returns a list of grants requested by the plugin.
+func (p *Plugin) Grants() []core.Grant {
+	return []core.Grant{
+		core.GrantPluginSettingRead,
+	}
+}
+
 const (
 	// TrackingID allows the user to set the Google Analytics property ID.
 	TrackingID = "Tracking ID"

@@ -37,6 +37,13 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
+// Grants returns a list of grants requested by the plugin.
+func (p *Plugin) Grants() []core.Grant {
+	return []core.Grant{
+		core.GrantUserAuthenticatedRead,
+	}
+}
+
 // Middleware returns router middleware.
 func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 	return []func(next http.Handler) http.Handler{

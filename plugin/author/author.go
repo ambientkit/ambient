@@ -46,7 +46,6 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 func (p *Plugin) Grants() []core.Grant {
 	return []core.Grant{
 		core.GrantPluginSettingRead,
-		core.GrantPluginSettingWrite,
 	}
 }
 

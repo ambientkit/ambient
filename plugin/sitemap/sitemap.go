@@ -35,6 +35,16 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
+// Grants returns a list of grants requested by the plugin.
+func (p *Plugin) Grants() []core.Grant {
+	return []core.Grant{
+		core.GrantSiteURLRead,
+		core.GrantSiteSchemeRead,
+		core.GrantSiteUpdatedRead,
+		core.GrantSitePostRead,
+	}
+}
+
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
 	p.Mux.Get("/sitemap.xml", p.index)
