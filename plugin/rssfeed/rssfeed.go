@@ -37,15 +37,15 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
-// Grants returns a list of grants requested by the plugin.
-func (p *Plugin) Grants() []core.Grant {
-	return []core.Grant{
-		core.GrantSiteTitleRead,
-		core.GrantSiteSchemeRead,
-		core.GrantSiteURLRead,
-		core.GrantSitePostRead,
-		core.GrantPluginSettingRead,
-		core.GrantPluginSettingWrite,
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []core.GrantRequest {
+	return []core.GrantRequest{
+		{Grant: core.GrantSiteTitleRead, Description: "Access to read the site title."},
+		{Grant: core.GrantSiteSchemeRead, Description: "Access to read the site scheme."},
+		{Grant: core.GrantSiteURLRead, Description: "Access to read the site URL."},
+		{Grant: core.GrantSitePostRead, Description: "Access to read all the site posts."},
+		{Grant: core.GrantPluginSettingRead, Description: "Access to read the plugin settings."},
+		{Grant: core.GrantPluginSettingWrite, Description: "Access to write to the plugin settings."},
 	}
 }
 

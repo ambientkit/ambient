@@ -147,13 +147,13 @@ func (p *PluginSystem) SetEnabled(pluginName string, enabled bool) error {
 }
 
 // GrantRequests returns a list of grant requests.
-func (p *PluginSystem) GrantRequests(pluginName string, grant Grant) ([]Grant, error) {
+func (p *PluginSystem) GrantRequests(pluginName string, grant Grant) ([]GrantRequest, error) {
 	plugin, err := p.Plugin(pluginName)
 	if err != nil {
 		return nil, err
 	}
 
-	return plugin.Grants(), nil
+	return plugin.GrantRequests(), nil
 }
 
 // Granted returns whether a plugin is granted for a plugin.

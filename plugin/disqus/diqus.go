@@ -42,12 +42,12 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
-// Grants returns a list of grants requested by the plugin.
-func (p *Plugin) Grants() []core.Grant {
-	return []core.Grant{
-		core.GrantPluginSettingRead,
-		core.GrantSiteURLRead,
-		core.GrantSiteSchemeRead,
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []core.GrantRequest {
+	return []core.GrantRequest{
+		{Grant: core.GrantPluginSettingRead, Description: "Access to the Disqus ID."},
+		{Grant: core.GrantSiteURLRead, Description: "Access to read the site URL."},
+		{Grant: core.GrantSiteSchemeRead, Description: "Access to read the site scheme."},
 	}
 }
 

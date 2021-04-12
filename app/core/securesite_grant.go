@@ -1,7 +1,7 @@
 package core
 
 // NeighborPluginGrantList gets the grants requests for a neighbor plugin.
-func (ss *SecureSite) NeighborPluginGrantList(pluginName string) ([]Grant, error) {
+func (ss *SecureSite) NeighborPluginGrantList(pluginName string) ([]GrantRequest, error) {
 	if !ss.Authorized(GrantPluginNeighborGrantRead) {
 		return nil, ErrAccessDenied
 	}
@@ -11,7 +11,7 @@ func (ss *SecureSite) NeighborPluginGrantList(pluginName string) ([]Grant, error
 		return nil, ErrNotFound
 	}
 
-	return plugin.Grants(), nil
+	return plugin.GrantRequests(), nil
 }
 
 // NeighborPluginGrants gets the map of granted permissions.
@@ -26,8 +26,8 @@ func (ss *SecureSite) NeighborPluginGrants(pluginName string) (map[Grant]bool, e
 	}
 
 	grants := make(map[Grant]bool)
-	for _, grant := range plugin.Grants() {
-		grants[grant] = ss.pluginsystem.Granted(pluginName, grant)
+	for _, grant := range plugin.GrantRequests() {
+		grants[grant.Grant] = ss.pluginsystem.Granted(pluginName, grant.Grant)
 	}
 
 	return grants, nil
@@ -43,7 +43,7 @@ func (ss *SecureSite) SetNeighborPluginGrant(pluginName string, grantName Grant,
 	if granted {
 		// Get the list of grants and ensure the grant is requested by the
 		// plugin or else deny it.
-		var grants []Grant
+		var grants []GrantRequest
 		grants, err = ss.NeighborPluginGrantList(pluginName)
 		if err != nil {
 			return err
@@ -51,7 +51,7 @@ func (ss *SecureSite) SetNeighborPluginGrant(pluginName string, grantName Grant,
 
 		found := false
 		for _, grant := range grants {
-			if grant == grantName {
+			if grant.Grant == grantName {
 				found = true
 				break
 			}

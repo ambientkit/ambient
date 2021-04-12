@@ -44,22 +44,22 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
-// Grants returns a list of grants requested by the plugin.
-func (p *Plugin) Grants() []core.Grant {
-	return []core.Grant{
-		core.GrantUserAuthenticatedRead,
-		core.GrantPluginSettingRead,
-		core.GrantPluginSettingWrite,
-		core.GrantSitePostRead,
-		core.GrantSitePostWrite,
-		core.GrantSiteSchemeRead,
-		core.GrantSiteSchemeWrite,
-		core.GrantSiteURLRead,
-		core.GrantSiteURLWrite,
-		core.GrantSiteTitleRead,
-		core.GrantSiteTitleWrite,
-		core.GrantSiteContentRead,
-		core.GrantSiteContentWrite,
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []core.GrantRequest {
+	return []core.GrantRequest{
+		{Grant: core.GrantUserAuthenticatedRead, Description: "Show different menus to authenticated vs unauthenticated users."},
+		{Grant: core.GrantPluginSettingRead, Description: "Read own plugin settings."},
+		{Grant: core.GrantPluginSettingWrite, Description: "Write own plugin settings."},
+		{Grant: core.GrantSitePostRead, Description: "Read all site posts."},
+		{Grant: core.GrantSitePostWrite, Description: "Create and edit site posts."},
+		{Grant: core.GrantSiteSchemeRead, Description: "Read site scheme."},
+		{Grant: core.GrantSiteSchemeWrite, Description: "Update the site scheme."},
+		{Grant: core.GrantSiteURLRead, Description: "Read the site URL."},
+		{Grant: core.GrantSiteURLWrite, Description: "Update the site URL."},
+		{Grant: core.GrantSiteTitleRead, Description: "Read the site title."},
+		{Grant: core.GrantSiteTitleWrite, Description: "Update the site title."},
+		{Grant: core.GrantSiteContentRead, Description: "Read home page content."},
+		{Grant: core.GrantSiteContentWrite, Description: "Update home page content."},
 	}
 }
 

@@ -7,15 +7,11 @@
             <p>
                 <label for="id_field{{.Index}}">{{.Name}}</label>
                 <input type="checkbox" name="field{{.Index}}" id="id_field{{.Index}}" value="true" {{if .Granted}}checked{{end}}>
-                {{/* {{if .Description.Text}}
+                {{if .Description}}
                 <span class="helptext">
-                    {{ if .Description.URL}}
-                    <a href='{{.Description.URL}}' target='_blank'>{{.Description.Text}}</a>
-                    {{else}}
-                    {{.Description.Text}}
-                    {{end}}
+                    {{.Description}}
                 </span>
-                {{end}} */}}
+                {{end}}
             </p>
             {{end}}
             <button type="submit" class="save btn btn-default">Save</button>

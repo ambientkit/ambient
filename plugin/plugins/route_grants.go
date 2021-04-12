@@ -8,10 +8,10 @@ import (
 )
 
 type pluginGrant struct {
-	Index   int
-	Name    core.Grant
-	Granted bool
-	//Description core.SettingDescription
+	Index       int
+	Name        core.Grant
+	Granted     bool
+	Description string
 }
 
 func (p *Plugin) grantsEdit(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -32,11 +32,12 @@ func (p *Plugin) grantsEdit(w http.ResponseWriter, r *http.Request) (status int,
 	}
 
 	arr := make([]pluginGrant, 0)
-	for index, name := range grantList {
+	for index, request := range grantList {
 		arr = append(arr, pluginGrant{
-			Index:   index,
-			Name:    name,
-			Granted: grants[name],
+			Index:       index,
+			Name:        request.Grant,
+			Granted:     grants[request.Grant],
+			Description: request.Description,
 		})
 	}
 
@@ -61,9 +62,9 @@ func (p *Plugin) grantsUpdate(w http.ResponseWriter, r *http.Request) (status in
 	}
 
 	// Loop through each plugin to get the grants then save.
-	for index, name := range grantList {
+	for index, request := range grantList {
 		val := r.FormValue(fmt.Sprintf("field%v", index))
-		err := p.Site.SetNeighborPluginGrant(pluginName, name, val == "true")
+		err := p.Site.SetNeighborPluginGrant(pluginName, request.Grant, val == "true")
 		if err != nil {
 			return p.Site.Error(err)
 		}

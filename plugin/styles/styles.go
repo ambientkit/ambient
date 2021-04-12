@@ -37,10 +37,10 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
-// Grants returns a list of grants requested by the plugin.
-func (p *Plugin) Grants() []core.Grant {
-	return []core.Grant{
-		core.GrantPluginSettingRead,
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []core.GrantRequest {
+	return []core.GrantRequest{
+		{Grant: core.GrantPluginSettingRead, Description: "Access to read the plugin settings."},
 	}
 }
 

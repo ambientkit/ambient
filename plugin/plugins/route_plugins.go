@@ -11,7 +11,7 @@ type pluginWithSettings struct {
 	Name string
 	core.PluginData
 	Settings []core.Setting
-	Grants   []core.Grant
+	Grants   []core.GrantRequest
 }
 
 func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {

@@ -41,6 +41,11 @@ func (ss *SecureSite) DeletePlugin(name string) error {
 
 	delete(ss.storage.Site.PluginStorage, name)
 
+	err := ss.pluginsystem.InitializePlugin(name)
+	if err != nil {
+		return err
+	}
+
 	return ss.storage.Save()
 }
 

@@ -28,7 +28,7 @@ type IPlugin interface {
 	Assets() ([]Asset, *embed.FS)                       // optional, called during enable
 	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
 	Settings() []Setting                                // optional, called during special operations
-	Grants() []Grant                                    // optional, called during every plugin operation against data provider
+	GrantRequests() []GrantRequest                      // optional, called during every plugin operation against data provider
 	FuncMap() func(r *http.Request) template.FuncMap    // optional, called on every render
 }
 

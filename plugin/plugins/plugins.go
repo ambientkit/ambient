@@ -39,17 +39,18 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
-// Grants returns a list of grants requested by the plugin.
-func (p *Plugin) Grants() []core.Grant {
-	return []core.Grant{
-		core.GrantSitePluginRead,
-		core.GrantSitePluginEnable,
-		core.GrantSitePluginDisable,
-		core.GrantPluginNeighborSettingRead,
-		core.GrantPluginNeighborSettingWrite,
-		core.GrantPluginNeighborGrantRead,
-		core.GrantPluginNeighborGrantWrite,
-		core.GrantRouterNeighborRouteClear,
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []core.GrantRequest {
+	return []core.GrantRequest{
+		{Grant: core.GrantSitePluginRead, Description: "Access to read the plugins."},
+		{Grant: core.GrantSitePluginEnable, Description: "Access to enable plugins."},
+		{Grant: core.GrantSitePluginDisable, Description: "Access to disable plugins."},
+		{Grant: core.GrantSitePluginDelete, Description: "Access to delete plugin storage."},
+		{Grant: core.GrantPluginNeighborSettingRead, Description: "Access to read other plugin settings."},
+		{Grant: core.GrantPluginNeighborSettingWrite, Description: "Access to write to other plugin settings"},
+		{Grant: core.GrantPluginNeighborGrantRead, Description: "Access to read grant requests for plugins"},
+		{Grant: core.GrantPluginNeighborGrantWrite, Description: "Access to approve grants for plugins."},
+		{Grant: core.GrantRouterNeighborRouteClear, Description: "Access to clear routes for plugins."},
 	}
 }
 

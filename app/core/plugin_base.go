@@ -62,8 +62,8 @@ func (p *PluginBase) TemplateEngine(logger ILogger, injector AssetInjector) (IRe
 	return nil, nil
 }
 
-// Grants returns a list of grants requested by the plugin.
-func (p *PluginBase) Grants() []Grant {
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *PluginBase) GrantRequests() []GrantRequest {
 	return nil
 }
 
