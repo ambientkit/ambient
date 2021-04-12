@@ -22,12 +22,12 @@ func (p *Plugin) grantsEdit(w http.ResponseWriter, r *http.Request) (status int,
 	vars["token"] = p.Security.SetCSRF(r)
 
 	grantList, err := p.Site.NeighborPluginGrantList(pluginName)
-	if p.Site.ErrorAccessDenied(err) {
+	if err != nil {
 		return p.Site.Error(err)
 	}
 
 	grants, err := p.Site.NeighborPluginGrants(pluginName)
-	if p.Site.ErrorAccessDenied(err) {
+	if err != nil {
 		return p.Site.Error(err)
 	}
 
@@ -56,7 +56,7 @@ func (p *Plugin) grantsUpdate(w http.ResponseWriter, r *http.Request) (status in
 	}
 
 	grantList, err := p.Site.NeighborPluginGrantList(pluginName)
-	if p.Site.ErrorAccessDenied(err) {
+	if err != nil {
 		return p.Site.Error(err)
 	}
 
@@ -64,7 +64,7 @@ func (p *Plugin) grantsUpdate(w http.ResponseWriter, r *http.Request) (status in
 	for index, name := range grantList {
 		val := r.FormValue(fmt.Sprintf("field%v", index))
 		err := p.Site.SetNeighborPluginGrant(pluginName, name, val == "true")
-		if p.Site.ErrorAccessDenied(err) {
+		if err != nil {
 			return p.Site.Error(err)
 		}
 	}

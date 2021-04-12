@@ -38,8 +38,8 @@ func (p *PluginMeta) Assets() ([]Asset, *embed.FS, func(r *http.Request) templat
 	return nil, nil, nil
 }
 
-// Fields -
-func (p *PluginMeta) Fields() []Setting {
+// Settings -
+func (p *PluginMeta) Settings() []Setting {
 	return nil
 }
 

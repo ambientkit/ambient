@@ -30,6 +30,7 @@ type Setting struct {
 	Name        string             `json:"name"`
 	Type        SettingType        `json:"type"`
 	Description SettingDescription `json:"description"`
+	Hide        bool               `json:"hide"`
 	Default     interface{}        `json:"default"`
 }
 

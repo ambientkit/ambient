@@ -231,7 +231,7 @@ func (p *PluginSystem) SettingDefault(pluginName string, settingName string) (in
 	}
 
 	// TODO: this needs to be more efficient.
-	fields := plugin.Fields()
+	fields := plugin.Settings()
 	for _, field := range fields {
 		if field.Name == settingName {
 			return field.Default, nil

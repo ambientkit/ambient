@@ -13,7 +13,7 @@ func (ss *SecureSite) PluginNeighborSettingsList(pluginName string) ([]Setting, 
 		return nil, ErrNotFound
 	}
 
-	return plugin.Fields(), nil
+	return plugin.Settings(), nil
 }
 
 // SetPluginSetting sets a variable for the plugin.
@@ -78,6 +78,24 @@ func (ss *SecureSite) PluginSetting(fieldName string) (interface{}, error) {
 func (ss *SecureSite) SetNeighborPluginSetting(pluginName string, settingName string, value string) error {
 	if !ss.Authorized(GrantPluginNeighborfieldWrite) {
 		return ErrAccessDenied
+	}
+
+	settings, err := ss.PluginNeighborSettingsList(pluginName)
+	if err != nil {
+		return err
+	}
+
+	found := false
+	for _, setting := range settings {
+		if setting.Name == settingName {
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		ss.log.Debug("setting to set on plugin %v was not specified by the plugin: %v", pluginName, settingName)
+		return ErrSettingNotSpecified
 	}
 
 	return ss.pluginsystem.SetSetting(pluginName, settingName, value)

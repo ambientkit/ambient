@@ -14,6 +14,9 @@ var (
 	// plugin, but the plugin didn't explicitly request the grant so don't allow
 	// it.
 	ErrGrantNotRequested = errors.New("request does not exist for the grant")
+	// ErrSettingNotSpecified is when a setting is attempted to be set on a
+	// plugin, but the plugin didn't explicity specify it as a setting.
+	ErrSettingNotSpecified = errors.New("setting does not exist for the plugin")
 )
 
 // SecureSite is a secure data access for the site.
@@ -43,23 +46,13 @@ func NewSecureSite(pluginName string, log IAppLogger, storage *Storage, session 
 // Error handles returning the proper error.
 func (ss *SecureSite) Error(siteError error) (status int, err error) {
 	switch siteError {
-	case ErrAccessDenied, ErrGrantNotRequested:
+	case ErrAccessDenied, ErrGrantNotRequested, ErrSettingNotSpecified:
 		return http.StatusForbidden, siteError
 	case ErrNotFound:
 		return http.StatusNotFound, siteError
 	default:
 		return http.StatusInternalServerError, siteError
 	}
-}
-
-// ErrorAccessDenied return true if the error is AccessDenied.
-func (ss *SecureSite) ErrorAccessDenied(err error) bool {
-	return err == ErrAccessDenied
-}
-
-// ErrorNotFound return true if the error is NotFound.
-func (ss *SecureSite) ErrorNotFound(err error) bool {
-	return err == ErrNotFound
 }
 
 // Load forces a reload of the data.

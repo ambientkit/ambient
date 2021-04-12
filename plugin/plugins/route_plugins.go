@@ -34,13 +34,13 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	for _, pluginName := range pluginNames {
 		// Get the list of grants.
 		grantList, err := p.Site.NeighborPluginGrantList(pluginName)
-		if p.Site.ErrorAccessDenied(err) {
+		if err != nil {
 			return p.Site.Error(err)
 		}
 
 		// Get the list of settings.
 		settingsList, err := p.Site.PluginNeighborSettingsList(pluginName)
-		if p.Site.ErrorAccessDenied(err) {
+		if err != nil {
 			return p.Site.Error(err)
 		}
 

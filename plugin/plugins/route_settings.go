@@ -29,8 +29,12 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 
 	arr := make([]pluginSetting, 0)
 	for index, setting := range settings {
+		if setting.Hide {
+			continue
+		}
+
 		curVal, err := p.Site.NeighborPluginSettingString(pluginName, setting.Name)
-		if p.Site.ErrorAccessDenied(err) {
+		if err != nil {
 			return p.Site.Error(err)
 		}
 
@@ -65,9 +69,13 @@ func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status 
 
 	// Loop through each plugin to get the settings then save.
 	for index, setting := range settings {
+		if setting.Hide {
+			continue
+		}
+
 		val := r.FormValue(fmt.Sprintf("field%v", index))
 		err := p.Site.SetNeighborPluginSetting(pluginName, setting.Name, val)
-		if p.Site.ErrorAccessDenied(err) {
+		if err != nil {
 			return p.Site.Error(err)
 		}
 	}

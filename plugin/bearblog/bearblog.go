@@ -72,18 +72,20 @@ const (
 	AllowHTMLinMarkdown = "Allow HTML in Markdown"
 )
 
-// Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []core.Setting {
+// Settings returns a list of user settable fields.
+func (p *Plugin) Settings() []core.Setting {
 	return []core.Setting{
 		{
 			Name:    LoginURL,
 			Default: "admin",
+			Hide:    true,
 		},
 		{
 			Name: Author,
 		},
 		{
 			Name: Subtitle,
+			Hide: true,
 		},
 		{
 			Name: Description,
@@ -92,6 +94,7 @@ func (p *Plugin) Fields() []core.Setting {
 		{
 			Name: Footer,
 			Type: core.Textarea,
+			Hide: true,
 		},
 		{
 			Name: AllowHTMLinMarkdown,

@@ -40,8 +40,8 @@ const (
 	Styles = "Styles"
 )
 
-// Fields returns a list of user settable fields.
-func (p *Plugin) Fields() []core.Setting {
+// Settings returns a list of user settable fields.
+func (p *Plugin) Settings() []core.Setting {
 	return []core.Setting{
 		{
 			Name: Favicon,
