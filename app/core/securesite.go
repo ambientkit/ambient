@@ -10,6 +10,10 @@ var (
 	ErrAccessDenied = errors.New("access denied to the data item")
 	// ErrNotFound is when an item is not found.
 	ErrNotFound = errors.New("item was not found")
+	// ErrGrantNotRequested is when a grant is attempted to be enabled on a
+	// plugin, but the plugin didn't explicitly request the grant so don't allow
+	// it.
+	ErrGrantNotRequested = errors.New("request does not exist for the grant")
 )
 
 // SecureSite is a secure data access for the site.
@@ -39,7 +43,7 @@ func NewSecureSite(pluginName string, log IAppLogger, storage *Storage, session 
 // Error handles returning the proper error.
 func (ss *SecureSite) Error(siteError error) (status int, err error) {
 	switch siteError {
-	case ErrAccessDenied:
+	case ErrAccessDenied, ErrGrantNotRequested:
 		return http.StatusForbidden, siteError
 	case ErrNotFound:
 		return http.StatusNotFound, siteError

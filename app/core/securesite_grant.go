@@ -41,6 +41,27 @@ func (ss *SecureSite) SetNeighborPluginGrant(pluginName string, grantName Grant,
 
 	var err error
 	if granted {
+		// Get the list of grants and ensure the grant is requested by the
+		// plugin or else deny it.
+		var grants []Grant
+		grants, err = ss.NeighborPluginGrantList(pluginName)
+		if err != nil {
+			return err
+		}
+
+		found := false
+		for _, grant := range grants {
+			if grant == grantName {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			ss.log.Debug("grant to enable on plugin %v was not requested by the plugin: %v", pluginName, grantName)
+			return ErrGrantNotRequested
+		}
+
 		err = ss.pluginsystem.SetGrant(pluginName, grantName)
 	} else {
 		err = ss.pluginsystem.RemoveGrant(pluginName, grantName)
