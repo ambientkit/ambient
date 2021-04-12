@@ -64,12 +64,10 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 			continue
 		}
 
-		files, assets, funcMap := v.Assets()
-		if files == nil {
-			continue
-		}
+		files, assets := v.Assets()
 
 		// If a FuncMap exists, pass request into FuncMap.
+		funcMap := v.FuncMap()
 		if funcMap != nil {
 			afm := funcMap(r)
 			for k, v := range afm {

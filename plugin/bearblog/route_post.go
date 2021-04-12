@@ -57,7 +57,7 @@ func (p *Plugin) postIndex(w http.ResponseWriter, r *http.Request) (status int, 
 		vars["posts"] = pubPosts
 	}
 
-	return p.Render.Page(w, r, assets, "template/content/bloglist_index", p.FuncMap(r), vars)
+	return p.Render.Page(w, r, assets, "template/content/bloglist_index", p.funcMap(r), vars)
 }
 
 func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -94,7 +94,7 @@ func (p *Plugin) postShow(w http.ResponseWriter, r *http.Request) (status int, e
 	vars["pagedescription"] = plaintextBlurb(post.Content)
 	vars["postcontent"] = p.sanitized(post.Content)
 
-	return p.Render.Post(w, r, assets, "template/content/post", p.FuncMap(r), vars)
+	return p.Render.Post(w, r, assets, "template/content/post", p.funcMap(r), vars)
 }
 
 // plaintextBlurb returns a plaintext blurb from markdown content.

@@ -5,8 +5,6 @@ package googleanalytics
 import (
 	"embed"
 	"fmt"
-	"html/template"
-	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
@@ -58,12 +56,12 @@ func (p *Plugin) Settings() []core.Setting {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	// Get the tracking ID.
 	trackingID, err := p.Site.PluginSettingString(TrackingID)
 	if err != nil || len(trackingID) == 0 {
 		// Otherwise don't set the assets.
-		return nil, nil, nil
+		return nil, nil
 	}
 
 	return []core.Asset{
@@ -92,5 +90,5 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 				},
 			},
 		},
-	}, &assets, nil
+	}, &assets
 }

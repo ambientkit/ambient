@@ -16,7 +16,8 @@ type IPlugin interface {
 	Routes()
 	Enable(*Toolkit) error
 	Disable() error
-	Assets() ([]Asset, *embed.FS, func(r *http.Request) template.FuncMap)
+	Assets() ([]Asset, *embed.FS)
+	FuncMap() func(r *http.Request) template.FuncMap
 	Settings() []Setting
 	Middleware() []func(next http.Handler) http.Handler
 

@@ -10,8 +10,8 @@ import (
 	"github.com/josephspurrier/ambient/app/core"
 )
 
-// FuncMap returns a map of template functions that can be used in templates.
-func (p *Plugin) FuncMap(r *http.Request) template.FuncMap {
+// funcMap returns a map of template functions that can be used in templates.
+func (p *Plugin) funcMap(r *http.Request) template.FuncMap {
 	fm := make(template.FuncMap)
 	fm["Stamp"] = func(t time.Time) string {
 		return t.Format("2006-01-02")

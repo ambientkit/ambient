@@ -23,8 +23,13 @@ func (p *PluginBase) Disable() error {
 func (p *PluginBase) Routes() {}
 
 // Assets -
-func (p *PluginBase) Assets() ([]Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
-	return nil, nil, nil
+func (p *PluginBase) Assets() ([]Asset, *embed.FS) {
+	return nil, nil
+}
+
+// FuncMap -
+func (p *PluginBase) FuncMap() func(r *http.Request) template.FuncMap {
+	return nil
 }
 
 // Settings -

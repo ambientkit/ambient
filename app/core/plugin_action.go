@@ -154,7 +154,7 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	v.Routes()
 
 	// Load the assets.
-	assets, files, _ := v.Assets()
+	assets, files := v.Assets()
 	if files == nil {
 		// Save the plugin routes so they can be removed if disabled.
 		saveRoutesForPlugin(name, recorder, c.Storage)

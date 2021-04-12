@@ -57,18 +57,18 @@ func (p *Plugin) Settings() []core.Setting {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	// Get the Disqus ID.
 	disqusID, err := p.Site.PluginSettingString(DisqusID)
 	if err != nil || len(disqusID) == 0 {
 		// Otherwise don't set the assets.
-		return nil, nil, nil
+		return nil, nil
 	}
 
 	siteURL, err := p.Site.FullURL()
 	if err != nil || len(siteURL) == 0 {
 		// Otherwise don't set the assets.
-		return nil, nil, nil
+		return nil, nil
 	}
 
 	return []core.Asset{
@@ -114,7 +114,12 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 				},
 			},
 		},
-	}, &assets, p.funcMap
+	}, &assets
+}
+
+// FuncMap returns a callable function when passed in a request.
+func (p *Plugin) FuncMap() func(r *http.Request) template.FuncMap {
+	return p.funcMap
 }
 
 func (p *Plugin) funcMap(r *http.Request) template.FuncMap {

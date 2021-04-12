@@ -132,7 +132,7 @@ func (p *Plugin) Routes() {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	arr := make([]core.Asset, 0)
 
 	siteTitle, err := p.Site.Title()
@@ -217,5 +217,10 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 		Inline:   true,
 	})
 
-	return arr, &assets, p.FuncMap
+	return arr, &assets
+}
+
+// FuncMap returns a callable function when passed in a request.
+func (p *Plugin) FuncMap() func(r *http.Request) template.FuncMap {
+	return p.funcMap
 }

@@ -4,8 +4,6 @@ package rssfeed
 
 import (
 	"embed"
-	"html/template"
-	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
@@ -64,15 +62,15 @@ func (p *Plugin) Settings() []core.Setting {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	siteTitle, err := p.Site.Title()
 	if err != nil {
-		return nil, nil, nil
+		return nil, nil
 	}
 
 	feedURL, err := p.Site.PluginSettingString(FeedURL)
 	if err != nil {
-		return nil, nil, nil
+		return nil, nil
 	}
 
 	return []core.Asset{
@@ -100,7 +98,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 				},
 			},
 		},
-	}, nil, nil
+	}, nil
 }
 
 // Routes gets routes for the plugin.

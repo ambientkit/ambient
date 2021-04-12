@@ -4,8 +4,6 @@ package prism
 
 import (
 	"embed"
-	"html/template"
-	"net/http"
 
 	"github.com/josephspurrier/ambient/app/core"
 )
@@ -43,7 +41,7 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) template.FuncMap) {
+func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 	return []core.Asset{
 		{
 			Path:     "css/prism-vsc-dark-plus.css",
@@ -67,7 +65,7 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS, func(r *http.Request) templa
 			Location: core.LocationBody,
 			External: true,
 		},
-	}, &assets, nil
+	}, &assets
 }
 
 //
