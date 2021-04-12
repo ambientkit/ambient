@@ -25,7 +25,7 @@ func (p *Plugin) postAdminIndex(w http.ResponseWriter, r *http.Request) (status 
 func (p *Plugin) postAdminCreate(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	vars := make(map[string]interface{})
 	vars["title"] = "New post"
-	vars["token"] = p.Security.SetCSRF(r)
+	vars["token"] = p.Site.SetCSRF(r)
 
 	return p.Render.Page(w, r, assets, "template/content/post_create", p.funcMap(r), vars)
 }
@@ -39,7 +39,7 @@ func (p *Plugin) postAdminStore(w http.ResponseWriter, r *http.Request) (status 
 	r.ParseForm()
 
 	// CSRF protection.
-	success := p.Security.CSRF(r)
+	success := p.Site.CSRF(r)
 	if !success {
 		return http.StatusBadRequest, nil
 	}
@@ -79,7 +79,7 @@ func (p *Plugin) postAdminStore(w http.ResponseWriter, r *http.Request) (status 
 func (p *Plugin) postAdminEdit(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	vars := make(map[string]interface{})
 	vars["title"] = "Edit post"
-	vars["token"] = p.Security.SetCSRF(r)
+	vars["token"] = p.Site.SetCSRF(r)
 
 	ID := p.Mux.Param(r, "id")
 
@@ -113,7 +113,7 @@ func (p *Plugin) postAdminUpdate(w http.ResponseWriter, r *http.Request) (status
 	r.ParseForm()
 
 	// CSRF protection.
-	success := p.Security.CSRF(r)
+	success := p.Site.CSRF(r)
 	if !success {
 		return http.StatusBadRequest, nil
 	}

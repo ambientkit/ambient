@@ -60,7 +60,7 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 	vars["homeContent"] = siteContent
 	vars["ptitle"] = siteTitle
 	vars["subtitle"] = siteSubtitle
-	vars["token"] = p.Security.SetCSRF(r)
+	vars["token"] = p.Site.SetCSRF(r)
 
 	// Help the user set the domain based off the current URL.
 	if baseURL == "" {
@@ -80,7 +80,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 	r.ParseForm()
 
 	// CSRF protection.
-	success := p.Security.CSRF(r)
+	success := p.Site.CSRF(r)
 	if !success {
 		return http.StatusBadRequest, nil
 	}

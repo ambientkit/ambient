@@ -19,7 +19,7 @@ func (p *Plugin) grantsEdit(w http.ResponseWriter, r *http.Request) (status int,
 
 	vars := make(map[string]interface{})
 	vars["title"] = "Edit grants for: " + pluginName
-	vars["token"] = p.Security.SetCSRF(r)
+	vars["token"] = p.Site.SetCSRF(r)
 
 	grantList, err := p.Site.NeighborPluginGrantList(pluginName)
 	if err != nil {
@@ -50,7 +50,7 @@ func (p *Plugin) grantsUpdate(w http.ResponseWriter, r *http.Request) (status in
 	r.ParseForm()
 
 	// CSRF protection.
-	ok := p.Security.CSRF(r)
+	ok := p.Site.CSRF(r)
 	if !ok {
 		return http.StatusBadRequest, nil
 	}

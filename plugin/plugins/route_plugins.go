@@ -17,7 +17,7 @@ type pluginWithSettings struct {
 func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	vars := make(map[string]interface{})
 	vars["title"] = "Plugins"
-	vars["token"] = p.Security.SetCSRF(r)
+	vars["token"] = p.Site.SetCSRF(r)
 
 	plugins, err := p.Site.Plugins()
 	if err != nil {
@@ -61,7 +61,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 	r.ParseForm()
 
 	// CSRF protection.
-	ok := p.Security.CSRF(r)
+	ok := p.Site.CSRF(r)
 	if !ok {
 		return http.StatusBadRequest, nil
 	}

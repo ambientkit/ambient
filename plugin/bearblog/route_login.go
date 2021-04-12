@@ -24,7 +24,7 @@ func (p *Plugin) login(w http.ResponseWriter, r *http.Request) (status int, err 
 
 	vars := make(map[string]interface{})
 	vars["title"] = "Login"
-	vars["token"] = p.Security.SetCSRF(r)
+	vars["token"] = p.Site.SetCSRF(r)
 
 	return p.Render.Page(w, r, assets, "template/content/login", p.funcMap(r), vars)
 }
@@ -43,7 +43,7 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 	r.ParseForm()
 
 	// CSRF protection.
-	success := p.Security.CSRF(r)
+	success := p.Site.CSRF(r)
 	if !success {
 		return http.StatusBadRequest, nil
 	}
@@ -100,18 +100,25 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 
 	// If the username and password don't match, then just redirect.
 	if username != allowedUsername || !passMatch || !mfaSuccess {
-		p.Log.Info("Login attempt failed. Username: %v (expected: %v) | Password match: %v | MFA success: %v\n", username, allowedUsername, passMatch, mfaSuccess)
+		p.Log.Info("login attempt failed. Username: %v (expected: %v) | Password match: %v | MFA success: %v\n", username, allowedUsername, passMatch, mfaSuccess)
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 
-	p.Log.Info("", "Login attempt successful.")
-
-	p.Security.SetUser(r, username)
-	if remember == "on" {
-		p.Security.RememberMe(r, true)
+	err = p.Site.UserLogin(r, username)
+	if err != nil {
+		p.Log.Info("login attempt failed for '%v': %v", username, err.Error())
 	} else {
-		p.Security.RememberMe(r, false)
+		p.Log.Info("login attempt successful for user: %v", username)
+	}
+	if remember == "on" {
+		err = p.Site.UserPersist(r, true)
+	} else {
+		err = p.Site.UserPersist(r, false)
+	}
+
+	if err != nil {
+		p.Log.Info("login persist failed for user '%v': %v", username, err.Error())
 	}
 
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
@@ -119,7 +126,10 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 }
 
 func (p *Plugin) logout(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	p.Security.Logout(r)
+	err = p.Site.UserLogout(r)
+	if err != nil {
+		p.Log.Info("logout failed: %v", err.Error())
+	}
 
 	http.Redirect(w, r, "/", http.StatusFound)
 	return

@@ -15,10 +15,10 @@ type IPlugin interface {
 	PluginVersion() string // required, read frequently
 
 	// These are called before the plugin is enabled so they only have access to the logger.
-	Storage(logger ILogger) (DataStorer, SessionStorer, error)                    // optional
-	SessionManager(logger ILogger, sessionStorer SessionStorer) (ISession, error) // optional
-	TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error)       // optional
-	Router(logger ILogger, render IRender) (IAppRouter, error)                    // optional
+	Storage(logger ILogger) (DataStorer, SessionStorer, error)                       // optional
+	SessionManager(logger ILogger, sessionStorer SessionStorer) (IAppSession, error) // optional
+	TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error)          // optional
+	Router(logger ILogger, render IRender) (IAppRouter, error)                       // optional
 
 	// These should all have access to the toolkit.
 	Enable(toolkit *Toolkit) error                      // optional, called during enable

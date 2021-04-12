@@ -43,7 +43,7 @@ func (p *PluginBase) Middleware() []func(next http.Handler) http.Handler {
 }
 
 // SessionManager returns a session manager.
-func (p *PluginBase) SessionManager(logger ILogger, ss SessionStorer) (ISession, error) {
+func (p *PluginBase) SessionManager(logger ILogger, ss SessionStorer) (IAppSession, error) {
 	return nil, nil
 }
 

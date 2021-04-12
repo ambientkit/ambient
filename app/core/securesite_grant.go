@@ -2,7 +2,7 @@ package core
 
 // NeighborPluginGrantList gets the grants requests for a neighbor plugin.
 func (ss *SecureSite) NeighborPluginGrantList(pluginName string) ([]Grant, error) {
-	if !ss.Authorized(GrantPluginNeighborgrantRead) {
+	if !ss.Authorized(GrantPluginNeighborGrantRead) {
 		return nil, ErrAccessDenied
 	}
 
@@ -16,7 +16,7 @@ func (ss *SecureSite) NeighborPluginGrantList(pluginName string) ([]Grant, error
 
 // NeighborPluginGrants gets the map of granted permissions.
 func (ss *SecureSite) NeighborPluginGrants(pluginName string) (map[Grant]bool, error) {
-	if !ss.Authorized(GrantPluginNeighborgrantRead) {
+	if !ss.Authorized(GrantPluginNeighborGrantRead) {
 		return nil, ErrAccessDenied
 	}
 
@@ -35,7 +35,7 @@ func (ss *SecureSite) NeighborPluginGrants(pluginName string) (map[Grant]bool, e
 
 // SetNeighborPluginGrant sets a grant for a neighbor plugin.
 func (ss *SecureSite) SetNeighborPluginGrant(pluginName string, grantName Grant, granted bool) error {
-	if !ss.Authorized(GrantPluginNeighborgrantWrite) {
+	if !ss.Authorized(GrantPluginNeighborGrantWrite) {
 		return ErrAccessDenied
 	}
 

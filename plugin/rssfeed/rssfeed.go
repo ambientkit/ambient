@@ -44,8 +44,8 @@ func (p *Plugin) Grants() []core.Grant {
 		core.GrantSiteSchemeRead,
 		core.GrantSiteURLRead,
 		core.GrantSitePostRead,
-		core.GrantPluginFieldRead,
-		core.GrantPluginFieldWrite,
+		core.GrantPluginSettingRead,
+		core.GrantPluginSettingWrite,
 	}
 }
 

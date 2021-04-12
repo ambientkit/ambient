@@ -20,7 +20,7 @@ func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status in
 
 	vars := make(map[string]interface{})
 	vars["title"] = "Edit settings for: " + pluginName
-	vars["token"] = p.Security.SetCSRF(r)
+	vars["token"] = p.Site.SetCSRF(r)
 
 	settings, err := p.Site.PluginNeighborSettingsList(pluginName)
 	if err != nil {
@@ -57,7 +57,7 @@ func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status 
 	r.ParseForm()
 
 	// CSRF protection.
-	ok := p.Security.CSRF(r)
+	ok := p.Site.CSRF(r)
 	if !ok {
 		return http.StatusBadRequest, nil
 	}

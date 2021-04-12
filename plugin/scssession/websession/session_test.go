@@ -39,7 +39,7 @@ func TestNewSession(t *testing.T) {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Test user
 		u := "foo"
-		sess.SetUser(r, u)
+		sess.Login(r, u)
 		user, found := sess.User(r)
 		assert.True(t, found)
 		assert.Equal(t, u, user)
@@ -51,7 +51,7 @@ func TestNewSession(t *testing.T) {
 
 		// Test persistence
 		assert.Equal(t, sessionManager.Cookie.Persist, false)
-		sess.RememberMe(r, true)
+		sess.Persist(r, true)
 		assert.Equal(t, sessionManager.Cookie.Persist, true)
 
 		// Test CSRF

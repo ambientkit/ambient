@@ -35,9 +35,9 @@ func (s *Session) UserAuthenticated(r *http.Request) (bool, error) {
 	return ok, nil
 }
 
-// RememberMe -
-func (s *Session) RememberMe(r *http.Request, value bool) {
-	s.manager.Cookie.Persist = value
+// Persist -
+func (s *Session) Persist(r *http.Request, persist bool) {
+	s.manager.Cookie.Persist = persist
 }
 
 // Logout -
@@ -51,8 +51,8 @@ func (s *Session) User(r *http.Request) (string, bool) {
 	return u, len(u) > 0
 }
 
-// SetUser -
-func (s *Session) SetUser(r *http.Request, value string) {
+// Login -
+func (s *Session) Login(r *http.Request, value string) {
 	s.manager.Put(r.Context(), "user", value)
 }
 

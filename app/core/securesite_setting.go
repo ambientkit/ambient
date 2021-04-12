@@ -4,7 +4,7 @@ import "fmt"
 
 // PluginNeighborSettingsList gets the grants requests for a neighbor plugin.
 func (ss *SecureSite) PluginNeighborSettingsList(pluginName string) ([]Setting, error) {
-	if !ss.Authorized(GrantPluginNeighborfieldRead) {
+	if !ss.Authorized(GrantPluginNeighborSettingRead) {
 		return nil, ErrAccessDenied
 	}
 
@@ -18,7 +18,7 @@ func (ss *SecureSite) PluginNeighborSettingsList(pluginName string) ([]Setting, 
 
 // SetPluginSetting sets a variable for the plugin.
 func (ss *SecureSite) SetPluginSetting(settingName string, value string) error {
-	if !ss.Authorized(GrantPluginFieldWrite) {
+	if !ss.Authorized(GrantPluginSettingWrite) {
 		return ErrAccessDenied
 	}
 
@@ -27,7 +27,7 @@ func (ss *SecureSite) SetPluginSetting(settingName string, value string) error {
 
 // PluginSettingBool returns a plugin setting as a bool.
 func (ss *SecureSite) PluginSettingBool(name string) (bool, error) {
-	if !ss.Authorized(GrantPluginFieldRead) {
+	if !ss.Authorized(GrantPluginSettingRead) {
 		return false, ErrAccessDenied
 	}
 
@@ -38,7 +38,7 @@ func (ss *SecureSite) PluginSettingBool(name string) (bool, error) {
 
 // PluginSettingString returns a setting for the plugin as a string.
 func (ss *SecureSite) PluginSettingString(fieldName string) (string, error) {
-	if !ss.Authorized(GrantPluginFieldRead) {
+	if !ss.Authorized(GrantPluginSettingRead) {
 		return "", ErrAccessDenied
 	}
 
@@ -57,7 +57,7 @@ func (ss *SecureSite) PluginSettingString(fieldName string) (string, error) {
 
 // PluginSetting returns a setting for the plugin as an interface{}.
 func (ss *SecureSite) PluginSetting(fieldName string) (interface{}, error) {
-	if !ss.Authorized(GrantPluginFieldRead) {
+	if !ss.Authorized(GrantPluginSettingRead) {
 		return "", ErrAccessDenied
 	}
 
@@ -76,7 +76,7 @@ func (ss *SecureSite) PluginSetting(fieldName string) (interface{}, error) {
 
 // SetNeighborPluginSetting sets a setting for a neighbor plugin.
 func (ss *SecureSite) SetNeighborPluginSetting(pluginName string, settingName string, value string) error {
-	if !ss.Authorized(GrantPluginNeighborfieldWrite) {
+	if !ss.Authorized(GrantPluginNeighborSettingWrite) {
 		return ErrAccessDenied
 	}
 
@@ -103,7 +103,7 @@ func (ss *SecureSite) SetNeighborPluginSetting(pluginName string, settingName st
 
 // NeighborPluginSettingString returns a setting for a neighbor plugin as a string.
 func (ss *SecureSite) NeighborPluginSettingString(pluginName string, fieldName string) (string, error) {
-	if !ss.Authorized(GrantPluginNeighborfieldRead) {
+	if !ss.Authorized(GrantPluginNeighborSettingRead) {
 		return "", ErrAccessDenied
 	}
 
@@ -122,7 +122,7 @@ func (ss *SecureSite) NeighborPluginSettingString(pluginName string, fieldName s
 
 // NeighborPluginSetting returns a setting for a neighbor plugin as an interface{}.
 func (ss *SecureSite) NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error) {
-	if !ss.Authorized(GrantPluginNeighborfieldRead) {
+	if !ss.Authorized(GrantPluginNeighborSettingRead) {
 		return "", ErrAccessDenied
 	}
 

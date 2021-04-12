@@ -22,14 +22,14 @@ type LayoutInjector interface {
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
 	storage        *Storage
-	sess           ISession
+	sess           IAppSession
 	pluginsystem   *PluginSystem
 	log            ILogger
 	pluginSettings IPluginList
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger ILogger, storage *Storage, sess ISession, plugins *PluginSystem, pluginSettings IPluginList) *PluginInjector {
+func NewPlugininjector(logger ILogger, storage *Storage, sess IAppSession, plugins *PluginSystem, pluginSettings IPluginList) *PluginInjector {
 	return &PluginInjector{
 		storage:        storage,
 		sess:           sess,

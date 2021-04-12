@@ -48,8 +48,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 func (p *Plugin) Grants() []core.Grant {
 	return []core.Grant{
 		core.GrantUserAuthenticatedRead,
-		core.GrantPluginFieldRead,
-		core.GrantPluginFieldWrite,
+		core.GrantPluginSettingRead,
+		core.GrantPluginSettingWrite,
 		core.GrantSitePostRead,
 		core.GrantSitePostWrite,
 		core.GrantSiteSchemeRead,

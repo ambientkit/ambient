@@ -110,11 +110,10 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 	recorder := routerrecorder.NewRecorder(ss.mux)
 
 	toolkit := &Toolkit{
-		Mux:      recorder,
-		Render:   ss.render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
-		Security: ss.sess,
-		Site:     NewSecureSite(name, ss.log, ss.storage, ss.pluginsystem, ss.sess, ss.mux, ss.render),
-		Log:      ss.log,
+		Mux:    recorder,
+		Render: ss.render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
+		Site:   NewSecureSite(name, ss.log, ss.storage, ss.pluginsystem, ss.sess, ss.mux, ss.render),
+		Log:    ss.log,
 	}
 
 	// Enable the plugin and pass in the toolkit.
@@ -196,7 +195,7 @@ func saveRoutesForPlugin(name string, recorder *routerrecorder.Recorder, storage
 	storage.PluginRoutes.Routes[name] = arr
 }
 
-func embeddedAssets(mux IRouter, sess ISession, pluginName string, files []Asset, assets *embed.FS) error {
+func embeddedAssets(mux IRouter, sess IAppSession, pluginName string, files []Asset, assets *embed.FS) error {
 	for _, unsafeFile := range files {
 		// Recreate the variable when using closures:
 		// https://golang.org/doc/faq#closures_and_goroutines

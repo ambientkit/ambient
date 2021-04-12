@@ -92,7 +92,7 @@ func Boot(log *logger.Logger) (http.Handler, error) {
 	}
 
 	// Get the session manager from the plugins.
-	var sess core.ISession
+	var sess core.IAppSession
 	for _, name := range ps.Names() {
 		// Get the plugin.
 		p, err := ps.Plugin(name)

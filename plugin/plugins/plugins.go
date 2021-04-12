@@ -45,10 +45,10 @@ func (p *Plugin) Grants() []core.Grant {
 		core.GrantSitePluginRead,
 		core.GrantSitePluginEnable,
 		core.GrantSitePluginDisable,
-		core.GrantPluginNeighborfieldRead,
-		core.GrantPluginNeighborfieldWrite,
-		core.GrantPluginNeighborgrantRead,
-		core.GrantPluginNeighborgrantWrite,
+		core.GrantPluginNeighborSettingRead,
+		core.GrantPluginNeighborSettingWrite,
+		core.GrantPluginNeighborGrantRead,
+		core.GrantPluginNeighborGrantWrite,
 		core.GrantRouterNeighborRouteClear,
 	}
 }

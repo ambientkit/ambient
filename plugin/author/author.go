@@ -45,8 +45,8 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 // Grants returns a list of grants requested by the plugin.
 func (p *Plugin) Grants() []core.Grant {
 	return []core.Grant{
-		core.GrantPluginFieldRead,
-		core.GrantPluginFieldWrite,
+		core.GrantPluginSettingRead,
+		core.GrantPluginSettingWrite,
 	}
 }
 

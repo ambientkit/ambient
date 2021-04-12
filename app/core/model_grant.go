@@ -26,7 +26,6 @@ const (
 	// GrantSiteURLWrite allows write access to the site URL.
 	GrantSiteURLWrite Grant = "site.url:write"
 	// GrantSiteUpdatedRead allows read access to the site updated time.
-	// TODO: This doesn't have a write associated with it.
 	GrantSiteUpdatedRead Grant = "site.updated:read"
 
 	// GrantSiteLoadTrigger allows trigger access to the site load from data storage.
@@ -54,19 +53,23 @@ const (
 	// GrantSitePluginDelete allows delete access to the site plugins.
 	GrantSitePluginDelete Grant = "site.plugin:delete"
 
-	// GrantPluginFieldRead allows read access to the plugin field.
-	GrantPluginFieldRead Grant = "plugin.field:read"
-	// GrantPluginFieldWrite allows write access to the plugin field.
-	GrantPluginFieldWrite Grant = "plugin.field:write"
-	// GrantPluginNeighborfieldRead allows read access to a field in another plugin.
-	GrantPluginNeighborfieldRead Grant = "plugin.neighborfield:read"
-	// GrantPluginNeighborfieldWrite allows write access to a field in another plugin.
-	GrantPluginNeighborfieldWrite Grant = "plugin.neighborfield:write"
-	// GrantPluginNeighborgrantRead allows read access to a grant in another plugin.
-	GrantPluginNeighborgrantRead Grant = "plugin.neighborgrant:read"
-	// GrantPluginNeighborgrantWrite allows write access to a grant in another plugin.
-	GrantPluginNeighborgrantWrite Grant = "plugin.neighborgrant:write"
+	// GrantPluginSettingRead allows read access to the plugin setting.
+	GrantPluginSettingRead Grant = "plugin.setting:read"
+	// GrantPluginSettingWrite allows write access to the plugin setting.
+	GrantPluginSettingWrite Grant = "plugin.setting:write"
+	// GrantPluginNeighborSettingRead allows read access to a setting in another plugin.
+	GrantPluginNeighborSettingRead Grant = "plugin.neighborsetting:read"
+	// GrantPluginNeighborSettingWrite allows write access to a setting in another plugin.
+	GrantPluginNeighborSettingWrite Grant = "plugin.neighborsetting:write"
+	// GrantPluginNeighborGrantRead allows read access to a grant in another plugin.
+	GrantPluginNeighborGrantRead Grant = "plugin.neighborgrant:read"
+	// GrantPluginNeighborGrantWrite allows write access to a grant in another plugin.
+	GrantPluginNeighborGrantWrite Grant = "plugin.neighborgrant:write"
 
 	// GrantUserAuthenticatedRead allows read access whether the current user is logged in or not.
 	GrantUserAuthenticatedRead Grant = "user.authenticated:read"
+	// GrantUserAuthenticatedWrite allows write access to login or logout a user.
+	GrantUserAuthenticatedWrite Grant = "user.authenticated:write"
+	// GrantUserPersistWrite allows write access to login or logout a user.
+	GrantUserPersistWrite Grant = "user.persist:write"
 )
