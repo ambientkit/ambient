@@ -16,19 +16,25 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginMeta
+	*core.PluginBase
 	*core.Toolkit
 }
 
 // New returns a new bearblog plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginMeta: &core.PluginMeta{
-			Name:       "bearblog",
-			Version:    "1.0.0",
-			AppVersion: "1.0.0",
-		},
+		PluginBase: &core.PluginBase{},
 	}
+}
+
+// PluginName returns the plugin name.
+func (p *Plugin) PluginName() string {
+	return "bearblog"
+}
+
+// PluginVersion returns the plugin version.
+func (p *Plugin) PluginVersion() string {
+	return "1.0.0"
 }
 
 // Enable accepts the toolkit.

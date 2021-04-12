@@ -15,7 +15,7 @@ import (
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginMeta
+	*core.PluginBase
 	*core.Toolkit
 
 	sessionManager *scs.SessionManager
@@ -25,12 +25,18 @@ type Plugin struct {
 // New returns a new scssession plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginMeta: &core.PluginMeta{
-			Name:       "scssession",
-			Version:    "1.0.0",
-			AppVersion: "1.0.0",
-		},
+		PluginBase: &core.PluginBase{},
 	}
+}
+
+// PluginName returns the plugin name.
+func (p *Plugin) PluginName() string {
+	return "scssession"
+}
+
+// PluginVersion returns the plugin version.
+func (p *Plugin) PluginVersion() string {
+	return "1.0.0"
 }
 
 // Enable accepts the toolkit.

@@ -8,7 +8,10 @@ import (
 
 // IPlugin represents a plugin.
 type IPlugin interface {
+	// PluginName should be globally unique. Only lowercase letters, numbers,
+	// and hypens are permitted. Must start with with a letter.
 	PluginName() string
+	// PluginVersion must follow https://semver.org/.
 	PluginVersion() string
 	Routes()
 	Enable(*Toolkit) error
