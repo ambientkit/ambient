@@ -37,6 +37,18 @@ func (p *Plugin) Enable(toolkit *core.Toolkit) error {
 	return nil
 }
 
+// Grants returns a list of grants requested by the plugin.
+func (p *Plugin) Grants() []core.Grant {
+	return []core.Grant{
+		core.GrantSiteTitleRead,
+		core.GrantSiteSchemeRead,
+		core.GrantSiteURLRead,
+		core.GrantSitePostRead,
+		core.GrantPluginFieldRead,
+		core.GrantPluginFieldWrite,
+	}
+}
+
 const (
 	// FeedURL allows user to set the feed URL>
 	FeedURL = "Feed URL"

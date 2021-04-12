@@ -80,6 +80,18 @@ func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status 
 		}
 	}
 
+	// Disable the plugin.
+	err = p.Site.DisablePlugin(pluginName)
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
+	// Re-enable the plugin to get any change in routes.
+	err = p.Site.EnablePlugin(pluginName)
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
 	http.Redirect(w, r, fmt.Sprintf("/dashboard/plugins/%v/settings", pluginName), http.StatusFound)
 	return
 }
