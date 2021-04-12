@@ -256,7 +256,8 @@ func embeddedAssets(mux IRouter, sess ISession, pluginName string, files []Asset
 }
 
 // LoadAllPluginMiddleware returns a handler that is wrapped in conditional
-// middlware from the plugins.
+// middlware from the plugins. This only needs to be run once at start up
+// and should never be called again.
 func (ss *SecureSite) LoadAllPluginMiddleware(h http.Handler) http.Handler {
 	for _, pluginName := range ss.pluginsystem.names {
 		plugin, ok := ss.pluginsystem.plugins[pluginName]
@@ -273,13 +274,6 @@ func (ss *SecureSite) LoadAllPluginMiddleware(h http.Handler) http.Handler {
 // LoadSinglePluginMiddleware returns a handler that is wrapped in conditional
 // middlware from the plugins.
 func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin IPlugin) http.Handler {
-	// Skip if the plugin isn't found.
-	_, ok := ss.storage.Site.PluginStorage[plugin.PluginName()]
-	if !ok {
-		ss.log.Debug("plugin middleware: plugin not found: %v\n", plugin.PluginName())
-		return h
-	}
-
 	// Loop through each piece of middleware.
 	arrHandlers := plugin.Middleware()
 	if len(arrHandlers) > 0 {
