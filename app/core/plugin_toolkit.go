@@ -15,6 +15,23 @@ type Toolkit struct {
 	Log      ILogger
 }
 
+// IAppRouter represents a router.
+type IAppRouter interface {
+	IRouter
+
+	ServeHTTP(w http.ResponseWriter, r *http.Request)
+	Clear(method string, path string)
+	SetNotFound(notFound http.Handler)
+	SetServeHTTP(h func(w http.ResponseWriter, r *http.Request, status int, err error))
+}
+
+// IAppLogger represents a logger.
+type IAppLogger interface {
+	ILogger
+
+	SetLevel(level uint32)
+}
+
 // IRender represents a template renderer.
 type IRender interface {
 	Page(w http.ResponseWriter, r *http.Request, assets embed.FS, templateName string, fm template.FuncMap, vars map[string]interface{}) (status int, err error)

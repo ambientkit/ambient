@@ -41,6 +41,10 @@ func (rec *Recorder) Routes() []Route {
 
 // Get -
 func (rec *Recorder) Get(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+	if rec.mux == nil {
+		return
+	}
+
 	rec.routes = append(rec.routes, Route{
 		Method: http.MethodGet,
 		Path:   path,
@@ -50,6 +54,10 @@ func (rec *Recorder) Get(path string, fn func(http.ResponseWriter, *http.Request
 
 // Post -
 func (rec *Recorder) Post(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+	if rec.mux == nil {
+		return
+	}
+
 	rec.routes = append(rec.routes, Route{
 		Method: http.MethodPost,
 		Path:   path,
@@ -59,10 +67,18 @@ func (rec *Recorder) Post(path string, fn func(http.ResponseWriter, *http.Reques
 
 // Param -
 func (rec *Recorder) Param(r *http.Request, name string) string {
+	if rec.mux == nil {
+		return ""
+	}
+
 	return rec.mux.Param(r, name)
 }
 
 // Error -
 func (rec *Recorder) Error(status int, w http.ResponseWriter, r *http.Request) {
+	if rec.mux == nil {
+		return
+	}
+
 	rec.mux.Error(status, w, r)
 }

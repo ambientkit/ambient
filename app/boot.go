@@ -185,17 +185,18 @@ func Boot(log *logger.Logger) (http.Handler, error) {
 	}
 
 	// Create core app.
-	c := core.NewApp(log, ps, te, mux, sess, storage)
+	//c := core.NewApp(log, ps, te, mux, sess, storage)
+	securesite := core.NewSecureSite("ambient", log, storage, sess, mux, te, ps)
 
 	// Load the plugin pages.
-	err = c.LoadAllPluginPages()
+	err = securesite.LoadAllPluginPages()
 	if err != nil {
 		return nil, err
 	}
 
 	// Enable the middleware from the plugins.
-	var h http.Handler = c.Router
-	h = c.LoadAllPluginMiddleware(h, Plugins)
+	var h http.Handler = mux
+	h = securesite.LoadAllPluginMiddleware(h)
 
 	return h, nil
 }

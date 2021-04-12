@@ -68,14 +68,20 @@ func (ss *SecureSite) Load() error {
 
 // Authorized determines if the current context has access.
 func (ss *SecureSite) Authorized(grant Grant) bool {
+	// Always allow ambient application to get full access.
+	if ss.pluginName == "ambient" {
+		ss.log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v\n", "ambient", grant)
+		return true
+	}
+
 	// If has star, then allow all access.
-	if granted := ss.pluginsystem.Granted(ss.pluginName, GrantAll); !granted {
+	if granted := ss.pluginsystem.Granted(ss.pluginName, GrantAll); granted {
 		ss.log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v\n", ss.pluginName, grant)
 		return true
 	}
 
 	// If the grant was found, then allow access.
-	if granted := ss.pluginsystem.Granted(ss.pluginName, grant); !granted {
+	if granted := ss.pluginsystem.Granted(ss.pluginName, grant); granted {
 		ss.log.Debug("securesite: granted plugin (%v) access to the data item for grant: %v\n", ss.pluginName, grant)
 		return true
 	}

@@ -1,3 +1,4 @@
+// Package core provides plugin functionality for the application.
 package core
 
 import (
