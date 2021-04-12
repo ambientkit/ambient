@@ -2,21 +2,15 @@
 // Reference: https://dzone.com/articles/logging-levels-what-they-are-and-how-they-help-you
 package pluginlogger
 
+import "github.com/josephspurrier/ambient"
+
 // Logger represents a plugin logger.
 type Logger struct {
-	log ILogger
-}
-
-// ILogger represents an application logger.
-type ILogger interface {
-	Debug(format string, v ...interface{})
-	Info(format string, v ...interface{})
-	Warn(format string, v ...interface{})
-	Error(format string, v ...interface{})
+	log ambient.IAppLogger
 }
 
 // NewPluginLogger returns a new logger with a default log level of error.
-func NewPluginLogger(logger ILogger) *Logger {
+func NewPluginLogger(logger ambient.IAppLogger) *Logger {
 	return &Logger{
 		log: logger,
 	}

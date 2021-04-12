@@ -82,3 +82,7 @@ local-run:
 .PHONY: amb
 amb:
 	go run cmd/amb/main.go
+
+.PHONY: ambient
+ambient:
+	go run cmd/ambient/main.go

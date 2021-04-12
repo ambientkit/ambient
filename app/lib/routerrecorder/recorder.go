@@ -3,25 +3,13 @@ package routerrecorder
 
 import (
 	"net/http"
-)
 
-// IRouter represents a router.
-type IRouter interface {
-	Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
-	Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
-	Patch(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
-	Put(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
-	Head(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
-	Options(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
-	Delete(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
-	Error(status int, w http.ResponseWriter, r *http.Request)
-	Param(r *http.Request, param string) string
-	ServeHTTP(w http.ResponseWriter, r *http.Request)
-}
+	"github.com/josephspurrier/ambient"
+)
 
 // Recorder -
 type Recorder struct {
-	mux IRouter
+	mux ambient.IAppRouter
 
 	routes []Route
 }
@@ -33,7 +21,7 @@ type Route struct {
 }
 
 // NewRecorder is a route recorder for plugins.
-func NewRecorder(mux IRouter) *Recorder {
+func NewRecorder(mux ambient.IAppRouter) *Recorder {
 	return &Recorder{
 		mux: mux,
 	}
