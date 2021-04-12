@@ -184,9 +184,8 @@ func Boot(log *logger.Logger) (http.Handler, error) {
 		log.Fatal("boot: no default router found")
 	}
 
-	// Create core app.
-	//c := core.NewApp(log, ps, te, mux, sess, storage)
-	securesite := core.NewSecureSite("ambient", log, storage, sess, mux, te, ps)
+	// Create secure site for the core application.
+	securesite := core.NewSecureSite("ambient", log, storage, ps, sess, mux, te)
 
 	// Load the plugin pages.
 	err = securesite.LoadAllPluginPages()
@@ -195,8 +194,7 @@ func Boot(log *logger.Logger) (http.Handler, error) {
 	}
 
 	// Enable the middleware from the plugins.
-	var h http.Handler = mux
-	h = securesite.LoadAllPluginMiddleware(h)
+	h := securesite.LoadAllPluginMiddleware(mux)
 
 	return h, nil
 }

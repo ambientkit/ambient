@@ -20,7 +20,7 @@ var (
 		},
 	}
 	log           *logger.Logger
-	plugins       *core.PluginSystem
+	pluginsystem  *core.PluginSystem
 	securestorage *core.SecureSite
 )
 
@@ -52,13 +52,13 @@ func main() {
 	}
 
 	// Initialize the plugin system.
-	plugins, err = core.NewPluginSystem(log, app.Plugins, storage)
+	pluginsystem, err = core.NewPluginSystem(log, app.Plugins, storage)
 	if err != nil {
 		log.Fatal("", err.Error())
 	}
 
 	// Set up the secure storage.
-	securestorage = core.NewSecureSite(appName, log, storage, nil, nil, nil, plugins)
+	securestorage = core.NewSecureSite(appName, log, storage, pluginsystem, nil, nil, nil)
 
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(
@@ -90,7 +90,7 @@ func enablePlugin(name string) {
 func enableGrants(name string) {
 	log.Info("add plugin grants: %v", name)
 
-	p, err := plugins.Plugin(name)
+	p, err := pluginsystem.Plugin(name)
 	if err != nil {
 		log.Error("", err.Error())
 	}
@@ -106,26 +106,26 @@ func enableGrants(name string) {
 
 func addGrantAll(name string) error {
 	// Set the grants for the CLI tool.
-	err := plugins.SetGrant(name, core.GrantAll)
+	err := pluginsystem.SetGrant(name, core.GrantAll)
 	if err != nil {
 		return err
 	}
-	return plugins.Save()
+	return pluginsystem.Save()
 }
 
 func removeGrantAll(name string) error {
 	// Remove the grants for the CLI tool.
-	err := plugins.RemoveGrant(name, core.GrantAll)
+	err := pluginsystem.RemoveGrant(name, core.GrantAll)
 	if err != nil {
 		return err
 	}
 
-	return plugins.Save()
+	return pluginsystem.Save()
 }
 
 func enableCLIGrant() bool {
 	// Initialize the plugin in storage.
-	err := plugins.InitializePlugin(appName)
+	err := pluginsystem.InitializePlugin(appName)
 	if err != nil {
 		log.Error("could not initialize plugin %v: %v", appName, err.Error())
 		return true
@@ -151,7 +151,7 @@ func disableCLIGrant() {
 	}
 
 	// Remove the plugin from storage.
-	err = plugins.RemovePlugin(appName)
+	err = pluginsystem.RemovePlugin(appName)
 	if err != nil {
 		log.Error("could not remove plugin %v: %v", appName, err.Error())
 	}

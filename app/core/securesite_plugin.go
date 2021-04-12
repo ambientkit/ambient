@@ -113,7 +113,7 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 		Mux:      recorder,
 		Render:   ss.render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
 		Security: ss.sess,
-		Site:     NewSecureSite(name, ss.log, ss.storage, ss.sess, ss.mux, ss.render, ss.pluginsystem),
+		Site:     NewSecureSite(name, ss.log, ss.storage, ss.pluginsystem, ss.sess, ss.mux, ss.render),
 		Log:      ss.log,
 	}
 
@@ -129,20 +129,17 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 
 	// Load the assets.
 	assets, files := v.Assets()
-	if files == nil {
-		// Save the plugin routes so they can be removed if disabled.
-		saveRoutesForPlugin(name, recorder, ss.storage)
-		return
-	}
-
-	// Handle embedded assets.
-	err = embeddedAssets(recorder, ss.sess, name, assets, files)
-	if err != nil {
-		ss.log.Error("plugin load: problem loading assets for plugin %v: %v", name, err.Error())
+	if files != nil {
+		// Handle embedded assets.
+		err = embeddedAssets(recorder, ss.sess, name, assets, files)
+		if err != nil {
+			ss.log.Error("plugin load: problem loading assets for plugin %v: %v", name, err.Error())
+		}
 	}
 
 	// Save the plugin routes so they can be removed if disabled.
 	saveRoutesForPlugin(name, recorder, ss.storage)
+
 }
 
 // DisablePlugin disables a plugin.
