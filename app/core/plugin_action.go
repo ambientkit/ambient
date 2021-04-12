@@ -135,12 +135,11 @@ func (c *App) loadSinglePluginPages(name string) bool {
 	recorder := routerrecorder.NewRecorder(c.Router)
 
 	toolkit := &Toolkit{
-		Mux:          recorder,
-		Render:       c.Render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
-		Security:     c.Sess,
-		Site:         NewSecureSite(name, c.Log, c.Storage, c.Sess, c.Router, c.Plugins),
-		PluginLoader: c,
-		Log:          c.Log,
+		Mux:      recorder,
+		Render:   c.Render, // FIXME: Should probably remove this and create a new struct so it's more secure. A plugin could use a type conversion.
+		Security: c.Sess,
+		Site:     NewSecureSite(name, c.Log, c.Storage, c.Sess, c.Router, c.Render, c.Plugins),
+		Log:      c.Log,
 	}
 
 	// Enable the plugin and pass in the toolkit.

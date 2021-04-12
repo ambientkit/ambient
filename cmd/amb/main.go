@@ -58,7 +58,7 @@ func main() {
 	}
 
 	// Set up the secure storage.
-	securestorage = core.NewSecureSite(appName, log, storage, nil, nil, plugins)
+	securestorage = core.NewSecureSite(appName, log, storage, nil, nil, nil, plugins)
 
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(

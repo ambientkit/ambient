@@ -80,27 +80,9 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 			if err != nil {
 				return p.Site.Error(err)
 			}
-
-			// Load the plugin routes.
-			err = p.PluginLoader.LoadSinglePlugin(name)
-			if err != nil {
-				return http.StatusInternalServerError, err
-			}
 		} else if !enable && info.Enabled {
-			// Call the Disable() function on the plugin.
-			err = p.PluginLoader.DisableSinglePlugin(name)
-			if err != nil {
-				return http.StatusInternalServerError, err
-			}
-
-			// Disable the plugin in the system.
+			// Disable the plugin.
 			err = p.Site.DisablePlugin(name)
-			if err != nil {
-				return p.Site.Error(err)
-			}
-
-			// Clear the plugin routes.
-			err = p.Site.ClearAllRoutesForPlugin(name)
 			if err != nil {
 				return p.Site.Error(err)
 			}

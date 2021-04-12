@@ -8,12 +8,11 @@ import (
 
 // Toolkit provides utilities to plugins.
 type Toolkit struct {
-	Render       IRender
-	Mux          IRouter
-	Security     ISession
-	Site         *SecureSite
-	PluginLoader IPluginLoader
-	Log          ILogger
+	Render   IRender
+	Mux      IRouter
+	Security ISession
+	Site     *SecureSite
+	Log      ILogger
 }
 
 // IRender represents a template renderer.
@@ -41,12 +40,6 @@ type ISession interface {
 	SetUser(r *http.Request, username string)
 	RememberMe(r *http.Request, remember bool)
 	Logout(r *http.Request)
-}
-
-// IPluginLoader -
-type IPluginLoader interface {
-	LoadSinglePlugin(name string) error
-	DisableSinglePlugin(name string) error
 }
 
 // ILogger representer the log service for the application.
