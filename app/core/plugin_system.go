@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"fmt"
 )
 
 var (
@@ -27,6 +28,12 @@ func NewPluginSystem(log ILogger, arr []IPlugin, storage *Storage) (*PluginSyste
 
 	shouldSave := false
 	for _, p := range arr {
+		// Ensure a plugin can't be loaded twice or two plugins with the same
+		// names can't both be loaded.
+		if _, found := plugins[p.PluginName()]; found {
+			return nil, fmt.Errorf("found a duplicate plugin: %v", p.PluginName())
+		}
+
 		names = append(names, p.PluginName())
 		plugins[p.PluginName()] = p
 
