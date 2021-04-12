@@ -76,13 +76,13 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 	for name, info := range plugins {
 		enable := (r.FormValue(name) == "on")
 		if enable && !info.Enabled {
-			err = p.Site.EnablePlugin(name)
+			err = p.Site.EnablePlugin(name, true)
 			if err != nil {
 				return p.Site.Error(err)
 			}
 		} else if !enable && info.Enabled {
 			// Disable the plugin.
-			err = p.Site.DisablePlugin(name)
+			err = p.Site.DisablePlugin(name, true)
 			if err != nil {
 				return p.Site.Error(err)
 			}

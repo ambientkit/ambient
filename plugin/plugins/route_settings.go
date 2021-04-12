@@ -81,13 +81,13 @@ func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status 
 	}
 
 	// Disable the plugin.
-	err = p.Site.DisablePlugin(pluginName)
+	err = p.Site.DisablePlugin(pluginName, true)
 	if err != nil {
 		return p.Site.Error(err)
 	}
 
 	// Re-enable the plugin to get any change in routes.
-	err = p.Site.EnablePlugin(pluginName)
+	err = p.Site.EnablePlugin(pluginName, true)
 	if err != nil {
 		return p.Site.Error(err)
 	}

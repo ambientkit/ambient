@@ -1,6 +1,6 @@
-// Package logruslogger provides log functionality
+// Package zaplogger provides log functionality
 // for an Ambient application.
-package logruslogger
+package zaplogger
 
 import (
 	"github.com/josephspurrier/ambient/app/core"
@@ -12,7 +12,7 @@ type Plugin struct {
 	*core.Toolkit
 }
 
-// New returns a new logruslogger plugin.
+// New returns a new zaplogger plugin.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &core.PluginBase{},
@@ -21,7 +21,7 @@ func New() *Plugin {
 
 // PluginName returns the plugin name.
 func (p *Plugin) PluginName() string {
-	return "logruslogger"
+	return "zaplogger"
 }
 
 // PluginVersion returns the plugin version.

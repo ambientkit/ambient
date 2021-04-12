@@ -19,7 +19,6 @@ import (
 	"github.com/josephspurrier/ambient/plugin/hello"
 	"github.com/josephspurrier/ambient/plugin/htmltemplate"
 	"github.com/josephspurrier/ambient/plugin/logrequest"
-	"github.com/josephspurrier/ambient/plugin/logruslogger"
 	"github.com/josephspurrier/ambient/plugin/navigation"
 	"github.com/josephspurrier/ambient/plugin/notrailingslash"
 	"github.com/josephspurrier/ambient/plugin/plugins"
@@ -34,12 +33,14 @@ import (
 	"github.com/josephspurrier/ambient/plugin/styles"
 	"github.com/josephspurrier/ambient/plugin/uptimerobotok"
 	"github.com/josephspurrier/ambient/plugin/viewport"
+	"github.com/josephspurrier/ambient/plugin/zaplogger"
 )
 
 // Plugins defines the plugins - order does matter.
 var Plugins = core.IPluginList{
 	// Core plugins required to use the system.
-	logruslogger.New(),     // Logger must be the first plugin.
+	//logruslogger.New(), // Logger must be the first plugin.
+	zaplogger.New(),        // Logger must be the first plugin.
 	gcpbucketstorage.New(), // GCP and local Storage must be the second plugin.
 	htmltemplate.New(),     // HTML template engine.
 	awayrouter.New(),       // Request router.
@@ -85,6 +86,12 @@ func Boot() (core.IAppLogger, http.Handler, error) {
 	if err != nil {
 		return nil, nil, err
 	}
+
+	// Set the log level.
+	//log.SetLogLevel(core.LogLevelDebug)
+	log.SetLogLevel(core.LogLevelInfo)
+	//log.SetLogLevel(core.LogLevelError)
+	//log.SetLogLevel(core.LogLevelFatal)
 
 	// Set up the storage.
 	storage, ss, err := Storage(log, Plugins[1])

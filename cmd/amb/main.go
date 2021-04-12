@@ -83,7 +83,7 @@ var (
 
 func enablePlugin(name string) {
 	log.Info("enabling plugin: %v", name)
-	err := securestorage.EnablePlugin(name)
+	err := securestorage.EnablePlugin(name, false)
 	if err != nil {
 		log.Error("", err.Error())
 	}

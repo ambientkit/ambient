@@ -55,19 +55,3 @@ type IAppSession interface {
 	SetCSRF(r *http.Request) string
 	CSRF(r *http.Request) bool
 }
-
-// IAppLogger represents the log service for the application.
-type IAppLogger interface {
-	ILogger
-
-	// Fatal is reserved for the application level only.
-	Fatal(format string, v ...interface{})
-}
-
-// ILogger represents the log service for the plugins.
-type ILogger interface {
-	Debug(format string, v ...interface{})
-	Info(format string, v ...interface{})
-	Warn(format string, v ...interface{})
-	Error(format string, v ...interface{})
-}

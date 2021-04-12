@@ -43,15 +43,17 @@ func (ss *SecureSite) DeletePlugin(name string) error {
 }
 
 // EnablePlugin enables a plugin.
-func (ss *SecureSite) EnablePlugin(pluginName string) error {
+func (ss *SecureSite) EnablePlugin(pluginName string, loadPlugin bool) error {
 	if !ss.Authorized(GrantSitePluginEnable) {
 		return ErrAccessDenied
 	}
 
-	// Load the plugin and routes.
-	err := ss.loadSinglePlugin(pluginName)
-	if err != nil {
-		return err
+	if loadPlugin {
+		// Load the plugin and routes.
+		err := ss.loadSinglePlugin(pluginName)
+		if err != nil {
+			return err
+		}
 	}
 
 	pluginData, ok := ss.storage.Site.PluginStorage[pluginName]
@@ -142,32 +144,34 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 }
 
 // DisablePlugin disables a plugin.
-func (ss *SecureSite) DisablePlugin(pluginName string) error {
+func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error {
 	if !ss.Authorized(GrantSitePluginDisable) {
 		return ErrAccessDenied
 	}
 
-	// Get the plugin.
-	plugin, ok := ss.pluginsystem.plugins[pluginName]
-	if !ok {
-		return ErrNotFound
-	}
+	if unloadPlugin {
+		// Get the plugin.
+		plugin, ok := ss.pluginsystem.plugins[pluginName]
+		if !ok {
+			return ErrNotFound
+		}
 
-	// Disable the plugin.
-	err := plugin.Disable()
-	if err != nil {
-		return err
-	}
+		// Disable the plugin.
+		err := plugin.Disable()
+		if err != nil {
+			return err
+		}
 
-	// Get the routes for the plugin.
-	routes, ok := ss.storage.PluginRoutes.Routes[pluginName]
-	if !ok {
-		return ErrNotFound
-	}
+		// Get the routes for the plugin.
+		routes, ok := ss.storage.PluginRoutes.Routes[pluginName]
+		if !ok {
+			return ErrNotFound
+		}
 
-	// Clear each route.
-	for _, v := range routes {
-		ss.mux.Clear(v.Method, v.Path)
+		// Clear each route.
+		for _, v := range routes {
+			ss.mux.Clear(v.Method, v.Path)
+		}
 	}
 
 	// Get the plugin data.
@@ -276,7 +280,7 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin IPlugin)
 	// Loop through each piece of middleware.
 	arrHandlers := plugin.Middleware()
 	if len(arrHandlers) > 0 {
-		ss.log.Debug("plugin middleware: loading %v middleware for plugin: %v\n", len(plugin.Middleware()), plugin.PluginName())
+		ss.log.Debug("plugin middleware: loading %v middleware for plugin: %v", len(plugin.Middleware()), plugin.PluginName())
 	}
 
 	for i, pluginMiddleware := range arrHandlers {
@@ -292,17 +296,17 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin IPlugin)
 				// If the plugin is not found in the settings, then skip it.
 				safePluginSettings, ok := ss.storage.Site.PluginStorage[safePlugin.PluginName()]
 				if !ok {
-					ss.log.Debug("plugin middleware: plugin %v not found\n", safePlugin.PluginName())
+					ss.log.Debug("plugin middleware: plugin %v not found", safePlugin.PluginName())
 					next.ServeHTTP(w, r)
 					return
 				}
 
 				// If the plugin is enabled, then wrap with the middleware.
 				if safePluginSettings.Enabled {
-					ss.log.Debug("plugin middleware: running (enabled) middleware %v by plugin: %v\n", middlewareIndex, safePlugin.PluginName())
+					ss.log.Debug("plugin middleware: running (enabled) middleware %v by plugin: %v", middlewareIndex, safePlugin.PluginName())
 					safePluginMiddleware(next).ServeHTTP(w, r)
 				} else {
-					ss.log.Debug("plugin middleware: skipping (disabled) middleware %v by plugin: %v\n", middlewareIndex, safePlugin.PluginName())
+					ss.log.Debug("plugin middleware: skipping (disabled) middleware %v by plugin: %v", middlewareIndex, safePlugin.PluginName())
 					next.ServeHTTP(w, r)
 				}
 			})

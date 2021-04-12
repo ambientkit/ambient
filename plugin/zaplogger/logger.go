@@ -1,13 +1,16 @@
-package logruslogger
+package zaplogger
 
 import (
 	"github.com/josephspurrier/ambient/app/core"
-	"github.com/sirupsen/logrus"
+	"github.com/mattn/go-colorable"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 // Logger represents a logger.
 type Logger struct {
-	log *logrus.Logger
+	log      *zap.SugaredLogger
+	loglevel zap.AtomicLevel
 
 	appName    string
 	appVersion string
@@ -15,54 +18,65 @@ type Logger struct {
 
 // NewLogger returns a new logger with a default log level of error.
 func NewLogger(appName string, appVersion string) *Logger {
-	var base = logrus.New()
-	//base.SetFormatter(&logrus.JSONFormatter{})
-	base.Level = logrus.InfoLevel
+	loglevel := zap.NewAtomicLevel()
+	encoderCfg := zap.NewProductionEncoderConfig()
+	encoderCfg.TimeKey = "" // Disable timestamps.
+	encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	base := zap.New(zapcore.NewCore(
+		zapcore.NewConsoleEncoder(encoderCfg),
+		//zapcore.NewJSONEncoder(encoderCfg),
+		zapcore.AddSync(colorable.NewColorableStdout()),
+		//zapcore.Lock(os.Stdout),
+		loglevel,
+	))
+
+	defer base.Sync()
+	sugar := base.Sugar()
 
 	return &Logger{
-		log: base,
+		log:      sugar,
+		loglevel: loglevel,
 
 		appName:    appName,
 		appVersion: appVersion,
 	}
 }
 
-func (l *Logger) logentry() *logrus.Entry {
-	standardFields := logrus.Fields{
-		"app":     l.appName,
-		"version": l.appVersion,
-	}
-
-	return l.log.WithFields(standardFields)
+func (l *Logger) logentry() *zap.SugaredLogger {
+	return l.log.Named(l.appName + " v" + l.appVersion)
 }
 
 // SetLogLevel will set the logger output level.
 func (l *Logger) SetLogLevel(level core.LogLevel) {
 	// Set log level temporarily to info.
-	l.log.Level = logrus.InfoLevel
-	l.logentry().Infoln("log level set to:", level)
+	l.loglevel.SetLevel(zap.InfoLevel)
+	l.logentry().Infof("log level set to: %v", level)
+
+	var loglevel zapcore.Level
 
 	switch level {
 	case core.LogLevelDebug:
-		l.log.Level = logrus.DebugLevel
+		loglevel = zapcore.DebugLevel
 	case core.LogLevelInfo:
-		l.log.Level = logrus.InfoLevel
+		loglevel = zapcore.InfoLevel
 	case core.LogLevelWarn:
-		l.log.Level = logrus.WarnLevel
+		loglevel = zapcore.WarnLevel
 	case core.LogLevelError:
-		l.log.Level = logrus.ErrorLevel
+		loglevel = zapcore.ErrorLevel
 	case core.LogLevelFatal:
-		l.log.Level = logrus.FatalLevel
+		loglevel = zapcore.FatalLevel
 	default:
-		l.log.Level = logrus.InfoLevel
+		loglevel = zapcore.InfoLevel
 	}
+
+	l.loglevel.SetLevel(loglevel)
 }
 
 // Debug is equivalent to log.Printf() + "\n" if format is not empty.
 // It's equivalent to Println() if format is empty.
 func (l *Logger) Debug(format string, v ...interface{}) {
 	if len(format) == 0 {
-		l.logentry().Debugln(v...)
+		l.logentry().Debug(v...)
 	} else {
 		l.logentry().Debugf(format, v...)
 	}
@@ -72,7 +86,7 @@ func (l *Logger) Debug(format string, v ...interface{}) {
 // It's equivalent to Println() if format is empty.
 func (l *Logger) Info(format string, v ...interface{}) {
 	if len(format) == 0 {
-		l.logentry().Infoln(v...)
+		l.logentry().Info(v...)
 	} else {
 		l.logentry().Infof(format, v...)
 	}
@@ -82,7 +96,7 @@ func (l *Logger) Info(format string, v ...interface{}) {
 // It's equivalent to Println() if format is empty.
 func (l *Logger) Warn(format string, v ...interface{}) {
 	if len(format) == 0 {
-		l.logentry().Warnln(v...)
+		l.logentry().Warn(v...)
 	} else {
 		l.logentry().Warnf(format, v...)
 	}
@@ -92,7 +106,7 @@ func (l *Logger) Warn(format string, v ...interface{}) {
 // It's equivalent to Println() if format is empty.
 func (l *Logger) Error(format string, v ...interface{}) {
 	if len(format) == 0 {
-		l.logentry().Errorln(v...)
+		l.logentry().Error(v...)
 	} else {
 		l.logentry().Errorf(format, v...)
 	}
@@ -103,7 +117,7 @@ func (l *Logger) Error(format string, v ...interface{}) {
 // to os.Exit(1).
 func (l *Logger) Fatal(format string, v ...interface{}) {
 	if len(format) == 0 {
-		l.logentry().Fatalln(v...)
+		l.logentry().Fatal(v...)
 	} else {
 		l.logentry().Fatalf(format, v...)
 	}

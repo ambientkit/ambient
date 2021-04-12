@@ -100,7 +100,7 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 
 	// If the username and password don't match, then just redirect.
 	if username != allowedUsername || !passMatch || !mfaSuccess {
-		p.Log.Info("login attempt failed. Username: %v (expected: %v) | Password match: %v | MFA success: %v\n", username, allowedUsername, passMatch, mfaSuccess)
+		p.Log.Info("login attempt failed. Username: %v (expected: %v) | Password match: %v | MFA success: %v", username, allowedUsername, passMatch, mfaSuccess)
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
