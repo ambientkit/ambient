@@ -20,13 +20,13 @@ type IPlugin interface {
 	FuncMap() func(r *http.Request) template.FuncMap
 	Settings() []Setting
 	Middleware() []func(next http.Handler) http.Handler
+	Grants() []Grant
 
 	// These are called before the plugin is enabled so they only have access to the logger.
-	SessionManager(logger ILogger, ss SessionStorer) (ISession, error)
-	Router(logger ILogger, te IRender) (IAppRouter, error)
 	Storage(logger ILogger) (DataStorer, SessionStorer, error)
+	SessionManager(logger ILogger, ss SessionStorer) (ISession, error)
 	TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error)
-	Grants() []Grant
+	Router(logger ILogger, te IRender) (IAppRouter, error)
 }
 
 // IPluginList is a list of IPlugins.
