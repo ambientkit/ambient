@@ -30,7 +30,7 @@ func Storage(log *logger.Logger, plugin core.IPlugin) (*core.Storage, core.Sessi
 	site := &core.Site{}
 
 	// Set up the data storage provider.
-	storage, err := core.NewDatastore(ds, site)
+	storage, err := core.NewStorage(ds, site)
 	if err != nil {
 		return nil, nil, err
 	}

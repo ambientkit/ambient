@@ -14,9 +14,9 @@ type Storage struct {
 	datastorer   DataStorer
 }
 
-// NewDatastore returns a writable and readable site object. Returns an error if the
+// NewStorage returns a writable and readable site object. Returns an error if the
 // object cannot be initially read.
-func NewDatastore(ds DataStorer, site *Site) (*Storage, error) {
+func NewStorage(ds DataStorer, site *Site) (*Storage, error) {
 	s := &Storage{
 		Site:       site,
 		datastorer: ds,

@@ -1,5 +1,15 @@
 package core
 
+// PluginData represents the plugin storage information.
+type PluginData struct {
+	Enabled  bool           `json:"enabled"`
+	Grants   PluginGrants   `json:"grants"`
+	Settings PluginSettings `json:"settings"`
+}
+
+// PluginGrants represents an unordered map of grants.
+type PluginGrants map[Grant]bool
+
 // SettingType is an HTML type of setting.
 type SettingType string
 
@@ -11,16 +21,6 @@ const (
 	// Checkbox is a checkbox field.
 	Checkbox SettingType = "checkbox"
 )
-
-// PluginData represents the plugin storage information.
-type PluginData struct {
-	Enabled  bool           `json:"enabled"`
-	Grants   PluginGrants   `json:"grants"`
-	Settings PluginSettings `json:"settings"`
-}
-
-// PluginGrants represents an unordered map of grants.
-type PluginGrants map[Grant]bool
 
 // PluginSettings represents an unordered map of settings.
 type PluginSettings map[string]interface{}
@@ -38,15 +38,4 @@ type Setting struct {
 type SettingDescription struct {
 	Text string `json:"name"`
 	URL  string `json:"url"`
-}
-
-// PluginRoutes -
-type PluginRoutes struct {
-	Routes map[string][]Route
-}
-
-// Route -
-type Route struct {
-	Method string
-	Path   string
 }
