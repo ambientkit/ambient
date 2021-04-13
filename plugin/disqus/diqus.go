@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 //go:embed css/*.css js/*.js
@@ -15,14 +15,14 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new disqus plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -37,17 +37,17 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // GrantRequests returns a list of grants requested by the plugin.
-func (p *Plugin) GrantRequests() []core.GrantRequest {
-	return []core.GrantRequest{
-		{Grant: core.GrantPluginSettingRead, Description: "Access to the Disqus ID."},
-		{Grant: core.GrantSiteURLRead, Description: "Access to read the site URL."},
-		{Grant: core.GrantSiteSchemeRead, Description: "Access to read the site scheme."},
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantPluginSettingRead, Description: "Access to the Disqus ID."},
+		{Grant: ambient.GrantSiteURLRead, Description: "Access to read the site URL."},
+		{Grant: ambient.GrantSiteSchemeRead, Description: "Access to read the site scheme."},
 	}
 }
 
@@ -57,8 +57,8 @@ const (
 )
 
 // Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []core.Setting {
-	return []core.Setting{
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
 		{
 			Name: DisqusID,
 		},
@@ -66,7 +66,7 @@ func (p *Plugin) Settings() []core.Setting {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	// Get the Disqus ID.
 	disqusID, err := p.Site.PluginSettingString(DisqusID)
 	if err != nil || len(disqusID) == 0 {
@@ -80,24 +80,24 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		return nil, nil
 	}
 
-	return []core.Asset{
+	return []ambient.Asset{
 		{
 			Path:     "css/disqus.css",
-			Filetype: core.AssetStylesheet,
-			Location: core.LocationHead,
-			LayoutOnly: []core.LayoutType{
-				core.LayoutPost,
+			Filetype: ambient.AssetStylesheet,
+			Location: ambient.LocationHead,
+			LayoutOnly: []ambient.LayoutType{
+				ambient.LayoutPost,
 			},
 		},
 		{
 			Path:     "js/disqus.js",
-			Filetype: core.AssetJavaScript,
-			Location: core.LocationBody,
-			LayoutOnly: []core.LayoutType{
-				core.LayoutPost,
+			Filetype: ambient.AssetJavaScript,
+			Location: ambient.LocationBody,
+			LayoutOnly: []ambient.LayoutType{
+				ambient.LayoutPost,
 			},
 			Inline: true,
-			Replace: []core.Replace{
+			Replace: []ambient.Replace{
 				{
 					Find:    "{{.DisqusID}}",
 					Replace: disqusID,
@@ -109,14 +109,14 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 			},
 		},
 		{
-			Filetype: core.AssetGeneric,
-			Location: core.LocationMain,
-			LayoutOnly: []core.LayoutType{
-				core.LayoutPost,
+			Filetype: ambient.AssetGeneric,
+			Location: ambient.LocationMain,
+			LayoutOnly: []ambient.LayoutType{
+				ambient.LayoutPost,
 			},
 			TagName:    "div",
 			ClosingTag: true,
-			Attributes: []core.Attribute{
+			Attributes: []ambient.Attribute{
 				{
 					Name:  "id",
 					Value: "disqus_thread",

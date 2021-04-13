@@ -5,7 +5,7 @@ package stackedit
 import (
 	"embed"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 //go:embed js/*.js
@@ -13,14 +13,14 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new stackedit plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -35,26 +35,26 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
-	return []core.Asset{
+func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
+	return []ambient.Asset{
 		{
 			Path:     "https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js",
-			Filetype: core.AssetJavaScript,
-			Location: core.LocationBody,
+			Filetype: ambient.AssetJavaScript,
+			Location: ambient.LocationBody,
 			External: true,
-			Auth:     core.AuthOnly,
+			Auth:     ambient.AuthOnly,
 		},
 		{
 			Path:     "js/stackedit.js",
-			Filetype: core.AssetJavaScript,
-			Location: core.LocationBody,
-			Auth:     core.AuthOnly,
+			Filetype: ambient.AssetJavaScript,
+			Location: ambient.LocationBody,
+			Auth:     ambient.AuthOnly,
 		},
 	}, &assets
 }

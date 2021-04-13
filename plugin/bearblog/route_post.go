@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday/v2"
 	"jaytaylor.com/html2text"
@@ -31,7 +31,7 @@ func (p *Plugin) postIndex(w http.ResponseWriter, r *http.Request) (status int, 
 			return p.Site.Error(err)
 		}
 
-		posts := make([]core.PostWithID, 0)
+		posts := make([]ambient.PostWithID, 0)
 		for _, v := range postsAndPages {
 			match := false
 			for _, tag := range v.Tags {

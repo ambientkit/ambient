@@ -1,7 +1,7 @@
 package logruslogger
 
 import (
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 	"github.com/sirupsen/logrus"
 )
 
@@ -37,21 +37,21 @@ func (l *Logger) logentry() *logrus.Entry {
 }
 
 // SetLogLevel will set the logger output level.
-func (l *Logger) SetLogLevel(level core.LogLevel) {
+func (l *Logger) SetLogLevel(level ambient.LogLevel) {
 	// Set log level temporarily to info.
 	l.log.Level = logrus.InfoLevel
 	l.logentry().Infoln("log level set to:", level)
 
 	switch level {
-	case core.LogLevelDebug:
+	case ambient.LogLevelDebug:
 		l.log.Level = logrus.DebugLevel
-	case core.LogLevelInfo:
+	case ambient.LogLevelInfo:
 		l.log.Level = logrus.InfoLevel
-	case core.LogLevelWarn:
+	case ambient.LogLevelWarn:
 		l.log.Level = logrus.WarnLevel
-	case core.LogLevelError:
+	case ambient.LogLevelError:
 		l.log.Level = logrus.ErrorLevel
-	case core.LogLevelFatal:
+	case ambient.LogLevelFatal:
 		l.log.Level = logrus.FatalLevel
 	default:
 		l.log.Level = logrus.InfoLevel

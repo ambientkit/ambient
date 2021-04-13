@@ -5,19 +5,19 @@ package author
 import (
 	"embed"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new author plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -37,21 +37,21 @@ const (
 )
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // GrantRequests returns a list of grants requested by the plugin.
-func (p *Plugin) GrantRequests() []core.GrantRequest {
-	return []core.GrantRequest{
-		{Grant: core.GrantPluginSettingRead, Description: "Access to the author name."},
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantPluginSettingRead, Description: "Access to the author name."},
 	}
 }
 
 // Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []core.Setting {
-	return []core.Setting{
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
 		{
 			Name: Author,
 		},
@@ -59,20 +59,20 @@ func (p *Plugin) Settings() []core.Setting {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	name, err := p.Site.PluginSettingString(Author)
 	if err != nil || len(name) == 0 {
 		// Otherwise don't set the assets.
 		return nil, nil
 	}
 
-	return []core.Asset{
+	return []ambient.Asset{
 		{
-			Filetype:   core.AssetGeneric,
-			Location:   core.LocationHead,
+			Filetype:   ambient.AssetGeneric,
+			Location:   ambient.LocationHead,
 			TagName:    "meta",
 			ClosingTag: false,
-			Attributes: []core.Attribute{
+			Attributes: []ambient.Attribute{
 				{
 					Name:  "name",
 					Value: "author",

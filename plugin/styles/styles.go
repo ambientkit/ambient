@@ -5,19 +5,19 @@ package styles
 import (
 	"embed"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new styles plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -32,15 +32,15 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // GrantRequests returns a list of grants requested by the plugin.
-func (p *Plugin) GrantRequests() []core.GrantRequest {
-	return []core.GrantRequest{
-		{Grant: core.GrantPluginSettingRead, Description: "Access to read the plugin settings."},
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantPluginSettingRead, Description: "Access to read the plugin settings."},
 	}
 }
 
@@ -52,19 +52,19 @@ const (
 )
 
 // Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []core.Setting {
-	return []core.Setting{
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
 		{
 			Name: Favicon,
-			Description: core.SettingDescription{
+			Description: ambient.SettingDescription{
 				Text: "Emoji cheatsheet",
 				URL:  "https://emojicheatsheet.com/",
 			},
 		},
 		{
 			Name: Styles,
-			Type: core.Textarea,
-			Description: core.SettingDescription{
+			Type: ambient.Textarea,
+			Description: ambient.SettingDescription{
 				Text: "No-class css themes. You can also paste a link like this: @import 'https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css'",
 				URL:  "https://www.cssbed.com/",
 			},
@@ -73,17 +73,17 @@ func (p *Plugin) Settings() []core.Setting {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
-	arr := make([]core.Asset, 0)
+func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
+	arr := make([]ambient.Asset, 0)
 
 	favicon, err := p.Site.PluginSettingString(Favicon)
 	if err == nil && len(favicon) > 0 {
-		arr = append(arr, core.Asset{
-			Filetype:   core.AssetGeneric,
-			Location:   core.LocationHead,
+		arr = append(arr, ambient.Asset{
+			Filetype:   ambient.AssetGeneric,
+			Location:   ambient.LocationHead,
 			TagName:    "link",
 			ClosingTag: false,
-			Attributes: []core.Attribute{
+			Attributes: []ambient.Attribute{
 				{
 					Name:  "rel",
 					Value: "icon",
@@ -98,10 +98,10 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 
 	s, err := p.Site.PluginSettingString(Styles)
 	if err == nil && len(s) > 0 {
-		arr = append(arr, core.Asset{
+		arr = append(arr, ambient.Asset{
 			Path:     "/plugins/styles/css/style.css",
-			Filetype: core.AssetStylesheet,
-			Location: core.LocationHead,
+			Filetype: ambient.AssetStylesheet,
+			Location: ambient.LocationHead,
 			External: true,
 		})
 	}

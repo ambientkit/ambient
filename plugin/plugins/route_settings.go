@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 type pluginSetting struct {
 	Index       int
 	Name        string
 	Value       string
-	FieldType   core.SettingType
-	Description core.SettingDescription
+	FieldType   ambient.SettingType
+	Description ambient.SettingDescription
 }
 
 func (p *Plugin) settingsEdit(w http.ResponseWriter, r *http.Request) (status int, err error) {

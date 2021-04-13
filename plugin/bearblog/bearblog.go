@@ -8,7 +8,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 //go:embed template/partial/*.tmpl template/content/*.tmpl
@@ -16,14 +16,14 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new bearblog plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -38,28 +38,28 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 
 	return nil
 }
 
 // GrantRequests returns a list of grants requested by the plugin.
-func (p *Plugin) GrantRequests() []core.GrantRequest {
-	return []core.GrantRequest{
-		{Grant: core.GrantUserAuthenticatedRead, Description: "Show different menus to authenticated vs unauthenticated users."},
-		{Grant: core.GrantPluginSettingRead, Description: "Read own plugin settings."},
-		{Grant: core.GrantPluginSettingWrite, Description: "Write own plugin settings."},
-		{Grant: core.GrantSitePostRead, Description: "Read all site posts."},
-		{Grant: core.GrantSitePostWrite, Description: "Create and edit site posts."},
-		{Grant: core.GrantSiteSchemeRead, Description: "Read site scheme."},
-		{Grant: core.GrantSiteSchemeWrite, Description: "Update the site scheme."},
-		{Grant: core.GrantSiteURLRead, Description: "Read the site URL."},
-		{Grant: core.GrantSiteURLWrite, Description: "Update the site URL."},
-		{Grant: core.GrantSiteTitleRead, Description: "Read the site title."},
-		{Grant: core.GrantSiteTitleWrite, Description: "Update the site title."},
-		{Grant: core.GrantSiteContentRead, Description: "Read home page content."},
-		{Grant: core.GrantSiteContentWrite, Description: "Update home page content."},
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantUserAuthenticatedRead, Description: "Show different menus to authenticated vs unauthenticated users."},
+		{Grant: ambient.GrantPluginSettingRead, Description: "Read own plugin settings."},
+		{Grant: ambient.GrantPluginSettingWrite, Description: "Write own plugin settings."},
+		{Grant: ambient.GrantSitePostRead, Description: "Read all site posts."},
+		{Grant: ambient.GrantSitePostWrite, Description: "Create and edit site posts."},
+		{Grant: ambient.GrantSiteSchemeRead, Description: "Read site scheme."},
+		{Grant: ambient.GrantSiteSchemeWrite, Description: "Update the site scheme."},
+		{Grant: ambient.GrantSiteURLRead, Description: "Read the site URL."},
+		{Grant: ambient.GrantSiteURLWrite, Description: "Update the site URL."},
+		{Grant: ambient.GrantSiteTitleRead, Description: "Read the site title."},
+		{Grant: ambient.GrantSiteTitleWrite, Description: "Update the site title."},
+		{Grant: ambient.GrantSiteContentRead, Description: "Read home page content."},
+		{Grant: ambient.GrantSiteContentWrite, Description: "Update home page content."},
 	}
 }
 
@@ -79,8 +79,8 @@ const (
 )
 
 // Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []core.Setting {
-	return []core.Setting{
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
 		{
 			Name:    LoginURL,
 			Default: "admin",
@@ -95,16 +95,16 @@ func (p *Plugin) Settings() []core.Setting {
 		},
 		{
 			Name: Description,
-			Type: core.Textarea,
+			Type: ambient.Textarea,
 		},
 		{
 			Name: Footer,
-			Type: core.Textarea,
+			Type: ambient.Textarea,
 			Hide: true,
 		},
 		{
 			Name: AllowHTMLinMarkdown,
-			Type: core.Checkbox,
+			Type: ambient.Checkbox,
 		},
 	}
 }
@@ -132,14 +132,14 @@ func (p *Plugin) Routes() {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
-	arr := make([]core.Asset, 0)
+func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
+	arr := make([]ambient.Asset, 0)
 
 	siteTitle, err := p.Site.Title()
 	if err == nil && len(siteTitle) > 0 {
-		arr = append(arr, core.Asset{
-			Filetype: core.AssetGeneric,
-			Location: core.LocationHead,
+		arr = append(arr, ambient.Asset{
+			Filetype: ambient.AssetGeneric,
+			Location: ambient.LocationHead,
 			TagName:  "title",
 			Inline:   true,
 			Content:  fmt.Sprintf(`{{if .pagetitle}}{{.pagetitle}} | %v{{else}}%v{{end}}`, siteTitle, siteTitle),
@@ -148,12 +148,12 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 
 	siteDescription, err := p.Site.PluginSettingString(Description)
 	if err == nil && len(siteDescription) > 0 {
-		arr = append(arr, core.Asset{
-			Filetype:   core.AssetGeneric,
-			Location:   core.LocationHead,
+		arr = append(arr, ambient.Asset{
+			Filetype:   ambient.AssetGeneric,
+			Location:   ambient.LocationHead,
 			TagName:    "meta",
 			ClosingTag: false,
-			Attributes: []core.Attribute{
+			Attributes: []ambient.Attribute{
 				{
 					Name:  "name",
 					Value: "description",
@@ -166,12 +166,12 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		})
 	}
 
-	arr = append(arr, core.Asset{
-		Filetype:   core.AssetGeneric,
-		Location:   core.LocationHead,
+	arr = append(arr, ambient.Asset{
+		Filetype:   ambient.AssetGeneric,
+		Location:   ambient.LocationHead,
 		TagName:    "link",
 		ClosingTag: false,
-		Attributes: []core.Attribute{
+		Attributes: []ambient.Attribute{
 			{
 				Name:  "rel",
 				Value: "canonical",
@@ -185,12 +185,12 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 
 	siteAuthor, err := p.Site.PluginSettingString(Author)
 	if err == nil && len(siteAuthor) > 0 {
-		arr = append(arr, core.Asset{
-			Filetype:   core.AssetGeneric,
-			Location:   core.LocationHead,
+		arr = append(arr, ambient.Asset{
+			Filetype:   ambient.AssetGeneric,
+			Location:   ambient.LocationHead,
 			TagName:    "meta",
 			ClosingTag: false,
-			Attributes: []core.Attribute{
+			Attributes: []ambient.Attribute{
 				{
 					Name:  "name",
 					Value: "author",
@@ -203,17 +203,17 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		})
 	}
 
-	arr = append(arr, core.Asset{
+	arr = append(arr, ambient.Asset{
 		Path:     "template/partial/nav.tmpl",
-		Filetype: core.AssetGeneric,
-		Location: core.LocationHeader,
+		Filetype: ambient.AssetGeneric,
+		Location: ambient.LocationHeader,
 		Inline:   true,
 	})
 
-	arr = append(arr, core.Asset{
+	arr = append(arr, ambient.Asset{
 		Path:     "template/partial/footer.tmpl",
-		Filetype: core.AssetGeneric,
-		Location: core.LocationFooter,
+		Filetype: ambient.AssetGeneric,
+		Location: ambient.LocationFooter,
 		Inline:   true,
 	})
 

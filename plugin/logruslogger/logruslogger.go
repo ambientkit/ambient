@@ -2,20 +2,18 @@
 // for an Ambient application.
 package logruslogger
 
-import (
-	"github.com/josephspurrier/ambient/app/core"
-)
+import "github.com/josephspurrier/ambient"
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new logruslogger plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -30,7 +28,7 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Logger returns a logger.
-func (p *Plugin) Logger(appName string, appVersion string) (core.IAppLogger, error) {
+func (p *Plugin) Logger(appName string, appVersion string) (ambient.IAppLogger, error) {
 	// Create the logger.
 	log := NewLogger(appName, appVersion)
 
@@ -38,7 +36,7 @@ func (p *Plugin) Logger(appName string, appVersion string) (core.IAppLogger, err
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }

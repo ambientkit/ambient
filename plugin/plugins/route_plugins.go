@@ -4,14 +4,14 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 type pluginWithSettings struct {
 	Name string
-	core.PluginData
-	Settings []core.Setting
-	Grants   []core.GrantRequest
+	ambient.PluginData
+	Settings []ambient.Setting
+	Grants   []ambient.GrantRequest
 }
 
 func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {

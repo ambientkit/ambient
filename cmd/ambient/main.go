@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/app"
-	"github.com/josephspurrier/ambient/app/lib/timezone"
+	"github.com/josephspurrier/ambient/lib/timezone"
 )
 
 func init() {
@@ -16,7 +17,7 @@ func init() {
 
 func main() {
 	// Set up the application services.
-	logger, mux, err := app.Boot()
+	logger, mux, err := ambient.Boot(app.Plugins)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}

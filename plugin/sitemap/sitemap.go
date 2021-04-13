@@ -2,20 +2,18 @@
 // for an Ambient application.
 package sitemap
 
-import (
-	"github.com/josephspurrier/ambient/app/core"
-)
+import "github.com/josephspurrier/ambient"
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new sitemap plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -30,18 +28,18 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // GrantRequests returns a list of grants requested by the plugin.
-func (p *Plugin) GrantRequests() []core.GrantRequest {
-	return []core.GrantRequest{
-		{Grant: core.GrantSiteURLRead, Description: "Access to read the site URL."},
-		{Grant: core.GrantSiteSchemeRead, Description: "Access to read the site scheme."},
-		{Grant: core.GrantSiteUpdatedRead, Description: "Access to read the last updated date."},
-		{Grant: core.GrantSitePostRead, Description: "Access to read all the posts."},
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantSiteURLRead, Description: "Access to read the site URL."},
+		{Grant: ambient.GrantSiteSchemeRead, Description: "Access to read the site scheme."},
+		{Grant: ambient.GrantSiteUpdatedRead, Description: "Access to read the last updated date."},
+		{Grant: ambient.GrantSitePostRead, Description: "Access to read all the posts."},
 	}
 }
 

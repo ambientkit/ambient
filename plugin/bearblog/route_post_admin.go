@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/plugin/bearblog/lib/uuid"
 )
 
@@ -46,7 +46,7 @@ func (p *Plugin) postAdminStore(w http.ResponseWriter, r *http.Request) (status 
 
 	now := time.Now()
 
-	var post core.Post
+	var post ambient.Post
 	post.Title = r.FormValue("title")
 	post.URL = r.FormValue("slug")
 	post.Canonical = r.FormValue("canonical_url")

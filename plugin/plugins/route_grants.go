@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 type pluginGrant struct {
 	Index       int
-	Name        core.Grant
+	Name        ambient.Grant
 	Granted     bool
 	Description string
 }

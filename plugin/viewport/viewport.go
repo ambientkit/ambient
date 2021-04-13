@@ -5,19 +5,19 @@ package viewport
 import (
 	"embed"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new viewport plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -37,21 +37,21 @@ const (
 )
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // GrantRequests returns a list of grants requested by the plugin.
-func (p *Plugin) GrantRequests() []core.GrantRequest {
-	return []core.GrantRequest{
-		{Grant: core.GrantPluginSettingRead, Description: "Access to read the plugin settings."},
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantPluginSettingRead, Description: "Access to read the plugin settings."},
 	}
 }
 
 // Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []core.Setting {
-	return []core.Setting{
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
 		{
 			Name:    Viewport,
 			Default: "width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0",
@@ -60,20 +60,20 @@ func (p *Plugin) Settings() []core.Setting {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	vp, err := p.Site.PluginSettingString(Viewport)
 	if err != nil || len(vp) == 0 {
 		// Otherwise don't set the assets.
 		return nil, nil
 	}
 
-	return []core.Asset{
+	return []ambient.Asset{
 		{
-			Filetype:   core.AssetGeneric,
-			Location:   core.LocationHead,
+			Filetype:   ambient.AssetGeneric,
+			Location:   ambient.LocationHead,
 			TagName:    "meta",
 			ClosingTag: false,
-			Attributes: []core.Attribute{
+			Attributes: []ambient.Attribute{
 				{
 					Name:  "name",
 					Value: "viewport",

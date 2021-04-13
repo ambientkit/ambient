@@ -5,19 +5,19 @@ package redirecttourl
 import (
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new notrailingslash plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -32,15 +32,15 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // GrantRequests returns a list of grants requested by the plugin.
-func (p *Plugin) GrantRequests() []core.GrantRequest {
-	return []core.GrantRequest{
-		{Grant: core.GrantSitePluginRead, Description: "Access to read the scheme and URL settings to redirect to."},
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantSitePluginRead, Description: "Access to read the scheme and URL settings to redirect to."},
 	}
 }
 
@@ -52,17 +52,17 @@ const (
 )
 
 // Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []core.Setting {
-	return []core.Setting{
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
 		{
 			Name: SiteScheme,
-			Description: core.SettingDescription{
+			Description: ambient.SettingDescription{
 				Text: "http or https",
 			},
 		},
 		{
 			Name: SiteURL,
-			Description: core.SettingDescription{
+			Description: ambient.SettingDescription{
 				Text: "example: domain.com",
 			},
 		},

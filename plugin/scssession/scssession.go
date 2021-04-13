@@ -9,14 +9,14 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/plugin/scssession/websession"
 )
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 
 	sessionManager *scs.SessionManager
 	sess           *websession.Session
@@ -25,7 +25,7 @@ type Plugin struct {
 // New returns a new scssession plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -40,7 +40,7 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 
 	return nil
@@ -54,7 +54,7 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 }
 
 // SessionManager returns the session manager.
-func (p *Plugin) SessionManager(logger core.ILogger, ss core.SessionStorer) (core.IAppSession, error) {
+func (p *Plugin) SessionManager(logger ambient.ILogger, ss ambient.SessionStorer) (ambient.IAppSession, error) {
 	// Get the environment variables.
 	secretKey := os.Getenv("AMB_SESSION_KEY")
 	if len(secretKey) == 0 {

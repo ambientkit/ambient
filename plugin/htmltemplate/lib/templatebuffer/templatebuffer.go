@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/josephspurrier/ambient/app/lib/cachecontrol"
+	"github.com/josephspurrier/ambient/lib/cachecontrol"
 	"github.com/oxtoacart/bpool"
 )
 

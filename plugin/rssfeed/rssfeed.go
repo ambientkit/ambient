@@ -5,19 +5,19 @@ package rssfeed
 import (
 	"embed"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new rssfeed plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -32,20 +32,20 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // GrantRequests returns a list of grants requested by the plugin.
-func (p *Plugin) GrantRequests() []core.GrantRequest {
-	return []core.GrantRequest{
-		{Grant: core.GrantSiteTitleRead, Description: "Access to read the site title."},
-		{Grant: core.GrantSiteSchemeRead, Description: "Access to read the site scheme."},
-		{Grant: core.GrantSiteURLRead, Description: "Access to read the site URL."},
-		{Grant: core.GrantSitePostRead, Description: "Access to read all the site posts."},
-		{Grant: core.GrantPluginSettingRead, Description: "Access to read the plugin settings."},
-		{Grant: core.GrantPluginSettingWrite, Description: "Access to write to the plugin settings."},
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantSiteTitleRead, Description: "Access to read the site title."},
+		{Grant: ambient.GrantSiteSchemeRead, Description: "Access to read the site scheme."},
+		{Grant: ambient.GrantSiteURLRead, Description: "Access to read the site URL."},
+		{Grant: ambient.GrantSitePostRead, Description: "Access to read all the site posts."},
+		{Grant: ambient.GrantPluginSettingRead, Description: "Access to read the plugin settings."},
+		{Grant: ambient.GrantPluginSettingWrite, Description: "Access to write to the plugin settings."},
 	}
 }
 
@@ -57,24 +57,24 @@ const (
 )
 
 // Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []core.Setting {
-	return []core.Setting{
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
 		{
 			Name:    FeedURL,
 			Default: "/rss.xml",
-			Description: core.SettingDescription{
+			Description: ambient.SettingDescription{
 				Text: "Must start with a slash like this: /rss.xml",
 			},
 		},
 		{
 			Name: Description,
-			Type: core.Textarea,
+			Type: ambient.Textarea,
 		},
 	}
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	siteTitle, err := p.Site.Title()
 	if err != nil {
 		return nil, nil
@@ -85,13 +85,13 @@ func (p *Plugin) Assets() ([]core.Asset, *embed.FS) {
 		return nil, nil
 	}
 
-	return []core.Asset{
+	return []ambient.Asset{
 		{
-			Filetype:   core.AssetGeneric,
-			Location:   core.LocationHead,
+			Filetype:   ambient.AssetGeneric,
+			Location:   ambient.LocationHead,
 			TagName:    "link",
 			ClosingTag: false,
-			Attributes: []core.Attribute{
+			Attributes: []ambient.Attribute{
 				{
 					Name:  "rel",
 					Value: "alternative",

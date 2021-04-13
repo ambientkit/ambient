@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/c-bata/go-prompt"
+	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/app"
-	"github.com/josephspurrier/ambient/app/core"
 )
 
 var (
@@ -19,9 +19,9 @@ var (
 			os.Exit(0)
 		},
 	}
-	log           core.IAppLogger
-	pluginsystem  *core.PluginSystem
-	securestorage *core.SecureSite
+	log           ambient.IAppLogger
+	pluginsystem  *ambient.PluginSystem
+	securestorage *ambient.SecureSite
 )
 
 func init() {
@@ -42,25 +42,25 @@ func main() {
 
 	// Set up the logger.
 	var err error
-	log, err = app.Logger(appName, appVersion, app.Plugins[0])
+	log, err = ambient.LoadLogger(appName, appVersion, app.Plugins[0])
 	if err != nil {
 		syslog.Fatalln(err.Error())
 	}
 
 	// Get the plugins and initialize storage.
-	storage, _, err := app.Storage(log, app.Plugins[1])
+	storage, _, err := ambient.LoadStorage(log, app.Plugins[1])
 	if err != nil {
 		log.Fatal("", err.Error())
 	}
 
 	// Initialize the plugin system.
-	pluginsystem, err = core.NewPluginSystem(log, app.Plugins, storage)
+	pluginsystem, err = ambient.NewPluginSystem(log, app.Plugins, storage)
 	if err != nil {
 		log.Fatal("", err.Error())
 	}
 
 	// Set up the secure storage.
-	securestorage = core.NewSecureSite(appName, log, storage, pluginsystem, nil, nil, nil)
+	securestorage = ambient.NewSecureSite(appName, log, storage, pluginsystem, nil, nil, nil)
 
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(
@@ -108,7 +108,7 @@ func enableGrants(name string) {
 
 func addGrantAll(name string) error {
 	// Set the grants for the CLI tool.
-	err := pluginsystem.SetGrant(name, core.GrantAll)
+	err := pluginsystem.SetGrant(name, ambient.GrantAll)
 	if err != nil {
 		return err
 	}
@@ -117,7 +117,7 @@ func addGrantAll(name string) error {
 
 func removeGrantAll(name string) error {
 	// Remove the grants for the CLI tool.
-	err := pluginsystem.RemoveGrant(name, core.GrantAll)
+	err := pluginsystem.RemoveGrant(name, ambient.GrantAll)
 	if err != nil {
 		return err
 	}
@@ -133,7 +133,7 @@ func enableCLIGrant() bool {
 		return true
 	}
 
-	// Add admin grant for the CLI app.
+	// Add admin grant for the CLI ambient.
 	err = addGrantAll(appName)
 	if err != nil {
 		log.Error("could not enable GrantAll on plugin %v: %v", appName, err.Error())
@@ -145,7 +145,7 @@ func enableCLIGrant() bool {
 }
 
 func disableCLIGrant() {
-	// Remove admin grant for the CLI app.
+	// Remove admin grant for the CLI ambient.
 	log.Info("remove GrantAll for plugin: %v", appName)
 	err := removeGrantAll(appName)
 	if err != nil {

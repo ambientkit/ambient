@@ -1,7 +1,7 @@
 package zaplogger
 
 import (
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 	"github.com/mattn/go-colorable"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -47,7 +47,7 @@ func (l *Logger) logentry() *zap.SugaredLogger {
 }
 
 // SetLogLevel will set the logger output level.
-func (l *Logger) SetLogLevel(level core.LogLevel) {
+func (l *Logger) SetLogLevel(level ambient.LogLevel) {
 	// Set log level temporarily to info.
 	l.loglevel.SetLevel(zap.InfoLevel)
 	l.logentry().Infof("log level set to: %v", level)
@@ -55,15 +55,15 @@ func (l *Logger) SetLogLevel(level core.LogLevel) {
 	var loglevel zapcore.Level
 
 	switch level {
-	case core.LogLevelDebug:
+	case ambient.LogLevelDebug:
 		loglevel = zapcore.DebugLevel
-	case core.LogLevelInfo:
+	case ambient.LogLevelInfo:
 		loglevel = zapcore.InfoLevel
-	case core.LogLevelWarn:
+	case ambient.LogLevelWarn:
 		loglevel = zapcore.WarnLevel
-	case core.LogLevelError:
+	case ambient.LogLevelError:
 		loglevel = zapcore.ErrorLevel
-	case core.LogLevelFatal:
+	case ambient.LogLevelFatal:
 		loglevel = zapcore.FatalLevel
 	default:
 		loglevel = zapcore.InfoLevel

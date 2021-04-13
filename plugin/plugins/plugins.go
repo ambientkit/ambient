@@ -4,7 +4,7 @@ package plugins
 import (
 	"embed"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 //go:embed template/*.tmpl
@@ -12,14 +12,14 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new plugins plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -34,23 +34,23 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // GrantRequests returns a list of grants requested by the plugin.
-func (p *Plugin) GrantRequests() []core.GrantRequest {
-	return []core.GrantRequest{
-		{Grant: core.GrantSitePluginRead, Description: "Access to read the plugins."},
-		{Grant: core.GrantSitePluginEnable, Description: "Access to enable plugins."},
-		{Grant: core.GrantSitePluginDisable, Description: "Access to disable plugins."},
-		{Grant: core.GrantSitePluginDelete, Description: "Access to delete plugin storage."},
-		{Grant: core.GrantPluginNeighborSettingRead, Description: "Access to read other plugin settings."},
-		{Grant: core.GrantPluginNeighborSettingWrite, Description: "Access to write to other plugin settings"},
-		{Grant: core.GrantPluginNeighborGrantRead, Description: "Access to read grant requests for plugins"},
-		{Grant: core.GrantPluginNeighborGrantWrite, Description: "Access to approve grants for plugins."},
-		{Grant: core.GrantRouterNeighborRouteClear, Description: "Access to clear routes for plugins."},
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantSitePluginRead, Description: "Access to read the plugins."},
+		{Grant: ambient.GrantSitePluginEnable, Description: "Access to enable plugins."},
+		{Grant: ambient.GrantSitePluginDisable, Description: "Access to disable plugins."},
+		{Grant: ambient.GrantSitePluginDelete, Description: "Access to delete plugin storage."},
+		{Grant: ambient.GrantPluginNeighborSettingRead, Description: "Access to read other plugin settings."},
+		{Grant: ambient.GrantPluginNeighborSettingWrite, Description: "Access to write to other plugin settings"},
+		{Grant: ambient.GrantPluginNeighborGrantRead, Description: "Access to read grant requests for plugins"},
+		{Grant: ambient.GrantPluginNeighborGrantWrite, Description: "Access to approve grants for plugins."},
+		{Grant: ambient.GrantRouterNeighborRouteClear, Description: "Access to clear routes for plugins."},
 	}
 }
 

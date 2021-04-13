@@ -6,20 +6,20 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage/store"
 )
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new gcpbucketstorage plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -34,7 +34,7 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
@@ -45,7 +45,7 @@ var (
 )
 
 // Storage returns data and session storage.
-func (p *Plugin) Storage(logger core.ILogger) (core.DataStorer, core.SessionStorer, error) {
+func (p *Plugin) Storage(logger ambient.ILogger) (ambient.IDataStorer, ambient.SessionStorer, error) {
 	bucket := os.Getenv("AMB_GCP_BUCKET_NAME")
 	if len(bucket) == 0 {
 		return nil, nil, fmt.Errorf("environment variable missing: %v", "AMB_GCP_BUCKET_NAME")
@@ -57,8 +57,8 @@ func (p *Plugin) Storage(logger core.ILogger) (core.DataStorer, core.SessionStor
 	// 	storageSitePath = sitePath
 	// }
 
-	var ds core.DataStorer
-	var ss core.SessionStorer
+	var ds ambient.IDataStorer
+	var ss ambient.SessionStorer
 
 	if RunningLocalDev() {
 		// Use local filesytem when developing.

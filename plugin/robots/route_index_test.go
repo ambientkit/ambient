@@ -29,7 +29,7 @@ package robots_test
 // 	mux := setupRouter()
 
 // 	// Create core app.
-// 	c := &core.App{}
+// 	c := &ambient.App{}
 // 	x := &route.XMLUtil{c}
 // 	mux.Get("/robots.txt", x.Robots)
 // 	r := httptest.NewRequest("GET", "/robots.txt", nil)

@@ -6,20 +6,20 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/plugin/awayrouter/router"
 )
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*core.PluginBase
-	*core.Toolkit
+	*ambient.PluginBase
+	*ambient.Toolkit
 }
 
 // New returns a new awayrouter plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &core.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
@@ -34,7 +34,7 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Router returns a router.
-func (p *Plugin) Router(logger core.ILogger, te core.IRender) (core.IAppRouter, error) {
+func (p *Plugin) Router(logger ambient.ILogger, te ambient.IRender) (ambient.IAppRouter, error) {
 	// Set up the default router.
 	mux := router.New()
 
@@ -45,14 +45,14 @@ func (p *Plugin) Router(logger core.ILogger, te core.IRender) (core.IAppRouter, 
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *core.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	p.Toolkit = toolkit
 	return nil
 }
 
 // setupRouter returns a router with the NotFound handler and the default
 // handler set.
-func setupRouter(logger core.ILogger, mux core.IAppRouter, te core.IRender) {
+func setupRouter(logger ambient.ILogger, mux ambient.IAppRouter, te ambient.IRender) {
 	// Set the handling of all responses.
 	customServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
 		// Handle only errors.

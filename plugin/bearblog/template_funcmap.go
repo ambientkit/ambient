@@ -7,7 +7,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/josephspurrier/ambient/app/core"
+	"github.com/josephspurrier/ambient"
 )
 
 // funcMap returns a map of template functions that can be used in templates.
@@ -19,7 +19,7 @@ func (p *Plugin) funcMap(r *http.Request) template.FuncMap {
 	fm["StampFriendly"] = func(t time.Time) string {
 		return t.Format("02 Jan, 2006")
 	}
-	fm["PublishedPages"] = func() []core.Post {
+	fm["PublishedPages"] = func() []ambient.Post {
 		arr, err := p.Site.PublishedPages()
 		if err != nil {
 			p.Log.Warn("bearblog: error getting published pages: %v", err.Error())
