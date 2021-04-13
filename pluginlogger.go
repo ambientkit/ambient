@@ -1,5 +1,3 @@
-// Package pluginlogger provides a way to output logging messages.
-// Reference: https://dzone.com/articles/logging-levels-what-they-are-and-how-they-help-you
 package ambient
 
 // Logger represents a plugin logger.

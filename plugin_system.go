@@ -1,4 +1,3 @@
-// package ambient provides plugin functionality for the application.
 package ambient
 
 import (
