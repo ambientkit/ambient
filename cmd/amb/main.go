@@ -4,6 +4,7 @@ import (
 	"fmt"
 	syslog "log"
 	"os"
+	"strings"
 
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
@@ -170,10 +171,26 @@ var pluginList = []string{
 	"bearblog",
 }
 
+var corePlugins = []prompt.Suggest{
+	{Text: "all", Description: ""},
+	{Text: "awayrouter", Description: ""},
+	{Text: "scssession", Description: ""},
+	{Text: "htmltemplate", Description: ""},
+	{Text: "plugins", Description: ""},
+	{Text: "bearcss", Description: ""},
+	{Text: "bearblog", Description: ""},
+}
+
 func executer(s string) {
-	switch s {
+	args := strings.Split(s, " ")
+
+	switch args[0] {
 	case execEnable:
-		log.Info("", "enabling core plugins")
+		if len(args) < 1 {
+			break
+		}
+
+		log.Info("", "enabling plugin")
 
 		// Enable grants temporarily.
 		fail := enableCLIGrant()
@@ -181,15 +198,19 @@ func executer(s string) {
 			return
 		}
 
-		// Enable plugins.
-		for _, p := range pluginList {
-			enablePlugin(p)
+		if args[1] == "all" {
+			// Enable plugins.
+			for _, p := range pluginList {
+				enablePlugin(p)
+			}
+		} else {
+			enablePlugin(args[1])
 		}
 
 		// Remove temporary grants.
 		disableCLIGrant()
 	case execGrants:
-		log.Info("", "adding core plugin grants")
+		log.Info("", "adding plugin grants")
 
 		// Enable grants temporarily.
 		fail := enableCLIGrant()
@@ -197,27 +218,53 @@ func executer(s string) {
 			return
 		}
 
-		// Enable plugin grants.
-		for _, p := range pluginList {
-			enableGrants(p)
+		if args[1] == "all" {
+			// Enable plugin grants.
+			for _, p := range pluginList {
+				enableGrants(p)
+			}
+		} else {
+			enableGrants(args[1])
 		}
 
 		// Remove temporary grants.
 		disableCLIGrant()
 	case execExit:
 		os.Exit(0)
-	default:
-		log.Info("", "command not recognized")
 	}
+
+	log.Info("", "command not recognized")
 }
 
 func completer(d prompt.Document) []prompt.Suggest {
-	s := []prompt.Suggest{
-		{Text: execEnable, Description: "Enable the core plugins"},
-		{Text: execGrants, Description: "Add grants for the core plugins"},
-		{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
+	suggestions := []prompt.Suggest{}
+
+	// if d.TextBeforeCursor() == "" {
+	// 	return suggestions
+	// }
+
+	args := strings.Split(d.TextBeforeCursor(), " ")
+
+	if len(args) <= 1 {
+		return prompt.FilterHasPrefix([]prompt.Suggest{
+			{Text: execEnable, Description: "Enable the core plugins"},
+			{Text: execGrants, Description: "Add grants for the core plugins"},
+			{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
+		}, args[0], true)
 	}
-	return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
+
+	switch args[0] {
+	case "enable":
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(corePlugins, args[1], true)
+		}
+	case "grant":
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(corePlugins, args[1], true)
+		}
+	}
+
+	return prompt.FilterHasPrefix(suggestions, d.TextBeforeCursor(), true)
 }
 
 func exitChecker(in string, breakline bool) bool {
