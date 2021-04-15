@@ -28,6 +28,8 @@ func NewPluginSystem(log IAppLogger, arr []IPlugin, storage *Storage) (*PluginSy
 
 	shouldSave := false
 	for _, p := range arr {
+		// TODO: Need to make sure the name matches a certain format. All lowercase. No symbols.
+
 		// Ensure a plugin can't be loaded twice or two plugins with the same
 		// names can't both be loaded.
 		if _, found := plugins[p.PluginName()]; found {
