@@ -18,6 +18,8 @@ type SettingType string
 const (
 	// Input is a standard text field.
 	Input SettingType = "input"
+	// InputPassword is a standard password field.
+	InputPassword SettingType = "password"
 	// Textarea is a textarea field.
 	Textarea SettingType = "textarea"
 	// Checkbox is a checkbox field.

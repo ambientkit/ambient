@@ -10,6 +10,8 @@
                 <textarea name="field{{.Index}}" id="id_field{{.Index}}" cols="40" rows="20">{{.Value}}</textarea>
                 {{else if eq .FieldType "checkbox"}}
                 <input type="checkbox" name="field{{.Index}}" id="id_field{{.Index}}" value="true" {{ if eq .Value "true" }}checked{{end}}>
+                {{else if eq .FieldType "password"}}
+                <input type="password" name="field{{.Index}}" id="id_field{{.Index}}" value="{{.Value}}">
                 {{else}}
                 <input type="input" name="field{{.Index}}" id="id_field{{.Index}}" value="{{.Value}}">
                 {{end}}
