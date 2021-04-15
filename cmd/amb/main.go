@@ -186,7 +186,7 @@ func executer(s string) {
 
 	switch args[0] {
 	case execEnable:
-		if len(args) < 1 {
+		if len(args) < 2 {
 			break
 		}
 
@@ -210,6 +210,10 @@ func executer(s string) {
 		// Remove temporary grants.
 		disableCLIGrant()
 	case execGrants:
+		if len(args) < 2 {
+			break
+		}
+
 		log.Info("", "adding plugin grants")
 
 		// Enable grants temporarily.

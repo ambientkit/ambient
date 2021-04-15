@@ -67,26 +67,31 @@ func (ss *SecureSite) Load() error {
 }
 
 // Authorized determines if the current context has access.
-func (ss *SecureSite) Authorized(grant Grant) bool {
+func Authorized(log ILogger, storage *Storage, pluginName string, grant Grant) bool {
 	// Always allow ambient application to get full access.
-	if ss.pluginName == "ambient" {
-		ss.log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v", "ambient", grant)
+	if pluginName == "ambient" {
+		log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v", "ambient", grant)
 		return true
 	}
 
 	// If has star, then allow all access.
-	if granted := ss.pluginsystem.Granted(ss.pluginName, GrantAll); granted {
-		ss.log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v", ss.pluginName, grant)
+	if granted := Granted(log, storage, pluginName, GrantAll); granted {
+		log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v", pluginName, grant)
 		return true
 	}
 
 	// If the grant was found, then allow access.
-	if granted := ss.pluginsystem.Granted(ss.pluginName, grant); granted {
-		ss.log.Debug("securesite: granted plugin (%v) access to the data item for grant: %v", ss.pluginName, grant)
+	if granted := Granted(log, storage, pluginName, grant); granted {
+		log.Debug("securesite: granted plugin (%v) access to the data item for grant: %v", pluginName, grant)
 		return true
 	}
 
-	ss.log.Warn("securesite: denied plugin (%v) access to the data item, requires grant: %v", ss.pluginName, grant)
+	log.Warn("securesite: denied plugin (%v) access to the data item, requires grant: %v", pluginName, grant)
 
 	return false
+}
+
+// Authorized determines if the current context has access.
+func (ss *SecureSite) Authorized(grant Grant) bool {
+	return Authorized(ss.log, ss.storage, ss.pluginName, grant)
 }

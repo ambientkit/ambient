@@ -45,11 +45,6 @@ const (
 	// GrantSitePostDelete allows delete access to the site posts.
 	GrantSitePostDelete Grant = "site.post:delete"
 
-	// GrantRouterRouteClear allows clear access to a route.
-	GrantRouterRouteClear Grant = "router.route:clear"
-	// GrantRouterNeighborRouteClear allows clear access to a route in another plugin.
-	GrantRouterNeighborRouteClear Grant = "router.neighborroute:clear"
-
 	// GrantSitePluginRead allows read access to the site plugins.
 	GrantSitePluginRead Grant = "site.plugin:read"
 	// GrantSitePluginEnable allows enable access to the site plugins.
@@ -58,6 +53,13 @@ const (
 	GrantSitePluginDisable Grant = "site.plugin:disable"
 	// GrantSitePluginDelete allows delete access to the site plugins.
 	GrantSitePluginDelete Grant = "site.plugin:delete"
+
+	// GrantRouterRouteWrite allows write access to routes.
+	GrantRouterRouteWrite Grant = "router.route:write"
+	// GrantRouterRouteClear allows clear access to a route.
+	GrantRouterRouteClear Grant = "router.route:clear"
+	// GrantRouterNeighborRouteClear allows clear access to a route in another plugin.
+	GrantRouterNeighborRouteClear Grant = "router.neighborroute:clear"
 
 	// GrantPluginSettingRead allows read access to the plugin setting.
 	GrantPluginSettingRead Grant = "plugin.setting:read"
@@ -78,4 +80,9 @@ const (
 	GrantUserAuthenticatedWrite Grant = "user.authenticated:write"
 	// GrantUserPersistWrite allows write access to login or logout a user.
 	GrantUserPersistWrite Grant = "user.persist:write"
+
+	// GrantSiteAssetWrite allows write access to site assets.
+	GrantSiteAssetWrite Grant = "site.asset:write"
+	// GrantSiteFuncMapWrite allows write access to site FuncMap for templates.
+	GrantSiteFuncMapWrite Grant = "site.funcmap:write"
 )

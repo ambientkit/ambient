@@ -156,16 +156,16 @@ func (p *PluginSystem) GrantRequests(pluginName string, grant Grant) ([]GrantReq
 }
 
 // Granted returns whether a plugin is granted for a plugin.
-func (p *PluginSystem) Granted(pluginName string, grant Grant) bool {
-	data, ok := p.storage.Site.PluginStorage[pluginName]
+func Granted(log ILogger, storage *Storage, pluginName string, grant Grant) bool {
+	data, ok := storage.Site.PluginStorage[pluginName]
 	if !ok {
-		p.log.Debug("pluginsystem.granted: could not find plugin: %v", pluginName)
+		log.Debug("pluginsystem.granted: could not find plugin: %v", pluginName)
 		return false
 	}
 
 	granted, found := data.Grants[grant]
 	if !found {
-		p.log.Debug("pluginsystem.granted: could not find grant for plugin (%v): %v", pluginName, grant)
+		log.Debug("pluginsystem.granted: could not find grant for plugin (%v): %v", pluginName, grant)
 		return false
 	}
 

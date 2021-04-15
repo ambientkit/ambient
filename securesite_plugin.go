@@ -113,7 +113,7 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 		return
 	}
 
-	recorder := NewRecorder(ss.mux)
+	recorder := NewRecorder(name, ss.log, ss.storage, ss.mux)
 
 	toolkit := &Toolkit{
 		Mux:    recorder,

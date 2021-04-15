@@ -60,6 +60,9 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 		{Grant: ambient.GrantSiteTitleWrite, Description: "Update the site title."},
 		{Grant: ambient.GrantSiteContentRead, Description: "Read home page content."},
 		{Grant: ambient.GrantSiteContentWrite, Description: "Update home page content."},
+		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to write blog meta tags to the header and add a nav and footer."},
+		{Grant: ambient.GrantSiteFuncMapWrite, Description: "Access to create global FuncMaps for templates."},
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for editing the blog posts."},
 	}
 }
 

@@ -40,6 +40,14 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	return nil
 }
 
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to add a stylesheet to the header."},
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for a stylesheet."},
+	}
+}
+
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	return []ambient.Asset{

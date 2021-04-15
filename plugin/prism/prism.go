@@ -40,6 +40,14 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	return nil
 }
 
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to add stylesheets and javascript to each page."},
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for accessing stylesheets."},
+	}
+}
+
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	return []ambient.Asset{
@@ -54,7 +62,7 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 			Location: ambient.LocationHead,
 		},
 		{
-			Path:     "https://unpkg.com/prismjs@1.23.0/components/prism-ambient.min.js",
+			Path:     "https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js",
 			Filetype: ambient.AssetJavaScript,
 			Location: ambient.LocationBody,
 			External: true,
@@ -67,31 +75,3 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 		},
 	}, &assets
 }
-
-//
-// func (p Plugin) Header() string {
-// 	return `<link rel="stylesheet" href="/plugins/prism/css/prism-vsc-dark-plus.css?` + p.Version + `">
-// 	<link rel="stylesheet" href="/plugins/prism/css/clean.css?` + p.Version + `">`
-// }
-
-// // Body -
-// func (p Plugin) Body() string {
-// 	return `<script src="https://unpkg.com/prismjs@1.23.0/components/prism-ambient.min.js"></script>
-// 	<script src="https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>`
-// }
-
-// // SetSettings -
-// func (pm Prism) SetSettings(s ambient.ISettings) error {
-// 	s.Add("name string", fieldType string, defaultValue string)
-
-// }
-
-// Deactivate deactivates the plugin, but leaves the state in the system.
-// func Deactivate() error {
-// 	return nil
-// }
-
-// // Uninstall removes all plugin state from the system.
-// func Uninstall() error {
-// 	return nil
-// }

@@ -64,54 +64,62 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 			continue
 		}
 
-		files, assets := v.Assets()
-
 		// If a FuncMap exists, pass request into FuncMap.
 		funcMap := v.FuncMap()
 		if funcMap != nil {
-			afm := funcMap(r)
-			for k, v := range afm {
-				fm[k] = v
+			// Ensure the plugin has access to write to FuncMap.
+			if Authorized(c.log, c.storage, name, GrantSiteFuncMapWrite) {
+				afm := funcMap(r)
+				for k, v := range afm {
+					fm[k] = v
+				}
 			}
 		}
 
-		loggedIn, _ := c.sess.UserAuthenticated(r)
-		for _, file := range files {
-			// Handle authentication on resources without changing resources.
-			if !authAssetAllowed(loggedIn, file) {
-				continue
-			}
+		// Ensure the plugin has access to write to assets.
+		files, assets := v.Assets()
+		if len(files) > 0 {
+			if Authorized(c.log, c.storage, name, GrantSiteAssetWrite) {
+				loggedIn, _ := c.sess.UserAuthenticated(r)
 
-			// Determine if the asset is allowed on the current page type.
-			if len(file.LayoutOnly) > 0 {
-				allowed := false
-				for _, layout := range file.LayoutOnly {
-					if layout == layoutType {
-						allowed = true
-						break
+				for _, file := range files {
+					// Handle authentication on resources without changing resources.
+					if !authAssetAllowed(loggedIn, file) {
+						continue
+					}
+
+					// Determine if the asset is allowed on the current page type.
+					if len(file.LayoutOnly) > 0 {
+						allowed := false
+						for _, layout := range file.LayoutOnly {
+							if layout == layoutType {
+								allowed = true
+								break
+							}
+						}
+						if !allowed {
+							continue
+						}
+					}
+
+					// Convert the asset to an element.
+					txt := file.Element(c.log, v, assets)
+
+					switch file.Location {
+					case LocationHead:
+						pluginHead += txt + "\n    "
+					case LocationHeader:
+						pluginHeader += txt + "\n    "
+					case LocationMain:
+						pluginMain += txt + "\n    "
+					case LocationFooter:
+						pluginFooter += txt + "\n    "
+					case LocationBody:
+						pluginBody += txt + "\n    "
+					default:
+						c.log.Error("plugin injector: unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
 					}
 				}
-				if !allowed {
-					continue
-				}
-			}
-
-			// Convert the asset to an element.
-			txt := file.Element(c.log, v, assets)
-
-			switch file.Location {
-			case LocationHead:
-				pluginHead += txt + "\n    "
-			case LocationHeader:
-				pluginHeader += txt + "\n    "
-			case LocationMain:
-				pluginMain += txt + "\n    "
-			case LocationFooter:
-				pluginFooter += txt + "\n    "
-			case LocationBody:
-				pluginBody += txt + "\n    "
-			default:
-				c.log.Error("plugin injector: unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
 			}
 		}
 	}
