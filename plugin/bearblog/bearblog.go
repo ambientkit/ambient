@@ -98,9 +98,11 @@ func (p *Plugin) Settings() []ambient.Setting {
 		{
 			Name:    Password,
 			Default: "password",
+			Type:    ambient.InputPassword,
 		},
 		{
 			Name: MFAKey,
+			Type: ambient.InputPassword,
 		},
 		{
 			Name:    LoginURL,

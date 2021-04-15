@@ -56,6 +56,7 @@ func (p *Plugin) Settings() []ambient.Setting {
 	return []ambient.Setting{
 		{
 			Name: SessionKey,
+			Type: ambient.InputPassword,
 		},
 	}
 }
