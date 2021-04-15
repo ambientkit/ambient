@@ -8,7 +8,7 @@ import (
 type Recorder struct {
 	mux IAppRouter
 
-	routes []Route
+	routeList []Route
 }
 
 // NewRecorder is a route recorder for plugins.
@@ -18,13 +18,13 @@ func NewRecorder(mux IAppRouter) *Recorder {
 	}
 }
 
-// Routes -
-func (rec *Recorder) Routes() []Route {
-	return rec.routes
+// Routes returns list of routes.
+func (rec *Recorder) routes() []Route {
+	return rec.routeList
 }
 
 func (rec *Recorder) handleRoute(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error), method string, callable func(path string, fn func(http.ResponseWriter, *http.Request) (int, error))) {
-	rec.routes = append(rec.routes, Route{
+	rec.routeList = append(rec.routeList, Route{
 		Method: method,
 		Path:   path,
 	})
@@ -110,4 +110,9 @@ func (rec *Recorder) Error(status int, w http.ResponseWriter, r *http.Request) {
 	}
 
 	rec.mux.Error(status, w, r)
+}
+
+// Wrap -
+func (rec *Recorder) Wrap(handler http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	return rec.mux.Wrap(handler)
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/bearblog"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
 	"github.com/josephspurrier/ambient/plugin/charset"
+	"github.com/josephspurrier/ambient/plugin/debugpprof"
 	"github.com/josephspurrier/ambient/plugin/description"
 	"github.com/josephspurrier/ambient/plugin/disqus"
 	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage"
@@ -43,6 +44,7 @@ var Plugins = ambient.IPluginList{
 	awayrouter.New(),       // Request router.
 
 	// Additional plugins.
+	debugpprof.New(),
 	charset.New(),
 	viewport.New(),
 	bearblog.New(),

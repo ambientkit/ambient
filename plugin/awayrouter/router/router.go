@@ -59,3 +59,11 @@ func (m *Mux) Error(status int, w http.ResponseWriter, r *http.Request) {
 func (m *Mux) Param(r *http.Request, param string) string {
 	return away.Param(r.Context(), param)
 }
+
+// Wrap returns a URL parameter.
+func (m *Mux) Wrap(handler http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	return func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		handler.ServeHTTP(w, r)
+		return
+	}
+}

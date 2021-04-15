@@ -44,6 +44,7 @@ type IRouter interface {
 	Options(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Error(status int, w http.ResponseWriter, r *http.Request)
 	Param(r *http.Request, name string) string
+	Wrap(handler http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) (status int, err error)
 }
 
 // IAppSession represents a user session.

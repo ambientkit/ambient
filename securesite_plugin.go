@@ -194,7 +194,7 @@ func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error 
 func saveRoutesForPlugin(name string, recorder *Recorder, storage *Storage) {
 	// Save the routes.
 	arr := make([]Route, 0)
-	for _, route := range recorder.Routes() {
+	for _, route := range recorder.routes() {
 		arr = append(arr, Route{
 			Method: route.Method,
 			Path:   route.Path,
