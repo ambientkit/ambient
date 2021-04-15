@@ -1,6 +1,7 @@
 package bearblog
 
 import (
+	"encoding/base64"
 	"net/http"
 	"strconv"
 
@@ -57,7 +58,7 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 		return
 	}
 
-	hashDecoded, err := p.Site.PluginSettingString(Password)
+	allowedPassword, err := p.Site.PluginSettingString(Password)
 	if err != nil {
 		p.Site.Error(err)
 		return
@@ -88,10 +89,10 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 
 	// Decode the hash - this is to allow it to be stored easily since dollar
 	// signs are difficult to work with.
-	// hashDecoded, err := base64.StdEncoding.DecodeString(allowedPassword)
-	// if err != nil {
-	// 	return http.StatusInternalServerError, err
-	// }
+	hashDecoded, err := base64.StdEncoding.DecodeString(allowedPassword)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
 	passMatch := passhash.MatchString(string(hashDecoded), password)
 
 	// If the username and password don't match, then just redirect.

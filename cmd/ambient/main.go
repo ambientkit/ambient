@@ -13,17 +13,14 @@ import (
 func init() {
 	// Set the time zone.
 	tz := os.Getenv("AMB_TIMEZONE")
-	if len(tz) == 0 {
-		// Set the default to eastern time.
-		tz = "America/New_York"
+	if len(tz) > 0 {
+		os.Setenv("TZ", tz)
 	}
-
-	os.Setenv("TZ", tz)
 }
 
 func main() {
 	// Set up the application services.
-	logger, mux, err := ambient.Boot(app.Plugins)
+	logger, mux, err := ambient.Boot(app.Plugins())
 	if err != nil {
 		log.Fatalln(err.Error())
 	}

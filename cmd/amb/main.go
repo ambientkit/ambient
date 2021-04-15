@@ -27,25 +27,26 @@ var (
 
 func main() {
 	// Ensure there is at least the logger and storage plugins.
-	if len(app.Plugins) < 2 {
+	plugins := app.Plugins()
+	if len(plugins) < 2 {
 		syslog.Fatalln("boot: no log and storage plugins found")
 	}
 
 	// Set up the logger.
 	var err error
-	log, err = ambient.LoadLogger(appName, appVersion, app.Plugins[0])
+	log, err = ambient.LoadLogger(appName, appVersion, plugins[0])
 	if err != nil {
 		syslog.Fatalln(err.Error())
 	}
 
 	// Get the plugins and initialize storage.
-	storage, _, err := ambient.LoadStorage(log, app.Plugins[1])
+	storage, _, err := ambient.LoadStorage(log, plugins[1])
 	if err != nil {
 		log.Fatal("", err.Error())
 	}
 
 	// Initialize the plugin system.
-	pluginsystem, err = ambient.NewPluginSystem(log, app.Plugins, storage)
+	pluginsystem, err = ambient.NewPluginSystem(log, plugins, storage)
 	if err != nil {
 		log.Fatal("", err.Error())
 	}

@@ -47,7 +47,7 @@ func (sd *SessionDatabase) Save(ss Sessionstorer, en Encrypter) error {
 	var b []byte
 	var err error
 
-	if RunningLocalDev() {
+	if runningLocalDev() {
 		// Indent so the data is easy to read.
 		b, err = json.MarshalIndent(sd, "", "    ")
 	} else {
@@ -72,7 +72,7 @@ func (sd *SessionDatabase) Save(ss Sessionstorer, en Encrypter) error {
 }
 
 // RunningLocalDev returns true if the AMB_LOCAL environment variable is set.
-func RunningLocalDev() bool {
+func runningLocalDev() bool {
 	s := os.Getenv("AMB_LOCAL")
 	return len(s) > 0
 }

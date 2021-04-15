@@ -3,9 +3,7 @@
 package scssession
 
 import (
-	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -20,12 +18,15 @@ type Plugin struct {
 
 	sessionManager *scs.SessionManager
 	sess           *websession.Session
+
+	sessionKey string
 }
 
 // New returns a new scssession plugin.
-func New() *Plugin {
+func New(sessionKey string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},
+		sessionKey: sessionKey,
 	}
 }
 
@@ -55,8 +56,10 @@ const (
 func (p *Plugin) Settings() []ambient.Setting {
 	return []ambient.Setting{
 		{
-			Name: SessionKey,
-			Type: ambient.InputPassword,
+			Name:    SessionKey,
+			Type:    ambient.InputPassword,
+			Default: p.sessionKey,
+			Hide:    true,
 		},
 	}
 }
@@ -70,19 +73,8 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 
 // SessionManager returns the session manager.
 func (p *Plugin) SessionManager(logger ambient.ILogger, ss ambient.SessionStorer) (ambient.IAppSession, error) {
-	// Get the environment variables.
-	secretKey := os.Getenv("AMB_SESSION_KEY")
-	if len(secretKey) == 0 {
-		return nil, fmt.Errorf("environment variable missing: %v", "AMB_SESSION_KEY")
-	}
-
-	// secretKey, err := p.Site.PluginSettingString(SessionKey)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
 	// Set up the session storage provider.
-	en := websession.NewEncryptedStorage(secretKey)
+	en := websession.NewEncryptedStorage(p.sessionKey)
 	store, err := websession.NewJSONSession(ss, en)
 	if err != nil {
 		return nil, err

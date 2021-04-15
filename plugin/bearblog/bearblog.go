@@ -48,6 +48,8 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 	return []ambient.GrantRequest{
 		{Grant: ambient.GrantUserAuthenticatedRead, Description: "Show different menus to authenticated vs unauthenticated users."},
+		{Grant: ambient.GrantUserAuthenticatedWrite, Description: "Access to login and logout the user."},
+		{Grant: ambient.GrantUserPersistWrite, Description: "Access to set session as persistent."},
 		{Grant: ambient.GrantPluginSettingRead, Description: "Read own plugin settings."},
 		{Grant: ambient.GrantPluginSettingWrite, Description: "Write own plugin settings."},
 		{Grant: ambient.GrantSitePostRead, Description: "Read all site posts."},
@@ -97,7 +99,7 @@ func (p *Plugin) Settings() []ambient.Setting {
 		},
 		{
 			Name:    Password,
-			Default: "password",
+			Default: "JDJhJDEwJFlwNGhKQ3hDd1dvb3VCOGwwcFZ5OHUxcGx1VDF6Q2IxSmhSbkFhYkI4Mjgvbjk0aHVhdzAu",
 			Type:    ambient.InputPassword,
 		},
 		{

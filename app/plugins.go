@@ -2,6 +2,10 @@
 package app
 
 import (
+	"fmt"
+	"log"
+	"os"
+
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/awayrouter"
@@ -35,40 +39,48 @@ import (
 )
 
 // Plugins defines the plugins - order does matter.
-var Plugins = ambient.IPluginList{
-	// Core plugins required to use the system.
-	//logruslogger.New(), // Logger must be the first plugin.
-	zaplogger.New(),        // Logger must be the first plugin.
-	gcpbucketstorage.New(), // GCP and local Storage must be the second plugin.
-	htmltemplate.New(),     // HTML template engine.
-	awayrouter.New(),       // Request router.
+var Plugins = func() ambient.IPluginList {
+	// Get the environment variables.
+	secretKey := os.Getenv("AMB_SESSION_KEY")
+	if len(secretKey) == 0 {
+		log.Fatalln(fmt.Errorf("environment variable missing: %v", "AMB_SESSION_KEY"))
+	}
 
-	// Additional plugins.
-	debugpprof.New(),
-	charset.New(),
-	viewport.New(),
-	bearblog.New(),
-	author.New(),
-	description.New(),
-	bearcss.New(),
-	plugins.New(),
-	prism.New(),
-	stackedit.New(),
-	googleanalytics.New(),
-	disqus.New(),
-	hello.New(),
-	robots.New(),
-	sitemap.New(),
-	rssfeed.New(),
-	styles.New(),
-	navigation.New(),
+	return ambient.IPluginList{
+		// Core plugins required to use the system.
+		//logruslogger.New(), // Logger must be the first plugin.
+		zaplogger.New(),        // Logger must be the first plugin.
+		gcpbucketstorage.New(), // GCP and local Storage must be the second plugin.
+		htmltemplate.New(),     // HTML template engine.
+		awayrouter.New(),       // Request router.
 
-	// Middleware - executes bottom to top.
-	notrailingslash.New(), // Redirect all request swith trailing slash.
-	uptimerobotok.New(),   // Provide 200 on HEAD /.
-	securedashboard.New(), // Descure all /dashboard routes.
-	redirecttourl.New(),   // Redirect to production URL.
-	gzipresponse.New(),    // Compress all HTTP response.
-	logrequest.New(),      // Log every request as INFO.
-	scssession.New(),      // Session manager.
+		// Additional plugins.
+		debugpprof.New(),
+		charset.New(),
+		viewport.New(),
+		bearblog.New(),
+		author.New(),
+		description.New(),
+		bearcss.New(),
+		plugins.New(),
+		prism.New(),
+		stackedit.New(),
+		googleanalytics.New(),
+		disqus.New(),
+		hello.New(),
+		robots.New(),
+		sitemap.New(),
+		rssfeed.New(),
+		styles.New(),
+		navigation.New(),
+
+		// Middleware - executes bottom to top.
+		notrailingslash.New(),     // Redirect all request swith trailing slash.
+		uptimerobotok.New(),       // Provide 200 on HEAD /.
+		securedashboard.New(),     // Descure all /dashboard routes.
+		redirecttourl.New(),       // Redirect to production URL.
+		gzipresponse.New(),        // Compress all HTTP response.
+		logrequest.New(),          // Log every request as INFO.
+		scssession.New(secretKey), // Session manager.
+	}
 }
