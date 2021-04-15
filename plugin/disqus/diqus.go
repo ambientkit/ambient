@@ -48,6 +48,9 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 		{Grant: ambient.GrantPluginSettingRead, Description: "Access to the Disqus ID."},
 		{Grant: ambient.GrantSiteURLRead, Description: "Access to read the site URL."},
 		{Grant: ambient.GrantSiteSchemeRead, Description: "Access to read the site scheme."},
+		{Grant: ambient.GrantSiteFuncMapWrite, Description: "Access to create global FuncMaps for templates."},
+		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to write meta tags to the header and add a nav and footer."},
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for serving javascript and stylesheets."},
 	}
 }
 
@@ -128,14 +131,12 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 
 // FuncMap returns a callable function when passed in a request.
 func (p *Plugin) FuncMap() func(r *http.Request) template.FuncMap {
-	return p.funcMap
-}
+	return func(r *http.Request) template.FuncMap {
+		fm := make(template.FuncMap)
+		fm["disqus_PageURL"] = func() string {
+			return r.URL.Path
+		}
 
-func (p *Plugin) funcMap(r *http.Request) template.FuncMap {
-	fm := make(template.FuncMap)
-	fm["PageURL"] = func() string {
-		return r.URL.Path
+		return fm
 	}
-
-	return fm
 }

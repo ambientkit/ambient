@@ -31,9 +31,3 @@ package ambient
 // 	Param(r *http.Request, param string) string
 // 	ServeHTTP(w http.ResponseWriter, r *http.Request)
 // }
-
-// IDataStorer reads and writes data to an object.
-type IDataStorer interface {
-	Save([]byte) error
-	Load() ([]byte, error)
-}

@@ -3,10 +3,10 @@
 {{end}}
 <p>
     <i>
-        <time datetime="{{.pubdate | Stamp}}" pubdate>
-            {{.pubdate | StampFriendly}}
+        <time datetime="{{.pubdate | bearblog_Stamp}}" pubdate>
+            {{.pubdate | bearblog_StampFriendly}}
         </time>
-        {{if Authenticated}}<a href="/dashboard/posts/{{.id}}">edit</a>{{end}}
+        {{if bearblog_Authenticated}}<a href="/dashboard/posts/{{.id}}">edit</a>{{end}}
     </i>
 </p>
 <content>

@@ -208,7 +208,7 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 			},
 			{
 				Name:  "href",
-				Value: `{{if .canonical}}{{.canonical}}{{else}}{{PageURL}}{{end}}`,
+				Value: `{{if .canonical}}{{.canonical}}{{else}}{{bearblog_PageURL}}{{end}}`,
 			},
 		},
 	})

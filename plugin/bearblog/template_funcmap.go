@@ -12,27 +12,27 @@ import (
 // funcMap returns a map of template functions that can be used in templates.
 func (p *Plugin) funcMap(r *http.Request) template.FuncMap {
 	fm := make(template.FuncMap)
-	fm["Stamp"] = func(t time.Time) string {
+	fm["bearblog_Stamp"] = func(t time.Time) string {
 		return t.Format("2006-01-02")
 	}
-	fm["StampFriendly"] = func(t time.Time) string {
+	fm["bearblog_StampFriendly"] = func(t time.Time) string {
 		return t.Format("02 Jan, 2006")
 	}
-	fm["PublishedPages"] = func() []ambient.Post {
+	fm["bearblog_PublishedPages"] = func() []ambient.Post {
 		arr, err := p.Site.PublishedPages()
 		if err != nil {
 			p.Log.Warn("bearblog: error getting published pages: %v", err.Error())
 		}
 		return arr
 	}
-	fm["SiteSubtitle"] = func() string {
+	fm["bearblog_SiteSubtitle"] = func() string {
 		subtitle, err := p.Site.PluginSettingString(Subtitle)
 		if err != nil {
 			p.Log.Warn("bearblog: error getting subtitle: %v", err.Error())
 		}
 		return subtitle
 	}
-	fm["Authenticated"] = func() bool {
+	fm["bearblog_Authenticated"] = func() bool {
 		// If user is not authenticated, don't allow them to access the page.
 		loggedIn, err := p.Site.UserAuthenticated(r)
 		if err != nil {
@@ -40,14 +40,14 @@ func (p *Plugin) funcMap(r *http.Request) template.FuncMap {
 		}
 		return loggedIn
 	}
-	fm["SiteFooter"] = func() string {
+	fm["bearblog_SiteFooter"] = func() string {
 		f, err := p.Site.PluginSettingString(Footer)
 		if err != nil {
 			p.Log.Warn("bearblog: error getting footer: %v", err.Error())
 		}
 		return f
 	}
-	fm["PageURL"] = func() string {
+	fm["bearblog_PageURL"] = func() string {
 		siteURL, err := p.Site.FullURL()
 		if err != nil {
 			p.Log.Warn("bearblog: error getting site URL: %v", err.Error())
@@ -55,7 +55,7 @@ func (p *Plugin) funcMap(r *http.Request) template.FuncMap {
 
 		return path.Join(siteURL, r.URL.Path)
 	}
-	fm["MFAEnabled"] = func() bool {
+	fm["bearblog_MFAEnabled"] = func() bool {
 		mfakey, err := p.Site.PluginSettingString(MFAKey)
 		if err != nil {
 			p.Log.Warn("bearblog: error getting MFA key: %v", err.Error())

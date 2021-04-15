@@ -1,8 +1,10 @@
 package ambient
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 )
 
 // AssetInjector represents code that can inject files into a template.
@@ -70,8 +72,13 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 			// Ensure the plugin has access to write to FuncMap.
 			if Authorized(c.log, c.storage, name, GrantSiteFuncMapWrite) {
 				afm := funcMap(r)
-				for k, v := range afm {
-					fm[k] = v
+				for fName, fValue := range afm {
+					// Ensure each of the FuncMaps are namespaced.
+					if !strings.HasPrefix(fName, v.PluginName()) {
+						fm[fmt.Sprintf("%v_%v", v.PluginName(), fName)] = fValue
+					} else {
+						fm[fName] = fValue
+					}
 				}
 			}
 		}

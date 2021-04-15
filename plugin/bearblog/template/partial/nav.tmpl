@@ -1,19 +1,19 @@
 <a class="title" href="/">
-    <h2>{{SiteSubtitle}}</h2>
+    <h2>{{bearblog_SiteSubtitle}}</h2>
 </a>
 <nav>
-    {{if Authenticated}}
+    {{if bearblog_Authenticated}}
     <a href="/dashboard">Dashboard</a>
     <a href="/dashboard/plugins/navigation">Navigation</a>
     <a href="/dashboard/posts">Edit Blog</a>
     <a href="/dashboard/plugins">Plugins</a>
     {{end}}
     <a href="/">Home</a>
-    {{range $p := PublishedPages}}
+    {{range $p := bearblog_PublishedPages}}
     <a href="/{{.URL}}">{{.Title}}</a>
     {{end}}
     <a href="/blog">Blog</a>
-    {{if Authenticated}}
+    {{if bearblog_Authenticated}}
     <a href="/dashboard/logout">Logout</a>
     {{end}}
 </nav>
