@@ -1,9 +1,7 @@
 package bearblog
 
 import (
-	"encoding/base64"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/josephspurrier/ambient/plugin/bearblog/lib/passhash"
@@ -53,23 +51,26 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 	mfa := r.FormValue("mfa")
 	remember := r.FormValue("remember")
 
-	allowedUsername := os.Getenv("AMB_USERNAME")
-	if len(allowedUsername) == 0 {
-		p.Log.Error("bearblog: environment variable is missing: %v", "AMB_USERNAME")
-		http.Redirect(w, r, "/", http.StatusFound)
+	allowedUsername, err := p.Site.PluginSettingString(Username)
+	if err != nil {
+		p.Site.Error(err)
 		return
 	}
 
-	hash := os.Getenv("AMB_PASSWORD_HASH")
-	if len(hash) == 0 {
-		p.Log.Error("bearblog: environment variable is missing: %v", "AMB_PASSWORD_HASH")
-		http.Redirect(w, r, "/", http.StatusFound)
+	hashDecoded, err := p.Site.PluginSettingString(Password)
+	if err != nil {
+		p.Site.Error(err)
+		return
+	}
+
+	mfakey, err := p.Site.PluginSettingString(MFAKey)
+	if err != nil {
+		p.Site.Error(err)
 		return
 	}
 
 	// Get the MFA key - if the environment variable doesn't exist, then
 	// let the MFA pass.
-	mfakey := os.Getenv("AMB_MFA_KEY")
 	mfaSuccess := true
 	if len(mfakey) > 0 {
 		imfa := 0
@@ -85,17 +86,12 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 		}
 	}
 
-	// When running locally, let any MFA pass.
-	// if envdetect.RunningLocalDev() {
-	// 	mfaSuccess = true
-	// }
-
 	// Decode the hash - this is to allow it to be stored easily since dollar
 	// signs are difficult to work with.
-	hashDecoded, err := base64.StdEncoding.DecodeString(hash)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
+	// hashDecoded, err := base64.StdEncoding.DecodeString(allowedPassword)
+	// if err != nil {
+	// 	return http.StatusInternalServerError, err
+	// }
 	passMatch := passhash.MatchString(string(hashDecoded), password)
 
 	// If the username and password don't match, then just redirect.

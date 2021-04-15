@@ -46,6 +46,20 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	return nil
 }
 
+const (
+	// SessionKey allows user to set the session key.
+	SessionKey = "Session Key"
+)
+
+// Settings returns a list of user settable fields.
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
+		{
+			Name: SessionKey,
+		},
+	}
+}
+
 // Middleware returns router middleware.
 func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 	return []func(next http.Handler) http.Handler{
@@ -60,6 +74,11 @@ func (p *Plugin) SessionManager(logger ambient.ILogger, ss ambient.SessionStorer
 	if len(secretKey) == 0 {
 		return nil, fmt.Errorf("environment variable missing: %v", "AMB_SESSION_KEY")
 	}
+
+	// secretKey, err := p.Site.PluginSettingString(SessionKey)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// Set up the session storage provider.
 	en := websession.NewEncryptedStorage(secretKey)

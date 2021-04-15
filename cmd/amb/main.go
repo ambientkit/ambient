@@ -25,16 +25,6 @@ var (
 	securestorage *ambient.SecureSite
 )
 
-func init() {
-	// Set the time zone.
-	tz := os.Getenv("AMB_TIMEZONE")
-	if len(tz) == 0 {
-		// Set the default to eastern time.
-		tz = "America/New_York"
-	}
-	os.Setenv("TZ", tz)
-}
-
 func main() {
 	// Ensure there is at least the logger and storage plugins.
 	if len(app.Plugins) < 2 {

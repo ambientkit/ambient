@@ -6,9 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
 	"path"
-	"strconv"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/plugin/htmltemplate/lib/templatebuffer"
@@ -16,28 +14,18 @@ import (
 
 // Engine represents a HTML template engine.
 type Engine struct {
-	allowUnsafeHTML bool
-	assetInjector   ambient.AssetInjector
-	escape          bool
-	log             ambient.ILogger
+	assetInjector ambient.AssetInjector
+	escape        bool
+	log           ambient.ILogger
 }
 
 // NewTemplateEngine returns a HTML template engine.
 func NewTemplateEngine(logger ambient.ILogger, assetInjector ambient.AssetInjector) *Engine {
-	allowHTML := os.Getenv("AMB_ALLOW_HTML")
-	allowUnsafeHTML, err := strconv.ParseBool(allowHTML)
-	if err != nil {
-		logger.Error("htmltemplate: environment variable is not able to parse as bool (%v=%v): %v", "AMB_ALLOW_HTML", allowHTML, err.Error())
-		return nil
-	}
-
 	//TODO: Add a setting to enable or disable escaping.
-
 	return &Engine{
-		allowUnsafeHTML: allowUnsafeHTML,
-		assetInjector:   assetInjector,
-		escape:          true,
-		log:             logger,
+		assetInjector: assetInjector,
+		escape:        true,
+		log:           logger,
 	}
 }
 

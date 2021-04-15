@@ -3,7 +3,6 @@ package bearblog
 import (
 	"html/template"
 	"net/http"
-	"os"
 	"path"
 	"time"
 
@@ -57,7 +56,11 @@ func (p *Plugin) funcMap(r *http.Request) template.FuncMap {
 		return path.Join(siteURL, r.URL.Path)
 	}
 	fm["MFAEnabled"] = func() bool {
-		return len(os.Getenv("AMB_MFA_KEY")) > 0
+		mfakey, err := p.Site.PluginSettingString(MFAKey)
+		if err != nil {
+			p.Log.Warn("bearblog: error getting MFA key: %v", err.Error())
+		}
+		return len(mfakey) > 0
 	}
 
 	return fm

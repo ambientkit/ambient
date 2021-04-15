@@ -8,12 +8,17 @@ import (
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/app"
-	"github.com/josephspurrier/ambient/lib/timezone"
 )
 
 func init() {
 	// Set the time zone.
-	timezone.Set()
+	tz := os.Getenv("AMB_TIMEZONE")
+	if len(tz) == 0 {
+		// Set the default to eastern time.
+		tz = "America/New_York"
+	}
+
+	os.Setenv("TZ", tz)
 }
 
 func main() {

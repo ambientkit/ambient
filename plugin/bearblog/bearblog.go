@@ -79,11 +79,29 @@ const (
 	Footer = "Footer"
 	// AllowHTMLinMarkdown allows user to set if they allow HTML in markdown.
 	AllowHTMLinMarkdown = "Allow HTML in Markdown"
+
+	// Username allows user to set the login username.
+	Username = "Username"
+	// Password allows user to set the login password.
+	Password = "Password"
+	// MFAKey allows user to set the MFA key.
+	MFAKey = "MFA Key"
 )
 
 // Settings returns a list of user settable fields.
 func (p *Plugin) Settings() []ambient.Setting {
 	return []ambient.Setting{
+		{
+			Name:    Username,
+			Default: "admin",
+		},
+		{
+			Name:    Password,
+			Default: "password",
+		},
+		{
+			Name: MFAKey,
+		},
 		{
 			Name:    LoginURL,
 			Default: "admin",

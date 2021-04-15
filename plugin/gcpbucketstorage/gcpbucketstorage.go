@@ -3,7 +3,6 @@
 package gcpbucketstorage
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/josephspurrier/ambient"
@@ -39,6 +38,20 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	return nil
 }
 
+const (
+	// Bucket allows user to set the GCP bucket.
+	Bucket = "Bucket"
+)
+
+// Settings returns a list of user settable fields.
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
+		{
+			Name: Bucket,
+		},
+	}
+}
+
 var (
 	storageSitePath    = "storage/site.json"
 	storageSessionPath = "storage/session.bin"
@@ -46,26 +59,19 @@ var (
 
 // Storage returns data and session storage.
 func (p *Plugin) Storage(logger ambient.ILogger) (ambient.IDataStorer, ambient.SessionStorer, error) {
-	bucket := os.Getenv("AMB_GCP_BUCKET_NAME")
-	if len(bucket) == 0 {
-		return nil, nil, fmt.Errorf("environment variable missing: %v", "AMB_GCP_BUCKET_NAME")
-	}
-
-	// Set the storage and session environment variables.
-	// sitePath := os.Getenv("AMB_SITE_PATH")
-	// if len(sitePath) > 0 {
-	// 	storageSitePath = sitePath
-	// }
-
 	var ds ambient.IDataStorer
 	var ss ambient.SessionStorer
 
-	if RunningLocalDev() {
+	if runningLocalDev() {
 		// Use local filesytem when developing.
 		ds = store.NewLocalStorage(storageSitePath)
 		ss = store.NewLocalStorage(storageSessionPath)
-
 	} else {
+		bucket, err := p.Site.PluginSettingString(Bucket)
+		if err != nil {
+			return nil, nil, err
+		}
+
 		// Use Google when running in GCP.
 		ds = store.NewGCPStorage(bucket, storageSitePath)
 		ss = store.NewGCPStorage(bucket, storageSessionPath)
@@ -74,8 +80,8 @@ func (p *Plugin) Storage(logger ambient.ILogger) (ambient.IDataStorer, ambient.S
 	return ds, ss, nil
 }
 
-// RunningLocalDev returns true if the AMB_LOCAL environment variable is set.
-func RunningLocalDev() bool {
+// runningLocalDev returns true if the AMB_LOCAL environment variable is set.
+func runningLocalDev() bool {
 	s := os.Getenv("AMB_LOCAL")
 	return len(s) > 0
 }
