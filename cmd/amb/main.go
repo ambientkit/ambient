@@ -23,11 +23,12 @@ var (
 	log           ambient.IAppLogger
 	pluginsystem  *ambient.PluginSystem
 	securestorage *ambient.SecureSite
+	plugins       ambient.IPluginList
 )
 
 func main() {
 	// Ensure there is at least the logger and storage plugins.
-	plugins := app.Plugins()
+	plugins = app.Plugins()
 	if len(plugins) < 2 {
 		syslog.Fatalln("boot: no log and storage plugins found")
 	}
@@ -152,24 +153,15 @@ func disableCLIGrant() {
 
 }
 
-// List of core plugins.
-var pluginList = []string{
-	"awayrouter",
-	"scssession",
-	"htmltemplate",
-	"plugins",
-	"bearcss",
-	"bearblog",
-}
+func pluginSuggestions() []prompt.Suggest {
+	arr := make([]prompt.Suggest, 0)
+	arr = append(arr, prompt.Suggest{Text: "all", Description: ""})
 
-var corePlugins = []prompt.Suggest{
-	{Text: "all", Description: ""},
-	{Text: "awayrouter", Description: ""},
-	{Text: "scssession", Description: ""},
-	{Text: "htmltemplate", Description: ""},
-	{Text: "plugins", Description: ""},
-	{Text: "bearcss", Description: ""},
-	{Text: "bearblog", Description: ""},
+	for _, pluginName := range app.MinimalPlugins {
+		arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
+	}
+
+	return arr
 }
 
 func executer(s string) {
@@ -178,6 +170,7 @@ func executer(s string) {
 	switch args[0] {
 	case execEnable:
 		if len(args) < 2 {
+			log.Info("", "command not recognized")
 			break
 		}
 
@@ -191,7 +184,7 @@ func executer(s string) {
 
 		if args[1] == "all" {
 			// Enable plugins.
-			for _, p := range pluginList {
+			for _, p := range app.MinimalPlugins {
 				enablePlugin(p)
 			}
 		} else {
@@ -202,6 +195,7 @@ func executer(s string) {
 		disableCLIGrant()
 	case execGrants:
 		if len(args) < 2 {
+			log.Info("", "command not recognized")
 			break
 		}
 
@@ -215,7 +209,7 @@ func executer(s string) {
 
 		if args[1] == "all" {
 			// Enable plugin grants.
-			for _, p := range pluginList {
+			for _, p := range app.MinimalPlugins {
 				enableGrants(p)
 			}
 		} else {
@@ -226,9 +220,9 @@ func executer(s string) {
 		disableCLIGrant()
 	case execExit:
 		os.Exit(0)
+	default:
+		log.Info("", "command not recognized")
 	}
-
-	log.Info("", "command not recognized")
 }
 
 func completer(d prompt.Document) []prompt.Suggest {
@@ -251,11 +245,11 @@ func completer(d prompt.Document) []prompt.Suggest {
 	switch args[0] {
 	case "enable":
 		if len(args) == 2 {
-			return prompt.FilterHasPrefix(corePlugins, args[1], true)
+			return prompt.FilterHasPrefix(pluginSuggestions(), args[1], true)
 		}
 	case "grant":
 		if len(args) == 2 {
-			return prompt.FilterHasPrefix(corePlugins, args[1], true)
+			return prompt.FilterHasPrefix(pluginSuggestions(), args[1], true)
 		}
 	}
 

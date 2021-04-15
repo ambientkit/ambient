@@ -37,6 +37,18 @@ import (
 	"github.com/josephspurrier/ambient/plugin/zaplogger"
 )
 
+// MinimalPlugins required to boot the application.
+var MinimalPlugins = []string{
+	"zaplogger",
+	"gcpbucketstorage",
+	"scssession",
+	"htmltemplate",
+	"awayrouter",
+	"plugins",
+	"bearblog",
+	"bearcss",
+}
+
 // Plugins defines the plugins - order does matter.
 var Plugins = func() ambient.IPluginList {
 	// Get the environment variables.
