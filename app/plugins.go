@@ -2,7 +2,6 @@
 package app
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -43,7 +42,12 @@ var Plugins = func() ambient.IPluginList {
 	// Get the environment variables.
 	secretKey := os.Getenv("AMB_SESSION_KEY")
 	if len(secretKey) == 0 {
-		log.Fatalln(fmt.Errorf("environment variable missing: %v", "AMB_SESSION_KEY"))
+		log.Fatalf("app: environment variable missing: %v\n", "AMB_SESSION_KEY")
+	}
+
+	passwordHash := os.Getenv("AMB_PASSWORD_HASH")
+	if len(passwordHash) == 0 {
+		log.Fatalf("app: environment variable is missing: %v\n", "AMB_PASSWORD_HASH")
 	}
 
 	return ambient.IPluginList{
@@ -58,7 +62,7 @@ var Plugins = func() ambient.IPluginList {
 		debugpprof.New(),
 		charset.New(),
 		viewport.New(),
-		bearblog.New(),
+		bearblog.New(passwordHash),
 		author.New(),
 		description.New(),
 		bearcss.New(),

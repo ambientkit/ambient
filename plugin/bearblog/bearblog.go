@@ -18,12 +18,16 @@ var assets embed.FS
 type Plugin struct {
 	*ambient.PluginBase
 	*ambient.Toolkit
+
+	passwordHash string
 }
 
 // New returns a new bearblog plugin.
-func New() *Plugin {
+func New(passwordHash string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},
+
+		passwordHash: passwordHash,
 	}
 }
 
@@ -99,8 +103,9 @@ func (p *Plugin) Settings() []ambient.Setting {
 		},
 		{
 			Name:    Password,
-			Default: "JDJhJDEwJFlwNGhKQ3hDd1dvb3VCOGwwcFZ5OHUxcGx1VDF6Q2IxSmhSbkFhYkI4Mjgvbjk0aHVhdzAu",
+			Default: p.passwordHash,
 			Type:    ambient.InputPassword,
+			Hide:    true,
 		},
 		{
 			Name: MFAKey,
