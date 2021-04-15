@@ -1,4 +1,4 @@
-// Package app represents an app.
+// Package app represents an Ambient app.
 package app
 
 import (
@@ -58,28 +58,30 @@ var Plugins = func() ambient.IPluginList {
 		htmltemplate.New(),     // HTML template engine.
 		awayrouter.New(),       // Request router.
 
-		// Additional plugins.
-		debugpprof.New(),
-		charset.New(),
-		viewport.New(),
-		bearblog.New(passwordHash),
-		author.New(),
-		description.New(),
-		bearcss.New(),
-		plugins.New(),
-		prism.New(),
-		stackedit.New(),
-		googleanalytics.New(),
-		disqus.New(),
+		// Custom plugins.
+		debugpprof.New(),           // Go pprof debug endpoints.
+		charset.New(),              // Charset to the HTML head.
+		viewport.New(),             // Viewport in the HTML head.
+		bearblog.New(passwordHash), // Bear Blog functionality.
+		author.New(),               // Author in the HTML head.
+		description.New(),          // Description the HTML head.
+		bearcss.New(),              // Bear Blog styling.
+		plugins.New(),              // Page to manage plugins.
+		prism.New(),                // Prism CSS for codeblocks.
+		stackedit.New(),            // Stackedit for editing markdown.
+		googleanalytics.New(),      // Google Analytics.
+		disqus.New(),               // Disqus for comments for blog posts.
+		robots.New(),               // Robots file.
+		sitemap.New(),              // Sitemap generator.
+		rssfeed.New(),              // RSS feed generator.
+		styles.New(),               // Style editing page.
+
+		// Draft plugins.
 		hello.New(),
-		robots.New(),
-		sitemap.New(),
-		rssfeed.New(),
-		styles.New(),
 		navigation.New(),
 
 		// Middleware - executes bottom to top.
-		notrailingslash.New(),     // Redirect all request swith trailing slash.
+		notrailingslash.New(),     // Redirect all requests with a trailing slash.
 		uptimerobotok.New(),       // Provide 200 on HEAD /.
 		securedashboard.New(),     // Descure all /dashboard routes.
 		redirecttourl.New(),       // Redirect to production URL.
