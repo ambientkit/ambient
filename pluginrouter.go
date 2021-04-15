@@ -38,16 +38,13 @@ func (rec *Recorder) handleRoute(path string, fn func(http.ResponseWriter, *http
 	callable(path, rec.protect(fn))
 }
 
-// Protect -
-func (rec *Recorder) protect(fn func(http.ResponseWriter, *http.Request) (status int, err error)) func(http.ResponseWriter, *http.Request) (status int, err error) {
+func (rec *Recorder) protect(h func(http.ResponseWriter, *http.Request) (status int, err error)) func(http.ResponseWriter, *http.Request) (status int, err error) {
 	return func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-		// Ensure the plugin has permission to serve the route.
 		if !Authorized(rec.log, rec.storage, rec.pluginName, GrantRouterRouteWrite) {
-			return
+			return http.StatusForbidden, nil
 		}
 
-		fn(w, r)
-		return
+		return h(w, r)
 	}
 }
 

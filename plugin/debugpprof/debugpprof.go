@@ -38,6 +38,13 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	return nil
 }
 
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for accessing debug information."},
+	}
+}
+
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
 	p.Mux.Get("/debug/pprof", p.Mux.Wrap(p.index))
