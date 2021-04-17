@@ -166,11 +166,9 @@ func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error 
 			return err
 		}
 
-		// Get the routes for the plugin.
-		routes, ok := ss.storage.PluginRoutes.Routes[pluginName]
-		if !ok {
-			return ErrNotFound
-		}
+		// Get the routes for the plugin, not all plugins have routes so don't
+		// check if it's ok for not.
+		routes := ss.storage.PluginRoutes.Routes[pluginName]
 
 		// Clear each route.
 		for _, v := range routes {
