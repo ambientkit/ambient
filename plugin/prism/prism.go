@@ -1,10 +1,11 @@
-// Package prism provides code highlighting through Prism for an Ambient
-// application.
+// Package prism provides syntax highlighting using Prism (https://prismjs.com/)
+// for an Ambient application.
 package prism
 
 import (
 	"embed"
 	"fmt"
+	"net/http"
 
 	"github.com/josephspurrier/ambient"
 )
@@ -53,6 +54,8 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 const (
 	// Version allows user to set the library version.
 	Version = "Version"
+	// Styles allows user to set the styles.
+	Styles = "Styles"
 )
 
 // Settings returns a list of user settable fields.
@@ -66,6 +69,14 @@ func (p *Plugin) Settings() []ambient.Setting {
 				URL:  "https://github.com/PrismJS/prism/releases",
 			},
 		},
+		{
+			Name: Styles,
+			Type: ambient.Textarea,
+			Description: ambient.SettingDescription{
+				Text: "You can paste a theme from https://github.com/PrismJS/prism-themes/tree/master/themes or an import like this using https://gitcdn.link/: @import 'https://gitcdn.link/cdn/PrismJS/prism-themes/d00360c3b3cfe495f45cc06865969c7731a94763/themes/prism-vsc-dark-plus.css'",
+				URL:  "https://github.com/PrismJS/prism-themes/tree/master/themes",
+			},
+		},
 	}
 }
 
@@ -76,12 +87,7 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 		return nil, nil
 	}
 
-	return []ambient.Asset{
-		{
-			Path:     "css/prism-vsc-dark-plus.css",
-			Filetype: ambient.AssetStylesheet,
-			Location: ambient.LocationHead,
-		},
+	arr := []ambient.Asset{
 		{
 			Path:     "css/clean.css",
 			Filetype: ambient.AssetStylesheet,
@@ -99,5 +105,36 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 			Location: ambient.LocationBody,
 			External: true,
 		},
-	}, &assets
+	}
+
+	s, err := p.Site.PluginSettingString(Styles)
+	if err == nil && len(s) > 0 {
+		arr = append(arr, ambient.Asset{
+			Path:     fmt.Sprintf("/plugins/%v/css/style.css", p.PluginName()),
+			Filetype: ambient.AssetStylesheet,
+			Location: ambient.LocationHead,
+			External: true,
+		})
+	}
+
+	return arr, &assets
+}
+
+// Routes gets routes for the plugin.
+func (p *Plugin) Routes() {
+	p.Mux.Get(fmt.Sprintf("/plugins/%v/css/style.css", p.PluginName()), p.index)
+}
+
+// index returns CSS file.
+func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	// Get the styles.
+	s, err := p.Site.PluginSetting(Styles)
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
+	w.Header().Set("Content-Type", "text/css")
+
+	fmt.Fprint(w, s)
+	return
 }
