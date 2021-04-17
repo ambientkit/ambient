@@ -9,6 +9,8 @@ import (
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/app"
+	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage"
+	"github.com/josephspurrier/ambient/plugin/zaplogger"
 )
 
 var (
@@ -27,27 +29,27 @@ var (
 )
 
 func main() {
-	// Ensure there is at least the logger and storage plugins.
-	plugins = app.Plugins()
-	if len(plugins) < 2 {
-		syslog.Fatalln("boot: no log and storage plugins found")
-	}
+	//logger := logruslogger.New()         // Logger
+	logger := zaplogger.New()            // Logger
+	gcpstorage := gcpbucketstorage.New() // GCP and local Storage must be the second plugin.
 
-	// Set up the logger.
-	var err error
-	log, err = ambient.LoadLogger(appName, appVersion, plugins[0])
+	// Create the ambient app.
+	ambientApp, err := ambient.NewApp("ambient", "1.0", logger, gcpstorage)
 	if err != nil {
 		syslog.Fatalln(err.Error())
 	}
 
-	// Get the plugins and initialize storage.
-	storage, _, err := ambient.LoadStorage(log, plugins[1])
+	// Set up the plugins.
+	err = ambientApp.SetPlugins(app.Plugins())
 	if err != nil {
-		log.Fatal("", err.Error())
+		syslog.Fatalln(err.Error())
 	}
 
+	log = ambientApp.Logger()
+	storage := ambientApp.Storage()
+
 	// Initialize the plugin system.
-	pluginsystem, err = ambient.NewPluginSystem(log, plugins, storage)
+	pluginsystem, err = ambient.NewPluginSystem(log, storage, plugins)
 	if err != nil {
 		log.Fatal("", err.Error())
 	}

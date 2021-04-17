@@ -8,6 +8,8 @@ import "github.com/josephspurrier/ambient"
 type Plugin struct {
 	*ambient.PluginBase
 	*ambient.Toolkit
+
+	log *Logger
 }
 
 // New returns a new zaplogger plugin.
@@ -30,9 +32,9 @@ func (p *Plugin) PluginVersion() string {
 // Logger returns a logger.
 func (p *Plugin) Logger(appName string, appVersion string) (ambient.IAppLogger, error) {
 	// Create the logger.
-	log := NewLogger(appName, appVersion)
+	p.log = NewLogger(appName, appVersion)
 
-	return log, nil
+	return p.log, nil
 }
 
 // Enable accepts the toolkit.

@@ -16,7 +16,6 @@ import (
 	"github.com/josephspurrier/ambient/plugin/debugpprof"
 	"github.com/josephspurrier/ambient/plugin/description"
 	"github.com/josephspurrier/ambient/plugin/disqus"
-	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage"
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/gzipresponse"
 	"github.com/josephspurrier/ambient/plugin/htmltemplate"
@@ -34,13 +33,12 @@ import (
 	"github.com/josephspurrier/ambient/plugin/styles"
 	"github.com/josephspurrier/ambient/plugin/uptimerobotok"
 	"github.com/josephspurrier/ambient/plugin/viewport"
-	"github.com/josephspurrier/ambient/plugin/zaplogger"
 )
 
 // MinimalPlugins required to boot the application.
 var MinimalPlugins = []string{
-	"zaplogger",
-	"gcpbucketstorage",
+	//"zaplogger",
+	//"gcpbucketstorage",
 	"scssession",
 	"htmltemplate",
 	"awayrouter",
@@ -64,11 +62,8 @@ var Plugins = func() ambient.IPluginList {
 
 	return ambient.IPluginList{
 		// Core plugins required to use the system.
-		//logruslogger.New(), // Logger must be the first plugin.
-		zaplogger.New(),        // Logger must be the first plugin.
-		gcpbucketstorage.New(), // GCP and local Storage must be the second plugin.
-		htmltemplate.New(),     // HTML template engine.
-		awayrouter.New(),       // Request router.
+		htmltemplate.New(), // HTML template engine.
+		awayrouter.New(),   // Request router.
 
 		// Custom plugins.
 		debugpprof.New(),           // Go pprof debug endpoints.

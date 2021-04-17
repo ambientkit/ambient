@@ -82,7 +82,7 @@ func (ss *SecureSite) LoadAllPluginPages() error {
 		return err
 	}
 
-	for name := range ss.storage.Site.PluginStorage {
+	for _, name := range ss.pluginsystem.names {
 		// Skip plugins that are not enabled.
 		if !ss.pluginsystem.Enabled(name) {
 			continue

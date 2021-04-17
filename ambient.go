@@ -7,13 +7,29 @@ import (
 	"net/http"
 )
 
-// IPlugin represents a plugin.
-type IPlugin interface {
+// ICore represents the core of any plugin.
+type ICore interface {
 	// PluginName should be globally unique. Only lowercase letters, numbers,
 	// and hypens are permitted. Must start with with a letter.
 	PluginName() string // required, read frequently
 	// PluginVersion must follow https://semver.org/.
 	PluginVersion() string // required, read frequently
+}
+
+// IMiddleware represents middleware.
+// type IMiddleware interface {
+// 	ICore
+
+// 	// These should all have access to the toolkit.
+// 	Enable(toolkit *Toolkit) error // optional, called during enable
+// 	Disable() error                // optional, called during disable
+
+// 	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
+// }
+
+// IPlugin represents a plugin.
+type IPlugin interface {
+	ICore
 
 	// These are called before the plugin is enabled so they only have access to the logger.
 	Logger(appName string, appVersion string) (IAppLogger, error)                    // optional

@@ -2,12 +2,12 @@ package main
 
 import (
 	"log"
-	"net/http"
-	_ "net/http/pprof"
 	"os"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/app"
+	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage"
+	"github.com/josephspurrier/ambient/plugin/zaplogger"
 )
 
 func init() {
@@ -19,18 +19,22 @@ func init() {
 }
 
 func main() {
-	// Set up the application services.
-	logger, mux, err := ambient.Boot(app.Plugins())
+	//logger := logruslogger.New()         // Logger
+	logger := zaplogger.New()            // Logger
+	gcpstorage := gcpbucketstorage.New() // GCP and local Storage must be the second plugin.
+
+	// Create the ambient app.
+	ambientApp, err := ambient.NewApp("ambient", "1.0", logger, gcpstorage)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
-	// Start the web server.
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	// Set up the plugins.
+	err = ambientApp.SetPlugins(app.Plugins())
+	if err != nil {
+		log.Fatalln(err.Error())
 	}
 
-	logger.Info("web server listening on port: %v", port)
-	logger.Fatal("", http.ListenAndServe(":"+port, mux))
+	// Start the web listener.
+	ambientApp.ListenAndServe()
 }

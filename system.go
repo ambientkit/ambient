@@ -21,7 +21,7 @@ type PluginSystem struct {
 }
 
 // NewPluginSystem returns a plugin system.
-func NewPluginSystem(log IAppLogger, arr []IPlugin, storage *Storage) (*PluginSystem, error) {
+func NewPluginSystem(log IAppLogger, storage *Storage, arr []IPlugin) (*PluginSystem, error) {
 	// Get a list of plugin names to maintain order.
 	names := make([]string, 0)
 	plugins := make(map[string]IPlugin)
