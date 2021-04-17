@@ -4,6 +4,7 @@ package prism
 
 import (
 	"embed"
+	"fmt"
 
 	"github.com/josephspurrier/ambient"
 )
@@ -45,11 +46,36 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 	return []ambient.GrantRequest{
 		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to add stylesheets and javascript to each page."},
 		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for accessing stylesheets."},
+		{Grant: ambient.GrantPluginSettingRead, Description: "Read own plugin settings."},
+	}
+}
+
+const (
+	// Version allows user to set the library version.
+	Version = "Version"
+)
+
+// Settings returns a list of user settable fields.
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
+		{
+			Name:    Version,
+			Default: "1.23.0",
+			Description: ambient.SettingDescription{
+				Text: "View releases (ex: 1.23.0)",
+				URL:  "https://github.com/PrismJS/prism/releases",
+			},
+		},
 	}
 }
 
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
+	version, err := p.Site.PluginSettingString(Version)
+	if err != nil {
+		return nil, nil
+	}
+
 	return []ambient.Asset{
 		{
 			Path:     "css/prism-vsc-dark-plus.css",
@@ -62,13 +88,13 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 			Location: ambient.LocationHead,
 		},
 		{
-			Path:     "https://unpkg.com/prismjs@1.23.0/components/prism-core.min.js",
+			Path:     fmt.Sprintf("https://unpkg.com/prismjs@%v/components/prism-core.min.js", version),
 			Filetype: ambient.AssetJavaScript,
 			Location: ambient.LocationBody,
 			External: true,
 		},
 		{
-			Path:     "https://unpkg.com/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js",
+			Path:     fmt.Sprintf("https://unpkg.com/prismjs@%v/plugins/autoloader/prism-autoloader.min.js", version),
 			Filetype: ambient.AssetJavaScript,
 			Location: ambient.LocationBody,
 			External: true,
