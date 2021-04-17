@@ -29,6 +29,8 @@ var (
 )
 
 func main() {
+	plugins = app.Plugins()
+
 	//logger := logruslogger.New()         // Logger
 	logger := zaplogger.New()            // Logger
 	gcpstorage := gcpbucketstorage.New() // GCP and local Storage must be the second plugin.
@@ -40,7 +42,7 @@ func main() {
 	}
 
 	// Set up the plugins.
-	err = ambientApp.SetPlugins(app.Plugins())
+	err = ambientApp.SetPlugins(plugins)
 	if err != nil {
 		syslog.Fatalln(err.Error())
 	}
@@ -89,7 +91,8 @@ func enableGrants(name string) {
 
 	p, err := pluginsystem.Plugin(name)
 	if err != nil {
-		log.Error("", err.Error())
+		log.Error("error with plugin (%v): %v", name, err.Error())
+		return
 	}
 
 	for _, request := range p.GrantRequests() {
