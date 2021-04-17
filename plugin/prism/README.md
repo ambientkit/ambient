@@ -2,6 +2,8 @@
 
 The prism plugin for [Ambient](https://github.com/josephspurrier/ambient) provides syntax highlighting using [Prism](https://prismjs.com/).
 
+**Current version:** 1.0.0
+
 ## Example Usage
 
 ```go
@@ -24,16 +26,29 @@ var Plugins = func() ambient.IPluginList {
 
 ## Configuration
 
-### Required
+### Initialization
+
+The plugin requires these values to be passed in during initialization:
 
 None
 
-### Optional
+### Settings
 
-None
+The plugin allows you to customize these settings:
+
+- **Version**
+- **Styles**
+
+### Permissions
+
+The plugin requires these permissions:
+
+- **plugin.setting:read** - Access to add stylesheets and javascript to each page.
+- **router.route:write** - Access to create routes for accessing stylesheets.
+- **site.asset:write** - Read own plugin settings.
 
 ### Environment Variables
 
-If you want to configure the provider via environment variables, you can use these below.
+The plugin can accept these environment variables:
 
 None
