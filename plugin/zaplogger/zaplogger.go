@@ -30,7 +30,7 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Logger returns a logger.
-func (p *Plugin) Logger(appName string, appVersion string) (ambient.IAppLogger, error) {
+func (p *Plugin) Logger(appName string, appVersion string) (ambient.AppLogger, error) {
 	// Create the logger.
 	p.log = NewLogger(appName, appVersion)
 

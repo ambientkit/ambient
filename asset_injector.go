@@ -23,13 +23,13 @@ type LayoutInjector interface {
 
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
-	log          IAppLogger
+	log          AppLogger
 	pluginsystem *PluginSystem
-	sess         IAppSession
+	sess         AppSession
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger IAppLogger, plugins *PluginSystem, sess IAppSession) *PluginInjector {
+func NewPlugininjector(logger AppLogger, plugins *PluginSystem, sess AppSession) *PluginInjector {
 	return &PluginInjector{
 		log:          logger,
 		pluginsystem: plugins,

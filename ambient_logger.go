@@ -1,16 +1,16 @@
 package ambient
 
-// IAppLogger represents the log service for the application.
-type IAppLogger interface {
-	ILogger
+// AppLogger represents the log service for the application.
+type AppLogger interface {
+	Logger
 
 	// Fatal is reserved for the application level only.
 	Fatal(format string, v ...interface{})
 	SetLogLevel(level LogLevel)
 }
 
-// ILogger represents the log service for the plugins.
-type ILogger interface {
+// Logger represents the log service for the plugins.
+type Logger interface {
 	Debug(format string, v ...interface{})
 	Info(format string, v ...interface{})
 	Warn(format string, v ...interface{})

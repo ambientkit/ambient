@@ -41,7 +41,7 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 }
 
 // TemplateEngine returns a template engine.
-func (p *Plugin) TemplateEngine(logger ambient.ILogger, injector ambient.AssetInjector) (ambient.IRender, error) {
+func (p *Plugin) TemplateEngine(logger ambient.Logger, injector ambient.AssetInjector) (ambient.IRender, error) {
 	tmpl := NewTemplateEngine(logger, injector)
 	return tmpl, nil
 }

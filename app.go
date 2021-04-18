@@ -12,7 +12,7 @@ const (
 
 // App represents an Ambient app that supports plugins.
 type App struct {
-	log           IAppLogger
+	log           AppLogger
 	pluginsystem  *PluginSystem
 	sessionstorer SessionStorer
 	handler       http.Handler
@@ -52,7 +52,7 @@ func NewApp(appName string, appVersion string, logPlugin IPlugin, storagePlugin 
 }
 
 // Logger returns the logger.
-func (app *App) Logger() IAppLogger {
+func (app *App) Logger() AppLogger {
 	return app.log
 }
 

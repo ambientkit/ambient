@@ -187,7 +187,7 @@ func saveRoutesForPlugin(name string, recorder *Recorder, pluginsystem *PluginSy
 	pluginsystem.SetRoute(name, arr)
 }
 
-func embeddedAssets(mux IRouter, sess IAppSession, pluginName string, files []Asset, assets *embed.FS) error {
+func embeddedAssets(mux Router, sess AppSession, pluginName string, files []Asset, assets *embed.FS) error {
 	for _, unsafeFile := range files {
 		// Recreate the variable when using closures:
 		// https://golang.org/doc/faq#closures_and_goroutines

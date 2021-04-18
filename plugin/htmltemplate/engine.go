@@ -16,11 +16,11 @@ import (
 type Engine struct {
 	assetInjector ambient.AssetInjector
 	escape        bool
-	log           ambient.ILogger
+	log           ambient.Logger
 }
 
 // NewTemplateEngine returns a HTML template engine.
-func NewTemplateEngine(logger ambient.ILogger, assetInjector ambient.AssetInjector) *Engine {
+func NewTemplateEngine(logger ambient.Logger, assetInjector ambient.AssetInjector) *Engine {
 	//TODO: Add a setting to enable or disable escaping.
 	return &Engine{
 		assetInjector: assetInjector,

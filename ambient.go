@@ -28,11 +28,11 @@ type IPlugin interface {
 	ICore
 
 	// These are called before the plugin is enabled so they only have access to the logger.
-	Logger(appName string, appVersion string) (IAppLogger, error)                    // optional
-	Storage(logger ILogger) (IDataStorer, SessionStorer, error)                      // optional
-	SessionManager(logger ILogger, sessionStorer SessionStorer) (IAppSession, error) // optional
-	TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error)          // optional
-	Router(logger ILogger, render IRender) (IAppRouter, error)                       // optional
+	Logger(appName string, appVersion string) (AppLogger, error)                   // optional
+	Storage(logger Logger) (DataStorer, SessionStorer, error)                      // optional
+	SessionManager(logger Logger, sessionStorer SessionStorer) (AppSession, error) // optional
+	TemplateEngine(logger Logger, injector AssetInjector) (IRender, error)         // optional
+	Router(logger Logger, render IRender) (AppRouter, error)                       // optional
 
 	// These should all have access to the toolkit.
 	Enable(toolkit *Toolkit) error                   // optional, called during enable

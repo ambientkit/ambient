@@ -38,22 +38,22 @@ func (p *PluginBase) Settings() []Setting {
 }
 
 // SessionManager returns a session manager.
-func (p *PluginBase) SessionManager(logger ILogger, ss SessionStorer) (IAppSession, error) {
+func (p *PluginBase) SessionManager(logger Logger, ss SessionStorer) (AppSession, error) {
 	return nil, nil
 }
 
 // Router returns a request router.
-func (p *PluginBase) Router(logger ILogger, te IRender) (IAppRouter, error) {
+func (p *PluginBase) Router(logger Logger, te IRender) (AppRouter, error) {
 	return nil, nil
 }
 
 // Storage returns data and session storage.
-func (p *PluginBase) Storage(logger ILogger) (IDataStorer, SessionStorer, error) {
+func (p *PluginBase) Storage(logger Logger) (DataStorer, SessionStorer, error) {
 	return nil, nil, nil
 }
 
 // TemplateEngine returns a template engine.
-func (p *PluginBase) TemplateEngine(logger ILogger, injector AssetInjector) (IRender, error) {
+func (p *PluginBase) TemplateEngine(logger Logger, injector AssetInjector) (IRender, error) {
 	return nil, nil
 }
 
@@ -63,6 +63,6 @@ func (p *PluginBase) GrantRequests() []GrantRequest {
 }
 
 // Logger -
-func (p *PluginBase) Logger(appName string, appVersion string) (IAppLogger, error) {
+func (p *PluginBase) Logger(appName string, appVersion string) (AppLogger, error) {
 	return nil, nil
 }

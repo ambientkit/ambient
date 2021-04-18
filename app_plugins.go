@@ -7,7 +7,7 @@ import (
 // LoadPlugins loads the plugins.
 func (app *App) LoadPlugins() error {
 	// Get the session manager from the plugins.
-	var sess IAppSession
+	var sess AppSession
 	for _, name := range app.pluginsystem.Names() {
 		// Get the plugin.
 		p, err := app.pluginsystem.Plugin(name)
@@ -70,7 +70,7 @@ func (app *App) LoadPlugins() error {
 	}
 
 	// Get the router from the plugins.
-	var mux IAppRouter
+	var mux AppRouter
 	for _, name := range app.pluginsystem.Names() {
 		// Skip if the plugin isn't found.
 		plugin, err := app.pluginsystem.Plugin(name)

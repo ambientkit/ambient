@@ -3,7 +3,7 @@ package ambient
 import "fmt"
 
 // LoadLogger returns the logger.
-func loadLogger(appName string, appVersion string, plugin IPlugin) (IAppLogger, error) {
+func loadLogger(appName string, appVersion string, plugin IPlugin) (AppLogger, error) {
 	// Get the logger from the plugins.
 	log, err := plugin.Logger(appName, appVersion)
 	if err != nil {
@@ -18,9 +18,9 @@ func loadLogger(appName string, appVersion string, plugin IPlugin) (IAppLogger, 
 }
 
 // LoadStorage returns the storage.
-func loadStorage(log IAppLogger, plugin IPlugin) (*Storage, SessionStorer, error) {
+func loadStorage(log AppLogger, plugin IPlugin) (*Storage, SessionStorer, error) {
 	// Define the storage managers.
-	var ds IDataStorer
+	var ds DataStorer
 	var ss SessionStorer
 
 	// Get the storage manager from the plugins.

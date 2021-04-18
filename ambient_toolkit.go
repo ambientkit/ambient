@@ -8,8 +8,8 @@ import (
 
 // Toolkit provides utilities to plugins.
 type Toolkit struct {
-	Log    ILogger
-	Mux    IRouter
+	Log    Logger
+	Mux    Router
 	Render IRender
 	Site   *SecureSite
 }
@@ -23,9 +23,9 @@ type IRender interface {
 	Error(w http.ResponseWriter, r *http.Request, content string, statusCode int, fm template.FuncMap, vars map[string]interface{}) (status int, err error)
 }
 
-// IAppRouter represents a router.
-type IAppRouter interface {
-	IRouter
+// AppRouter represents a router.
+type AppRouter interface {
+	Router
 
 	ServeHTTP(w http.ResponseWriter, r *http.Request)
 	Clear(method string, path string)
@@ -33,8 +33,8 @@ type IAppRouter interface {
 	SetServeHTTP(h func(w http.ResponseWriter, r *http.Request, status int, err error))
 }
 
-// IRouter represents a router.
-type IRouter interface {
+// Router represents a router.
+type Router interface {
 	Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Patch(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
@@ -47,8 +47,8 @@ type IRouter interface {
 	Wrap(handler http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) (status int, err error)
 }
 
-// IAppSession represents a user session.
-type IAppSession interface {
+// AppSession represents a user session.
+type AppSession interface {
 	UserAuthenticated(r *http.Request) (bool, error)
 	Login(r *http.Request, username string)
 	Logout(r *http.Request)

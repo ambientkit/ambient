@@ -100,7 +100,7 @@ func (file Asset) SanitizedPath() string {
 }
 
 // Element returns an HTML element.
-func (file *Asset) Element(logger IAppLogger, v IPlugin, assets fs.FS) string {
+func (file *Asset) Element(logger AppLogger, v IPlugin, assets fs.FS) string {
 	// Build the attributes.
 	attrs := make([]string, 0)
 	for _, attr := range file.Attributes {

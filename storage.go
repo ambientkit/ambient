@@ -10,12 +10,12 @@ import (
 // Storage represents a writable and readable object.
 type Storage struct {
 	site       *Site
-	datastorer IDataStorer
+	datastorer DataStorer
 }
 
 // NewStorage returns a writable and readable site object. Returns an error if the
 // object cannot be initially read.
-func NewStorage(ds IDataStorer) (*Storage, error) {
+func NewStorage(ds DataStorer) (*Storage, error) {
 	s := &Storage{
 		site:       &Site{},
 		datastorer: ds,

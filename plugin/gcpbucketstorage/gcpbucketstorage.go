@@ -58,8 +58,8 @@ var (
 )
 
 // Storage returns data and session storage.
-func (p *Plugin) Storage(logger ambient.ILogger) (ambient.IDataStorer, ambient.SessionStorer, error) {
-	var ds ambient.IDataStorer
+func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
+	var ds ambient.DataStorer
 	var ss ambient.SessionStorer
 
 	if runningLocalDev() {

@@ -6,16 +6,16 @@ import (
 
 // Recorder -
 type Recorder struct {
-	log          IAppLogger
+	log          AppLogger
 	pluginsystem *PluginSystem
-	mux          IAppRouter
+	mux          AppRouter
 
 	pluginName string
 	routeList  []Route
 }
 
 // NewRecorder is a route recorder for plugins.
-func NewRecorder(pluginName string, log IAppLogger, pluginsystem *PluginSystem, mux IAppRouter) *Recorder {
+func NewRecorder(pluginName string, log AppLogger, pluginsystem *PluginSystem, mux AppRouter) *Recorder {
 	return &Recorder{
 		log:          log,
 		pluginsystem: pluginsystem,

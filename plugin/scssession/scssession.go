@@ -72,7 +72,7 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 }
 
 // SessionManager returns the session manager.
-func (p *Plugin) SessionManager(logger ambient.ILogger, ss ambient.SessionStorer) (ambient.IAppSession, error) {
+func (p *Plugin) SessionManager(logger ambient.Logger, ss ambient.SessionStorer) (ambient.AppSession, error) {
 	// Set up the session storage provider.
 	en := websession.NewEncryptedStorage(p.sessionKey)
 	store, err := websession.NewJSONSession(ss, en)

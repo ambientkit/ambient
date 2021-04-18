@@ -22,7 +22,7 @@ var (
 			os.Exit(0)
 		},
 	}
-	log           ambient.IAppLogger
+	log           ambient.AppLogger
 	pluginsystem  *ambient.PluginSystem
 	securestorage *ambient.SecureSite
 )
