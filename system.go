@@ -17,7 +17,7 @@ type PluginSystem struct {
 
 	names           []string
 	middlewareNames []string
-	plugins         map[string]IPlugin
+	plugins         map[string]Plugin
 
 	routes map[string][]Route
 }
@@ -27,7 +27,7 @@ func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*Plugi
 	// Get a list of plugin names to maintain order.
 	names := make([]string, 0)
 	middlewareNames := make([]string, 0)
-	plugins := make(map[string]IPlugin)
+	plugins := make(map[string]Plugin)
 	shouldSave := false
 
 	// Load the middleware.
@@ -73,7 +73,7 @@ func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*Plugi
 	}, nil
 }
 
-func loadPlugin(p IPlugin, plugins map[string]IPlugin, storage *Storage) (shouldSave bool, err error) {
+func loadPlugin(p Plugin, plugins map[string]Plugin, storage *Storage) (shouldSave bool, err error) {
 	// TODO: Need to make sure the name matches a certain format. All lowercase. No symbols.
 
 	// Ensure a plugin can't be loaded twice or two plugins with the same
@@ -147,7 +147,7 @@ func (p *PluginSystem) Plugins() map[string]PluginData {
 }
 
 // Plugin returns a plugin by name.
-func (p *PluginSystem) Plugin(name string) (IPlugin, error) {
+func (p *PluginSystem) Plugin(name string) (Plugin, error) {
 	plugin, ok := p.plugins[name]
 	if !ok {
 		return nil, ErrPluginNotFound

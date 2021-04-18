@@ -61,7 +61,7 @@ var Plugins = func() *ambient.PluginLoader {
 	}
 
 	return &ambient.PluginLoader{
-		Plugins: []ambient.IPlugin{
+		Plugins: []ambient.Plugin{
 			// Core plugins required to use the system.
 			htmltemplate.New(), // HTML template engine.
 			awayrouter.New(),   // Request router.
@@ -88,7 +88,7 @@ var Plugins = func() *ambient.PluginLoader {
 			hello.New(),
 			navigation.New(),
 		},
-		Middleware: []ambient.IMiddleware{
+		Middleware: []ambient.Middleware{
 			// Middleware - executes bottom to top.
 			notrailingslash.New(),     // Redirect all requests with a trailing slash.
 			uptimerobotok.New(),       // Provide 200 on HEAD /.

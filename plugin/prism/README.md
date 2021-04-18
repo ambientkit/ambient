@@ -16,10 +16,12 @@ import (
 )
 
 // Plugins defines the plugins to use in the application. The order does matter.
-var Plugins = func() ambient.IPluginList {
-	return ambient.IPluginList{
-		// ...
-		prism.New(), // Prism CSS for codeblocks.
+var Plugins = func() *ambient.PluginLoader {
+	return &ambient.PluginLoader{
+		Plugins: []ambient.Plugin{
+			// ...
+			prism.New(), // Prism CSS for codeblocks.
+		},
 	}
 }
 ```

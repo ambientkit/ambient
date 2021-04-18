@@ -9,12 +9,12 @@ import (
 
 // PluginLoader contains the plugins for the Ambient application.
 type PluginLoader struct {
-	Plugins    []IPlugin
-	Middleware []IMiddleware
+	Plugins    []Plugin
+	Middleware []Middleware
 }
 
-// ICore represents the core of any plugin.
-type ICore interface {
+// PluginCore represents the core of any plugin.
+type PluginCore interface {
 	// PluginName should be globally unique. Only lowercase letters, numbers,
 	// and hypens are permitted. Must start with with a letter.
 	PluginName() string // required, read frequently
@@ -22,9 +22,9 @@ type ICore interface {
 	PluginVersion() string // required, read frequently
 }
 
-// IPlugin represents a plugin.
-type IPlugin interface {
-	ICore
+// Plugin represents a plugin.
+type Plugin interface {
+	PluginCore
 
 	// These are called before the plugin is enabled so they only have access to the logger.
 	Logger(appName string, appVersion string) (AppLogger, error)                   // optional
@@ -43,9 +43,9 @@ type IPlugin interface {
 	FuncMap() func(r *http.Request) template.FuncMap // optional, called on every render
 }
 
-// IMiddleware represents middleware.
-type IMiddleware interface {
-	IPlugin
+// Middleware represents middleware.
+type Middleware interface {
+	Plugin
 
 	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
 }
