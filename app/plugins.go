@@ -88,7 +88,7 @@ var Plugins = func() *ambient.PluginLoader {
 			hello.New(),
 			navigation.New(),
 		},
-		Middleware: []ambient.Middleware{
+		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.
 			notrailingslash.New(),     // Redirect all requests with a trailing slash.
 			uptimerobotok.New(),       // Provide 200 on HEAD /.

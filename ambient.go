@@ -10,7 +10,7 @@ import (
 // PluginLoader contains the plugins for the Ambient application.
 type PluginLoader struct {
 	Plugins    []Plugin
-	Middleware []Middleware
+	Middleware []MiddlewarePlugin
 }
 
 // PluginCore represents the core of any plugin.
@@ -27,8 +27,6 @@ type Plugin interface {
 	PluginCore
 
 	// These are called before the plugin is enabled so they only have access to the logger.
-	Logger(appName string, appVersion string) (AppLogger, error)                   // optional
-	Storage(logger Logger) (DataStorer, SessionStorer, error)                      // optional
 	SessionManager(logger Logger, sessionStorer SessionStorer) (AppSession, error) // optional
 	TemplateEngine(logger Logger, injector AssetInjector) (Renderer, error)        // optional
 	Router(logger Logger, render Renderer) (AppRouter, error)                      // optional
@@ -43,8 +41,22 @@ type Plugin interface {
 	FuncMap() func(r *http.Request) template.FuncMap // optional, called on every render
 }
 
-// Middleware represents middleware.
-type Middleware interface {
+// LoggingPlugin represents a logging plugin.
+type LoggingPlugin interface {
+	PluginCore
+
+	Logger(appName string, appVersion string) (AppLogger, error)
+}
+
+// StoragePlugin represents a storage plugin.
+type StoragePlugin interface {
+	PluginCore
+
+	Storage(logger Logger) (DataStorer, SessionStorer, error)
+}
+
+// MiddlewarePlugin represents a middleware plugin.
+type MiddlewarePlugin interface {
 	Plugin
 
 	Middleware() []func(next http.Handler) http.Handler // optional, called during enable

@@ -47,11 +47,6 @@ func (p *PluginBase) Router(logger Logger, te Renderer) (AppRouter, error) {
 	return nil, nil
 }
 
-// Storage returns data and session storage.
-func (p *PluginBase) Storage(logger Logger) (DataStorer, SessionStorer, error) {
-	return nil, nil, nil
-}
-
 // TemplateEngine returns a template engine.
 func (p *PluginBase) TemplateEngine(logger Logger, injector AssetInjector) (Renderer, error) {
 	return nil, nil
@@ -60,9 +55,4 @@ func (p *PluginBase) TemplateEngine(logger Logger, injector AssetInjector) (Rend
 // GrantRequests returns a list of grants requested by the plugin.
 func (p *PluginBase) GrantRequests() []GrantRequest {
 	return nil
-}
-
-// Logger -
-func (p *PluginBase) Logger(appName string, appVersion string) (AppLogger, error) {
-	return nil, nil
 }

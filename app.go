@@ -19,7 +19,7 @@ type App struct {
 }
 
 // NewApp returns a new Ambient app that supports plugins.
-func NewApp(appName string, appVersion string, logPlugin Plugin, storagePlugin Plugin, plugins *PluginLoader) (*App, error) {
+func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storagePlugin StoragePlugin, plugins *PluginLoader) (*App, error) {
 	// Get the logger from the plugin.
 	log, err := loadLogger(appName, appVersion, logPlugin)
 	if err != nil {

@@ -256,7 +256,7 @@ func (ss *SecureSite) LoadAllPluginMiddleware(h http.Handler) http.Handler {
 			continue
 		}
 
-		h = ss.loadSinglePluginMiddleware(h, plugin.(Middleware))
+		h = ss.loadSinglePluginMiddleware(h, plugin.(MiddlewarePlugin))
 	}
 
 	return h
@@ -264,7 +264,7 @@ func (ss *SecureSite) LoadAllPluginMiddleware(h http.Handler) http.Handler {
 
 // LoadSinglePluginMiddleware returns a handler that is wrapped in conditional
 // middlware from the plugins.
-func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin Middleware) http.Handler {
+func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin MiddlewarePlugin) http.Handler {
 	// Loop through each piece of middleware.
 	arrHandlers := plugin.Middleware()
 	if len(arrHandlers) > 0 {
