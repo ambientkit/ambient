@@ -27,7 +27,7 @@ func (ss *SecureSite) NeighborPluginGrants(pluginName string) (map[Grant]bool, e
 
 	grants := make(map[Grant]bool)
 	for _, grant := range plugin.GrantRequests() {
-		grants[grant.Grant] = ss.pluginsystem.Granted(ss.log, pluginName, grant.Grant)
+		grants[grant.Grant] = ss.pluginsystem.Granted(pluginName, grant.Grant)
 	}
 
 	return grants, nil

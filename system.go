@@ -173,17 +173,42 @@ func (p *PluginSystem) GrantRequests(pluginName string, grant Grant) ([]GrantReq
 	return plugin.GrantRequests(), nil
 }
 
-// Granted returns whether a plugin is granted for a plugin.
-func (p *PluginSystem) Granted(log ILogger, pluginName string, grant Grant) bool {
+// Authorized returns whether a plugin is inherited granted for a plugin.
+func (p *PluginSystem) Authorized(pluginName string, grant Grant) bool {
+	// Always allow ambient application to get full access.
+	if pluginName == "ambient" {
+		p.log.Debug("pluginsystem: granted plugin (%v) GrantAll access to the data item for grant: %v", "ambient", grant)
+		return true
+	}
+
+	// If has star, then allow all access.
+	if granted := p.Granted(pluginName, GrantAll); granted {
+		p.log.Debug("pluginsystem: granted plugin (%v) GrantAll access to the data item for grant: %v", pluginName, grant)
+		return true
+	}
+
+	// If the grant was found, then allow access.
+	if granted := p.Granted(pluginName, grant); granted {
+		p.log.Debug("pluginsystem: granted plugin (%v) access to the data item for grant: %v", pluginName, grant)
+		return true
+	}
+
+	p.log.Warn("pluginsystem: denied plugin (%v) access to the data item, requires grant: %v", pluginName, grant)
+
+	return false
+}
+
+// Granted returns whether a plugin is explicitly granted for a plugin.
+func (p *PluginSystem) Granted(pluginName string, grant Grant) bool {
 	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
-		log.Debug("pluginsystem.granted: could not find plugin: %v", pluginName)
+		p.log.Debug("pluginsystem.granted: could not find plugin: %v", pluginName)
 		return false
 	}
 
 	granted, found := data.Grants[grant]
 	if !found {
-		log.Debug("pluginsystem.granted: could not find grant for plugin (%v): %v", pluginName, grant)
+		p.log.Debug("pluginsystem.granted: could not find grant for plugin (%v): %v", pluginName, grant)
 		return false
 	}
 

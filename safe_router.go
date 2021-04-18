@@ -40,7 +40,7 @@ func (rec *Recorder) handleRoute(path string, fn func(http.ResponseWriter, *http
 
 func (rec *Recorder) protect(h func(http.ResponseWriter, *http.Request) (status int, err error)) func(http.ResponseWriter, *http.Request) (status int, err error) {
 	return func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-		if !Authorized(rec.log, rec.pluginsystem, rec.pluginName, GrantRouterRouteWrite) {
+		if !rec.pluginsystem.Authorized(rec.pluginName, GrantRouterRouteWrite) {
 			return http.StatusForbidden, nil
 		}
 
