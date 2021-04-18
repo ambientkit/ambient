@@ -17,7 +17,7 @@ type PluginSystem struct {
 
 	names   []string
 	plugins map[string]IPlugin
-	routes  map[string]IRouteList
+	routes  map[string][]Route
 }
 
 // NewPluginSystem returns a plugin system.
@@ -60,6 +60,7 @@ func NewPluginSystem(log IAppLogger, storage *Storage, arr []IPlugin) (*PluginSy
 
 		names:   names,
 		plugins: plugins,
+		routes:  make(map[string][]Route),
 	}, nil
 }
 
@@ -111,11 +112,26 @@ func (p *PluginSystem) Names() []string {
 	return p.names
 }
 
+// Plugins returns the plugin list.
+func (p *PluginSystem) Plugins() map[string]PluginData {
+	return p.storage.Site.PluginStorage
+}
+
 // Plugin returns a plugin by name.
 func (p *PluginSystem) Plugin(name string) (IPlugin, error) {
 	plugin, ok := p.plugins[name]
 	if !ok {
 		return nil, ErrPluginNotFound
+	}
+
+	return plugin, nil
+}
+
+// PluginData returns a plugin data by name.
+func (p *PluginSystem) PluginData(name string) (PluginData, error) {
+	plugin, ok := p.storage.Site.PluginStorage[name]
+	if !ok {
+		return PluginData{}, ErrPluginNotFound
 	}
 
 	return plugin, nil
@@ -158,8 +174,8 @@ func (p *PluginSystem) GrantRequests(pluginName string, grant Grant) ([]GrantReq
 }
 
 // Granted returns whether a plugin is granted for a plugin.
-func Granted(log ILogger, storage *Storage, pluginName string, grant Grant) bool {
-	data, ok := storage.Site.PluginStorage[pluginName]
+func (p *PluginSystem) Granted(log ILogger, pluginName string, grant Grant) bool {
+	data, ok := p.storage.Site.PluginStorage[pluginName]
 	if !ok {
 		log.Debug("pluginsystem.granted: could not find plugin: %v", pluginName)
 		return false
@@ -248,4 +264,9 @@ func (p *PluginSystem) SettingDefault(pluginName string, settingName string) (in
 	}
 
 	return nil, nil
+}
+
+// SetRoute saves a route.
+func (p *PluginSystem) SetRoute(pluginName string, route []Route) {
+	p.routes[pluginName] = route
 }

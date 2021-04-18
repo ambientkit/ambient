@@ -18,7 +18,7 @@ func (ss *SecureSite) Plugins() (map[string]PluginData, error) {
 		return nil, ErrAccessDenied
 	}
 
-	return ss.storage.Site.PluginStorage, nil
+	return ss.pluginsystem.Plugins(), nil
 }
 
 // PluginNames returns the list of plugin name.
@@ -36,14 +36,12 @@ func (ss *SecureSite) DeletePlugin(name string) error {
 		return ErrAccessDenied
 	}
 
-	delete(ss.storage.Site.PluginStorage, name)
-
-	err := ss.pluginsystem.InitializePlugin(name)
+	err := ss.pluginsystem.RemovePlugin(name)
 	if err != nil {
 		return err
 	}
 
-	return ss.storage.Save()
+	return ss.pluginsystem.InitializePlugin(name)
 }
 
 // EnablePlugin enables a plugin.
@@ -60,15 +58,7 @@ func (ss *SecureSite) EnablePlugin(pluginName string, loadPlugin bool) error {
 		}
 	}
 
-	pluginData, ok := ss.storage.Site.PluginStorage[pluginName]
-	if !ok {
-		return ErrNotFound
-	}
-
-	pluginData.Enabled = true
-	ss.storage.Site.PluginStorage[pluginName] = pluginData
-
-	return ss.storage.Save()
+	return ss.pluginsystem.SetEnabled(pluginName, true)
 }
 
 // LoadAllPluginPages loads all of the pages from the plugins.
@@ -118,12 +108,12 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 		return
 	}
 
-	recorder := NewRecorder(name, ss.log, ss.storage, ss.mux)
+	recorder := NewRecorder(name, ss.log, ss.pluginsystem, ss.mux)
 
 	toolkit := &Toolkit{
 		Mux:    recorder,
 		Render: NewRenderer(ss.render),
-		Site:   NewSecureSite(name, ss.log, ss.storage, ss.pluginsystem, ss.sess, ss.mux, ss.render),
+		Site:   NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render),
 		Log:    NewPluginLogger(ss.log),
 	}
 
@@ -148,7 +138,7 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 	}
 
 	// Save the plugin routes so they can be removed if disabled.
-	saveRoutesForPlugin(name, recorder, ss.storage)
+	saveRoutesForPlugin(name, recorder, ss.pluginsystem)
 
 }
 
@@ -173,7 +163,7 @@ func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error 
 
 		// Get the routes for the plugin, not all plugins have routes so don't
 		// check if it's ok for not.
-		routes := ss.storage.PluginRoutes.Routes[pluginName]
+		routes := ss.pluginsystem.routes[pluginName]
 
 		// Clear each route.
 		for _, v := range routes {
@@ -181,20 +171,11 @@ func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error 
 		}
 	}
 
-	// Get the plugin data.
-	pluginData, ok := ss.storage.Site.PluginStorage[pluginName]
-	if !ok {
-		return ErrNotFound
-	}
-
-	// Disable the plugin.
-	pluginData.Enabled = false
-	ss.storage.Site.PluginStorage[pluginName] = pluginData
-
-	return ss.storage.Save()
+	// Disable plugin.
+	return ss.pluginsystem.SetEnabled(pluginName, false)
 }
 
-func saveRoutesForPlugin(name string, recorder *Recorder, storage *Storage) {
+func saveRoutesForPlugin(name string, recorder *Recorder, pluginsystem *PluginSystem) {
 	// Save the routes.
 	arr := make([]Route, 0)
 	for _, route := range recorder.routes() {
@@ -203,7 +184,7 @@ func saveRoutesForPlugin(name string, recorder *Recorder, storage *Storage) {
 			Path:   route.Path,
 		})
 	}
-	storage.PluginRoutes.Routes[name] = arr
+	pluginsystem.SetRoute(name, arr)
 }
 
 func embeddedAssets(mux IRouter, sess IAppSession, pluginName string, files []Asset, assets *embed.FS) error {
@@ -300,9 +281,9 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin IPlugin)
 			safePluginMiddleware := pluginMiddleware
 			middlewareIndex := i
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// If the plugin is not found in the settings, then skip it.
-				safePluginSettings, ok := ss.storage.Site.PluginStorage[safePlugin.PluginName()]
-				if !ok {
+				// If the plugin is not found in the storage, then skip it.
+				safePluginSettings, err := ss.pluginsystem.PluginData(safePlugin.PluginName())
+				if err != nil {
 					ss.log.Debug("plugin middleware: plugin %v not found", safePlugin.PluginName())
 					next.ServeHTTP(w, r)
 					return

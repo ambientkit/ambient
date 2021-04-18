@@ -17,7 +17,7 @@ func (ss *SecureSite) ClearAllRoutesForPlugin(pluginName string) error {
 		return ErrAccessDenied
 	}
 
-	routes, ok := ss.storage.PluginRoutes.Routes[pluginName]
+	routes, ok := ss.pluginsystem.routes[pluginName]
 	if !ok {
 		return ErrNotFound
 	}

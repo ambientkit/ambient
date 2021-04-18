@@ -6,20 +6,20 @@ import (
 
 // Recorder -
 type Recorder struct {
-	log     IAppLogger
-	storage *Storage
-	mux     IAppRouter
+	log          IAppLogger
+	pluginsystem *PluginSystem
+	mux          IAppRouter
 
 	pluginName string
 	routeList  []Route
 }
 
 // NewRecorder is a route recorder for plugins.
-func NewRecorder(pluginName string, log IAppLogger, storage *Storage, mux IAppRouter) *Recorder {
+func NewRecorder(pluginName string, log IAppLogger, pluginsystem *PluginSystem, mux IAppRouter) *Recorder {
 	return &Recorder{
-		log:     log,
-		storage: storage,
-		mux:     mux,
+		log:          log,
+		pluginsystem: pluginsystem,
+		mux:          mux,
 
 		pluginName: pluginName,
 	}
@@ -40,7 +40,7 @@ func (rec *Recorder) handleRoute(path string, fn func(http.ResponseWriter, *http
 
 func (rec *Recorder) protect(h func(http.ResponseWriter, *http.Request) (status int, err error)) func(http.ResponseWriter, *http.Request) (status int, err error) {
 	return func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-		if !Authorized(rec.log, rec.storage, rec.pluginName, GrantRouterRouteWrite) {
+		if !Authorized(rec.log, rec.pluginsystem, rec.pluginName, GrantRouterRouteWrite) {
 			return http.StatusForbidden, nil
 		}
 

@@ -6,9 +6,7 @@ func (ss *SecureSite) SavePost(ID string, post Post) error {
 		return ErrAccessDenied
 	}
 
-	ss.storage.Site.Posts[ID] = post
-
-	return ss.storage.Save()
+	return ss.pluginsystem.SavePost(ID, post)
 }
 
 // PostsAndPages returns the list of posts and pages.
@@ -17,7 +15,7 @@ func (ss *SecureSite) PostsAndPages(onlyPublished bool) (PostWithIDList, error) 
 		return nil, ErrAccessDenied
 	}
 
-	return ss.storage.Site.PostsAndPages(onlyPublished), nil
+	return ss.pluginsystem.PostsAndPages(onlyPublished), nil
 }
 
 // PublishedPosts returns the list of published posts.
@@ -26,7 +24,7 @@ func (ss *SecureSite) PublishedPosts() ([]Post, error) {
 		return nil, ErrAccessDenied
 	}
 
-	return ss.storage.Site.PublishedPosts(), nil
+	return ss.pluginsystem.PublishedPosts(), nil
 }
 
 // PublishedPages returns the list of published pages.
@@ -35,7 +33,7 @@ func (ss *SecureSite) PublishedPages() ([]Post, error) {
 		return nil, ErrAccessDenied
 	}
 
-	return ss.storage.Site.PublishedPages(), nil
+	return ss.pluginsystem.PublishedPages(), nil
 }
 
 // PostBySlug returns the post by slug.
@@ -44,7 +42,7 @@ func (ss *SecureSite) PostBySlug(slug string) (PostWithID, error) {
 		return PostWithID{}, ErrAccessDenied
 	}
 
-	return ss.storage.Site.PostBySlug(slug), nil
+	return ss.pluginsystem.PostBySlug(slug), nil
 }
 
 // PostByID returns the post by ID.
@@ -53,12 +51,7 @@ func (ss *SecureSite) PostByID(ID string) (Post, error) {
 		return Post{}, ErrAccessDenied
 	}
 
-	post, ok := ss.storage.Site.Posts[ID]
-	if !ok {
-		return Post{}, ErrNotFound
-	}
-
-	return post, nil
+	return ss.pluginsystem.PostByID(ID)
 }
 
 // DeletePostByID deletes a post.
@@ -67,7 +60,5 @@ func (ss *SecureSite) DeletePostByID(ID string) error {
 		return ErrAccessDenied
 	}
 
-	delete(ss.storage.Site.Posts, ID)
-
-	return ss.storage.Save()
+	return ss.pluginsystem.DeletePostByID(ID)
 }

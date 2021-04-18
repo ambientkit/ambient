@@ -24,7 +24,6 @@ type SecureSite struct {
 	pluginName string
 
 	log          IAppLogger
-	storage      *Storage
 	pluginsystem *PluginSystem
 	sess         IAppSession
 	mux          IAppRouter
@@ -32,12 +31,11 @@ type SecureSite struct {
 }
 
 // NewSecureSite returns a new secure site.
-func NewSecureSite(pluginName string, log IAppLogger, storage *Storage, ps *PluginSystem, session IAppSession, mux IAppRouter, render IRender) *SecureSite {
+func NewSecureSite(pluginName string, log IAppLogger, ps *PluginSystem, session IAppSession, mux IAppRouter, render IRender) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
 
 		log:          log,
-		storage:      storage,
 		sess:         session,
 		mux:          mux,
 		pluginsystem: ps,
@@ -63,11 +61,11 @@ func (ss *SecureSite) Load() error {
 		return ErrAccessDenied
 	}
 
-	return ss.storage.Load()
+	return ss.pluginsystem.Load()
 }
 
 // Authorized determines if the current context has access.
-func Authorized(log ILogger, storage *Storage, pluginName string, grant Grant) bool {
+func Authorized(log ILogger, pluginsystem *PluginSystem, pluginName string, grant Grant) bool {
 	// Always allow ambient application to get full access.
 	if pluginName == "ambient" {
 		log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v", "ambient", grant)
@@ -75,13 +73,13 @@ func Authorized(log ILogger, storage *Storage, pluginName string, grant Grant) b
 	}
 
 	// If has star, then allow all access.
-	if granted := Granted(log, storage, pluginName, GrantAll); granted {
+	if granted := pluginsystem.Granted(log, pluginName, GrantAll); granted {
 		log.Debug("securesite: granted plugin (%v) GrantAll access to the data item for grant: %v", pluginName, grant)
 		return true
 	}
 
 	// If the grant was found, then allow access.
-	if granted := Granted(log, storage, pluginName, grant); granted {
+	if granted := pluginsystem.Granted(log, pluginName, grant); granted {
 		log.Debug("securesite: granted plugin (%v) access to the data item for grant: %v", pluginName, grant)
 		return true
 	}
@@ -93,5 +91,5 @@ func Authorized(log ILogger, storage *Storage, pluginName string, grant Grant) b
 
 // Authorized determines if the current context has access.
 func (ss *SecureSite) Authorized(grant Grant) bool {
-	return Authorized(ss.log, ss.storage, ss.pluginName, grant)
+	return Authorized(ss.log, ss.pluginsystem, ss.pluginName, grant)
 }

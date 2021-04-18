@@ -36,12 +36,11 @@ func main() {
 
 	// Get the
 	log = ambientApp.Logger()
-	storage := ambientApp.Storage()
 	pluginsystem = ambientApp.PluginSystem()
 
 	// Create secure site for the core application and use "ambient" so it gets
 	// full permissions.
-	securestorage = ambient.NewSecureSite("ambient", log, storage, pluginsystem, nil, nil, nil)
+	securestorage = ambient.NewSecureSite("ambient", log, pluginsystem, nil, nil, nil)
 
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(

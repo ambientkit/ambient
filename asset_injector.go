@@ -67,7 +67,7 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 		funcMap := v.FuncMap()
 		if funcMap != nil {
 			// Ensure the plugin has access to write to FuncMap.
-			if Authorized(c.log, c.storage, name, GrantSiteFuncMapWrite) {
+			if Authorized(c.log, c.pluginsystem, name, GrantSiteFuncMapWrite) {
 				afm := funcMap(r)
 				for fName, fValue := range afm {
 					// Ensure each of the FuncMaps are namespaced.
@@ -83,7 +83,7 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 		// Ensure the plugin has access to write to assets.
 		files, assets := v.Assets()
 		if len(files) > 0 {
-			if Authorized(c.log, c.storage, name, GrantSiteAssetWrite) {
+			if Authorized(c.log, c.pluginsystem, name, GrantSiteAssetWrite) {
 				loggedIn, _ := c.sess.UserAuthenticated(r)
 
 				for _, file := range files {

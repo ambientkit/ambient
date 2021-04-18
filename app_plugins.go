@@ -100,7 +100,7 @@ func (app *App) LoadPlugins() error {
 
 	// Create secure site for the core application and use "ambient" so it gets
 	// full permissions.
-	securesite := NewSecureSite("ambient", app.log, app.storage, app.pluginsystem, sess, mux, te)
+	securesite := NewSecureSite("ambient", app.log, app.pluginsystem, sess, mux, te)
 
 	// Load the plugin pages.
 	err := securesite.LoadAllPluginPages()

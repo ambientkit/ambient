@@ -9,9 +9,8 @@ import (
 
 // Storage represents a writable and readable object.
 type Storage struct {
-	Site         *Site
-	PluginRoutes *PluginRoutes
-	datastorer   IDataStorer
+	Site       *Site
+	datastorer IDataStorer
 }
 
 // NewStorage returns a writable and readable site object. Returns an error if the
@@ -25,11 +24,6 @@ func NewStorage(ds IDataStorer, site *Site) (*Storage, error) {
 	err := s.Load()
 	if err != nil {
 		return nil, err
-	}
-
-	// Initialize the data structure.
-	s.PluginRoutes = &PluginRoutes{
-		Routes: make(map[string][]Route),
 	}
 
 	// Fill in the missing defaults.

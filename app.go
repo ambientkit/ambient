@@ -59,9 +59,9 @@ func (app *App) Logger() IAppLogger {
 }
 
 // Storage returns the storage manager.
-func (app *App) Storage() *Storage {
-	return app.storage
-}
+// func (app *App) Storage() *Storage {
+// 	return app.storage
+// }
 
 // PluginSystem returns the plugin system.
 func (app *App) PluginSystem() *PluginSystem {
