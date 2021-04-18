@@ -36,25 +36,14 @@ func main() {
 	gcpstorage := gcpbucketstorage.New() // GCP and local Storage must be the second plugin.
 
 	// Create the ambient app.
-	ambientApp, err := ambient.NewApp("ambient", "1.0", logger, gcpstorage)
-	if err != nil {
-		syslog.Fatalln(err.Error())
-	}
-
-	// Set up the plugins.
-	err = ambientApp.SetPlugins(plugins)
+	ambientApp, err := ambient.NewApp("ambient", "1.0", logger, gcpstorage, plugins)
 	if err != nil {
 		syslog.Fatalln(err.Error())
 	}
 
 	log = ambientApp.Logger()
 	storage := ambientApp.Storage()
-
-	// Initialize the plugin system.
-	pluginsystem, err = ambient.NewPluginSystem(log, storage, plugins)
-	if err != nil {
-		log.Fatal("", err.Error())
-	}
+	pluginsystem = ambientApp.PluginSystem()
 
 	// Set up the secure storage.
 	securestorage = ambient.NewSecureSite(appName, log, storage, pluginsystem, nil, nil, nil)

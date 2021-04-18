@@ -23,21 +23,19 @@ type LayoutInjector interface {
 
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
-	storage        *Storage
-	sess           IAppSession
-	pluginsystem   *PluginSystem
-	log            IAppLogger
-	pluginSettings IPluginList
+	storage      *Storage
+	sess         IAppSession
+	pluginsystem *PluginSystem
+	log          IAppLogger
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger IAppLogger, storage *Storage, sess IAppSession, plugins *PluginSystem, pluginSettings IPluginList) *PluginInjector {
+func NewPlugininjector(logger IAppLogger, storage *Storage, sess IAppSession, plugins *PluginSystem) *PluginInjector {
 	return &PluginInjector{
-		storage:        storage,
-		sess:           sess,
-		pluginsystem:   plugins,
-		log:            logger,
-		pluginSettings: pluginSettings,
+		storage:      storage,
+		sess:         sess,
+		pluginsystem: plugins,
+		log:          logger,
 	}
 }
 
@@ -53,8 +51,7 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 
 	// Loop through each of the plugins.
 	// Use the plugin names because it's ordered.
-	pluginNames := c.pluginSettings.PluginNames()
-	for _, name := range pluginNames {
+	for _, name := range c.pluginsystem.names {
 		plugin, ok := c.storage.Site.PluginStorage[name]
 		if !ok || !plugin.Enabled {
 			continue

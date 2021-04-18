@@ -9,7 +9,7 @@ func loadLogger(appName string, appVersion string, plugin IPlugin) (IAppLogger, 
 	if err != nil {
 		return nil, err
 	} else if log == nil {
-		return nil, fmt.Errorf("ambient: no default logger found")
+		return nil, fmt.Errorf("ambient: no logger found")
 	} else {
 		log.Info("ambient: using logger from plugin: %v", plugin.PluginName())
 	}
@@ -33,7 +33,7 @@ func loadStorage(log IAppLogger, plugin IPlugin) (*Storage, SessionStorer, error
 		ss = pss
 	}
 	if ds == nil || ss == nil {
-		return nil, nil, fmt.Errorf("ambient: no default storage found")
+		return nil, nil, fmt.Errorf("ambient: no storage manager found")
 	}
 
 	// Create new store object with the defaults.

@@ -12,14 +12,15 @@ const (
 
 // App represents an Ambient app that supports plugins.
 type App struct {
-	log     IAppLogger
-	storage *Storage
-	sess    SessionStorer
-	handler http.Handler
+	log          IAppLogger
+	storage      *Storage
+	sess         SessionStorer
+	handler      http.Handler
+	pluginsystem *PluginSystem
 }
 
 // NewApp returns a new Ambient app that supports plugins.
-func NewApp(appName string, appVersion string, logPlugin IPlugin, storagePlugin IPlugin) (*App, error) {
+func NewApp(appName string, appVersion string, logPlugin IPlugin, storagePlugin IPlugin, plugins []IPlugin) (*App, error) {
 	// Get the logger from the plugin.
 	log, err := loadLogger(appName, appVersion, logPlugin)
 	if err != nil {
@@ -38,10 +39,17 @@ func NewApp(appName string, appVersion string, logPlugin IPlugin, storagePlugin 
 		return nil, err
 	}
 
+	// Initialize the plugin system.
+	pluginsystem, err := NewPluginSystem(log, storage, plugins)
+	if err != nil {
+		log.Fatal("", err.Error())
+	}
+
 	return &App{
-		log:     log,
-		storage: storage,
-		sess:    sess,
+		log:          log,
+		storage:      storage,
+		sess:         sess,
+		pluginsystem: pluginsystem,
 	}, nil
 }
 
@@ -53,6 +61,11 @@ func (app *App) Logger() IAppLogger {
 // Storage returns the storage manager.
 func (app *App) Storage() *Storage {
 	return app.storage
+}
+
+// PluginSystem returns the plugin system.
+func (app *App) PluginSystem() *PluginSystem {
+	return app.pluginsystem
 }
 
 // Mux returns the HTTP request multiplexer.

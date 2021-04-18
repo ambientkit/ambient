@@ -4,31 +4,20 @@ import (
 	"fmt"
 )
 
-// SetPlugins sets the plugins.
-func (app *App) SetPlugins(Plugins IPluginList) error {
-	// Ensure there is at least the storage plugin.
-	if len(Plugins) == 0 {
-		return fmt.Errorf("ambient: no plugins found")
-	}
-
-	// Initialize the plugin system.
-	ps, err := NewPluginSystem(app.log, app.storage, Plugins)
-	if err != nil {
-		return err
-	}
-
+// LoadPlugins loads the plugins.
+func (app *App) LoadPlugins() error {
 	// Get the session manager from the plugins.
 	var sess IAppSession
-	for _, name := range ps.Names() {
+	for _, name := range app.pluginsystem.Names() {
 		// Get the plugin.
-		p, err := ps.Plugin(name)
+		p, err := app.pluginsystem.Plugin(name)
 		if err != nil {
 			// This shouldn't happen because the names are based off the plugin list.
 			return fmt.Errorf("ambient: could not find plugin (%v): %v", name, err.Error())
 		}
 
 		// Skip if the plugin isn't enabled.
-		if !ps.Enabled(name) {
+		if !app.pluginsystem.Enabled(name) {
 			continue
 		}
 
@@ -44,24 +33,24 @@ func (app *App) SetPlugins(Plugins IPluginList) error {
 		}
 	}
 	if sess == nil {
-		return fmt.Errorf("ambient: no default session manager found")
+		return fmt.Errorf("ambient: no session manager found")
 	}
 
 	// Set up the template injector.
-	pi := NewPlugininjector(app.log, app.storage, sess, ps, Plugins)
+	pi := NewPlugininjector(app.log, app.storage, sess, app.pluginsystem)
 
 	// Get the router from the plugins.
 	var te IRender
-	for _, name := range ps.Names() {
+	for _, name := range app.pluginsystem.Names() {
 		// Skip if the plugin isn't found.
-		plugin, err := ps.Plugin(name)
+		plugin, err := app.pluginsystem.Plugin(name)
 		if err != nil {
 			// This shouldn't happen because the names are based off the plugin list.
 			return fmt.Errorf("ambient: could not find plugin (%v): %v", name, err.Error())
 		}
 
 		// Skip if the plugin isn't enabled.
-		if !ps.Enabled(name) {
+		if !app.pluginsystem.Enabled(name) {
 			continue
 		}
 
@@ -77,20 +66,20 @@ func (app *App) SetPlugins(Plugins IPluginList) error {
 		}
 	}
 	if te == nil {
-		return fmt.Errorf("ambient: no default template engine found")
+		return fmt.Errorf("ambient: no template engine found")
 	}
 
 	// Get the router from the plugins.
 	var mux IAppRouter
-	for _, name := range ps.Names() {
+	for _, name := range app.pluginsystem.Names() {
 		// Skip if the plugin isn't found.
-		plugin, err := ps.Plugin(name)
+		plugin, err := app.pluginsystem.Plugin(name)
 		if err != nil {
 			continue
 		}
 
 		// Skip if the plugin isn't enabled.
-		if !ps.Enabled(name) {
+		if !app.pluginsystem.Enabled(name) {
 			continue
 		}
 
@@ -106,15 +95,15 @@ func (app *App) SetPlugins(Plugins IPluginList) error {
 		}
 	}
 	if mux == nil {
-		return fmt.Errorf("ambient: no default template engine found")
+		return fmt.Errorf("ambient: no template engine found")
 	}
 
 	// Create secure site for the core application. This should always be
 	// ambient so it gets full permissions.
-	securesite := NewSecureSite("ambient", app.log, app.storage, ps, sess, mux, te)
+	securesite := NewSecureSite("ambient", app.log, app.storage, app.pluginsystem, sess, mux, te)
 
 	// Load the plugin pages.
-	err = securesite.LoadAllPluginPages()
+	err := securesite.LoadAllPluginPages()
 	if err != nil {
 		return err
 	}

@@ -24,13 +24,13 @@ func main() {
 	gcpstorage := gcpbucketstorage.New() // GCP and local Storage must be the second plugin.
 
 	// Create the ambient app.
-	ambientApp, err := ambient.NewApp("ambient", "1.0", logger, gcpstorage)
+	ambientApp, err := ambient.NewApp("ambient", "1.0", logger, gcpstorage, app.Plugins())
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
 	// Set up the plugins.
-	err = ambientApp.SetPlugins(app.Plugins())
+	err = ambientApp.LoadPlugins()
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
