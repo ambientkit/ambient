@@ -36,11 +36,8 @@ func loadStorage(log IAppLogger, plugin IPlugin) (*Storage, SessionStorer, error
 		return nil, nil, fmt.Errorf("ambient: no storage manager found")
 	}
 
-	// Create new store object with the defaults.
-	site := &Site{}
-
 	// Set up the data storage provider.
-	storage, err := NewStorage(ds, site)
+	storage, err := NewStorage(ds)
 	if err != nil {
 		return nil, nil, err
 	}

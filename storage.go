@@ -9,15 +9,15 @@ import (
 
 // Storage represents a writable and readable object.
 type Storage struct {
-	Site       *Site
+	site       *Site
 	datastorer IDataStorer
 }
 
 // NewStorage returns a writable and readable site object. Returns an error if the
 // object cannot be initially read.
-func NewStorage(ds IDataStorer, site *Site) (*Storage, error) {
+func NewStorage(ds IDataStorer) (*Storage, error) {
 	s := &Storage{
-		Site:       site,
+		site:       &Site{},
 		datastorer: ds,
 	}
 
@@ -27,7 +27,7 @@ func NewStorage(ds IDataStorer, site *Site) (*Storage, error) {
 	}
 
 	// Fill in the missing defaults.
-	s.Site.Correct()
+	s.site.Correct()
 
 	return s, nil
 }
@@ -39,13 +39,13 @@ func (s *Storage) Save() error {
 	var err error
 
 	// Save the updated timestamp.
-	s.Site.Updated = time.Now()
+	s.site.Updated = time.Now()
 
 	if envdetect.RunningLocalDev() {
 		// Indent so the data is easy to read.
-		b, err = json.MarshalIndent(s.Site, "", "    ")
+		b, err = json.MarshalIndent(s.site, "", "    ")
 	} else {
-		b, err = json.Marshal(s.Site)
+		b, err = json.Marshal(s.site)
 	}
 
 	if err != nil {
@@ -68,7 +68,7 @@ func (s *Storage) Load() error {
 		return err
 	}
 
-	err = json.Unmarshal(b, s.Site)
+	err = json.Unmarshal(b, s.site)
 	if err != nil {
 		return err
 	}

@@ -39,10 +39,10 @@ func NewPluginSystem(log IAppLogger, storage *Storage, arr []IPlugin) (*PluginSy
 		names = append(names, p.PluginName())
 		plugins[p.PluginName()] = p
 
-		_, ok := storage.Site.PluginStorage[p.PluginName()]
+		_, ok := storage.site.PluginStorage[p.PluginName()]
 		if !ok {
 			shouldSave = true
-			storage.Site.PluginStorage[p.PluginName()] = newPluginData()
+			storage.site.PluginStorage[p.PluginName()] = newPluginData()
 		}
 
 	}
@@ -86,9 +86,9 @@ func (p *PluginSystem) Save() error {
 // InitializePlugin will initialize the plugin in the storage and will return
 // an error if one occurs.
 func (p *PluginSystem) InitializePlugin(pluginName string) error {
-	_, ok := p.storage.Site.PluginStorage[pluginName]
+	_, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
-		p.storage.Site.PluginStorage[pluginName] = newPluginData()
+		p.storage.site.PluginStorage[pluginName] = newPluginData()
 		return p.storage.Save()
 	}
 
@@ -98,9 +98,9 @@ func (p *PluginSystem) InitializePlugin(pluginName string) error {
 // RemovePlugin will delete the plugin from the storage and will return
 // an error if one occurs.
 func (p *PluginSystem) RemovePlugin(pluginName string) error {
-	_, ok := p.storage.Site.PluginStorage[pluginName]
+	_, ok := p.storage.site.PluginStorage[pluginName]
 	if ok {
-		delete(p.storage.Site.PluginStorage, pluginName)
+		delete(p.storage.site.PluginStorage, pluginName)
 		return p.storage.Save()
 	}
 
@@ -114,7 +114,7 @@ func (p *PluginSystem) Names() []string {
 
 // Plugins returns the plugin list.
 func (p *PluginSystem) Plugins() map[string]PluginData {
-	return p.storage.Site.PluginStorage
+	return p.storage.site.PluginStorage
 }
 
 // Plugin returns a plugin by name.
@@ -129,7 +129,7 @@ func (p *PluginSystem) Plugin(name string) (IPlugin, error) {
 
 // PluginData returns a plugin data by name.
 func (p *PluginSystem) PluginData(name string) (PluginData, error) {
-	plugin, ok := p.storage.Site.PluginStorage[name]
+	plugin, ok := p.storage.site.PluginStorage[name]
 	if !ok {
 		return PluginData{}, ErrPluginNotFound
 	}
@@ -140,7 +140,7 @@ func (p *PluginSystem) PluginData(name string) (PluginData, error) {
 // Enabled returns if the plugin is enabled or not. If it cannot be found, it
 // will still return false.
 func (p *PluginSystem) Enabled(name string) bool {
-	data, ok := p.storage.Site.PluginStorage[name]
+	data, ok := p.storage.site.PluginStorage[name]
 	if !ok {
 		p.log.Debug("pluginsystem.enabled: could not find plugin: %v", name)
 		return false
@@ -151,14 +151,14 @@ func (p *PluginSystem) Enabled(name string) bool {
 
 // SetEnabled sets a plugin as enabled or not.
 func (p *PluginSystem) SetEnabled(pluginName string, enabled bool) error {
-	data, ok := p.storage.Site.PluginStorage[pluginName]
+	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
 		p.log.Debug("pluginsystem.setenabled: could not find plugin: %v", pluginName)
 		return ErrNotFound
 	}
 
 	data.Enabled = enabled
-	p.storage.Site.PluginStorage[pluginName] = data
+	p.storage.site.PluginStorage[pluginName] = data
 
 	return p.storage.Save()
 }
@@ -175,7 +175,7 @@ func (p *PluginSystem) GrantRequests(pluginName string, grant Grant) ([]GrantReq
 
 // Granted returns whether a plugin is granted for a plugin.
 func (p *PluginSystem) Granted(log ILogger, pluginName string, grant Grant) bool {
-	data, ok := p.storage.Site.PluginStorage[pluginName]
+	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
 		log.Debug("pluginsystem.granted: could not find plugin: %v", pluginName)
 		return false
@@ -192,49 +192,49 @@ func (p *PluginSystem) Granted(log ILogger, pluginName string, grant Grant) bool
 
 // SetGrant sets a plugin grant.
 func (p *PluginSystem) SetGrant(pluginName string, grant Grant) error {
-	data, ok := p.storage.Site.PluginStorage[pluginName]
+	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
 		p.log.Debug("pluginsystem.setgrant: could not find plugin: %v", pluginName)
 		return ErrNotFound
 	}
 
 	data.Grants[grant] = true
-	p.storage.Site.PluginStorage[pluginName] = data
+	p.storage.site.PluginStorage[pluginName] = data
 
 	return p.storage.Save()
 }
 
 // RemoveGrant removes a plugin grant.
 func (p *PluginSystem) RemoveGrant(pluginName string, grant Grant) error {
-	data, ok := p.storage.Site.PluginStorage[pluginName]
+	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
 		p.log.Debug("pluginsystem.removegrant: could not find plugin: %v", pluginName)
 		return ErrNotFound
 	}
 
 	delete(data.Grants, grant)
-	p.storage.Site.PluginStorage[pluginName] = data
+	p.storage.site.PluginStorage[pluginName] = data
 
 	return p.storage.Save()
 }
 
 // SetSetting sets a plugin setting.
 func (p *PluginSystem) SetSetting(pluginName string, settingName string, value interface{}) error {
-	data, ok := p.storage.Site.PluginStorage[pluginName]
+	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
 		p.log.Debug("pluginsystem.setsettings: could not find plugin: %v", pluginName)
 		return ErrNotFound
 	}
 
 	data.Settings[settingName] = value
-	p.storage.Site.PluginStorage[pluginName] = data
+	p.storage.site.PluginStorage[pluginName] = data
 
 	return p.storage.Save()
 }
 
 // Setting returns a setting value.
 func (p *PluginSystem) Setting(pluginName string, settingName string) (interface{}, error) {
-	data, ok := p.storage.Site.PluginStorage[pluginName]
+	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
 		p.log.Debug("pluginsystem.setting: could not find plugin: %v", pluginName)
 		return nil, ErrNotFound

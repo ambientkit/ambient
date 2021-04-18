@@ -37,7 +37,7 @@ func (app *App) LoadPlugins() error {
 	}
 
 	// Set up the template injector.
-	pi := NewPlugininjector(app.log, app.storage, sess, app.pluginsystem)
+	pi := NewPlugininjector(app.log, app.pluginsystem, sess)
 
 	// Get the router from the plugins.
 	var te IRender
