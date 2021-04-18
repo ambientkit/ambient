@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	syslog "log"
+	pkglog "log"
 	"os"
 	"strings"
 
@@ -25,28 +25,23 @@ var (
 	log           ambient.IAppLogger
 	pluginsystem  *ambient.PluginSystem
 	securestorage *ambient.SecureSite
-	plugins       ambient.IPluginList
 )
 
 func main() {
-	plugins = app.Plugins()
-
-	//logger := logruslogger.New()         // Logger
-	logger := zaplogger.New()            // Logger
-	gcpstorage := gcpbucketstorage.New() // GCP and local Storage must be the second plugin.
-
 	// Create the ambient app.
-	ambientApp, err := ambient.NewApp("ambient", "1.0", logger, gcpstorage, plugins)
+	ambientApp, err := ambient.NewApp(appName, appVersion, zaplogger.New(), gcpbucketstorage.New(), app.Plugins())
 	if err != nil {
-		syslog.Fatalln(err.Error())
+		pkglog.Fatalln(err.Error())
 	}
 
+	// Get the
 	log = ambientApp.Logger()
 	storage := ambientApp.Storage()
 	pluginsystem = ambientApp.PluginSystem()
 
-	// Set up the secure storage.
-	securestorage = ambient.NewSecureSite(appName, log, storage, pluginsystem, nil, nil, nil)
+	// Create secure site for the core application and use "ambient" so it gets
+	// full permissions.
+	securestorage = ambient.NewSecureSite("ambient", log, storage, pluginsystem, nil, nil, nil)
 
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(
@@ -112,40 +107,40 @@ func removeGrantAll(name string) error {
 	return pluginsystem.Save()
 }
 
-func enableCLIGrant() bool {
-	// Initialize the plugin in storage.
-	err := pluginsystem.InitializePlugin(appName)
-	if err != nil {
-		log.Error("could not initialize plugin %v: %v", appName, err.Error())
-		return true
-	}
+// func enableCLIGrant() bool {
+// 	// Initialize the plugin in storage.
+// 	err := pluginsystem.InitializePlugin(appName)
+// 	if err != nil {
+// 		log.Error("could not initialize plugin %v: %v", appName, err.Error())
+// 		return true
+// 	}
 
-	// Add admin grant for the CLI ambient.
-	err = addGrantAll(appName)
-	if err != nil {
-		log.Error("could not enable GrantAll on plugin %v: %v", appName, err.Error())
-		return true
-	}
-	log.Info("temporarily enabling GrantAll for plugin: %v", appName)
+// 	// Add admin grant for the CLI ambient.
+// 	err = addGrantAll(appName)
+// 	if err != nil {
+// 		log.Error("could not enable GrantAll on plugin %v: %v", appName, err.Error())
+// 		return true
+// 	}
+// 	log.Info("temporarily enabling GrantAll for plugin: %v", appName)
 
-	return false
-}
+// 	return false
+// }
 
-func disableCLIGrant() {
-	// Remove admin grant for the CLI ambient.
-	log.Info("remove GrantAll for plugin: %v", appName)
-	err := removeGrantAll(appName)
-	if err != nil {
-		log.Error("could not remove GrantAll grant from plugin %v: %v", appName, err.Error())
-	}
+// func disableCLIGrant() {
+// 	// Remove admin grant for the CLI ambient.
+// 	log.Info("remove GrantAll for plugin: %v", appName)
+// 	err := removeGrantAll(appName)
+// 	if err != nil {
+// 		log.Error("could not remove GrantAll grant from plugin %v: %v", appName, err.Error())
+// 	}
 
-	// Remove the plugin from storage.
-	err = pluginsystem.RemovePlugin(appName)
-	if err != nil {
-		log.Error("could not remove plugin %v: %v", appName, err.Error())
-	}
+// 	// Remove the plugin from storage.
+// 	err = pluginsystem.RemovePlugin(appName)
+// 	if err != nil {
+// 		log.Error("could not remove plugin %v: %v", appName, err.Error())
+// 	}
 
-}
+// }
 
 func pluginSuggestions() []prompt.Suggest {
 	arr := make([]prompt.Suggest, 0)
@@ -171,10 +166,10 @@ func executer(s string) {
 		log.Info("", "enabling plugin")
 
 		// Enable grants temporarily.
-		fail := enableCLIGrant()
-		if fail {
-			return
-		}
+		// fail := enableCLIGrant()
+		// if fail {
+		// 	return
+		// }
 
 		if args[1] == "all" {
 			// Enable plugins.
@@ -186,7 +181,7 @@ func executer(s string) {
 		}
 
 		// Remove temporary grants.
-		disableCLIGrant()
+		//disableCLIGrant()
 	case execGrants:
 		if len(args) < 2 {
 			log.Info("", "command not recognized")
@@ -196,10 +191,10 @@ func executer(s string) {
 		log.Info("", "adding plugin grants")
 
 		// Enable grants temporarily.
-		fail := enableCLIGrant()
-		if fail {
-			return
-		}
+		// fail := enableCLIGrant()
+		// if fail {
+		// 	return
+		// }
 
 		if args[1] == "all" {
 			// Enable plugin grants.
@@ -211,7 +206,7 @@ func executer(s string) {
 		}
 
 		// Remove temporary grants.
-		disableCLIGrant()
+		//disableCLIGrant()
 	case execExit:
 		os.Exit(0)
 	default:

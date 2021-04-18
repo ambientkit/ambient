@@ -10,6 +10,11 @@ import (
 	"github.com/josephspurrier/ambient/plugin/zaplogger"
 )
 
+var (
+	appName    = "myapp"
+	appVersion = "1.0"
+)
+
 func init() {
 	// Set the time zone.
 	tz := os.Getenv("AMB_TIMEZONE")
@@ -19,17 +24,13 @@ func init() {
 }
 
 func main() {
-	//logger := logruslogger.New()         // Logger
-	logger := zaplogger.New()            // Logger
-	gcpstorage := gcpbucketstorage.New() // GCP and local Storage must be the second plugin.
-
 	// Create the ambient app.
-	ambientApp, err := ambient.NewApp("ambient", "1.0", logger, gcpstorage, app.Plugins())
+	ambientApp, err := ambient.NewApp(appName, appVersion, zaplogger.New(), gcpbucketstorage.New(), app.Plugins())
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
-	// Set up the plugins.
+	// Load the plugins.
 	err = ambientApp.LoadPlugins()
 	if err != nil {
 		log.Fatalln(err.Error())

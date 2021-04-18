@@ -98,8 +98,8 @@ func (app *App) LoadPlugins() error {
 		return fmt.Errorf("ambient: no template engine found")
 	}
 
-	// Create secure site for the core application. This should always be
-	// ambient so it gets full permissions.
+	// Create secure site for the core application and use "ambient" so it gets
+	// full permissions.
 	securesite := NewSecureSite("ambient", app.log, app.storage, app.pluginsystem, sess, mux, te)
 
 	// Load the plugin pages.

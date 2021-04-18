@@ -107,6 +107,11 @@ func (ss *SecureSite) loadSinglePlugin(name string) error {
 }
 
 func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]PluginData) {
+	if name == "ambient" {
+		ss.log.Error("plugin load: preventing loading plugin with reserved name: %v", name)
+		return
+	}
+
 	v, err := ss.pluginsystem.Plugin(name)
 	if err != nil {
 		ss.log.Error("plugin load: problem loading plugin %v: %v", name, err.Error())
