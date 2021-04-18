@@ -40,7 +40,7 @@ func (app *App) LoadPlugins() error {
 	pi := NewPlugininjector(app.log, app.pluginsystem, sess)
 
 	// Get the router from the plugins.
-	var te IRender
+	var te Renderer
 	for _, name := range app.pluginsystem.Names() {
 		// Skip if the plugin isn't found.
 		plugin, err := app.pluginsystem.Plugin(name)

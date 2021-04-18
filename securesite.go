@@ -27,11 +27,11 @@ type SecureSite struct {
 	pluginsystem *PluginSystem
 	sess         AppSession
 	mux          AppRouter
-	render       IRender
+	render       Renderer
 }
 
 // NewSecureSite returns a new secure site.
-func NewSecureSite(pluginName string, log AppLogger, ps *PluginSystem, session AppSession, mux AppRouter, render IRender) *SecureSite {
+func NewSecureSite(pluginName string, log AppLogger, ps *PluginSystem, session AppSession, mux AppRouter, render Renderer) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
 

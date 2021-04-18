@@ -43,7 +43,7 @@ func (p *PluginBase) SessionManager(logger Logger, ss SessionStorer) (AppSession
 }
 
 // Router returns a request router.
-func (p *PluginBase) Router(logger Logger, te IRender) (AppRouter, error) {
+func (p *PluginBase) Router(logger Logger, te Renderer) (AppRouter, error) {
 	return nil, nil
 }
 
@@ -53,7 +53,7 @@ func (p *PluginBase) Storage(logger Logger) (DataStorer, SessionStorer, error) {
 }
 
 // TemplateEngine returns a template engine.
-func (p *PluginBase) TemplateEngine(logger Logger, injector AssetInjector) (IRender, error) {
+func (p *PluginBase) TemplateEngine(logger Logger, injector AssetInjector) (Renderer, error) {
 	return nil, nil
 }
 

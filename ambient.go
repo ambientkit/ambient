@@ -7,6 +7,12 @@ import (
 	"net/http"
 )
 
+// PluginLoader contains the plugins for the Ambient application.
+type PluginLoader struct {
+	Plugins    []IPlugin
+	Middleware []IMiddleware
+}
+
 // ICore represents the core of any plugin.
 type ICore interface {
 	// PluginName should be globally unique. Only lowercase letters, numbers,
@@ -14,13 +20,6 @@ type ICore interface {
 	PluginName() string // required, read frequently
 	// PluginVersion must follow https://semver.org/.
 	PluginVersion() string // required, read frequently
-}
-
-// IMiddleware represents middleware.
-type IMiddleware interface {
-	IPlugin
-
-	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
 }
 
 // IPlugin represents a plugin.
@@ -31,8 +30,8 @@ type IPlugin interface {
 	Logger(appName string, appVersion string) (AppLogger, error)                   // optional
 	Storage(logger Logger) (DataStorer, SessionStorer, error)                      // optional
 	SessionManager(logger Logger, sessionStorer SessionStorer) (AppSession, error) // optional
-	TemplateEngine(logger Logger, injector AssetInjector) (IRender, error)         // optional
-	Router(logger Logger, render IRender) (AppRouter, error)                       // optional
+	TemplateEngine(logger Logger, injector AssetInjector) (Renderer, error)        // optional
+	Router(logger Logger, render Renderer) (AppRouter, error)                      // optional
 
 	// These should all have access to the toolkit.
 	Enable(toolkit *Toolkit) error                   // optional, called during enable
@@ -44,21 +43,9 @@ type IPlugin interface {
 	FuncMap() func(r *http.Request) template.FuncMap // optional, called on every render
 }
 
-// IPluginList is a list of IPlugins.
-type IPluginList []IPlugin
+// IMiddleware represents middleware.
+type IMiddleware interface {
+	IPlugin
 
-// PluginNames return an list of plugin names.
-func (arr IPluginList) PluginNames() []string {
-	pluginNames := make([]string, 0)
-	for _, v := range arr {
-		pluginNames = append(pluginNames, v.PluginName())
-	}
-
-	return pluginNames
-}
-
-// PluginLoader -
-type PluginLoader struct {
-	Plugins    []IPlugin
-	Middleware []IMiddleware
+	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
 }

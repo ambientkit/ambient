@@ -34,7 +34,7 @@ func (p *Plugin) PluginVersion() string {
 }
 
 // Router returns a router.
-func (p *Plugin) Router(logger ambient.Logger, te ambient.IRender) (ambient.AppRouter, error) {
+func (p *Plugin) Router(logger ambient.Logger, te ambient.Renderer) (ambient.AppRouter, error) {
 	// Set up the default router.
 	mux := router.New()
 
@@ -52,7 +52,7 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 
 // setupRouter returns a router with the NotFound handler and the default
 // handler set.
-func setupRouter(logger ambient.Logger, mux ambient.AppRouter, te ambient.IRender) {
+func setupRouter(logger ambient.Logger, mux ambient.AppRouter, te ambient.Renderer) {
 	// Set the handling of all responses.
 	customServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
 		// Handle only errors.
