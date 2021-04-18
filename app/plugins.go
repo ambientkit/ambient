@@ -48,7 +48,7 @@ var MinimalPlugins = []string{
 }
 
 // Plugins defines the plugins - order does matter.
-var Plugins = func() ambient.IPluginList {
+var Plugins = func() *ambient.PluginLoader {
 	// Get the environment variables.
 	secretKey := os.Getenv("AMB_SESSION_KEY")
 	if len(secretKey) == 0 {
@@ -60,40 +60,43 @@ var Plugins = func() ambient.IPluginList {
 		log.Fatalf("app: environment variable is missing: %v\n", "AMB_PASSWORD_HASH")
 	}
 
-	return ambient.IPluginList{
-		// Core plugins required to use the system.
-		htmltemplate.New(), // HTML template engine.
-		awayrouter.New(),   // Request router.
+	return &ambient.PluginLoader{
+		Plugins: []ambient.IPlugin{
+			// Core plugins required to use the system.
+			htmltemplate.New(), // HTML template engine.
+			awayrouter.New(),   // Request router.
 
-		// Custom plugins.
-		debugpprof.New(),           // Go pprof debug endpoints.
-		charset.New(),              // Charset to the HTML head.
-		viewport.New(),             // Viewport in the HTML head.
-		bearblog.New(passwordHash), // Bear Blog functionality.
-		author.New(),               // Author in the HTML head.
-		description.New(),          // Description the HTML head.
-		bearcss.New(),              // Bear Blog styling.
-		plugins.New(),              // Page to manage plugins.
-		prism.New(),                // Prism CSS for codeblocks.
-		stackedit.New(),            // Stackedit for editing markdown.
-		googleanalytics.New(),      // Google Analytics.
-		disqus.New(),               // Disqus for comments for blog posts.
-		robots.New(),               // Robots file.
-		sitemap.New(),              // Sitemap generator.
-		rssfeed.New(),              // RSS feed generator.
-		styles.New(),               // Style editing page.
+			// Custom plugins.
+			debugpprof.New(),           // Go pprof debug endpoints.
+			charset.New(),              // Charset to the HTML head.
+			viewport.New(),             // Viewport in the HTML head.
+			bearblog.New(passwordHash), // Bear Blog functionality.
+			author.New(),               // Author in the HTML head.
+			description.New(),          // Description the HTML head.
+			bearcss.New(),              // Bear Blog styling.
+			plugins.New(),              // Page to manage plugins.
+			prism.New(),                // Prism CSS for codeblocks.
+			stackedit.New(),            // Stackedit for editing markdown.
+			googleanalytics.New(),      // Google Analytics.
+			disqus.New(),               // Disqus for comments for blog posts.
+			robots.New(),               // Robots file.
+			sitemap.New(),              // Sitemap generator.
+			rssfeed.New(),              // RSS feed generator.
+			styles.New(),               // Style editing page.
 
-		// Draft plugins.
-		hello.New(),
-		navigation.New(),
-
-		// Middleware - executes bottom to top.
-		notrailingslash.New(),     // Redirect all requests with a trailing slash.
-		uptimerobotok.New(),       // Provide 200 on HEAD /.
-		securedashboard.New(),     // Descure all /dashboard routes.
-		redirecttourl.New(),       // Redirect to production URL.
-		gzipresponse.New(),        // Compress all HTTP response.
-		logrequest.New(),          // Log every request as INFO.
-		scssession.New(secretKey), // Session manager.
+			// Draft plugins.
+			hello.New(),
+			navigation.New(),
+		},
+		Middleware: []ambient.IMiddleware{
+			// Middleware - executes bottom to top.
+			notrailingslash.New(),     // Redirect all requests with a trailing slash.
+			uptimerobotok.New(),       // Provide 200 on HEAD /.
+			securedashboard.New(),     // Secure all /dashboard routes.
+			redirecttourl.New(),       // Redirect to production URL.
+			gzipresponse.New(),        // Compress all HTTP responses.
+			scssession.New(secretKey), // Session manager.
+			logrequest.New(),          // Log every request as INFO.
+		},
 	}
 }

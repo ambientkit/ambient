@@ -17,15 +17,11 @@ type ICore interface {
 }
 
 // IMiddleware represents middleware.
-// type IMiddleware interface {
-// 	ICore
+type IMiddleware interface {
+	IPlugin
 
-// 	// These should all have access to the toolkit.
-// 	Enable(toolkit *Toolkit) error // optional, called during enable
-// 	Disable() error                // optional, called during disable
-
-// 	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
-// }
+	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
+}
 
 // IPlugin represents a plugin.
 type IPlugin interface {
@@ -39,14 +35,13 @@ type IPlugin interface {
 	Router(logger ILogger, render IRender) (IAppRouter, error)                       // optional
 
 	// These should all have access to the toolkit.
-	Enable(toolkit *Toolkit) error                      // optional, called during enable
-	Disable() error                                     // optional, called during disable
-	Routes()                                            // optional, called during enable
-	Assets() ([]Asset, *embed.FS)                       // optional, called during enable
-	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
-	Settings() []Setting                                // optional, called during special operations
-	GrantRequests() []GrantRequest                      // optional, called during every plugin operation against data provider
-	FuncMap() func(r *http.Request) template.FuncMap    // optional, called on every render
+	Enable(toolkit *Toolkit) error                   // optional, called during enable
+	Disable() error                                  // optional, called during disable
+	Routes()                                         // optional, called during enable
+	Assets() ([]Asset, *embed.FS)                    // optional, called during enable
+	Settings() []Setting                             // optional, called during special operations
+	GrantRequests() []GrantRequest                   // optional, called during every plugin operation against data provider
+	FuncMap() func(r *http.Request) template.FuncMap // optional, called on every render
 }
 
 // IPluginList is a list of IPlugins.
@@ -60,4 +55,10 @@ func (arr IPluginList) PluginNames() []string {
 	}
 
 	return pluginNames
+}
+
+// PluginLoader -
+type PluginLoader struct {
+	Plugins    []IPlugin
+	Middleware []IMiddleware
 }

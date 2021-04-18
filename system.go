@@ -15,36 +15,44 @@ type PluginSystem struct {
 	log     IAppLogger
 	storage *Storage
 
-	names   []string
-	plugins map[string]IPlugin
-	routes  map[string][]Route
+	names           []string
+	middlewareNames []string
+	plugins         map[string]IPlugin
+
+	routes map[string][]Route
 }
 
 // NewPluginSystem returns a plugin system.
-func NewPluginSystem(log IAppLogger, storage *Storage, arr []IPlugin) (*PluginSystem, error) {
+func NewPluginSystem(log IAppLogger, storage *Storage, arr *PluginLoader) (*PluginSystem, error) {
 	// Get a list of plugin names to maintain order.
 	names := make([]string, 0)
+	middlewareNames := make([]string, 0)
 	plugins := make(map[string]IPlugin)
-
 	shouldSave := false
-	for _, p := range arr {
-		// TODO: Need to make sure the name matches a certain format. All lowercase. No symbols.
 
-		// Ensure a plugin can't be loaded twice or two plugins with the same
-		// names can't both be loaded.
-		if _, found := plugins[p.PluginName()]; found {
-			return nil, fmt.Errorf("found a duplicate plugin: %v", p.PluginName())
+	// Load the middleware.
+	for _, p := range arr.Middleware {
+		save, err := loadPlugin(p, plugins, storage)
+		if err != nil {
+			return nil, err
+		} else if save {
+			shouldSave = true
 		}
 
 		names = append(names, p.PluginName())
-		plugins[p.PluginName()] = p
+		middlewareNames = append(middlewareNames, p.PluginName())
+	}
 
-		_, ok := storage.site.PluginStorage[p.PluginName()]
-		if !ok {
+	// Load the plugins.
+	for _, p := range arr.Plugins {
+		save, err := loadPlugin(p, plugins, storage)
+		if err != nil {
+			return nil, err
+		} else if save {
 			shouldSave = true
-			storage.site.PluginStorage[p.PluginName()] = newPluginData()
 		}
 
+		names = append(names, p.PluginName())
 	}
 
 	if shouldSave {
@@ -58,10 +66,31 @@ func NewPluginSystem(log IAppLogger, storage *Storage, arr []IPlugin) (*PluginSy
 		log:     log,
 		storage: storage,
 
-		names:   names,
-		plugins: plugins,
-		routes:  make(map[string][]Route),
+		names:           names,
+		middlewareNames: middlewareNames,
+		plugins:         plugins,
+		routes:          make(map[string][]Route),
 	}, nil
+}
+
+func loadPlugin(p IPlugin, plugins map[string]IPlugin, storage *Storage) (shouldSave bool, err error) {
+	// TODO: Need to make sure the name matches a certain format. All lowercase. No symbols.
+
+	// Ensure a plugin can't be loaded twice or two plugins with the same
+	// names can't both be loaded.
+	if _, found := plugins[p.PluginName()]; found {
+		return false, fmt.Errorf("found a duplicate plugin: %v", p.PluginName())
+	}
+
+	plugins[p.PluginName()] = p
+
+	_, ok := storage.site.PluginStorage[p.PluginName()]
+	if !ok {
+		storage.site.PluginStorage[p.PluginName()] = newPluginData()
+		return true, nil
+	}
+
+	return false, nil
 }
 
 // newPluginData returns new PluginData.

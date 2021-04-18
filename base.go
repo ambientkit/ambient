@@ -37,11 +37,6 @@ func (p *PluginBase) Settings() []Setting {
 	return nil
 }
 
-// Middleware returns handler wrapped in middleware.
-func (p *PluginBase) Middleware() []func(next http.Handler) http.Handler {
-	return nil
-}
-
 // SessionManager returns a session manager.
 func (p *PluginBase) SessionManager(logger ILogger, ss SessionStorer) (IAppSession, error) {
 	return nil, nil
