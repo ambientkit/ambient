@@ -30,6 +30,12 @@ func main() {
 		pkglog.Fatalln(err.Error())
 	}
 
+	// Set the log level.
+	// ambientApp.SetLogLevel(ambient.LogLevelDebug)
+	// ambientApp.SetLogLevel(ambient.LogLevelInfo)
+	// ambientApp.SetLogLevel(ambient.LogLevelError)
+	// ambientApp.SetLogLevel(ambient.LogLevelFatal)
+
 	// Add template debug information.
 	//ambientApp.SetDebugTemplates(true)
 

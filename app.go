@@ -27,11 +27,8 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 		return nil, err
 	}
 
-	// Set the log level.
-	//log.SetLogLevel(LogLevelDebug)
+	// Set the default log level.
 	log.SetLogLevel(LogLevelInfo)
-	//log.SetLogLevel(LogLevelError)
-	//log.SetLogLevel(LogLevelFatal)
 
 	// Get the storage manager.
 	storage, sessionstorer, err := loadStorage(log, storagePlugin)
@@ -66,6 +63,11 @@ func (app *App) PluginSystem() *PluginSystem {
 // templates.
 func (app *App) SetDebugTemplates(enable bool) {
 	app.debugTemplates = enable
+}
+
+// SetLogLevel sets the log level.
+func (app *App) SetLogLevel(level LogLevel) {
+	app.log.SetLogLevel(LogLevelInfo)
 }
 
 // ListenAndServe will start the web listener on port 8080 or will pull the
