@@ -60,7 +60,7 @@ var Plugins = func() *ambient.PluginLoader {
 			"bearcss":    true, // Bear Blog styling.
 		},
 		Plugins: []ambient.Plugin{
-			// Custom plugins.
+			// Marketplace plugins.
 			debugpprof.New(),           // Go pprof debug endpoints.
 			charset.New(),              // Charset to the HTML head.
 			viewport.New(),             // Viewport in the HTML head.
@@ -78,7 +78,7 @@ var Plugins = func() *ambient.PluginLoader {
 			rssfeed.New(),              // RSS feed generator.
 			styles.New(),               // Style editing page.
 
-			// Draft plugins.
+			// App plugins.
 			hello.New(),
 			navigation.New(),
 		},
