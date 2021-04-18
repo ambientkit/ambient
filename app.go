@@ -15,6 +15,8 @@ type App struct {
 	log           AppLogger
 	pluginsystem  *PluginSystem
 	sessionstorer SessionStorer
+
+	debugTemplates bool
 }
 
 // NewApp returns a new Ambient app that supports plugins.
@@ -58,6 +60,12 @@ func (app *App) Logger() AppLogger {
 // PluginSystem returns the plugin system.
 func (app *App) PluginSystem() *PluginSystem {
 	return app.pluginsystem
+}
+
+// SetDebugTemplates sets the injector to enable verbose debug output in
+// templates.
+func (app *App) SetDebugTemplates(enable bool) {
+	app.debugTemplates = enable
 }
 
 // ListenAndServe will start the web listener on port 8080 or will pull the

@@ -10,6 +10,7 @@ import (
 // AssetInjector represents code that can inject files into a template.
 type AssetInjector interface {
 	Inject(injector LayoutInjector, t *template.Template, r *http.Request, layoutType LayoutType, vars map[string]interface{}) (*template.Template, error)
+	DebugTemplates() bool
 }
 
 // LayoutInjector represents an injector that the AssetInjector will call to inject assets in the correct place.
@@ -23,18 +24,25 @@ type LayoutInjector interface {
 
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
-	log          AppLogger
-	pluginsystem *PluginSystem
-	sess         AppSession
+	log            AppLogger
+	pluginsystem   *PluginSystem
+	sess           AppSession
+	debugTemplates bool
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger AppLogger, plugins *PluginSystem, sess AppSession) *PluginInjector {
+func NewPlugininjector(logger AppLogger, plugins *PluginSystem, sess AppSession, debugTemplates bool) *PluginInjector {
 	return &PluginInjector{
-		log:          logger,
-		pluginsystem: plugins,
-		sess:         sess,
+		log:            logger,
+		pluginsystem:   plugins,
+		sess:           sess,
+		debugTemplates: debugTemplates,
 	}
+}
+
+// DebugTemplates returns true if the templates should output debugging information.
+func (c *PluginInjector) DebugTemplates() bool {
+	return c.debugTemplates
 }
 
 // Inject will return a template and an error.
@@ -105,7 +113,7 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 					}
 
 					// Convert the asset to an element.
-					txt := file.Element(c.log, v, assets)
+					txt := file.Element(c.log, v, assets, c.debugTemplates)
 
 					switch file.Location {
 					case LocationHead:

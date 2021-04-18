@@ -100,7 +100,7 @@ func (file Asset) SanitizedPath() string {
 }
 
 // Element returns an HTML element.
-func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS) string {
+func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool) string {
 	// Build the attributes.
 	attrs := make([]string, 0)
 	for _, attr := range file.Attributes {
@@ -110,6 +110,11 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS) string {
 			attrs = append(attrs, fmt.Sprintf(`%v="%v"`, html.EscapeString(attr.Name), html.EscapeString(fmt.Sprint(attr.Value))))
 		}
 	}
+
+	if debug {
+		attrs = append(attrs, fmt.Sprintf(`%v="%v"`, html.EscapeString("data-ambplugin"), html.EscapeString(fmt.Sprint(v.PluginName()))))
+	}
+
 	attrsJoined := strings.Join(attrs, " ")
 	if len(attrsJoined) > 0 {
 		// Add a space at the beginning.
@@ -125,7 +130,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS) string {
 				logger.Error("plugin injector: error getting file contents: %v", err.Error())
 				return ""
 			}
-			txt = fmt.Sprintf("<style>%v</style>", string(ff))
+			txt = fmt.Sprintf("<style%v>%v</style>", attrsJoined, string(ff))
 		} else {
 			if file.External {
 				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
@@ -140,7 +145,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS) string {
 				logger.Error("plugin injector: error getting file contents: %v", err.Error())
 				return ""
 			}
-			txt = fmt.Sprintf("<script>%v</script>", string(ff))
+			txt = fmt.Sprintf("<script%v>%v</script>", attrsJoined, string(ff))
 		} else {
 			if file.External {
 				txt = fmt.Sprintf(`<script type="application/javascript" src="%v"%v></script>`, file.SanitizedPath(), attrsJoined)
@@ -161,7 +166,11 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS) string {
 			}
 
 			if file.TagName == "" {
-				txt = fmt.Sprintf(`%v`, string(ff))
+				if debug {
+					txt = fmt.Sprintf(`<span%v data-amblocation="start"></span>%v<span%v data-amblocation="end"></span>`, attrsJoined, string(ff), attrsJoined)
+				} else {
+					txt = fmt.Sprintf(`%v`, string(ff))
+				}
 			} else {
 				txt = fmt.Sprintf(`<%v%v>%v</%v>`, html.EscapeString(file.TagName), attrsJoined, string(ff), html.EscapeString(file.TagName))
 			}

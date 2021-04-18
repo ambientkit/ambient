@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"path"
+	"runtime"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/plugin/htmltemplate/lib/templatebuffer"
@@ -68,6 +69,13 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 		return http.StatusInternalServerError, err
 	}
 
+	// Output debug information.
+	if te.assetInjector.DebugTemplates() {
+		_, callerFile, callerLineNumber, _ := runtime.Caller(1)
+		content = fmt.Sprintf(`<span data-ambtemplate="%v" data-amblocation="start" data-ambcaller="%v:%v"></span>%v<span data-ambtemplate="%v" data-amblocation="end"></span>`,
+			partialTemplate, callerFile, callerLineNumber, content, partialTemplate)
+	}
+
 	// Escape the content.
 	t, err = te.escapeContent(t, "content", content)
 	if err != nil {
@@ -98,6 +106,13 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 	content, err := templatebuffer.ParseTemplate(postContent, fm, vars)
 	if err != nil {
 		return http.StatusInternalServerError, err
+	}
+
+	// Output debug information.
+	if te.assetInjector.DebugTemplates() {
+		_, callerFile, callerLineNumber, _ := runtime.Caller(1)
+		content = fmt.Sprintf(`<span data-ambtemplate="%v" data-amblocation="start" data-ambcaller="%v:%v"></span>%v<span data-ambtemplate="%v" data-amblocation="end"></span>`,
+			mainTemplate, callerFile, callerLineNumber, content, mainTemplate)
 	}
 
 	// Escape the content.

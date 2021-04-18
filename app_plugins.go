@@ -38,7 +38,7 @@ func (app *App) Handler() (http.Handler, error) {
 	}
 
 	// Set up the template injector.
-	pi := NewPlugininjector(app.log, app.pluginsystem, sess)
+	pi := NewPlugininjector(app.log, app.pluginsystem, sess, app.debugTemplates)
 
 	// Get the template engine.
 	var te Renderer

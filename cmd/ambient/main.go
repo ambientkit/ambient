@@ -30,6 +30,9 @@ func main() {
 		pkglog.Fatalln(err.Error())
 	}
 
+	// Add template debug information.
+	ambientApp.SetDebugTemplates(true)
+
 	// Get the logger.
 	log := ambientApp.Logger()
 
