@@ -25,11 +25,14 @@ var (
 	log           ambient.AppLogger
 	pluginsystem  *ambient.PluginSystem
 	securestorage *ambient.SecureSite
+	plugins       *ambient.PluginLoader
 )
 
 func main() {
+	plugins = app.Plugins()
+
 	// Create the ambient app.
-	ambientApp, err := ambient.NewApp(appName, appVersion, zaplogger.New(), gcpbucketstorage.New(), app.Plugins())
+	ambientApp, err := ambient.NewApp(appName, appVersion, zaplogger.New(), gcpbucketstorage.New(), plugins)
 	if err != nil {
 		pkglog.Fatalln(err.Error())
 	}
@@ -110,8 +113,10 @@ func pluginSuggestions() []prompt.Suggest {
 	arr := make([]prompt.Suggest, 0)
 	arr = append(arr, prompt.Suggest{Text: "all", Description: ""})
 
-	for _, pluginName := range app.MinimalPlugins {
-		arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
+	for pluginName, trusted := range plugins.TrustedPlugins {
+		if trusted {
+			arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
+		}
 	}
 
 	return arr
@@ -131,8 +136,10 @@ func executer(s string) {
 
 		if args[1] == "all" {
 			// Enable plugins.
-			for _, p := range app.MinimalPlugins {
-				enablePlugin(p)
+			for pluginName, trusted := range plugins.TrustedPlugins {
+				if trusted {
+					enablePlugin(pluginName)
+				}
 			}
 		} else {
 			enablePlugin(args[1])
@@ -147,8 +154,11 @@ func executer(s string) {
 
 		if args[1] == "all" {
 			// Enable plugin grants.
-			for _, p := range app.MinimalPlugins {
-				enableGrants(p)
+			for pluginName, trusted := range plugins.TrustedPlugins {
+				if trusted {
+					enableGrants(pluginName)
+				}
+
 			}
 		} else {
 			enableGrants(args[1])

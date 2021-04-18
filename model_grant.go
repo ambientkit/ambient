@@ -73,6 +73,8 @@ const (
 	GrantPluginNeighborGrantRead Grant = "plugin.neighborgrant:read"
 	// GrantPluginNeighborGrantWrite allows write access to a grant in another plugin.
 	GrantPluginNeighborGrantWrite Grant = "plugin.neighborgrant:write"
+	// GrantPluginTrustedRead allows read access to whether a plugin is trusted or not.
+	GrantPluginTrustedRead Grant = "plugin.trusted:read"
 
 	// GrantUserAuthenticatedRead allows read access whether the current user is logged in or not.
 	GrantUserAuthenticatedRead Grant = "user.authenticated:read"

@@ -148,3 +148,12 @@ func (ss *SecureSite) settingField(pluginName string, settingName string) (inter
 
 	return defaultValue, nil
 }
+
+// PluginTrusted returns whether a plugin is trusted or not.
+func (ss *SecureSite) PluginTrusted(pluginName string) (bool, error) {
+	if !ss.Authorized(GrantPluginTrustedRead) {
+		return false, ErrAccessDenied
+	}
+
+	return ss.pluginsystem.trusted[pluginName], nil
+}

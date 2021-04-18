@@ -31,6 +31,11 @@ func (p *Plugin) grantsEdit(w http.ResponseWriter, r *http.Request) (status int,
 		return p.Site.Error(err)
 	}
 
+	trusted, err := p.Site.PluginTrusted(pluginName)
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
 	arr := make([]pluginGrant, 0)
 	for index, request := range grantList {
 		arr = append(arr, pluginGrant{
@@ -41,6 +46,7 @@ func (p *Plugin) grantsEdit(w http.ResponseWriter, r *http.Request) (status int,
 		})
 	}
 
+	vars["trusted"] = trusted
 	vars["grants"] = arr
 
 	return p.Render.Page(w, r, assets, "template/grants_edit", nil, vars)

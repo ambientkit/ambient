@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	pkglog "log"
 	"os"
 
 	"github.com/josephspurrier/ambient"
@@ -27,15 +27,18 @@ func main() {
 	// Create the ambient app.
 	ambientApp, err := ambient.NewApp(appName, appVersion, zaplogger.New(), gcpbucketstorage.New(), app.Plugins())
 	if err != nil {
-		log.Fatalln(err.Error())
+		pkglog.Fatalln(err.Error())
 	}
 
-	// Load the plugins.
-	err = ambientApp.LoadPlugins()
+	// Get the logger.
+	log := ambientApp.Logger()
+
+	// Load the plugins and return the handler.
+	mux, err := ambientApp.Handler()
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Fatal("", err.Error())
 	}
 
 	// Start the web listener.
-	ambientApp.ListenAndServe()
+	ambientApp.ListenAndServe(mux)
 }

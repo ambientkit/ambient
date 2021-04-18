@@ -17,7 +17,10 @@ type PluginSystem struct {
 
 	names           []string
 	middlewareNames []string
+	router          RouterPlugin
+	templateEngine  TemplateEnginePlugin
 	plugins         map[string]Plugin
+	trusted         map[string]bool
 
 	routes map[string][]Route
 }
@@ -68,8 +71,12 @@ func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*Plugi
 
 		names:           names,
 		middlewareNames: middlewareNames,
-		plugins:         plugins,
-		routes:          make(map[string][]Route),
+		router:          arr.Router,
+		templateEngine:  arr.TemplateEngine,
+		trusted:         arr.TrustedPlugins,
+
+		plugins: plugins,
+		routes:  make(map[string][]Route),
 	}, nil
 }
 
@@ -207,6 +214,12 @@ func (p *PluginSystem) Authorized(pluginName string, grant Grant) bool {
 	// Always allow ambient application to get full access.
 	if pluginName == "ambient" {
 		p.log.Debug("pluginsystem: granted plugin (%v) GrantAll access to the data item for grant: %v", "ambient", grant)
+		return true
+	}
+
+	// Determine if plugin is in the trusted list.
+	if trusted := p.trusted[pluginName]; trusted {
+		p.log.Debug("pluginsystem: granted trusted plugin (%v) GrantAll access to the data item for grant: %v", pluginName, grant)
 		return true
 	}
 

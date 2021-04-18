@@ -52,6 +52,7 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 		{Grant: ambient.GrantPluginNeighborGrantWrite, Description: "Access to approve grants for plugins."},
 		{Grant: ambient.GrantRouterNeighborRouteClear, Description: "Access to clear routes for plugins."},
 		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for editing the plugins."},
+		{Grant: ambient.GrantPluginTrustedRead, Description: "Access to read if a plugin is trusted or not."},
 	}
 }
 

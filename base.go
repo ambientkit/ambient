@@ -37,22 +37,12 @@ func (p *PluginBase) Settings() []Setting {
 	return nil
 }
 
-// SessionManager returns a session manager.
-func (p *PluginBase) SessionManager(logger Logger, ss SessionStorer) (AppSession, error) {
-	return nil, nil
-}
-
-// Router returns a request router.
-func (p *PluginBase) Router(logger Logger, te Renderer) (AppRouter, error) {
-	return nil, nil
-}
-
-// TemplateEngine returns a template engine.
-func (p *PluginBase) TemplateEngine(logger Logger, injector AssetInjector) (Renderer, error) {
-	return nil, nil
-}
-
 // GrantRequests returns a list of grants requested by the plugin.
 func (p *PluginBase) GrantRequests() []GrantRequest {
 	return nil
+}
+
+// SessionManager returns a session manager.
+func (p *PluginBase) SessionManager(logger Logger, ss SessionStorer) (AppSession, error) {
+	return nil, nil
 }

@@ -15,7 +15,6 @@ type App struct {
 	log           AppLogger
 	pluginsystem  *PluginSystem
 	sessionstorer SessionStorer
-	handler       http.Handler
 }
 
 // NewApp returns a new Ambient app that supports plugins.
@@ -61,13 +60,9 @@ func (app *App) PluginSystem() *PluginSystem {
 	return app.pluginsystem
 }
 
-// Mux returns the HTTP request multiplexer.
-func (app *App) Mux() http.Handler {
-	return app.handler
-}
-
-// ListenAndServe will start the web listener.
-func (app *App) ListenAndServe() {
+// ListenAndServe will start the web listener on port 8080 or will pull the
+// environment variable from: PORT.
+func (app *App) ListenAndServe(h http.Handler) {
 	// Start the web server.
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -75,5 +70,5 @@ func (app *App) ListenAndServe() {
 	}
 
 	app.log.Info("ambient: web server listening on port: %v", port)
-	app.log.Fatal("", http.ListenAndServe(":"+port, app.Mux()))
+	app.log.Fatal("", http.ListenAndServe(":"+port, h))
 }

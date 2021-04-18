@@ -35,18 +35,6 @@ import (
 	"github.com/josephspurrier/ambient/plugin/viewport"
 )
 
-// MinimalPlugins required to boot the application.
-var MinimalPlugins = []string{
-	//"zaplogger",
-	//"gcpbucketstorage",
-	"scssession",
-	"htmltemplate",
-	"awayrouter",
-	"plugins",
-	"bearblog",
-	"bearcss",
-}
-
 // Plugins defines the plugins - order does matter.
 var Plugins = func() *ambient.PluginLoader {
 	// Get the environment variables.
@@ -61,11 +49,17 @@ var Plugins = func() *ambient.PluginLoader {
 	}
 
 	return &ambient.PluginLoader{
+		Router:         awayrouter.New(),
+		TemplateEngine: htmltemplate.New(),
+		// Trusted plugins are required to boot the application so they will be
+		// given full access.
+		TrustedPlugins: map[string]bool{
+			"scssession": true, // Session manager.
+			"plugins":    true, // Page to manage plugins.
+			"bearblog":   true, // Bear Blog functionality.
+			"bearcss":    true, // Bear Blog styling.
+		},
 		Plugins: []ambient.Plugin{
-			// Core plugins required to use the system.
-			htmltemplate.New(), // HTML template engine.
-			awayrouter.New(),   // Request router.
-
 			// Custom plugins.
 			debugpprof.New(),           // Go pprof debug endpoints.
 			charset.New(),              // Charset to the HTML head.

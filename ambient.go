@@ -9,8 +9,11 @@ import (
 
 // PluginLoader contains the plugins for the Ambient application.
 type PluginLoader struct {
-	Plugins    []Plugin
-	Middleware []MiddlewarePlugin
+	Router         RouterPlugin
+	TemplateEngine TemplateEnginePlugin
+	TrustedPlugins map[string]bool
+	Plugins        []Plugin
+	Middleware     []MiddlewarePlugin
 }
 
 // PluginCore represents the core of any plugin.
@@ -26,11 +29,6 @@ type PluginCore interface {
 type Plugin interface {
 	PluginCore
 
-	// These are called before the plugin is enabled so they only have access to the logger.
-	SessionManager(logger Logger, sessionStorer SessionStorer) (AppSession, error) // optional
-	TemplateEngine(logger Logger, injector AssetInjector) (Renderer, error)        // optional
-	Router(logger Logger, render Renderer) (AppRouter, error)                      // optional
-
 	// These should all have access to the toolkit.
 	Enable(toolkit *Toolkit) error                   // optional, called during enable
 	Disable() error                                  // optional, called during disable
@@ -39,6 +37,9 @@ type Plugin interface {
 	Settings() []Setting                             // optional, called during special operations
 	GrantRequests() []GrantRequest                   // optional, called during every plugin operation against data provider
 	FuncMap() func(r *http.Request) template.FuncMap // optional, called on every render
+
+	// Session manager should have middleware with it.
+	SessionManager(logger Logger, sessionStorer SessionStorer) (AppSession, error) // optional
 }
 
 // LoggingPlugin represents a logging plugin.
@@ -53,6 +54,20 @@ type StoragePlugin interface {
 	PluginCore
 
 	Storage(logger Logger) (DataStorer, SessionStorer, error)
+}
+
+// RouterPlugin represents a router engine plugin.
+type RouterPlugin interface {
+	PluginCore
+
+	Router(logger Logger, render Renderer) (AppRouter, error)
+}
+
+// TemplateEnginePlugin represents a template engine plugin.
+type TemplateEnginePlugin interface {
+	PluginCore
+
+	TemplateEngine(logger Logger, injector AssetInjector) (Renderer, error)
 }
 
 // MiddlewarePlugin represents a middleware plugin.

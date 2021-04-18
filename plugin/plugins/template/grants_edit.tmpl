@@ -1,5 +1,6 @@
 <h1>{{.title}}</h1>
 <a href="/dashboard/plugins">Back</a>
+{{if .trusted}}<p><i>This plugin is trusted so all permissions are granted.</i></p>{{end}}
 <form method="POST" class="post-form">
     <input type="hidden" name="token" value="{{.token}}">
         {{if .grants }}
