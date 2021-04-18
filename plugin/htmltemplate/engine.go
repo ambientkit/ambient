@@ -71,7 +71,7 @@ func (te *Engine) pluginPartial(w http.ResponseWriter, r *http.Request, mainTemp
 
 	// Output debug information.
 	if te.assetInjector.DebugTemplates() {
-		_, callerFile, callerLineNumber, _ := runtime.Caller(1)
+		_, callerFile, callerLineNumber, _ := runtime.Caller(3)
 		content = fmt.Sprintf(`<span data-ambtemplate="%v" data-amblocation="start" data-ambcaller="%v:%v"></span>%v<span data-ambtemplate="%v" data-amblocation="end"></span>`,
 			partialTemplate, callerFile, callerLineNumber, content, partialTemplate)
 	}
@@ -110,7 +110,7 @@ func (te *Engine) pluginContent(w http.ResponseWriter, r *http.Request, mainTemp
 
 	// Output debug information.
 	if te.assetInjector.DebugTemplates() {
-		_, callerFile, callerLineNumber, _ := runtime.Caller(1)
+		_, callerFile, callerLineNumber, _ := runtime.Caller(3)
 		content = fmt.Sprintf(`<span data-ambtemplate="%v" data-amblocation="start" data-ambcaller="%v:%v"></span>%v<span data-ambtemplate="%v" data-amblocation="end"></span>`,
 			mainTemplate, callerFile, callerLineNumber, content, mainTemplate)
 	}
