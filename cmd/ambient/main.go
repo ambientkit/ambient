@@ -31,7 +31,7 @@ func main() {
 	}
 
 	// Add template debug information.
-	ambientApp.SetDebugTemplates(true)
+	//ambientApp.SetDebugTemplates(true)
 
 	// Get the logger.
 	log := ambientApp.Logger()
