@@ -56,21 +56,46 @@ const (
 
 // Asset represents an HTML asset like a stylesheet or javascript file.
 type Asset struct {
-	Filetype   AssetType     `json:"filetype"`
-	Location   AssetLocation `json:"location"`
-	Auth       AuthType      `json:"auth"`
-	Attributes []Attribute   `json:"attributes"`
-	LayoutOnly []LayoutType  `json:"layout"`
+	// Filetype is the type of asset: generic, stylesheet, or javascript. (required)
+	Filetype AssetType `json:"filetype"`
+	// Location is the location on the HTML page where the asset will be
+	// added. (required)
+	Location AssetLocation `json:"location"`
+	// Auth determines whether to show the asset to all users, only authenticated
+	// users, or only non-authenticated users. Will display to all users if
+	// not specified. (optional)
+	Auth AuthType `json:"auth"`
+	// Attributes are a list of HTML attributes on all filetypes except on
+	// generic with no TagName. (optional)
+	Attributes []Attribute `json:"attributes"`
+	// LayoutOnly are a list of layout types where the element will be added.
+	// Supports page and post. Will display on all layouts if not specified.
+	// (optional)
+	LayoutOnly []LayoutType `json:"layout"`
 
-	TagName    string `json:"tagname"`
-	ClosingTag bool   `json:"closingtag"`
+	// TagName is only for generic assets when Inline is true. Will specify the
+	// type of element to create. If empty, then the asset will be written to
+	// the page without a surrounding HTML element.
+	TagName string `json:"tagname"`
+	// ClosingTag, if true, will add a closing tag. It's only for generic assets
+	// when inline is false.
+	ClosingTag bool `json:"closingtag"`
 
-	External bool      `json:"external"`
-	Inline   bool      `json:"inline"`
-	Path     string    `json:"path"`
-	Replace  []Replace `json:"replace"`
-
+	// External, if true, will just use the path as the source of the element.
+	// It is only for stylesheet and javascript filetypes.
+	External bool `json:"external"`
+	// Inline if true, will output the contents from an embedded file (Path) or
+	// the contents (Content) after doing a find/replace (Replace).
+	Inline bool `json:"inline"`
+	// Path is relative path to the embedded file or the full path to the
+	// external asset. (optional)
+	Path string `json:"path"`
+	// Content is the content that will output on the page. Path must be empty
+	// for content to be used and content is only used when Inline is true.
 	Content string `json:"content"`
+	// Replace is a list of find and replace strings that are run on the Path
+	// or Content when Inline is true.
+	Replace []Replace `json:"replace"`
 }
 
 // Replace represents text to find and replace.
@@ -175,7 +200,6 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 				txt = fmt.Sprintf(`<%v%v>%v</%v>`, html.EscapeString(file.TagName), attrsJoined, string(ff), html.EscapeString(file.TagName))
 			}
 		} else {
-			// FIXME: The closing tag could be false but the inline above will still add one.
 			if file.ClosingTag {
 				txt = fmt.Sprintf(`<%v%v></%v>`, html.EscapeString(file.TagName), attrsJoined, html.EscapeString(file.TagName))
 			} else {
@@ -192,7 +216,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 // Contents returns the text of the file to inline in HTML after doing replace.
 func (file *Asset) Contents(assets fs.FS) (ff []byte, status int, err error) {
 	// Get the contents from the path if the content field is not filled in.
-	if len(file.Content) == 0 {
+	if len(file.Path) > 0 {
 		// Use the root directory.
 		fsys, err := fs.Sub(assets, ".")
 		if err != nil {

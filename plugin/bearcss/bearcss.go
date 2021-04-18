@@ -52,8 +52,8 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	return []ambient.Asset{
 		{
-			Path:     "css/bear.css",
 			Filetype: ambient.AssetStylesheet,
+			Path:     "css/bear.css",
 			Location: ambient.LocationHead,
 		},
 	}, &assets
