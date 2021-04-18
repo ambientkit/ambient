@@ -22,7 +22,7 @@ func (app *App) LoadPlugins() error {
 		}
 
 		// Get the session manager.
-		sm, err := p.SessionManager(app.log, app.sess)
+		sm, err := p.SessionManager(app.log, app.sessionstorer)
 		if err != nil {
 			app.log.Error("", err.Error())
 		} else if sm != nil {

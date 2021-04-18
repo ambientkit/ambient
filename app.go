@@ -12,10 +12,10 @@ const (
 
 // App represents an Ambient app that supports plugins.
 type App struct {
-	log          IAppLogger
-	pluginsystem *PluginSystem
-	sess         SessionStorer
-	handler      http.Handler
+	log           IAppLogger
+	pluginsystem  *PluginSystem
+	sessionstorer SessionStorer
+	handler       http.Handler
 }
 
 // NewApp returns a new Ambient app that supports plugins.
@@ -33,7 +33,7 @@ func NewApp(appName string, appVersion string, logPlugin IPlugin, storagePlugin 
 	//log.SetLogLevel(LogLevelFatal)
 
 	// Get the storage manager.
-	storage, sess, err := loadStorage(log, storagePlugin)
+	storage, sessionstorer, err := loadStorage(log, storagePlugin)
 	if err != nil {
 		return nil, err
 	}
@@ -45,9 +45,9 @@ func NewApp(appName string, appVersion string, logPlugin IPlugin, storagePlugin 
 	}
 
 	return &App{
-		log:          log,
-		pluginsystem: pluginsystem,
-		sess:         sess,
+		log:           log,
+		pluginsystem:  pluginsystem,
+		sessionstorer: sessionstorer,
 	}, nil
 }
 
