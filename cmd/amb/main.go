@@ -107,41 +107,6 @@ func removeGrantAll(name string) error {
 	return pluginsystem.Save()
 }
 
-// func enableCLIGrant() bool {
-// 	// Initialize the plugin in storage.
-// 	err := pluginsystem.InitializePlugin(appName)
-// 	if err != nil {
-// 		log.Error("could not initialize plugin %v: %v", appName, err.Error())
-// 		return true
-// 	}
-
-// 	// Add admin grant for the CLI ambient.
-// 	err = addGrantAll(appName)
-// 	if err != nil {
-// 		log.Error("could not enable GrantAll on plugin %v: %v", appName, err.Error())
-// 		return true
-// 	}
-// 	log.Info("temporarily enabling GrantAll for plugin: %v", appName)
-
-// 	return false
-// }
-
-// func disableCLIGrant() {
-// 	// Remove admin grant for the CLI ambient.
-// 	log.Info("remove GrantAll for plugin: %v", appName)
-// 	err := removeGrantAll(appName)
-// 	if err != nil {
-// 		log.Error("could not remove GrantAll grant from plugin %v: %v", appName, err.Error())
-// 	}
-
-// 	// Remove the plugin from storage.
-// 	err = pluginsystem.RemovePlugin(appName)
-// 	if err != nil {
-// 		log.Error("could not remove plugin %v: %v", appName, err.Error())
-// 	}
-
-// }
-
 func pluginSuggestions() []prompt.Suggest {
 	arr := make([]prompt.Suggest, 0)
 	arr = append(arr, prompt.Suggest{Text: "all", Description: ""})
@@ -165,12 +130,6 @@ func executer(s string) {
 
 		log.Info("", "enabling plugin")
 
-		// Enable grants temporarily.
-		// fail := enableCLIGrant()
-		// if fail {
-		// 	return
-		// }
-
 		if args[1] == "all" {
 			// Enable plugins.
 			for _, p := range app.MinimalPlugins {
@@ -179,9 +138,6 @@ func executer(s string) {
 		} else {
 			enablePlugin(args[1])
 		}
-
-		// Remove temporary grants.
-		//disableCLIGrant()
 	case execGrants:
 		if len(args) < 2 {
 			log.Info("", "command not recognized")
@@ -189,12 +145,6 @@ func executer(s string) {
 		}
 
 		log.Info("", "adding plugin grants")
-
-		// Enable grants temporarily.
-		// fail := enableCLIGrant()
-		// if fail {
-		// 	return
-		// }
 
 		if args[1] == "all" {
 			// Enable plugin grants.
@@ -204,9 +154,6 @@ func executer(s string) {
 		} else {
 			enableGrants(args[1])
 		}
-
-		// Remove temporary grants.
-		//disableCLIGrant()
 	case execExit:
 		os.Exit(0)
 	default:
