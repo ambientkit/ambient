@@ -1,0 +1,28 @@
+{
+  "name": "ambient",
+  "version": "1.0.0",
+  "description": "Modular application platform.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node ./build.js",
+    "serve": "npx servor ./dist/ index.html --reload"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josephspurrier/ambient.git"
+  },
+  "author": "Joseph Spurrier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/josephspurrier/ambient/issues"
+  },
+  "homepage": "https://github.com/josephspurrier/ambient#readme",
+  "dependencies": {
+    "chokidar": "^3.5.1",
+    "esbuild": "^0.11.12",
+    "fs-extra": "^9.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
