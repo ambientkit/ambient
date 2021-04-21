@@ -6,7 +6,15 @@ let Greet = () => <h1>Hello, world!</h1>
 
 console.log(Server.renderToString('React app started.'));
 
-ReactDOM.render(
-    <Greet />,
-    document.getElementById('root')
-);
+if (typeof window !== "undefined") {
+    ReactDOM.render(
+        <Greet />,
+        document.getElementById('root')
+    );
+} else {
+    reactssr.render(Server.renderToString(
+        <React.StrictMode>
+            <Greet />
+        </React.StrictMode>
+    ));
+}
