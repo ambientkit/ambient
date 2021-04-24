@@ -36,7 +36,7 @@ export default function Layout({
           <meta name="twitter:card" content="summary_large_image" />
         </Head>
 
-        <header className={styles.header}>
+        {/* <header className={styles.header}>
 
           {home ? (
             <>
@@ -71,15 +71,15 @@ export default function Layout({
               </h2>
             </>
           )}
-        </header>
+        </header> */}
         <main>{children}</main>
-        {!home && (
+        {/* {!home && (
           <div className={styles.backToHome}>
             <Link href="/">
               <a>← Back to home</a>
             </Link>
           </div>
-        )}
+        )} */}
       </div>
     </>
   )
