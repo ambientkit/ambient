@@ -1,9 +1,11 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { useAuth } from '../providers/Auth';
 
-function View(): JSX.Element {
+const Page = () => {
   const [cookie, , removeCookie] = useCookies(["auth"]);
   const [shownNavClass, setShownNavClass] = useState<string>("");
   const [shownMobileNavClass, setShownMobileNavClass] = useState<string>("");
@@ -14,19 +16,8 @@ function View(): JSX.Element {
     removeCookie("auth", { path: "/" });
   };
 
-  const isLoggedIn = function (): boolean {
-    try {
-      const auth = cookie.auth;
-      if (auth === undefined) {
-        return false;
-      }
-      return true;
-    } catch (err) {
-      console.log(err);
-    }
-
-    return false;
-  };
+  const { isAuthenticated } = useAuth();
+  console.log(isAuthenticated);
 
   useEffect(() => {
     // Close the nav menus when an item is clicked.
@@ -93,33 +84,19 @@ function View(): JSX.Element {
               <a className="navbar-link">Menu</a>
 
               <div className="navbar-dropdown is-right">
-                {!isLoggedIn() && (
-                  <a
-                    className="navbar-item"
-                    onClick={() => {
-                      router.push('/login');
-                    }}
-                  >
-                    Login
-                  </a>
+                {!isAuthenticated && (
+                  <Link href="/login">
+                    <a className="navbar-item">Login</a>
+                  </Link>
                 )}
-                <a
-                  className="navbar-item"
-                  href={`https://petstore.swagger.io/?url=example.com/static/swagger.json`}
-                >
-                  Swagger
-                </a>
-
-                <a
-                  className="navbar-item"
-                  onClick={() => {
-                    router.push('/about');
-                  }}
-                >
-                  About
-                </a>
+                <Link href="https://petstore.swagger.io/">
+                  <a className="navbar-item">Swagger</a>
+                </Link>
+                <Link href="/about">
+                  <a className="navbar-item">About</a>
+                </Link>
                 <hr className="navbar-divider" />
-                {isLoggedIn() && (
+                {isAuthenticated && (
                   <a
                     className="dropdown-item"
                     onClick={() => {
@@ -140,4 +117,5 @@ function View(): JSX.Element {
   );
 }
 
-export default View;
+
+export default Page;

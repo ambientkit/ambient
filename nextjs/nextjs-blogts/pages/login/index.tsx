@@ -7,6 +7,7 @@ import Input from "~/component/input";
 import { messageType, showFlash } from "~/component/flash";
 import { useCookies } from "react-cookie";
 import { useRouter } from 'next/router';
+import { useAuth } from '~/providers/Auth';
 
 
 interface defaultProps {
@@ -21,6 +22,8 @@ interface User {
 
 export default function Page(props: defaultProps) {
     const router = useRouter();
+
+    const { setAuthenticated } = useAuth();
 
     const data = {
         title: "Login",
@@ -44,7 +47,7 @@ export default function Page(props: defaultProps) {
     const [, setCookie] = useCookies(["auth"]);
 
     return (
-        <Layout home>
+        <Layout>
             <Head>
                 <title>{siteTitle}</title>
             </Head>
@@ -85,6 +88,7 @@ export default function Page(props: defaultProps) {
                                                     auth.loggedIn = true;
                                                     auth.accessToken = data.token;
                                                     setCookie("auth", auth);
+                                                    setAuthenticated(true);
 
                                                     showFlash("Login successful.", messageType.success);
 

@@ -14,7 +14,7 @@ export default function Page() {
     }
 
     return (
-        <Layout home>
+        <Layout>
             <Head>
                 <title>{siteTitle}</title>
             </Head>
