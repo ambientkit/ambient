@@ -8,7 +8,7 @@ import withConditionalRedirect from './withConditionalRedirect';
  */
 export default function withoutAuth<P>(
   WrappedComponent: NextPage<P>,
-  location = '/profile'
+  location = '/'
 ): NextPage<P> {
   return withConditionalRedirect({
     WrappedComponent,

@@ -1,14 +1,12 @@
 import Head from 'next/head'
 import Layout, { siteTitle } from '~/components/layout'
-
 import { useState } from "react";
 import Submit from "~/module/submit";
 import Input from "~/component/input";
 import { messageType, showFlash } from "~/component/flash";
-import { useCookies } from "react-cookie";
 import { useRouter } from 'next/router';
 import { useAuth } from '~/providers/Auth';
-
+import withoutAuth from '~/hocs/withoutAuth';
 
 interface defaultProps {
     email?: string;
@@ -20,7 +18,7 @@ interface User {
     password: string;
 }
 
-export default function Page(props: defaultProps) {
+export default withoutAuth(function Page(props: defaultProps) {
     const router = useRouter();
 
     const { setAuthenticated } = useAuth();
@@ -43,8 +41,6 @@ export default function Page(props: defaultProps) {
         e.preventDefault();
         router.push("/register");
     }
-
-    const [, setCookie] = useCookies(["auth"]);
 
     return (
         <Layout>
@@ -87,7 +83,6 @@ export default function Page(props: defaultProps) {
 
                                                     auth.loggedIn = true;
                                                     auth.accessToken = data.token;
-                                                    setCookie("auth", auth);
                                                     setAuthenticated(true);
 
                                                     showFlash("Login successful.", messageType.success);
@@ -169,4 +164,4 @@ export default function Page(props: defaultProps) {
             </section>
         </Layout>
     );
-}
+})

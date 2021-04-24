@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { useCookies } from "react-cookie";
 import { useRouter } from 'next/router'
 import { useEffect } from "react"
+import withAuth from '~/hocs/withAuth';
 
-export default function Page() {
+export default withAuth(function Page() {
   const title = "Welcome";
   const subtitle = "Login was successful";
 
@@ -58,4 +59,4 @@ export default function Page() {
       </>
     </Layout>
   )
-}
+})

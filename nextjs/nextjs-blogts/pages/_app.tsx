@@ -3,6 +3,7 @@ import App, { AppInitialProps } from 'next/app';
 import cookie from 'cookie';
 import { CookieMessage } from '../@types';
 import { AuthProvider } from '../providers/Auth';
+import { AuthProvider as AuthProvider2 } from '../providers/Auth2';
 import '../styles/global.css'
 
 type AppProps = {
@@ -14,7 +15,9 @@ class MyApp extends App<AppProps> {
     const { Component, pageProps, authenticated } = this.props;
     return (
       <AuthProvider authenticated={authenticated}>
-        <Component {...pageProps} />
+        <AuthProvider2>
+          <Component {...pageProps} />
+        </AuthProvider2>
       </AuthProvider>
     );
   }
