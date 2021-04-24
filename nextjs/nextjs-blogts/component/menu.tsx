@@ -1,12 +1,14 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { navigate } from "hookrouter";
 import { useCookies } from "react-cookie";
+import { useRouter } from 'next/router'
 
 function View(): JSX.Element {
   const [cookie, , removeCookie] = useCookies(["auth"]);
   const [shownNavClass, setShownNavClass] = useState<string>("");
   const [shownMobileNavClass, setShownMobileNavClass] = useState<string>("");
+
+  const router = useRouter();
 
   const clear = function (): void {
     removeCookie("auth", { path: "/" });
@@ -49,7 +51,7 @@ function View(): JSX.Element {
             className="navbar-item"
             data-cy="home-link"
             onClick={() => {
-              navigate("/");
+              router.push('/');
             }}
           >
             <strong>goreactapp</strong>
@@ -95,7 +97,7 @@ function View(): JSX.Element {
                   <a
                     className="navbar-item"
                     onClick={() => {
-                      navigate("/login");
+                      router.push('/login');
                     }}
                   >
                     Login
@@ -103,7 +105,7 @@ function View(): JSX.Element {
                 )}
                 <a
                   className="navbar-item"
-                  href={`https://petstore.swagger.io/?url=${location.origin}/static/swagger.json`}
+                  href={`https://petstore.swagger.io/?url=example.com/static/swagger.json`}
                 >
                   Swagger
                 </a>
@@ -111,7 +113,7 @@ function View(): JSX.Element {
                 <a
                   className="navbar-item"
                   onClick={() => {
-                    navigate("/about");
+                    router.push('/about');
                   }}
                 >
                   About
@@ -122,7 +124,7 @@ function View(): JSX.Element {
                     className="dropdown-item"
                     onClick={() => {
                       clear();
-                      navigate("/login");
+                      router.push('/login');
                     }}
                   >
                     Logout
