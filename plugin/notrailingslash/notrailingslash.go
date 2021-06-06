@@ -56,7 +56,7 @@ func (p *Plugin) stripSlash(next http.Handler) http.Handler {
 
 		// Allow access to debug/pprof and force a trailing slash.
 		if strings.HasPrefix(r.URL.Path, "/debug") {
-			if r.URL.Path == "/debug/pprof" {
+			if r.URL.Path == p.Path("/debug/pprof") {
 				http.Redirect(w, r, r.URL.Path+"/", http.StatusPermanentRedirect)
 				return
 			}

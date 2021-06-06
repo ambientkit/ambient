@@ -8,9 +8,9 @@
                 <label for="id_{{.Name}}">Enable:</label>
                 <input type="checkbox" name="{{.Name}}" id="id_{{.Name}}" {{if .Enabled}}checked{{end}}>
                 <span class="helptext">
-                {{if .Grants}}<a href="/dashboard/plugins/{{.Name}}/grants">Grants</a>{{end}}
-                {{if .Settings}}<a href="/dashboard/plugins/{{.Name}}/settings">Settings</a>{{end}}
-                <a href="/dashboard/plugins/{{.Name}}/delete">Reset</a>
+                {{if .Grants}}<a href="{{URLPrefix}}/dashboard/plugins/{{.Name}}/grants">Grants</a>{{end}}
+                {{if .Settings}}<a href="{{URLPrefix}}/dashboard/plugins/{{.Name}}/settings">Settings</a>{{end}}
+                <a href="{{URLPrefix}}/dashboard/plugins/{{.Name}}/delete">Reset</a>
                 </span>
             </p>
             {{end}}
