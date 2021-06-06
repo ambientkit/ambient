@@ -32,7 +32,10 @@ func main() {
 	plugins = app.Plugins()
 
 	// Create the ambient app.
-	ambientApp, err := ambient.NewApp(appName, appVersion, zaplogger.New(), gcpbucketstorage.New(), plugins)
+	ambientApp, err := ambient.NewApp(appName, appVersion,
+		zaplogger.New(),
+		gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
+		plugins)
 	if err != nil {
 		pkglog.Fatalln(err.Error())
 	}
@@ -158,7 +161,6 @@ func executer(s string) {
 				if trusted {
 					enableGrants(pluginName)
 				}
-
 			}
 		} else {
 			enableGrants(args[1])

@@ -13,12 +13,18 @@ import (
 type Plugin struct {
 	*ambient.PluginBase
 	*ambient.Toolkit
+
+	sitePath    string
+	sessionPath string
 }
 
 // New returns a new gcpbucketstorage plugin.
-func New() *Plugin {
+func New(sitePath string, sessionPath string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},
+
+		sitePath:    sitePath,
+		sessionPath: sessionPath,
 	}
 }
 
@@ -52,11 +58,6 @@ func (p *Plugin) Settings() []ambient.Setting {
 	}
 }
 
-var (
-	storageSitePath    = "storage/site.json"
-	storageSessionPath = "storage/session.bin"
-)
-
 // Storage returns data and session storage.
 func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
 	var ds ambient.DataStorer
@@ -64,8 +65,8 @@ func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.Ses
 
 	if runningLocalDev() {
 		// Use local filesytem when developing.
-		ds = store.NewLocalStorage(storageSitePath)
-		ss = store.NewLocalStorage(storageSessionPath)
+		ds = store.NewLocalStorage(p.sitePath)
+		ss = store.NewLocalStorage(p.sessionPath)
 	} else {
 		bucket, err := p.Site.PluginSettingString(Bucket)
 		if err != nil {
@@ -73,8 +74,8 @@ func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.Ses
 		}
 
 		// Use Google when running in GCP.
-		ds = store.NewGCPStorage(bucket, storageSitePath)
-		ss = store.NewGCPStorage(bucket, storageSessionPath)
+		ds = store.NewGCPStorage(bucket, p.sitePath)
+		ss = store.NewGCPStorage(bucket, p.sessionPath)
 	}
 
 	return ds, ss, nil

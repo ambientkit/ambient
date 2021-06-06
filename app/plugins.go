@@ -35,6 +35,13 @@ import (
 	"github.com/josephspurrier/ambient/plugin/viewport"
 )
 
+var (
+	// StorageSitePath is the location of the site file.
+	StorageSitePath = "storage/site.json"
+	// StorageSessionPath is the location of the session file.
+	StorageSessionPath = "storage/session.bin"
+)
+
 // Plugins defines the plugins - order does matter.
 var Plugins = func() *ambient.PluginLoader {
 	// Get the environment variables.

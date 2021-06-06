@@ -25,7 +25,10 @@ func init() {
 
 func main() {
 	// Create the ambient app.
-	ambientApp, err := ambient.NewApp(appName, appVersion, zaplogger.New(), gcpbucketstorage.New(), app.Plugins())
+	ambientApp, err := ambient.NewApp(appName, appVersion,
+		zaplogger.New(),
+		gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
+		app.Plugins())
 	if err != nil {
 		pkglog.Fatalln(err.Error())
 	}
