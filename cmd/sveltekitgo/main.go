@@ -47,7 +47,7 @@ func main() {
 	log := ambientApp.Logger()
 
 	// Enable the site plugins.
-	grantAccess(log, plugins, ambientApp)
+	app.GrantAccess(log, plugins, ambientApp)
 
 	// Load the plugins and return the handler.
 	mux, err := ambientApp.Handler()
@@ -55,40 +55,7 @@ func main() {
 		log.Fatal("", err.Error())
 	}
 
-	// Start the web listener.
-	ambientApp.ListenAndServe(mux)
-}
-
-func grantAccess(log ambient.AppLogger, plugins *ambient.PluginLoader, ambientApp *ambient.App) {
-	// Get the plugin system.
-	pluginsystem := ambientApp.PluginSystem()
-
-	// Create secure site for the core application and use "ambient" so it gets
-	// full permissions.
-	securestorage := ambient.NewSecureSite("ambient", log, pluginsystem, nil, nil, nil)
-
-	// Enable plugins.
-	for pluginName, trusted := range plugins.TrustedPlugins {
-		if trusted {
-			log.Info("enabling plugin: %v", pluginName)
-			err := securestorage.EnablePlugin(pluginName, false)
-			if err != nil {
-				log.Error("", err.Error())
-			}
-
-			p, err := pluginsystem.Plugin(pluginName)
-			if err != nil {
-				log.Error("error with plugin (%v): %v", pluginName, err.Error())
-				return
-			}
-
-			for _, request := range p.GrantRequests() {
-				log.Info("%v - add grant: %v", pluginName, request.Grant)
-				err := securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
-				if err != nil {
-					log.Error("", err.Error())
-				}
-			}
-		}
-	}
+	// Start the web listener for the UI and API.
+	proxy := app.LoadProxy(mux)
+	ambientApp.ListenAndServe(proxy)
 }
