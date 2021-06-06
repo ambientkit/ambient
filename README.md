@@ -6,7 +6,7 @@ Pluggable blogging system for a single author. Written in Go and deploys to your
 
 ## Quickstart on Local
 
-- Clone the repository: `git@github.com:josephspurrier/polarbearblog.git`
+- Clone the repository: `git clone git@github.com:josephspurrier/ambient.git`
 - Create a new file called `.env` in the root of the repository with this content:
 
 ```bash
