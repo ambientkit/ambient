@@ -38,3 +38,12 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 func (p *Plugin) Disable() error {
 	return nil
 }
+
+// Routes gets routes for the plugin.
+func (p *Plugin) Routes() {
+	p.Mux.Get("/", p.index)
+	p.Mux.Get("/v1/auth/session", p.session)
+	p.Mux.Post("/v1/auth/login", p.login)
+	p.Mux.Post("/v1/auth/logout", p.logout)
+	p.Mux.Post("/v1/auth/register", p.register)
+}

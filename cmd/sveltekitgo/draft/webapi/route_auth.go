@@ -2,19 +2,10 @@ package webapi
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-
-	"golang.org/x/crypto/bcrypt"
 )
-
-// Routes gets routes for the plugin.
-func (p *Plugin) Routes() {
-	p.Mux.Get("/", p.index)
-	p.Mux.Get("/v1/auth/session", p.session)
-	p.Mux.Post("/v1/auth/login", p.login)
-}
 
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	type response struct {
@@ -107,32 +98,61 @@ func (p *Plugin) login(w http.ResponseWriter, r *http.Request) (status int, err 
 	return http.StatusBadRequest, fmt.Errorf("user information is not valid")
 }
 
-// User -
-type User struct {
-	ID        string `json:"id"`
-	Email     string `json:"email"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Password  string `json:"password"`
-}
-
-// LoadUsers -
-func LoadUsers() ([]User, error) {
-	b, err := ioutil.ReadFile("cmd/sveltekitgo/storage/users.json")
-	if err != nil {
-		return nil, err
+func (p *Plugin) logout(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	type response struct {
+		Status bool `json:"status"`
 	}
 
-	users := make([]User, 0)
-
-	err = json.Unmarshal(b, &users)
+	err = p.Site.UserLogout(r)
 	if err != nil {
-		return nil, err
+		return http.StatusBadRequest, err
 	}
 
-	return users, nil
+	return p.JSON(w, http.StatusOK, response{
+		Status: true,
+	})
 }
 
-func passwordMatch(password, hash string) bool {
-	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
+func (p *Plugin) register(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	type request struct {
+		Email     string `json:"email"`
+		FirstName string `json:"firstName"`
+		LastName  string `json:"lastName"`
+		Password  string `json:"password"`
+	}
+	type response struct {
+		Message string `json:"message"`
+	}
+
+	req := new(request)
+	err = json.NewDecoder(r.Body).Decode(req)
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
+	users, err := LoadUsers()
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
+	// Ensure the user doesn't already exist.
+	for _, user := range users {
+		if user.Email == req.Email {
+			return http.StatusBadRequest, errors.New("user already exists")
+		}
+	}
+
+	err = CreateUser(User{
+		Email:     req.Email,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Password:  req.Password,
+	})
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
+	return p.JSON(w, http.StatusCreated, response{
+		Message: "user created",
+	})
 }
