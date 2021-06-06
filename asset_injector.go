@@ -90,11 +90,11 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 		files, assets := v.Assets()
 		if len(files) > 0 {
 			if c.pluginsystem.Authorized(name, GrantSiteAssetWrite) {
-				loggedIn, _ := c.sess.UserAuthenticated(r)
+				_, err := c.sess.AuthenticatedUser(r)
 
 				for _, file := range files {
 					// Handle authentication on resources without changing resources.
-					if !authAssetAllowed(loggedIn, file) {
+					if !authAssetAllowed(err == nil, file) {
 						continue
 					}
 

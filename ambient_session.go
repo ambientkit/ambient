@@ -6,7 +6,7 @@ import (
 
 // AppSession represents a user session.
 type AppSession interface {
-	UserAuthenticated(r *http.Request) (bool, error)
+	AuthenticatedUser(r *http.Request) (string, error)
 	Login(r *http.Request, username string)
 	Logout(r *http.Request)
 	Persist(r *http.Request, persist bool)

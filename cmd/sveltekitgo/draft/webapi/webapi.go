@@ -38,8 +38,3 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 func (p *Plugin) Disable() error {
 	return nil
 }
-
-// Routes gets routes for the plugin.
-func (p *Plugin) Routes() {
-	p.Mux.Get("/", p.index)
-}

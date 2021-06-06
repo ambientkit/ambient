@@ -29,7 +29,7 @@ func (t *Toolkit) Path(url string) string {
 // Could also provide these responses:
 // https://echo.labstack.com/guide/response/
 
-// JSON sends a JSON response.
+// JSON sends a JSON response that is marshalable.
 func (t *Toolkit) JSON(w http.ResponseWriter, status int, response interface{}) (int, error) {
 	// Convert to JSON bytes.
 	b, err := json.Marshal(response)
@@ -40,7 +40,7 @@ func (t *Toolkit) JSON(w http.ResponseWriter, status int, response interface{}) 
 	return t.sendJSON(w, status, b)
 }
 
-// JSONPretty sends a pretty JSON response.
+// JSONPretty sends an indented JSON response that is marshalable.
 func (t *Toolkit) JSONPretty(w http.ResponseWriter, status int, response interface{}) (int, error) {
 	// Convert to JSON bytes.
 	b, err := json.MarshalIndent(response, "", "    ")

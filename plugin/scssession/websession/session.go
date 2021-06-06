@@ -3,6 +3,7 @@ package websession
 
 import (
 	"crypto/rand"
+	"errors"
 	"net/http"
 
 	"github.com/alexedwards/scs/v2"
@@ -28,13 +29,6 @@ func New(name string, manager *scs.SessionManager) *Session {
 	}
 }
 
-// UserAuthenticated -
-// FIXME: This should be handled better.
-func (s *Session) UserAuthenticated(r *http.Request) (bool, error) {
-	_, ok := s.User(r)
-	return ok, nil
-}
-
 // Persist -
 func (s *Session) Persist(r *http.Request, persist bool) {
 	s.manager.Cookie.Persist = persist
@@ -45,10 +39,15 @@ func (s *Session) Logout(r *http.Request) {
 	s.manager.Destroy(r.Context())
 }
 
-// User -
-func (s *Session) User(r *http.Request) (string, bool) {
+// AuthenticatedUser returns the user ID if authenticated or an error.
+func (s *Session) AuthenticatedUser(r *http.Request) (string, error) {
 	u := s.manager.GetString(r.Context(), "user")
-	return u, len(u) > 0
+
+	if len(u) == 0 {
+		return "", errors.New("user not found")
+	}
+
+	return u, nil
 }
 
 // Login -

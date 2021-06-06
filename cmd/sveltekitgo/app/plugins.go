@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/sveltekitgo/draft/webapi"
@@ -70,8 +71,9 @@ var Plugins = func() *ambient.PluginLoader {
 
 // ErrorResponse is an API error response.
 type ErrorResponse struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
+	Status          int    `json:"status"`
+	Message         string `json:"message"`
+	FriendlyMessage string `json:"friendlyMessage"`
 }
 
 // ErrorHandler returns the JSON error handler for the router.
@@ -79,18 +81,19 @@ func ErrorHandler() awayrouter.LoggerHandler {
 	return func(logger ambient.Logger, w http.ResponseWriter, r *http.Request, status int, err error) {
 		// Handle only errors.
 		if status >= 400 {
-			errText := http.StatusText(status)
+			errText := strings.ToLower(http.StatusText(status))
 
 			switch status {
 			case 403:
 				// Already logged on plugin access denials.
-				errText = "A plugin has been denied permission."
+				errText = "a plugin has been denied permission"
 			case 404:
 				// No need to log.
-				errText = "Darn, we cannot find the page."
+				errText = "darn, we cannot find the page"
 			case 400:
-				errText = "Darn, something went wrong."
+				errText = "darn, something went wrong"
 				if err != nil {
+					errText = err.Error()
 					logger.Info("awayrouter: error (%v): %v", status, err.Error())
 				}
 			default:
@@ -100,8 +103,9 @@ func ErrorHandler() awayrouter.LoggerHandler {
 			}
 
 			b, err := json.Marshal(ErrorResponse{
-				Status:  status,
-				Message: errText,
+				Status:          status,
+				Message:         errText,
+				FriendlyMessage: errText,
 			})
 			if err != nil {
 				if err != nil {

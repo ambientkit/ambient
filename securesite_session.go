@@ -2,13 +2,13 @@ package ambient
 
 import "net/http"
 
-// UserAuthenticated returns if the current user is authenticated.
-func (ss *SecureSite) UserAuthenticated(r *http.Request) (bool, error) {
+// AuthenticatedUser returns if the current user is authenticated.
+func (ss *SecureSite) AuthenticatedUser(r *http.Request) (string, error) {
 	if !ss.Authorized(GrantUserAuthenticatedRead) {
-		return false, ErrAccessDenied
+		return "false", ErrAccessDenied
 	}
 
-	return ss.sess.UserAuthenticated(r)
+	return ss.sess.AuthenticatedUser(r)
 }
 
 // UserLogin sets the current user as authenticated.

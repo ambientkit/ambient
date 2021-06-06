@@ -216,8 +216,8 @@ func embeddedAssets(mux Router, sess AppSession, pluginName string, files []Asse
 			}
 
 			// Handle authentication on resources without changing resources.
-			loggedIn, _ := sess.UserAuthenticated(r)
-			if !authAssetAllowed(loggedIn, file) {
+			_, err = sess.AuthenticatedUser(r)
+			if !authAssetAllowed(err == nil, file) {
 				return http.StatusNotFound, nil
 			}
 

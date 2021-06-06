@@ -34,11 +34,8 @@ func (p *Plugin) funcMap(r *http.Request) template.FuncMap {
 	}
 	fm["bearblog_Authenticated"] = func() bool {
 		// If user is not authenticated, don't allow them to access the page.
-		loggedIn, err := p.Site.UserAuthenticated(r)
-		if err != nil {
-			p.Log.Warn("bearblog: error getting if user is authenticated: %v", err.Error())
-		}
-		return loggedIn
+		_, err := p.Site.AuthenticatedUser(r)
+		return err == nil
 	}
 	fm["bearblog_SiteFooter"] = func() string {
 		f, err := p.Site.PluginSettingString(Footer)

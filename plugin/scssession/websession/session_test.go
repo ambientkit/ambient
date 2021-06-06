@@ -40,14 +40,14 @@ func TestNewSession(t *testing.T) {
 		// Test user
 		u := "foo"
 		sess.Login(r, u)
-		user, found := sess.User(r)
-		assert.True(t, found)
+		user, err := sess.AuthenticatedUser(r)
+		assert.True(t, err == nil)
 		assert.Equal(t, u, user)
 
 		// Test Logout
 		sess.Logout(r)
-		_, found = sess.User(r)
-		assert.False(t, found)
+		_, err = sess.AuthenticatedUser(r)
+		assert.False(t, err == nil)
 
 		// Test persistence
 		assert.Equal(t, sessionManager.Cookie.Persist, false)
