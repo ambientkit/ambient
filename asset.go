@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -87,6 +88,9 @@ type Asset struct {
 	// Inline if true, will output the contents from an embedded file (Path) or
 	// the contents (Content) after doing a find/replace (Replace).
 	Inline bool `json:"inline"`
+	// SkipExistCheck if true, will not check for the file existing because it's
+	// managed by a route.
+	SkipExistCheck bool `json:"skipexist"`
 	// Path is relative path to the embedded file or the full path to the
 	// external asset. (optional)
 	Path string `json:"path"`
@@ -146,6 +150,12 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 		attrsJoined = " " + attrsJoined
 	}
 
+	// Get the URL prefix for assets.
+	urlprefix := os.Getenv("AMB_URL_PREFIX")
+	if len(urlprefix) == 0 {
+		urlprefix = "/"
+	}
+
 	txt := ""
 	switch file.Filetype {
 	case AssetStylesheet:
@@ -160,7 +170,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 			if file.External {
 				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
 			} else {
-				txt = fmt.Sprintf(`<link rel="stylesheet" href="/plugins/%v/%v?v=%v"%v>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v/plugins/%v/%v?v=%v"%v>`, urlprefix, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
 			}
 		}
 	case AssetJavaScript:
@@ -175,7 +185,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 			if file.External {
 				txt = fmt.Sprintf(`<script type="application/javascript" src="%v"%v></script>`, file.SanitizedPath(), attrsJoined)
 			} else {
-				txt = fmt.Sprintf(`<script type="application/javascript" src="/plugins/%v/%v?v=%v"%v></script>`, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+				txt = fmt.Sprintf(`<script type="application/javascript" src="%v/plugins/%v/%v?v=%v"%v></script>`, urlprefix, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
 			}
 		}
 	case AssetGeneric:

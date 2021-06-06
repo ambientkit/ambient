@@ -202,9 +202,11 @@ func embeddedAssets(mux Router, sess AppSession, pluginName string, files []Asse
 
 		// TODO: Need to check for missing locations and types.
 
-		exists := fileExists(assets, file.SanitizedPath())
-		if !exists {
-			return fmt.Errorf("plugin (%v) has missing file, please check 'SetAssets()': %v", pluginName, file)
+		if !unsafeFile.SkipExistCheck {
+			exists := fileExists(assets, file.SanitizedPath())
+			if !exists {
+				return fmt.Errorf("plugin (%v) has missing file, please check 'SetAssets()': %v", pluginName, file)
+			}
 		}
 
 		mux.Get(fileurl, func(w http.ResponseWriter, r *http.Request) (statusCode int, err error) {

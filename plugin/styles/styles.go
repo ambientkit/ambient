@@ -41,6 +41,8 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 	return []ambient.GrantRequest{
 		{Grant: ambient.GrantPluginSettingRead, Description: "Access to read the plugin settings."},
+		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to add favicon."},
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to add a route for styles."},
 	}
 }
 
@@ -99,10 +101,9 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	s, err := p.Site.PluginSettingString(Styles)
 	if err == nil && len(s) > 0 {
 		arr = append(arr, ambient.Asset{
-			Path:     "/plugins/styles/css/style.css",
+			Path:     "css/style.css",
 			Filetype: ambient.AssetStylesheet,
 			Location: ambient.LocationHead,
-			External: true,
 		})
 	}
 

@@ -110,10 +110,10 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	s, err := p.Site.PluginSettingString(Styles)
 	if err == nil && len(s) > 0 {
 		arr = append(arr, ambient.Asset{
-			Path:     fmt.Sprintf("/plugins/%v/css/style.css", p.PluginName()),
-			Filetype: ambient.AssetStylesheet,
-			Location: ambient.LocationHead,
-			External: true,
+			Path:           "css/style.css",
+			Filetype:       ambient.AssetStylesheet,
+			Location:       ambient.LocationHead,
+			SkipExistCheck: true,
 		})
 	}
 
