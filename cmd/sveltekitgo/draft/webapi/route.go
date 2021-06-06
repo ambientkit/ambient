@@ -11,7 +11,7 @@ type HelloResponse struct {
 }
 
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	return p.JSON(w, http.StatusOK, HelloResponse{
+	return p.JSONPretty(w, http.StatusOK, HelloResponse{
 		Status:  http.StatusOK,
 		Message: "Cool!",
 	})
