@@ -13,8 +13,8 @@ const data = {
 };
 
 interface User {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 }
@@ -30,12 +30,12 @@ function Page(props: defaultProps) {
   const router = useRouter();
 
   const clear = () => {
-    setUser({ first_name: "", last_name: "", email: "", password: "" });
+    setUser({ firstName: "", lastName: "", email: "", password: "" });
   };
 
   const [user, setUser] = useState<User>({
-    first_name: props.firstName || "",
-    last_name: props.lastName || "",
+    firstName: props.firstName || "",
+    lastName: props.lastName || "",
     email: props.email || "",
     password: props.password || "",
   });
@@ -96,10 +96,10 @@ function Page(props: defaultProps) {
                   required={true}
                   onChange={(e: string) => {
                     const newUser = { ...user };
-                    newUser.first_name = e;
+                    newUser.first_Name = e;
                     setUser(newUser);
                   }}
-                  value={user.first_name}
+                  value={user.firstName}
                 />
 
                 <Input
@@ -109,10 +109,10 @@ function Page(props: defaultProps) {
                   required={true}
                   onChange={(e: string) => {
                     const newUser = { ...user };
-                    newUser.last_name = e;
+                    newUser.lastName = e;
                     setUser(newUser);
                   }}
-                  value={user.last_name}
+                  value={user.lastName}
                 />
 
                 <Input
