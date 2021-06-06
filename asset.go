@@ -153,7 +153,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 	// Get the URL prefix for assets.
 	urlprefix := os.Getenv("AMB_URL_PREFIX")
 	if len(urlprefix) == 0 {
-		urlprefix = "/"
+		urlprefix = ""
 	}
 
 	txt := ""
