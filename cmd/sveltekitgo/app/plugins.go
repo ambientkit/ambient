@@ -2,7 +2,10 @@
 package app
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/josephspurrier/ambient"
@@ -36,7 +39,7 @@ var Plugins = func() *ambient.PluginLoader {
 	}
 
 	return &ambient.PluginLoader{
-		Router:         awayrouter.New(),
+		Router:         awayrouter.New(ErrorHandler()),
 		TemplateEngine: htmltemplate.New(),
 		// Trusted plugins are required to boot the application so they will be
 		// given full access.
@@ -44,6 +47,7 @@ var Plugins = func() *ambient.PluginLoader {
 			"scssession": true,
 			"webapi":     true,
 
+			// Middleware -
 			"notrailingslash": true,
 			"gzipresponse":    true,
 			"logrequest":      true,
@@ -61,5 +65,55 @@ var Plugins = func() *ambient.PluginLoader {
 			scssession.New(secretKey), // Session manager.
 			logrequest.New(),          // Log every request as INFO.
 		},
+	}
+}
+
+// ErrorResponse is an API error response.
+type ErrorResponse struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+}
+
+// ErrorHandler returns the JSON error handler for the router.
+func ErrorHandler() awayrouter.LoggerHandler {
+	return func(logger ambient.Logger, w http.ResponseWriter, r *http.Request, status int, err error) {
+		// Handle only errors.
+		if status >= 400 {
+			errText := http.StatusText(status)
+
+			switch status {
+			case 403:
+				// Already logged on plugin access denials.
+				errText = "A plugin has been denied permission."
+			case 404:
+				// No need to log.
+				errText = "Darn, we cannot find the page."
+			case 400:
+				errText = "Darn, something went wrong."
+				if err != nil {
+					logger.Info("awayrouter: error (%v): %v", status, err.Error())
+				}
+			default:
+				if err != nil {
+					logger.Info("awayrouter: error (%v): %v", status, err.Error())
+				}
+			}
+
+			b, err := json.Marshal(ErrorResponse{
+				Status:  status,
+				Message: errText,
+			})
+			if err != nil {
+				if err != nil {
+					logger.Info("awayrouter: error in rendering error response (%v): %v", status, err.Error())
+				}
+				http.Error(w, "500 internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(status)
+			fmt.Fprint(w, string(b))
+		}
 	}
 }

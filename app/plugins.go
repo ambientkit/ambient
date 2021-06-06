@@ -56,7 +56,7 @@ var Plugins = func() *ambient.PluginLoader {
 	}
 
 	return &ambient.PluginLoader{
-		Router:         awayrouter.New(),
+		Router:         awayrouter.New(nil),
 		TemplateEngine: htmltemplate.New(),
 		// Trusted plugins are required to boot the application so they will be
 		// given full access.

@@ -10,16 +10,26 @@ import (
 	"github.com/josephspurrier/ambient/plugin/awayrouter/router"
 )
 
+// LoggerHandler -
+type LoggerHandler func(log ambient.Logger, w http.ResponseWriter, r *http.Request, status int, err error)
+
+// RouterHandler -
+type RouterHandler func(w http.ResponseWriter, r *http.Request, status int, err error)
+
 // Plugin represents an Ambient plugin.
 type Plugin struct {
 	*ambient.PluginBase
 	*ambient.Toolkit
+
+	serveHTTP LoggerHandler
 }
 
 // New returns a new awayrouter plugin.
-func New() *Plugin {
+func New(serveHTTP LoggerHandler) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},
+
+		serveHTTP: serveHTTP,
 	}
 }
 
@@ -39,7 +49,7 @@ func (p *Plugin) Router(logger ambient.Logger, te ambient.Renderer) (ambient.App
 	mux := router.New()
 
 	// Set the NotFound and custom ServeHTTP handlers.
-	setupRouter(logger, mux, te)
+	p.setupRouter(logger, mux, te)
 
 	return mux, nil
 }
@@ -52,9 +62,9 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 
 // setupRouter returns a router with the NotFound handler and the default
 // handler set.
-func setupRouter(logger ambient.Logger, mux ambient.AppRouter, te ambient.Renderer) {
+func (p *Plugin) setupRouter(logger ambient.Logger, mux ambient.AppRouter, te ambient.Renderer) {
 	// Set the handling of all responses.
-	customServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
+	defaultServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
 		// Handle only errors.
 		if status >= 400 {
 			errText := http.StatusText(status)
@@ -88,12 +98,19 @@ func setupRouter(logger ambient.Logger, mux ambient.AppRouter, te ambient.Render
 		}
 	}
 
-	// Send all 404 to the customer handler.
+	serveHTTP := defaultServeHTTP
+	if p.serveHTTP != nil {
+		serveHTTP = func(w http.ResponseWriter, r *http.Request, status int, err error) {
+			p.serveHTTP(logger, w, r, status, err)
+		}
+	}
+
+	// Send all 404 to the handler.
 	notFound := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		customServeHTTP(w, r, http.StatusNotFound, nil)
+		serveHTTP(w, r, http.StatusNotFound, nil)
 	})
 
 	// Set up the router.
-	mux.SetServeHTTP(customServeHTTP)
+	mux.SetServeHTTP(serveHTTP)
 	mux.SetNotFound(notFound)
 }

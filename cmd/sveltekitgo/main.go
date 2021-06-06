@@ -25,10 +25,11 @@ func init() {
 
 func main() {
 	// Create the ambient app.
+	plugins := app.Plugins()
 	ambientApp, err := ambient.NewApp(appName, appVersion,
 		zaplogger.New(),
 		gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
-		app.Plugins())
+		plugins)
 	if err != nil {
 		pkglog.Fatalln(err.Error())
 	}
@@ -46,7 +47,7 @@ func main() {
 	log := ambientApp.Logger()
 
 	// Enable the site plugins.
-	grantAccess(log, ambientApp)
+	grantAccess(log, plugins, ambientApp)
 
 	// Load the plugins and return the handler.
 	mux, err := ambientApp.Handler()
@@ -58,7 +59,7 @@ func main() {
 	ambientApp.ListenAndServe(mux)
 }
 
-func grantAccess(log ambient.AppLogger, ambientApp *ambient.App) {
+func grantAccess(log ambient.AppLogger, plugins *ambient.PluginLoader, ambientApp *ambient.App) {
 	// Get the plugin system.
 	pluginsystem := ambientApp.PluginSystem()
 
@@ -67,7 +68,7 @@ func grantAccess(log ambient.AppLogger, ambientApp *ambient.App) {
 	securestorage := ambient.NewSecureSite("ambient", log, pluginsystem, nil, nil, nil)
 
 	// Enable plugins.
-	for pluginName, trusted := range app.Plugins().TrustedPlugins {
+	for pluginName, trusted := range plugins.TrustedPlugins {
 		if trusted {
 			log.Info("enabling plugin: %v", pluginName)
 			err := securestorage.EnablePlugin(pluginName, false)
