@@ -8,7 +8,7 @@
 <small>
     <div>
         {{range $p := .tags}}
-        <a href="/blog?q={{.Name}}">#{{.Name}}</a>
+        <a href="{{URLPrefix}}/blog?q={{.Name}}">#{{.Name}}</a>
         {{end}}
     </div>
 </small>

@@ -76,6 +76,6 @@ func (p *Plugin) grantsUpdate(w http.ResponseWriter, r *http.Request) (status in
 		}
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/dashboard/plugins/%v/grants", pluginName), http.StatusFound)
+	p.Redirect(w, r, fmt.Sprintf("/dashboard/plugins/%v/grants", pluginName), http.StatusFound)
 	return
 }

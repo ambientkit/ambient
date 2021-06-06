@@ -3,16 +3,16 @@
 </a>
 <nav>
     {{if bearblog_Authenticated}}
-    <a href="/dashboard">Dashboard</a>
-    <a href="/dashboard/posts">Edit Blog</a>
-    <a href="/dashboard/plugins">Plugins</a>
+    <a href="{{URLPrefix}}/dashboard">Dashboard</a>
+    <a href="{{URLPrefix}}/dashboard/posts">Edit Blog</a>
+    <a href="{{URLPrefix}}/dashboard/plugins">Plugins</a>
     {{end}}
-    <a href="/">Home</a>
+    <a href="{{URLPrefix}}/">Home</a>
     {{range $p := bearblog_PublishedPages}}
-    <a href="/{{.URL}}">{{.Title}}</a>
+    <a href="{{URLPrefix}}/{{.URL}}">{{.Title}}</a>
     {{end}}
-    <a href="/blog">Blog</a>
+    <a href="{{URLPrefix}}/blog">Blog</a>
     {{if bearblog_Authenticated}}
-    <a href="/dashboard/logout">Logout</a>
+    <a href="{{URLPrefix}}/dashboard/logout">Logout</a>
     {{end}}
 </nav>

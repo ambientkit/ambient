@@ -2,6 +2,8 @@ package ambient
 
 import (
 	"net/http"
+	"os"
+	"path"
 )
 
 // Recorder -
@@ -30,7 +32,9 @@ func (rec *Recorder) routes() []Route {
 	return rec.routeList
 }
 
-func (rec *Recorder) handleRoute(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error), method string, callable func(path string, fn func(http.ResponseWriter, *http.Request) (int, error))) {
+func (rec *Recorder) handleRoute(rawpath string, fn func(http.ResponseWriter, *http.Request) (status int, err error), method string, callable func(path string, fn func(http.ResponseWriter, *http.Request) (int, error))) {
+	// Add the URL prefix to each route.
+	path := prefixedRoute(rawpath)
 	rec.routeList = append(rec.routeList, Route{
 		Method: method,
 		Path:   path,
@@ -46,6 +50,10 @@ func (rec *Recorder) protect(h func(http.ResponseWriter, *http.Request) (status 
 
 		return h(w, r)
 	}
+}
+
+func prefixedRoute(urlpath string) string {
+	return path.Join(os.Getenv("AMB_URL_PREFIX"), urlpath)
 }
 
 // Get -

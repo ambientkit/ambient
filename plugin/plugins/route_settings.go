@@ -92,6 +92,6 @@ func (p *Plugin) settingsUpdate(w http.ResponseWriter, r *http.Request) (status 
 		return p.Site.Error(err)
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/dashboard/plugins/%v/settings", pluginName), http.StatusFound)
+	p.Redirect(w, r, fmt.Sprintf("/dashboard/plugins/%v/settings", pluginName), http.StatusFound)
 	return
 }

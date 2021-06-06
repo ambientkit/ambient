@@ -142,27 +142,27 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 
 	// Inject into each component.
 	var err error
-	t, err = inject.Head(t, pluginHead, fm, data)
+	t, err = inject.Head(t, pluginHead, globalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = inject.Header(t, pluginHeader, fm, data)
+	t, err = inject.Header(t, pluginHeader, globalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = inject.Main(t, pluginMain, fm, data)
+	t, err = inject.Main(t, pluginMain, globalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = inject.Body(t, pluginBody, fm, data)
+	t, err = inject.Body(t, pluginBody, globalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = inject.Footer(t, pluginFooter, fm, data)
+	t, err = inject.Footer(t, pluginFooter, globalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}

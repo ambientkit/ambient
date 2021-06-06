@@ -1,5 +1,5 @@
 <h1>{{.title}}</h1>
-<a href="/dashboard/posts/new">New post</a>
+<a href="{{URLPrefix}}/dashboard/posts/new">New post</a>
 <ul class="post-list">
     {{range $id, $p := .posts}}
     <li>
@@ -10,7 +10,7 @@
                 </time>
             </i>
         </span>
-        <a href="/dashboard/posts/{{.ID}}">{{if .Page}}[Page] {{end}}{{.Title}}</a>
+        <a href="{{URLPrefix}}/dashboard/posts/{{.ID}}">{{if .Page}}[Page] {{end}}{{.Title}}</a>
         {{if not .Published}}
         <small>(not published)</small>
         {{end}}

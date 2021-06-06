@@ -4,6 +4,8 @@ import (
 	"embed"
 	"html/template"
 	"net/http"
+	"os"
+	"path"
 )
 
 // Toolkit provides utilities to plugins.
@@ -12,6 +14,11 @@ type Toolkit struct {
 	Mux    Router
 	Render Renderer
 	Site   *SecureSite
+}
+
+// Redirect to a page with the proper URL prefix.
+func (t Toolkit) Redirect(w http.ResponseWriter, r *http.Request, url string, code int) {
+	http.Redirect(w, r, path.Join(os.Getenv("AMB_URL_PREFIX"), url), code)
 }
 
 // Renderer represents a template renderer.

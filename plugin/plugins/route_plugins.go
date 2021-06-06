@@ -100,7 +100,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		}
 	}
 
-	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
+	p.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
 	return
 }
 
@@ -121,6 +121,6 @@ func (p *Plugin) destroy(w http.ResponseWriter, r *http.Request) (status int, er
 		return p.Site.Error(err)
 	}
 
-	http.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
+	p.Redirect(w, r, "/dashboard/plugins", http.StatusFound)
 	return
 }

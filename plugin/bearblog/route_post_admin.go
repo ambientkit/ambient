@@ -72,7 +72,7 @@ func (p *Plugin) postAdminStore(w http.ResponseWriter, r *http.Request) (status 
 		return p.Site.Error(err)
 	}
 
-	http.Redirect(w, r, "/dashboard/posts/"+ID, http.StatusFound)
+	p.Redirect(w, r, "/dashboard/posts/"+ID, http.StatusFound)
 	return
 }
 
@@ -141,7 +141,7 @@ func (p *Plugin) postAdminUpdate(w http.ResponseWriter, r *http.Request) (status
 		return p.Site.Error(err)
 	}
 
-	http.Redirect(w, r, "/dashboard/posts/"+ID, http.StatusFound)
+	p.Redirect(w, r, "/dashboard/posts/"+ID, http.StatusFound)
 	return
 }
 
@@ -158,6 +158,6 @@ func (p *Plugin) postAdminDestroy(w http.ResponseWriter, r *http.Request) (statu
 		return p.Site.Error(err)
 	}
 
-	http.Redirect(w, r, "/dashboard/posts", http.StatusFound)
+	p.Redirect(w, r, "/dashboard/posts", http.StatusFound)
 	return
 }

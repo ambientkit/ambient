@@ -77,7 +77,7 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 		imfa := 0
 		imfa, err = strconv.Atoi(mfa)
 		if err != nil {
-			http.Redirect(w, r, "/", http.StatusFound)
+			p.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
 
@@ -98,7 +98,7 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 	// If the username and password don't match, then just redirect.
 	if username != allowedUsername || !passMatch || !mfaSuccess {
 		p.Log.Info("login attempt failed. Username: %v (expected: %v) | Password match: %v | MFA success: %v", username, allowedUsername, passMatch, mfaSuccess)
-		http.Redirect(w, r, "/", http.StatusFound)
+		p.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 
@@ -118,7 +118,7 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 		p.Log.Info("login persist failed for user '%v': %v", username, err.Error())
 	}
 
-	http.Redirect(w, r, "/dashboard", http.StatusFound)
+	p.Redirect(w, r, "/dashboard", http.StatusFound)
 	return
 }
 
@@ -128,6 +128,6 @@ func (p *Plugin) logout(w http.ResponseWriter, r *http.Request) (status int, err
 		p.Log.Info("logout failed: %v", err.Error())
 	}
 
-	http.Redirect(w, r, "/", http.StatusFound)
+	p.Redirect(w, r, "/", http.StatusFound)
 	return
 }

@@ -6,7 +6,7 @@
         <time datetime="{{.pubdate | bearblog_Stamp}}" pubdate>
             {{.pubdate | bearblog_StampFriendly}}
         </time>
-        {{if bearblog_Authenticated}}<a href="/dashboard/posts/{{.id}}">edit</a>{{end}}
+        {{if bearblog_Authenticated}}<a href="{{URLPrefix}}/dashboard/posts/{{.id}}">edit</a>{{end}}
     </i>
 </p>
 <content>
@@ -16,7 +16,7 @@
 <small>
     <div>
         {{range $p := .tags}}
-        <a href="/blog?q={{.Name}}">#{{.Name}}</a>
+        <a href="{{URLPrefix}}/blog?q={{.Name}}">#{{.Name}}</a>
         {{end}}
     </div>
 </small>

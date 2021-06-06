@@ -120,7 +120,7 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		return p.Site.Error(err)
 	}
 
-	http.Redirect(w, r, "/dashboard", http.StatusFound)
+	p.Redirect(w, r, "/dashboard", http.StatusFound)
 	return
 }
 
@@ -130,6 +130,6 @@ func (p *Plugin) reload(w http.ResponseWriter, r *http.Request) (status int, err
 		p.Site.Error(err)
 	}
 
-	http.Redirect(w, r, "/dashboard", http.StatusFound)
+	p.Redirect(w, r, "/dashboard", http.StatusFound)
 	return
 }
