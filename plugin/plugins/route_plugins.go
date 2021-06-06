@@ -66,6 +66,12 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		return http.StatusBadRequest, nil
 	}
 
+	// Get list of plugin names.
+	names, err := p.Site.PluginNames()
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
 	// Get list of plugins.
 	plugins, err := p.Site.Plugins()
 	if err != nil {
@@ -73,7 +79,12 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 	}
 
 	// Loop through each plugin to get the settings then save.
-	for name, info := range plugins {
+	for _, name := range names {
+		info, ok := plugins[name]
+		if !ok {
+			continue
+		}
+
 		enable := (r.FormValue(name) == "on")
 		if enable && !info.Enabled {
 			err = p.Site.EnablePlugin(name, true)

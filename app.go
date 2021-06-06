@@ -67,7 +67,7 @@ func (app *App) SetDebugTemplates(enable bool) {
 
 // SetLogLevel sets the log level.
 func (app *App) SetLogLevel(level LogLevel) {
-	app.log.SetLogLevel(LogLevelInfo)
+	app.log.SetLogLevel(level)
 }
 
 // ListenAndServe will start the web listener on port 8080 or will pull the
