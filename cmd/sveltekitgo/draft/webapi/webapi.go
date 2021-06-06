@@ -46,4 +46,12 @@ func (p *Plugin) Routes() {
 	p.Mux.Post("/v1/auth/login", p.login)
 	p.Mux.Post("/v1/auth/logout", p.logout)
 	p.Mux.Post("/v1/auth/register", p.register)
+
+	p.Mux.Get("/v1/user/profile", p.userProfile)
+	p.Mux.Post("/v1/user/profile", p.updateUserProfile)
+
+	p.Mux.Get("/v1/note", p.loadNotes)
+	p.Mux.Post("/v1/note", p.createNote)
+	p.Mux.Put("/v1/note/:noteid", p.updateNote)
+	p.Mux.Delete("/v1/note/:noteid", p.deleteNote)
 }

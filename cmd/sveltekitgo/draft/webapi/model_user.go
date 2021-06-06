@@ -83,7 +83,7 @@ func DeleteUser(id string) error {
 
 	for i, v := range users {
 		if v.ID == id {
-			users = removeItem(users, i)
+			users = removeUserItem(users, i)
 			break
 		}
 	}
@@ -91,7 +91,7 @@ func DeleteUser(id string) error {
 	return SaveUsers(users)
 }
 
-func removeItem(s []User, index int) []User {
+func removeUserItem(s []User, index int) []User {
 	return append(s[:index], s[index+1:]...)
 }
 
@@ -104,9 +104,14 @@ func UpdateUser(user User) error {
 
 	for i, v := range users {
 		if v.ID == user.ID {
-			passhash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-			if err != nil {
-				return err
+			passhash := v.Password
+
+			if len(user.Password) > 0 {
+				hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+				if err != nil {
+					return err
+				}
+				passhash = string(hash)
 			}
 
 			users[i] = User{

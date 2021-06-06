@@ -31,11 +31,7 @@ func (p *Plugin) session(w http.ResponseWriter, r *http.Request) (status int, er
 
 	userEmail, err := p.Site.AuthenticatedUser(r)
 	if err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	if err != nil {
-		return http.StatusBadRequest, nil
+		return http.StatusBadRequest, err
 	}
 
 	users, err := LoadUsers()
