@@ -1,8 +1,6 @@
 package webapi
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -13,18 +11,8 @@ type HelloResponse struct {
 }
 
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err error) {
-	resp := &HelloResponse{
+	return p.JSON(w, http.StatusOK, HelloResponse{
 		Status:  http.StatusOK,
 		Message: "Cool!",
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-
-	b, err := json.Marshal(resp)
-	if err != nil {
-		fmt.Fprint(w, "Error")
-		return
-	}
-
-	return fmt.Fprint(w, string(b))
+	})
 }

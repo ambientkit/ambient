@@ -2,6 +2,8 @@ package ambient
 
 import (
 	"embed"
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
@@ -17,13 +19,34 @@ type Toolkit struct {
 }
 
 // Redirect to a page with the proper URL prefix.
-func (t Toolkit) Redirect(w http.ResponseWriter, r *http.Request, url string, code int) {
+func (t *Toolkit) Redirect(w http.ResponseWriter, r *http.Request, url string, code int) {
 	http.Redirect(w, r, t.Path(url), code)
 }
 
 // Path to a page with the proper URL prefix.
-func (t Toolkit) Path(url string) string {
+func (t *Toolkit) Path(url string) string {
 	return path.Join(os.Getenv("AMB_URL_PREFIX"), url)
+}
+
+// JSON sends a JSON response.
+func (t *Toolkit) JSON(w http.ResponseWriter, status int, response interface{}) (int, error) {
+	// Convert to JSON bytes.
+	b, err := json.Marshal(response)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// Set the header.
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write out the response.
+	_, err = fmt.Fprint(w, string(b))
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// Return the status.
+	return status, nil
 }
 
 // Renderer represents a template renderer.
