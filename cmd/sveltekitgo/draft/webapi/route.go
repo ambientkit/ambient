@@ -22,7 +22,7 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) (status int, err 
 
 	b, err := json.Marshal(resp)
 	if err != nil {
-		fmt.Fprint(w, "Error!")
+		fmt.Fprint(w, "Error")
 		return
 	}
 

@@ -23,7 +23,7 @@ func New() *Plugin {
 
 // PluginName returns the plugin name.
 func (p *Plugin) PluginName() string {
-	return "gzip"
+	return "gzipresponse"
 }
 
 // PluginVersion returns the plugin version.
