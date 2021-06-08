@@ -56,7 +56,7 @@ var Plugins = func() *ambient.PluginLoader {
 			"scssession": true,
 			"webapi":     true,
 
-			// Middleware -
+			// Middleware.
 			"proxyrequest":    true,
 			"notrailingslash": true,
 			"gzipresponse":    true,
