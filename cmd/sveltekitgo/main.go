@@ -3,6 +3,7 @@ package main
 import (
 	pkglog "log"
 	"os"
+	"os/exec"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/sveltekitgo/app"
@@ -53,6 +54,15 @@ func main() {
 	mux, err := ambientApp.Handler()
 	if err != nil {
 		log.Fatal("", err.Error())
+	}
+
+	// Start node for the front-end.
+	log.Info("ambient: web UI running on port: 8080")
+	cmd := exec.Command("node", "../svelte-go/dist")
+	cmd.Env = []string{"PORT=8080"}
+	err = cmd.Start()
+	if err != nil {
+		log.Fatal(err.Error())
 	}
 
 	// Start the web listener for the UI and API.
