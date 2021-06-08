@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/htmltemplate"
 	"github.com/josephspurrier/ambient/plugin/logrequest"
 	"github.com/josephspurrier/ambient/plugin/notrailingslash"
+	"github.com/josephspurrier/ambient/plugin/proxyrequest"
 	"github.com/josephspurrier/ambient/plugin/scssession"
 )
 
@@ -39,6 +41,12 @@ var Plugins = func() *ambient.PluginLoader {
 		log.Fatalf("app: environment variable is missing: %v\n", "AMB_PASSWORD_HASH")
 	}
 
+	// Front-end proxy.
+	urlUI, err := url.Parse("http://localhost:8080")
+	if err != nil {
+		log.Fatalf("app: UI proxy target error: %v", err.Error())
+	}
+
 	return &ambient.PluginLoader{
 		Router:         awayrouter.New(ErrorHandler()),
 		TemplateEngine: htmltemplate.New(),
@@ -49,6 +57,7 @@ var Plugins = func() *ambient.PluginLoader {
 			"webapi":     true,
 
 			// Middleware -
+			"proxyrequest":    true,
 			"notrailingslash": true,
 			"gzipresponse":    true,
 			"logrequest":      true,
@@ -61,6 +70,7 @@ var Plugins = func() *ambient.PluginLoader {
 		},
 		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.
+			proxyrequest.New(urlUI, "/api"),
 			notrailingslash.New(),     // Redirect all requests with a trailing slash.
 			gzipresponse.New(),        // Compress all HTTP responses.
 			scssession.New(secretKey), // Session manager.

@@ -56,6 +56,5 @@ func main() {
 	}
 
 	// Start the web listener for the UI and API.
-	proxy := app.LoadProxy(log, ambientApp, mux)
-	ambientApp.ListenAndServe(proxy)
+	ambientApp.ListenAndServe(mux)
 }

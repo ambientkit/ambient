@@ -116,7 +116,8 @@ func pluginSuggestions() []prompt.Suggest {
 	arr := make([]prompt.Suggest, 0)
 	arr = append(arr, prompt.Suggest{Text: "all", Description: ""})
 
-	for pluginName, trusted := range plugins.TrustedPlugins {
+	for _, pluginName := range plugins.TrustedPluginNames() {
+		trusted := plugins.TrustedPlugins[pluginName]
 		if trusted {
 			arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
 		}
@@ -139,7 +140,8 @@ func executer(s string) {
 
 		if args[1] == "all" {
 			// Enable plugins.
-			for pluginName, trusted := range plugins.TrustedPlugins {
+			for _, pluginName := range plugins.TrustedPluginNames() {
+				trusted := plugins.TrustedPlugins[pluginName]
 				if trusted {
 					enablePlugin(pluginName)
 				}
@@ -157,7 +159,8 @@ func executer(s string) {
 
 		if args[1] == "all" {
 			// Enable plugin grants.
-			for pluginName, trusted := range plugins.TrustedPlugins {
+			for _, pluginName := range plugins.TrustedPluginNames() {
+				trusted := plugins.TrustedPlugins[pluginName]
 				if trusted {
 					enableGrants(pluginName)
 				}

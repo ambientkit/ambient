@@ -12,7 +12,8 @@ func GrantAccess(log ambient.AppLogger, plugins *ambient.PluginLoader, ambientAp
 	securestorage := ambient.NewSecureSite("ambient", log, pluginsystem, nil, nil, nil)
 
 	// Enable plugins.
-	for pluginName, trusted := range plugins.TrustedPlugins {
+	for _, pluginName := range plugins.TrustedPluginNames() {
+		trusted := plugins.TrustedPlugins[pluginName]
 		if trusted {
 			log.Info("enabling plugin: %v", pluginName)
 			err := securestorage.EnablePlugin(pluginName, false)
