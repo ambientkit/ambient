@@ -1,24 +1,31 @@
 package app
 
 import (
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strings"
+
+	"github.com/josephspurrier/ambient"
+	"github.com/josephspurrier/ambient/plugin/logrequest"
 )
 
 // Proxy -
 type Proxy struct {
 	handlerUI  http.Handler
 	handlerAPI http.Handler
+	lrp        *logrequest.Plugin
 }
 
 // NewProxy -
-func NewProxy(handlerUI, handlerAPI http.Handler) *Proxy {
+func NewProxy(app *ambient.App, handlerUI, handlerAPI http.Handler) *Proxy {
+	lrp := logrequest.New()
+	lrp.Enable(app.Toolkit(lrp.PluginName()))
+
 	return &Proxy{
 		handlerUI:  handlerUI,
 		handlerAPI: handlerAPI,
+		lrp:        lrp,
 	}
 }
 
@@ -30,11 +37,11 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p.handlerUI.ServeHTTP(w, r)
+	p.lrp.LogRequest(p.handlerUI).ServeHTTP(w, r)
 }
 
 // LoadProxy returns a proxy for the UI and API.
-func LoadProxy(muxAPI http.Handler) *Proxy {
+func LoadProxy(log ambient.AppLogger, app *ambient.App, muxAPI http.Handler) *Proxy {
 	// Create a proxy to serve the front-end and backend.
 	urlUI, err := url.Parse("http://localhost:8080")
 	if err != nil {
@@ -46,5 +53,5 @@ func LoadProxy(muxAPI http.Handler) *Proxy {
 		w.WriteHeader(http.StatusBadGateway)
 	}
 
-	return NewProxy(uiProxy, muxAPI)
+	return NewProxy(app, uiProxy, muxAPI)
 }

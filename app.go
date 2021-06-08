@@ -15,6 +15,9 @@ type App struct {
 	log           AppLogger
 	pluginsystem  *PluginSystem
 	sessionstorer SessionStorer
+	mux           AppRouter
+	renderer      Renderer
+	sess          AppSession
 
 	debugTemplates bool
 }

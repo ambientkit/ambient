@@ -139,7 +139,6 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 
 	// Save the plugin routes so they can be removed if disabled.
 	saveRoutesForPlugin(name, recorder, ss.pluginsystem)
-
 }
 
 // DisablePlugin disables a plugin.
@@ -251,7 +250,8 @@ func embeddedAssets(mux Router, sess AppSession, pluginName string, files []Asse
 // LoadAllPluginMiddleware returns a handler that is wrapped in conditional
 // middlware from the plugins. This only needs to be run once at start up
 // and should never be called again.
-func (ss *SecureSite) LoadAllPluginMiddleware(h http.Handler) http.Handler {
+func (ss *SecureSite) LoadAllPluginMiddleware() http.Handler {
+	var h http.Handler = ss.mux
 	for _, pluginName := range ss.pluginsystem.middlewareNames {
 		plugin, ok := ss.pluginsystem.plugins[pluginName]
 		if !ok {

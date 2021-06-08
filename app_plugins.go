@@ -8,7 +8,6 @@ import (
 // Handler loads the plugins and returns the handler.
 func (app *App) Handler() (http.Handler, error) {
 	// Get the session manager from the plugins.
-	var sess AppSession
 	for _, name := range app.pluginsystem.Names() {
 		// Get the plugin.
 		p, err := app.pluginsystem.Plugin(name)
@@ -29,19 +28,18 @@ func (app *App) Handler() (http.Handler, error) {
 		} else if sm != nil {
 			// Only set the session manager once.
 			app.log.Info("ambient: using session manager from plugin: %v", name)
-			sess = sm
+			app.sess = sm
 			break
 		}
 	}
-	if sess == nil {
+	if app.sess == nil {
 		return nil, fmt.Errorf("ambient: no session manager found")
 	}
 
 	// Set up the template injector.
-	pi := NewPlugininjector(app.log, app.pluginsystem, sess, app.debugTemplates)
+	pi := NewPlugininjector(app.log, app.pluginsystem, app.sess, app.debugTemplates)
 
 	// Get the template engine.
-	var te Renderer
 	if app.pluginsystem.templateEngine != nil {
 		tt, err := app.pluginsystem.templateEngine.TemplateEngine(app.log, pi)
 		if err != nil {
@@ -49,32 +47,31 @@ func (app *App) Handler() (http.Handler, error) {
 		} else if tt != nil {
 			// Only set the router once.
 			app.log.Info("ambient: using template engine from plugin: %v", app.pluginsystem.templateEngine.PluginName())
-			te = tt
+			app.renderer = tt
 		}
 	}
-	if te == nil {
+	if app.renderer == nil {
 		return nil, fmt.Errorf("ambient: no template engine found")
 	}
 
 	// Get the router.
-	var mux AppRouter
 	if app.pluginsystem.router != nil {
-		rm, err := app.pluginsystem.router.Router(app.log, te)
+		rm, err := app.pluginsystem.router.Router(app.log, app.renderer)
 		if err != nil {
 			return nil, err
 		} else if rm != nil {
 			// Only set the router once.
 			app.log.Info("ambient: using router (mux) from plugin: %v", app.pluginsystem.router.PluginName())
-			mux = rm
+			app.mux = rm
 		}
 	}
-	if mux == nil {
+	if app.mux == nil {
 		return nil, fmt.Errorf("ambient: no router found")
 	}
 
 	// Create secure site for the core application and use "ambient" so it gets
 	// full permissions.
-	securesite := NewSecureSite("ambient", app.log, app.pluginsystem, sess, mux, te)
+	securesite := NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer)
 
 	// Load the plugin pages.
 	err := securesite.LoadAllPluginPages()
@@ -83,7 +80,19 @@ func (app *App) Handler() (http.Handler, error) {
 	}
 
 	// Enable the middleware from the plugins.
-	handler := securesite.LoadAllPluginMiddleware(mux)
+	handler := securesite.LoadAllPluginMiddleware()
 
 	return handler, nil
+}
+
+// Toolkit returns a toolkit for use with plugins externally.
+func (app *App) Toolkit(pluginName string) *Toolkit {
+	toolkit := &Toolkit{
+		Mux:    NewRecorder(pluginName, app.log, app.pluginsystem, app.mux),
+		Render: NewRenderer(app.renderer),
+		Site:   NewSecureSite(pluginName, app.log, app.pluginsystem, app.sess, app.mux, app.renderer),
+		Log:    NewPluginLogger(app.log),
+	}
+
+	return toolkit
 }
