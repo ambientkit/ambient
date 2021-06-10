@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"net/http"
+	"runtime/debug"
 
 	"github.com/alexedwards/scs/v2"
 )
@@ -44,6 +45,7 @@ func (s *Session) AuthenticatedUser(r *http.Request) (string, error) {
 	u := s.manager.GetString(r.Context(), "user")
 
 	if len(u) == 0 {
+		debug.PrintStack()
 		return "", errors.New("user not found")
 	}
 
