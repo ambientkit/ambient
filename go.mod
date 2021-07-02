@@ -19,5 +19,4 @@ require (
 	go.uber.org/zap v1.16.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	jaytaylor.com/html2text v0.0.0-20200412013138-3577fbdbcff7
-	rogchap.com/v8go v0.5.1
 )
