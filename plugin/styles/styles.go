@@ -60,7 +60,7 @@ func (p *Plugin) Settings() []ambient.Setting {
 			Name: Favicon,
 			Description: ambient.SettingDescription{
 				Text: "Emoji cheatsheet",
-				URL:  "https://emojicheatsheet.com/",
+				URL:  "https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md",
 			},
 		},
 		{

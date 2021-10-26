@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	pkglog "log"
+	stdlog "log"
 	"os"
 	"strings"
 
@@ -37,10 +37,10 @@ func main() {
 		gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
 		plugins)
 	if err != nil {
-		pkglog.Fatalln(err.Error())
+		stdlog.Fatalln(err.Error())
 	}
 
-	// Get the
+	// Get the logger and plugin system.
 	log = ambientApp.Logger()
 	pluginsystem = ambientApp.PluginSystem()
 

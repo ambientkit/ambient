@@ -16,7 +16,7 @@ func (app *App) Handler() (http.Handler, error) {
 			return nil, fmt.Errorf("ambient: could not find plugin (%v): %v", name, err.Error())
 		}
 
-		// Skip if the plugin isn't enabled.
+		// Skip if the plugin isn't enabled. The session manager needs to be trusted.
 		if !app.pluginsystem.Enabled(name) {
 			continue
 		}
@@ -33,7 +33,7 @@ func (app *App) Handler() (http.Handler, error) {
 		}
 	}
 	if app.sess == nil {
-		return nil, fmt.Errorf("ambient: no session manager found")
+		return nil, fmt.Errorf("ambient: no session manager found, ensure it is trusted")
 	}
 
 	// Set up the template injector.
@@ -95,4 +95,46 @@ func (app *App) Toolkit(pluginName string) *Toolkit {
 	}
 
 	return toolkit
+}
+
+// GrantAccess grants access to all trusted plugins.
+func (app *App) GrantAccess(plugins *PluginLoader) {
+	// Get the plugin system.
+	pluginsystem := app.PluginSystem()
+
+	// Create secure site for the core application and use "ambient" so it gets
+	// full permissions.
+	securestorage := NewSecureSite("ambient", app.log, pluginsystem, nil, nil, nil)
+
+	// Enable plugins.
+	for _, pluginName := range plugins.TrustedPluginNames() {
+		trusted := plugins.TrustedPlugins[pluginName]
+		if trusted {
+			// If plugin is not enabled, then enable.
+			if !securestorage.pluginsystem.Enabled(pluginName) {
+				app.log.Info("ambient: enabling trusted plugin: %v", pluginName)
+				err := securestorage.EnablePlugin(pluginName, false)
+				if err != nil {
+					app.log.Error("", err.Error())
+				}
+			}
+
+			p, err := pluginsystem.Plugin(pluginName)
+			if err != nil {
+				app.log.Error("error with plugin (%v): %v", pluginName, err.Error())
+				return
+			}
+
+			for _, request := range p.GrantRequests() {
+				// If plugin is not granted permission, then grant.
+				if !securestorage.pluginsystem.Granted(pluginName, request.Grant) {
+					app.log.Info("ambient: for plugin %v, adding grant: %v", pluginName, request.Grant)
+					err := securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
+					if err != nil {
+						app.log.Error("", err.Error())
+					}
+				}
+			}
+		}
+	}
 }

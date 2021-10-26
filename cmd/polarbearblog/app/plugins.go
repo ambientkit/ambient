@@ -5,11 +5,9 @@ import (
 	"os"
 
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/app/draft/hello"
-	"github.com/josephspurrier/ambient/app/draft/navigation"
-	"github.com/josephspurrier/ambient/app/draft/simplelogin"
 	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/awayrouter"
+	"github.com/josephspurrier/ambient/plugin/bearblog"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
 	"github.com/josephspurrier/ambient/plugin/charset"
 	"github.com/josephspurrier/ambient/plugin/debugpprof"
@@ -36,9 +34,9 @@ import (
 
 var (
 	// StorageSitePath is the location of the site file.
-	StorageSitePath = "app/storage/site.json"
+	StorageSitePath = "storage/site.json"
 	// StorageSessionPath is the location of the session file.
-	StorageSessionPath = "app/storage/session.bin"
+	StorageSessionPath = "storage/session.bin"
 )
 
 // Plugins defines the plugins - order does matter.
@@ -60,33 +58,29 @@ var Plugins = func() *ambient.PluginLoader {
 		// Trusted plugins are required to boot the application so they will be
 		// given full access.
 		TrustedPlugins: map[string]bool{
-			"scssession":  true, // Session manager.
-			"plugins":     true, // Page to manage plugins.
-			"simplelogin": true, // Simple login page.
-			"bearcss":     true, // Bear Blog styling.
+			"scssession": true, // Session manager.
+			"plugins":    true, // Page to manage plugins.
+			"bearblog":   true, // Bear Blog functionality.
+			"bearcss":    true, // Bear Blog styling.
 		},
 		Plugins: []ambient.Plugin{
 			// Marketplace plugins.
-			simplelogin.New(passwordHash), // Simple login page.
-			bearcss.New(),                 // Bear Blog styling.
-			debugpprof.New(),              // Go pprof debug endpoints.
-			charset.New(),                 // Charset to the HTML head.
-			viewport.New(),                // Viewport in the HTML head.
-			author.New(),                  // Author in the HTML head.
-			description.New(),             // Description the HTML head.
-			plugins.New(),                 // Page to manage plugins.
-			prism.New(),                   // Prism CSS for codeblocks.
-			stackedit.New(),               // Stackedit for editing markdown.
-			googleanalytics.New(),         // Google Analytics.
-			disqus.New(),                  // Disqus for comments for blog posts.
-			robots.New(),                  // Robots file.
-			sitemap.New(),                 // Sitemap generator.
-			rssfeed.New(),                 // RSS feed generator.
-			styles.New(),                  // Style editing page.
-
-			// App plugins.
-			hello.New(),
-			navigation.New(),
+			debugpprof.New(),           // Go pprof debug endpoints.
+			charset.New(),              // Charset to the HTML head.
+			viewport.New(),             // Viewport in the HTML head.
+			bearblog.New(passwordHash), // Bear Blog functionality.
+			author.New(),               // Author in the HTML head.
+			description.New(),          // Description the HTML head.
+			bearcss.New(),              // Bear Blog styling.
+			plugins.New(),              // Page to manage plugins.
+			prism.New(),                // Prism CSS for codeblocks.
+			stackedit.New(),            // Stackedit for editing markdown.
+			googleanalytics.New(),      // Google Analytics.
+			disqus.New(),               // Disqus for comments for blog posts.
+			robots.New(),               // Robots file.
+			sitemap.New(),              // Sitemap generator.
+			rssfeed.New(),              // RSS feed generator.
+			styles.New(),               // Style editing page.
 		},
 		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.

@@ -5,14 +5,19 @@ import (
 	"os"
 
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/app"
+	"github.com/josephspurrier/ambient/cmd/polarbearblog/app"
 	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage"
 	"github.com/josephspurrier/ambient/plugin/zaplogger"
 )
 
 var (
-	appName    = "myapp"
+	appName    = "polarbearblog"
 	appVersion = "1.0"
+)
+
+const (
+	// LoginURL allows user to set the login URL.
+	LoginURL = "Login URL"
 )
 
 func init() {
@@ -33,15 +38,6 @@ func main() {
 	if err != nil {
 		stdlog.Fatalln(err.Error())
 	}
-
-	// Set the log level.
-	// ambientApp.SetLogLevel(ambient.LogLevelDebug)
-	// ambientApp.SetLogLevel(ambient.LogLevelInfo)
-	// ambientApp.SetLogLevel(ambient.LogLevelError)
-	// ambientApp.SetLogLevel(ambient.LogLevelFatal)
-
-	// Add template debug information.
-	//ambientApp.SetDebugTemplates(true)
 
 	// Get the logger.
 	log := ambientApp.Logger()
