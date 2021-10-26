@@ -39,8 +39,8 @@ var (
 	StorageSessionPath = "storage/session.bin"
 )
 
-// Plugins defines the plugins - order does matter.
-var Plugins = func() *ambient.PluginLoader {
+// Plugins defines the plugins.
+func Plugins() *ambient.PluginLoader {
 	// Get the environment variables.
 	secretKey := os.Getenv("AMB_SESSION_KEY")
 	if len(secretKey) == 0 {
