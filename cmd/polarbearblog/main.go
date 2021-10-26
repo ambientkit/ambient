@@ -2,7 +2,6 @@ package main
 
 import (
 	stdlog "log"
-	"os"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/polarbearblog/app"
@@ -19,14 +18,6 @@ const (
 	// LoginURL allows user to set the login URL.
 	LoginURL = "Login URL"
 )
-
-func init() {
-	// Set the time zone.
-	tz := os.Getenv("AMB_TIMEZONE")
-	if len(tz) > 0 {
-		os.Setenv("TZ", tz)
-	}
-}
 
 func main() {
 	// Create the ambient app.

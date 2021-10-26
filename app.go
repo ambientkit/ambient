@@ -24,6 +24,12 @@ type App struct {
 
 // NewApp returns a new Ambient app that supports plugins.
 func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storagePlugin StoragePlugin, plugins *PluginLoader) (*App, error) {
+	// Set the time zone. Required for plugins that rely on timzone like MFA.
+	tz := os.Getenv("AMB_TIMEZONE")
+	if len(tz) > 0 {
+		os.Setenv("TZ", tz)
+	}
+
 	// Get the logger from the plugin.
 	log, err := loadLogger(appName, appVersion, logPlugin)
 	if err != nil {

@@ -2,7 +2,6 @@ package main
 
 import (
 	stdlog "log"
-	"os"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/app"
@@ -14,14 +13,6 @@ var (
 	appName    = "myapp"
 	appVersion = "1.0"
 )
-
-func init() {
-	// Set the time zone.
-	tz := os.Getenv("AMB_TIMEZONE")
-	if len(tz) > 0 {
-		os.Setenv("TZ", tz)
-	}
-}
 
 func main() {
 	// Create the ambient app.
@@ -41,7 +32,7 @@ func main() {
 	// ambientApp.SetLogLevel(ambient.LogLevelFatal)
 
 	// Add template debug information.
-	// ambientApp.SetDebugTemplates(true)
+	ambientApp.SetDebugTemplates(true)
 
 	// Get the logger.
 	log := ambientApp.Logger()

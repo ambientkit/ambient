@@ -3,9 +3,8 @@
 package gcpbucketstorage
 
 import (
-	"os"
-
 	"github.com/josephspurrier/ambient"
+	"github.com/josephspurrier/ambient/lib/envdetect"
 	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage/store"
 )
 
@@ -63,7 +62,7 @@ func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.Ses
 	var ds ambient.DataStorer
 	var ss ambient.SessionStorer
 
-	if runningLocalDev() {
+	if envdetect.RunningLocalDev() {
 		// Use local filesytem when developing.
 		ds = store.NewLocalStorage(p.sitePath)
 		ss = store.NewLocalStorage(p.sessionPath)
@@ -79,10 +78,4 @@ func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.Ses
 	}
 
 	return ds, ss, nil
-}
-
-// runningLocalDev returns true if the AMB_LOCAL environment variable is set.
-func runningLocalDev() bool {
-	s := os.Getenv("AMB_LOCAL")
-	return len(s) > 0
 }
