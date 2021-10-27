@@ -4,13 +4,13 @@ import (
 	stdlog "log"
 
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/cmd/polarbearblog/app"
+	"github.com/josephspurrier/ambient/cmd/myapp/app"
 	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage"
 	"github.com/josephspurrier/ambient/plugin/zaplogger"
 )
 
 var (
-	appName    = "polarbearblog"
+	appName    = "myapp"
 	appVersion = "1.0"
 )
 
@@ -24,6 +24,15 @@ func main() {
 	if err != nil {
 		stdlog.Fatalln(err.Error())
 	}
+
+	// Set the log level.
+	// ambientApp.SetLogLevel(ambient.LogLevelDebug)
+	// ambientApp.SetLogLevel(ambient.LogLevelInfo)
+	// ambientApp.SetLogLevel(ambient.LogLevelError)
+	// ambientApp.SetLogLevel(ambient.LogLevelFatal)
+
+	// Add template debug information.
+	// ambientApp.SetDebugTemplates(true)
 
 	// Enable the trusted plugins.
 	ambientApp.GrantAccess(plugins)

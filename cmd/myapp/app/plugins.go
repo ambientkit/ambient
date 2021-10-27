@@ -5,11 +5,11 @@ import (
 	"os"
 
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/app/draft/hello"
-	"github.com/josephspurrier/ambient/app/draft/navigation"
-	"github.com/josephspurrier/ambient/app/draft/simplelogin"
+	"github.com/josephspurrier/ambient/cmd/myapp/app/draft/hello"
+	"github.com/josephspurrier/ambient/cmd/myapp/app/draft/navigation"
 	"github.com/josephspurrier/ambient/plugin/author"
 	"github.com/josephspurrier/ambient/plugin/awayrouter"
+	"github.com/josephspurrier/ambient/plugin/bearblog"
 	"github.com/josephspurrier/ambient/plugin/bearcss"
 	"github.com/josephspurrier/ambient/plugin/charset"
 	"github.com/josephspurrier/ambient/plugin/debugpprof"
@@ -27,6 +27,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/rssfeed"
 	"github.com/josephspurrier/ambient/plugin/scssession"
 	"github.com/josephspurrier/ambient/plugin/securedashboard"
+	"github.com/josephspurrier/ambient/plugin/simplelogin"
 	"github.com/josephspurrier/ambient/plugin/sitemap"
 	"github.com/josephspurrier/ambient/plugin/stackedit"
 	"github.com/josephspurrier/ambient/plugin/styles"
@@ -36,9 +37,9 @@ import (
 
 var (
 	// StorageSitePath is the location of the site file.
-	StorageSitePath = "app/storage/site.json"
+	StorageSitePath = "cmd/myapp/storage/site.json"
 	// StorageSessionPath is the location of the session file.
-	StorageSessionPath = "app/storage/session.bin"
+	StorageSessionPath = "cmd/myapp/storage/session.bin"
 )
 
 // Plugins defines the plugins.
@@ -68,6 +69,7 @@ func Plugins() *ambient.PluginLoader {
 		Plugins: []ambient.Plugin{
 			// Marketplace plugins.
 			simplelogin.New(passwordHash), // Simple login page.
+			bearblog.New(passwordHash),    // Bear Blog functionality.
 			bearcss.New(),                 // Bear Blog styling.
 			debugpprof.New(),              // Go pprof debug endpoints.
 			charset.New(),                 // Charset to the HTML head.

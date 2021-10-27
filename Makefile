@@ -75,8 +75,8 @@ passhash:
 .PHONY: local-init
 local-init:
 	@echo Creating session and site storage files locally.
-	cp storage/initial/session.bin storage/session.bin
-	cp storage/initial/site.json storage/site.json
+	cp cmd/myapp/storage/initial/session.bin storage/session.bin
+	cp cmd/myapp/storage/initial/site.json storage/site.json
 
 .PHONY: local-run
 local-run:
@@ -86,7 +86,3 @@ local-run:
 .PHONY: amb
 amb:
 	go run cmd/amb/main.go
-
-.PHONY: ambient
-ambient:
-	go run cmd/ambient/main.go
