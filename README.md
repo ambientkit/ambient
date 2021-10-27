@@ -14,7 +14,7 @@ Each time I write a new web app, there is a lot of reuse of foundational code. I
 
 ### Who is this for?
 
-Ambient will probably appeal to individual developers or small development teams who need to build one or many web apps using a pluggable framework. Large teams will probably want a framework more established - but if you find it works well, drop me a [line](issues/new) 😁 .
+Ambient will probably appeal to individual developers or small development teams who need to build one or many web apps using a pluggable framework. Large teams will probably want a more established framework - but if you find it works well, drop me a [line](/issues/new) 😁 .
 
 ### How does it work?
 
