@@ -37,7 +37,7 @@ A pluginmanager is included that allows you to:
   - Grant permissions to a plugin
   - Modify the settings for a plugin
 
-There is a [library of plugins](plugins) that you can use in your apps or you can use to learn how create your own plugins.
+There is a [library of plugins](plugin) that you can use in your apps or you can use to learn how create your own plugins.
 
 ## Quickstart
 
