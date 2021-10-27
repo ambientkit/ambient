@@ -18,7 +18,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/htmltemplate"
 	"github.com/josephspurrier/ambient/plugin/logrequest"
 	"github.com/josephspurrier/ambient/plugin/notrailingslash"
-	"github.com/josephspurrier/ambient/plugin/plugins"
+	"github.com/josephspurrier/ambient/plugin/pluginmanager"
 	"github.com/josephspurrier/ambient/plugin/prism"
 	"github.com/josephspurrier/ambient/plugin/redirecttourl"
 	"github.com/josephspurrier/ambient/plugin/robots"
@@ -58,10 +58,10 @@ func Plugins() *ambient.PluginLoader {
 		// Trusted plugins are required to boot the application so they will be
 		// given full access.
 		TrustedPlugins: map[string]bool{
-			"scssession": true, // Session manager.
-			"plugins":    true, // Page to manage plugins.
-			"bearblog":   true, // Bear Blog functionality.
-			"bearcss":    true, // Bear Blog styling.
+			"scssession":    true, // Session manager.
+			"pluginmanager": true, // Page to manage plugins.
+			"bearblog":      true, // Bear Blog functionality.
+			"bearcss":       true, // Bear Blog styling.
 		},
 		Plugins: []ambient.Plugin{
 			// Marketplace plugins.
@@ -72,7 +72,7 @@ func Plugins() *ambient.PluginLoader {
 			author.New(),               // Author in the HTML head.
 			description.New(),          // Description the HTML head.
 			bearcss.New(),              // Bear Blog styling.
-			plugins.New(),              // Page to manage plugins.
+			pluginmanager.New(),        // Page to manage plugins.
 			prism.New(),                // Prism CSS for codeblocks.
 			stackedit.New(),            // Stackedit for editing markdown.
 			googleanalytics.New(),      // Google Analytics.

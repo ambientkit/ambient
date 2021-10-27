@@ -8,6 +8,13 @@ import (
 var (
 	// ErrPluginNotFound returns a plugin that is not found.
 	ErrPluginNotFound = errors.New("plugin name not found")
+
+	disallowedPluginNames = map[string]bool{
+		"plugin":  false,
+		"plugins": false,
+		"ambient": false,
+		"amb":     false,
+	}
 )
 
 // PluginSystem represents loaded plugins.
@@ -35,6 +42,11 @@ func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*Plugi
 
 	// Load the middleware.
 	for _, p := range arr.Middleware {
+		// Don't allow certain plugin names.
+		if allowed, ok := disallowedPluginNames[p.PluginName()]; ok && !allowed {
+			return nil, fmt.Errorf("ambient: plugin name not allowed: %v", p.PluginName())
+		}
+
 		save, err := loadPlugin(p, plugins, storage)
 		if err != nil {
 			return nil, err
@@ -48,6 +60,11 @@ func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*Plugi
 
 	// Load the plugins.
 	for _, p := range arr.Plugins {
+		// Don't allow certain plugin names.
+		if allowed, ok := disallowedPluginNames[p.PluginName()]; ok && !allowed {
+			return nil, fmt.Errorf("ambient: plugin name not allowed: %v", p.PluginName())
+		}
+
 		save, err := loadPlugin(p, plugins, storage)
 		if err != nil {
 			return nil, err

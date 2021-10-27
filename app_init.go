@@ -4,6 +4,11 @@ import "fmt"
 
 // LoadLogger returns the logger.
 func loadLogger(appName string, appVersion string, plugin LoggingPlugin) (AppLogger, error) {
+	// Don't allow certain plugin names.
+	if allowed, ok := disallowedPluginNames[plugin.PluginName()]; ok && !allowed {
+		return nil, fmt.Errorf("ambient: plugin name not allowed: %v", plugin.PluginName())
+	}
+
 	// Get the logger from the plugins.
 	log, err := plugin.Logger(appName, appVersion)
 	if err != nil {
@@ -19,6 +24,11 @@ func loadLogger(appName string, appVersion string, plugin LoggingPlugin) (AppLog
 
 // LoadStorage returns the storage.
 func loadStorage(log AppLogger, plugin StoragePlugin) (*Storage, SessionStorer, error) {
+	// Don't allow certain plugin names.
+	if allowed, ok := disallowedPluginNames[plugin.PluginName()]; ok && !allowed {
+		return nil, nil, fmt.Errorf("ambient: plugin name not allowed: %v", plugin.PluginName())
+	}
+
 	// Define the storage managers.
 	var ds DataStorer
 	var ss SessionStorer

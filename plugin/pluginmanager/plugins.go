@@ -1,5 +1,5 @@
-// Package plugins provides a plugin management page for an Ambient application.
-package plugins
+// Package pluginmanager provides a plugin management page for an Ambient application.
+package pluginmanager
 
 import (
 	"embed"
@@ -25,7 +25,7 @@ func New() *Plugin {
 
 // PluginName returns the plugin name.
 func (p *Plugin) PluginName() string {
-	return "plugins"
+	return "pluginmanager"
 }
 
 // PluginVersion returns the plugin version.

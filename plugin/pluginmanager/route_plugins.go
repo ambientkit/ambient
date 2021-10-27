@@ -1,4 +1,4 @@
-package plugins
+package pluginmanager
 
 import (
 	"net/http"
@@ -16,7 +16,7 @@ type pluginWithSettings struct {
 
 func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {
 	vars := make(map[string]interface{})
-	vars["title"] = "Plugins"
+	vars["title"] = "Plugin Manager"
 	vars["token"] = p.Site.SetCSRF(r)
 
 	plugins, err := p.Site.Plugins()
