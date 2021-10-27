@@ -43,6 +43,10 @@ There is a [library of plugins](plugin) that you can use in your apps or you can
 
 You can follow the [tutorial](cmd/myapp/README.md) to quickly get the sample app up and running locally.
 
+## Plugin Development Guide
+
+You can follow the [Plugin Development Guide](PLUGIN.md) to build your own plugins.
+
 ## Screenshots
 
 Below are screenshots of the sample app with links to the plugins to help explain the architecture.

@@ -10,7 +10,7 @@ import (
 // PluginCore represents the core of any plugin.
 type PluginCore interface {
 	// PluginName should be globally unique. Only lowercase letters, numbers,
-	// and hypens are permitted. Must start with with a letter.
+	// and underscores are permitted. Must start with with a letter.
 	PluginName() string // required, read frequently
 	// PluginVersion must follow https://semver.org/.
 	PluginVersion() string // required, read frequently
