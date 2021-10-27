@@ -25,42 +25,18 @@ Ambient will probably appeal to individual developers or small development teams
   - logger
   - session manager
   - router
-  - pages or API endpoints
   - middleware
+  - template engine
+  - pages or API endpoints
   - content for HTML head, content, navigation, footer, etc.
 - Plugin manager allows you to:
   - Enable/disable a plugin
   - Grant permissions to a plugin
   - Modify the settings for a plugin
 
-## Overview2
-
-Ambient is framework in Go for building web apps using plugins. Over the years, I've found myself copying the same code when building apps and wanted a way to centralize all of it as well as provide a framework for building new functionality so it can easily reused. When building apps, I typically need:
-
-- logger
-- router
-- environment variable package
-- storage system - both in the cloud and local (for dev testing)
-- middleware to log each request
-- style loader
-- etc.
-
-This project started when I wanted to rewrite my blog so I could easily update it and run it using serverless tech. I rewrote the Bear Blog in Go and found myself extending it to add additional capabilities (code highlighter, markdown editor). I found that I had to make the same types of changes throughout the code and there wasn't an easy way to turn it on or off or adjust the settings. I wanted a unified way to do that so I built Ambient to standardize how to extend web apps using plugins.
-
-The current goals:
-
-- plugin system that could add most of the functionality: routes, middleware, session storage, logging, etc.
-- plugin system that could allow other people to easily add new functionality
-- router that supports runtime updates to routes
-- logger that supports colors as well as json output
-- access system where explicit access must be given for plugins to modify the app
-- plugins that could easily be generated for popular tools: Bootstrap, React, Svelte, jQuery, etc.
-
-Pluggable blogging system for a single author. Written in Go and deploys to your own GCP project with a few commands. This project uses `make` to simplify the deployment process.
-
 ## Quickstart on Local
 
-To test out an example website, you can follow these steps.
+To test out an example web app:
 
 - Clone the repository: `git clone git@github.com:josephspurrier/ambient.git`
 - Create a new file called `.env` in the root of the repository with this content:
@@ -95,21 +71,26 @@ AMB_GCP_REGION=us-central1
 # AMB_TIMEZONE=America/New_York
 ```
 
-- To generate the `AMB_SESSION_KEY` variable for .env, run: `make privatekey`. Overwrite the line in the `.env` file.
-- To generate the `AMB_PASSWORD_HASH` variable for .env, run: `make passhash passwordhere`. Replace with your password. Overwrite the line in the `.env` file.
 - To create the session and site files in the storage folder, run: `make local-init`
 - To start the webserver on port 8080, run: `make local-run`
 
-The login page is located at: http://localhost:8080/login/admin.
+The login page is located at: http://localhost:8080/login.
 
 To login, you'll need:
 
 - the default username is: `admin`
 - the password from the .env file for which the `AMB_PASSWORD_HASH` was derived
 
-Once you are logged in, you should see a new menu option call `Dashboard`. From this screen, you'll be able to make changes to the site as we as the home page. To add new posts, click on `Posts` and add the posts or pages from there.
+Once you are logged in, you should see a new menu option call `Plugins`. From this screen, you'll be able to use the Plugin Manager to make changes to the plugin state, permissions, and settings.
 
-## Development
+### Local Development Flag
+
+When `AMB_LOCAL` is set, the following things will happen:
+
+- data storage will be the local filesystem instead of in Google Cloud Storage
+- if you try to access the application, it will listen on all IPs/addresses, instead of redirecting like it does in production
+
+## Development Workflow
 
 If you would like to make changes to the code, I recommend these tools to help streamline your workflow.
 
@@ -131,16 +112,9 @@ export $(egrep -v '^#' .env | xargs)
 export PATH=$PATH:$(pwd)/bin
 ```
 
-You can then use this commands to test and then to deploy.
+You can then use this command to start the web server and monitor for changes:
 
 ```bash
 # Start hot reload. The web application should be available at: http://localhost:8080
 air
 ```
-
-### Local Development Flag
-
-When `AMB_LOCAL` is set, the following things will happen:
-
-- data storage will be the local filesystem instead of in Google Cloud Storage
-- if you try to access the application, it will listen on all IPs/addresses, instead of redirecting like it does in production
