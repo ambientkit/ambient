@@ -69,6 +69,12 @@ AMB_GCP_REGION=us-central1
 ## Optional: set the time zone from here:
 ## https://golang.org/src/time/zoneinfo_abbrs_windows.go
 # AMB_TIMEZONE=America/New_York
+
+## Optional: set the web server port.
+# PORT=8080
+
+## Optional: set the URL prefix if behind a proxy.
+# AMB_URL_PREFIX=/api
 ```
 
 - To create the session and site files in the storage folder, run: `make local-init`
@@ -85,6 +91,8 @@ Once you are logged in, you should see a new menu option call `Plugins`. From th
 
 ### Local Development Flags
 
+You can set the web server `PORT` to values other than `8080`.
+
 When `AMB_LOCAL` is set to `true`:
 
 - data storage will be the local filesystem instead of in Google Cloud Storage
@@ -93,6 +101,8 @@ When `AMB_LOCAL` is set to `true`:
 You can use `envdetect.RunningLocalDev()` to detect if the flag is set to true or not.
 
 When `AMB_TIMEZONE` is set to a timezone like `America/New_York`, the application will use that timezone. This is required if using time-based packages like MFA.
+
+When `AMB_URL_PREFIX` is set to a path like `/api`, the application will server requests from `/api/...`. This is helpful if you are running behind a proxy or are hosting multiple websites from a single URL.
 
 ### Application Settings
 
