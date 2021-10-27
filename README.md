@@ -42,34 +42,34 @@ You can follow the [tutorial](cmd/myapp/README.md) to quickly get the applicatio
 
 Below are screens of the sample application that you'll see if you follow the tutorial.
 
-The terminal shows the [logger plugin](plugin/logruslogger/logger.go) that outputs based on log level.
+The terminal shows the [logger plugin](plugin/logruslogger/logruslogger.go) that outputs based on log level.
 
 ![Terminal](doc/screenshot/terminal.png)
 
-The home screen is simple and demonstrates the [bearcss plugin](plugin/bearcss/bearcss.go) which provides styling.
+The home screen is from the [simplelogin plugin](plugin/simplelogin/simplelogin.go) and demonstrates the styling from the [bearcss plugin](plugin/bearcss/bearcss.go). Routing is handled through the [awayrouter plugin](plugin/awayrouter).
 
 ![Home](doc/screenshot/home.png)
 
-The login page takes a username and password which is from the [simplelogin plugin](plugin/simplelogin/simplelogin.go). The password hash is read from the environment variable: `AMB_PASSWORD_HASH`.
+The login page takes a username and password (handled by the [simplelogin plugin](plugin/simplelogin/simplelogin.go)). The password hash is read from the environment variable: `AMB_PASSWORD_HASH`. The [scssession plugin](plugin/scssession/scssession.go) handles the session creation and stores to the local filesystem, but supports any storage system via a plugin that satisfies the [`SessionStorer`](ambient_sessionstorer.go) interface.
 
 ![Login](doc/screenshot/login.png)
 
-The [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go) provides easy access to modify plugins.
+The [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go) provides an easy way to modify plugins.
 
 ![Plugin Manager](doc/screenshot/pluginmanager.png)
 
-The settings of the [author plugin](plugin/author/author.go) allows you to customize the value.
+The settings page (part of the [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go)) allows you to customize the value that gets displayed in the meta tag that is set by the [author plugin](plugin/author/author.go).
 
 ![Settings](doc/screenshot/settings.png)
 
-The grants page (part of the [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go)) allows you to allow or deny modifications to the application by the plugin.
+The grants page (part of the [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go)) allows you to allow or deny modifications to the application by the [author plugin](plugin/author/author.go).
 
 ![Grants](doc/screenshot/grants.png)
 
-Once enabled, the [author plugin](plugin/author/author.go) modifies the HTML header to add in a meta tag with the value from the settings page.
+Once enabled, the [author plugin](plugin/author/author.go) modifies the HTML header (through the [htmlengine plugin](plugin/htmlengine/htmlengine.go)) to add in a meta tag with the value from the settings page.
 
 ![HTML](doc/screenshot/htmlauthor.png)
 
-The backend storage is provided by the [gcpbucketstorage plugin](plugin/gcpbucketstorage/gcpbucketstorage.go) for the web app is in a JSON file on the local filesystem, but supports any storage system via a plugin that satisfies the [`DataStorer`](ambient_datastorer.go) interface:
+The backend storage is provided by the [gcpbucketstorage plugin](plugin/gcpbucketstorage/gcpbucketstorage.go) and is stored in a JSON file on the local filesystem, but supports any storage system via a plugin that satisfies the [`DataStorer`](ambient_datastorer.go) interface.
 
 ![Storage](doc/screenshot/storage.png)
