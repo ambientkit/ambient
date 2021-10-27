@@ -3,14 +3,18 @@
 This guide will walk you through creating a plugin for Ambient.
 
 - [Minimum Viable Plugin (MVP)](#minimum-viable-plugin-mvp)
-- [Types of Plugins](#types-of-plugins)
+- [Plugin Functions](#plugin-functions)
 	- [Logger](#logger)
 	- [Storage System](#storage-system)
 	- [Session Manager](#session-manager)
 	- [Template Engine](#template-engine)
 	- [Router](#router)
 	- [Middleware](#middleware)
-	- [Other Plugin](#other-plugin)
+	- [Routes](#routes)
+	- [Grant Requests](#grant-requests)
+	- [Settings](#settings)
+	- [Assets](#assets)
+	- [Funcmaps](#funcmaps)
 - [Good Practices](#good-practices)
 - [Misc](#misc)
 
@@ -111,11 +115,11 @@ func Plugins() *ambient.PluginLoader {
 }
 ```
 
-When you start the application, the plugin will not be enabled. You must login and then navigate to: http://localhost:8080/dashboard/plugins. Put a checkmark next to the plugin and then click the **Save** button at the bottom of the page. Your plugin is now enabled! It doesn't do anything so don't get too excited, but you've got the scaffolding of a plugin so on to the next step where you choose the type of plugin to create.
+When you start the application, the plugin will not be enabled. You must login and then navigate to: http://localhost:8080/dashboard/plugins. Put a checkmark next to the plugin and then click the **Save** button at the bottom of the page. Your plugin is now enabled! It doesn't do anything so don't get too excited, but you've got the scaffolding of a plugin so on to the next step where you choose the type of plugin function to use.
 
-## Types of Plugins
+## Plugin Functions
 
-Ambient supports the following types of plugins:
+Ambient supports the following types of plugin functions via the [Plugin interface](ambient.go):
 
 - logger
 - storage system
@@ -123,9 +127,15 @@ Ambient supports the following types of plugins:
 - template engine
 - router
 - middleware
-- other plugin
+- routes
+- grant requests
+- settings
+- assets
+- funcmaps
 
-The main difference between the plugins is what functions are called in them. All the functions listed in the "other plugin" type can be used TBD
+There are also plugins that fall outside this list (most of them). They use the remainder of the functions to modify or interact with the app. Since a single interface is used for all plugins, a single plugin could essentially serve all the purposes, but then it wouldn't reall
+
+The main difference between the plugins is what functions are called in them.
 
 ### Logger
 
@@ -390,42 +400,153 @@ type Handler interface {
 }
 ```
 
-### Other Plugin
+### Routes
 
-An [other plugin](plugin/author/author.go) is a plugin that doesn't fall under any of the other categories.
+The `Routes()` function registers HTTP handlers with the router.
 
-Any plugin that modifies the application must use the `GrantRequests()` function and return the `[]GrantRequest` object. This does apply to any of the plugin types above.
+A [plugin with routes](plugin/simplelogin/simplelogin.go) defined must include the MVP code as well as the `Routes()` function.
 
-To add configurable settings, the plugin must use the `Setting()` function and return the `[]Setting` object. To modify the HTML of responses, the plugin can use the `Assets()` function and return a `[]Asset` object and an `embed.FS` object.
+```go
+// Routes gets routes for the plugin.
+func (p *Plugin) Routes() {
+	p.Mux.Get("/", p.home)
+	p.Mux.Get("/login", p.login)
+	p.Mux.Post("/login", p.loginPost)
+	p.Mux.Get("/dashboard", p.dashboard)
+	p.Mux.Get("/dashboard/logout", p.logout)
+}
+```
+
+The function doesn't return any objects and shouldn't fail either. It also takes a special kind of HTTP handler - one that returns an HTTP status code and an error. A standard HTTP handler doesn't have any returns, but that makes it more difficult to standardize how to write out status codes and output errors so this new function definition improves on it.
+
+```go
+// Home renders the home template.
+func (p *Plugin) Home(w http.ResponseWriter, r *http.Request) (status int, err error) {
+	vars := make(map[string]interface{})
+	vars["title"] = "Home"
+	return p.Render.Page(w, r, assets, "template/content/home", p.funcMap(r), vars)
+}
+```
+
+### Grant Requests
+
+The `GrantRequests()` function returns a list of permissions required by the plugin. The admin of the application must enable each of the permissions.
+
+A [plugin](plugin/prism/prism.go) that needs to make changes to the application or interact with its data must include the MVP code as well as the `GrantRequests()` function.
 
 ```go
 // GrantRequests returns a list of grants requested by the plugin.
 func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 	return []ambient.GrantRequest{
-		{Grant: ambient.GrantPluginSettingRead, Description: "Access to the author name."},
-		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to write a meta tag to the header."},
+		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to add stylesheets and javascript to each page."},
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for accessing stylesheets."},
+		{Grant: ambient.GrantPluginSettingRead, Description: "Read own plugin settings."},
 	}
 }
+```
 
+The function returns a `[]GrantRequest` object. You can see the full list of permissions in [model_grant.go](model_grant.go).
+
+### Settings
+
+The `Settings()` function returns a list of settings that can be edited from the pluginmanager UI.
+
+A [plugin](plugin/simplelogin/simplelogin.go) that has configurable settings should use MVP code as well as the `Settings()` function.
+
+```go
 // Settings returns a list of user settable fields.
 func (p *Plugin) Settings() []ambient.Setting {
 	return []ambient.Setting{
 		{
+			Name:    Username,
+			Default: "admin",
+		},
+		{
+			Name:    Password,
+			Default: p.passwordHash,
+			Type:    ambient.InputPassword,
+			Hide:    true,
+		},
+		{
+			Name: MFAKey,
+			Type: ambient.InputPassword,
+		},
+		{
+			Name:    LoginURL,
+			Default: "admin",
+			Hide:    true,
+		},
+		{
 			Name: Author,
+		},
+		{
+			Name: Subtitle,
+			Hide: true,
+		},
+		{
+			Name: Description,
+			Type: ambient.Textarea,
+		},
+		{
+			Name: Footer,
+			Type: ambient.Textarea,
+			Hide: true,
+		},
+		{
+			Name: AllowHTMLinMarkdown,
+			Type: ambient.Checkbox,
 		},
 	}
 }
+```
 
+You can see all of the available setting types in the [model_setting.go](model_setting.go) file.
+
+### Assets
+
+The `Assets()` function returns a list of assets that can modify the template output.
+
+A [plugin](plugin/simplelogin/simplelogin.go) that has assets should use MVP code as well as the `Assets()` function.
+
+```go
 // Assets returns a list of assets and an embedded filesystem.
 func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
-	name, err := p.Site.PluginSettingString(Author)
-	if err != nil || len(name) == 0 {
-		// Otherwise don't set the assets.
-		return nil, nil
+	arr := make([]ambient.Asset, 0)
+
+	siteTitle, err := p.Site.Title()
+	if err == nil && len(siteTitle) > 0 {
+		arr = append(arr, ambient.Asset{
+			Filetype: ambient.AssetGeneric,
+			Location: ambient.LocationHead,
+			TagName:  "title",
+			Inline:   true,
+			Content:  fmt.Sprintf(`{{if .pagetitle}}{{.pagetitle}} | %v{{else}}%v{{end}}`, siteTitle, siteTitle),
+		})
 	}
 
-	return []ambient.Asset{
-		{
+	siteDescription, err := p.Site.PluginSettingString(Description)
+	if err == nil && len(siteDescription) > 0 {
+		arr = append(arr, ambient.Asset{
+			Filetype:   ambient.AssetGeneric,
+			Location:   ambient.LocationHead,
+			TagName:    "meta",
+			ClosingTag: false,
+			Attributes: []ambient.Attribute{
+				{
+					Name:  "name",
+					Value: "description",
+				},
+				{
+					Name:  "content",
+					Value: fmt.Sprintf("{{if .pagedescription}}{{.pagedescription}}{{else}}%v{{end}}", siteDescription),
+				},
+			},
+		})
+	}
+
+	siteAuthor, err := p.Site.PluginSettingString(Author)
+	if err == nil && len(siteAuthor) > 0 {
+		arr = append(arr, ambient.Asset{
 			Filetype:   ambient.AssetGeneric,
 			Location:   ambient.LocationHead,
 			TagName:    "meta",
@@ -437,11 +558,49 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 				},
 				{
 					Name:  "content",
-					Value: name,
+					Value: siteAuthor,
 				},
 			},
-		},
-	}, nil
+		})
+	}
+
+	arr = append(arr, ambient.Asset{
+		Path:     "template/partial/nav.tmpl",
+		Filetype: ambient.AssetGeneric,
+		Location: ambient.LocationHeader,
+		Inline:   true,
+	})
+
+	arr = append(arr, ambient.Asset{
+		Path:     "template/partial/footer.tmpl",
+		Filetype: ambient.AssetGeneric,
+		Location: ambient.LocationFooter,
+		Inline:   true,
+	})
+
+	return arr, &assets
+}
+```
+
+You can see all of the available setting types in the [asset.go](asset.go) file.
+
+### Funcmaps
+
+The `FuncMap()` function returns a `template.FuncMap` that can be used in the templates.
+
+A [plugin](plugin/disqus/diqus.go) that needs a FuncMap for templates should use MVP code as well as the `Assets()` function.
+
+```go
+// FuncMap returns a callable function when passed in a request.
+func (p *Plugin) FuncMap() func(r *http.Request) template.FuncMap {
+	return func(r *http.Request) template.FuncMap {
+		fm := make(template.FuncMap)
+		fm["disqus_PageURL"] = func() string {
+			return r.URL.Path
+		}
+
+		return fm
+	}
 }
 ```
 
