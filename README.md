@@ -18,7 +18,7 @@ Ambient will probably appeal to individual developers or small development teams
 
 ### How does it work?
 
-- Ambient is a web server that accepts an app name, app version, logger, storage system, session manager, and a collection of plugins.
+- Ambient is a web server that accepts an app name, app version, logger, storage system, and a collection of plugins (which must include a session manager, router, template engine).
 - Plugins have to satisfy interfaces in order to work with Ambient.
 - Plugins must request permissions and the admin must grant each permission.
 - Plugins can modify almost any part of a web application:

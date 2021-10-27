@@ -32,13 +32,13 @@ func main() {
 	// ambientApp.SetLogLevel(ambient.LogLevelFatal)
 
 	// Add template debug information.
-	ambientApp.SetDebugTemplates(true)
+	// ambientApp.SetDebugTemplates(true)
+
+	// Enable the trusted plugins.
+	ambientApp.GrantAccess(plugins)
 
 	// Get the logger.
 	log := ambientApp.Logger()
-
-	// Enable the trusted site plugins.
-	ambientApp.GrantAccess(plugins)
 
 	// Load the plugins and return the handler.
 	mux, err := ambientApp.Handler()

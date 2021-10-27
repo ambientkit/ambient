@@ -14,11 +14,6 @@ var (
 	appVersion = "1.0"
 )
 
-const (
-	// LoginURL allows user to set the login URL.
-	LoginURL = "Login URL"
-)
-
 func main() {
 	// Create the ambient app.
 	plugins := app.Plugins()
@@ -30,11 +25,11 @@ func main() {
 		stdlog.Fatalln(err.Error())
 	}
 
+	// Enable the trusted plugins.
+	ambientApp.GrantAccess(plugins)
+
 	// Get the logger.
 	log := ambientApp.Logger()
-
-	// Enable the trusted site plugins.
-	ambientApp.GrantAccess(plugins)
 
 	// Load the plugins and return the handler.
 	mux, err := ambientApp.Handler()
