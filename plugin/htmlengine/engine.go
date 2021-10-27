@@ -1,4 +1,4 @@
-package htmltemplate
+package htmlengine
 
 import (
 	"crypto/rand"
@@ -10,7 +10,7 @@ import (
 	"runtime"
 
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/htmltemplate/lib/templatebuffer"
+	"github.com/josephspurrier/ambient/plugin/htmlengine/lib/templatebuffer"
 )
 
 // Engine represents a HTML template engine.

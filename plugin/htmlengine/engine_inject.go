@@ -1,9 +1,9 @@
-package htmltemplate
+package htmlengine
 
 import (
 	"html/template"
 
-	"github.com/josephspurrier/ambient/plugin/htmltemplate/lib/templatebuffer"
+	"github.com/josephspurrier/ambient/plugin/htmlengine/lib/templatebuffer"
 )
 
 func (te *Engine) inject(t *template.Template, field string, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error) {

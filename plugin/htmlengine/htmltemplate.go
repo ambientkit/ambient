@@ -1,6 +1,5 @@
-// Package htmltemplate provides a HTML template engine
-// for an Ambient application.
-package htmltemplate
+// Package htmlengine provides a HTML template engine for an Ambient application.
+package htmlengine
 
 import (
 	"embed"
@@ -17,7 +16,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new htmltemplate plugin.
+// New returns a new htmlengine plugin.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},
@@ -26,7 +25,7 @@ func New() *Plugin {
 
 // PluginName returns the plugin name.
 func (p *Plugin) PluginName() string {
-	return "htmltemplate"
+	return "htmlengine"
 }
 
 // PluginVersion returns the plugin version.

@@ -15,7 +15,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/disqus"
 	"github.com/josephspurrier/ambient/plugin/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/gzipresponse"
-	"github.com/josephspurrier/ambient/plugin/htmltemplate"
+	"github.com/josephspurrier/ambient/plugin/htmlengine"
 	"github.com/josephspurrier/ambient/plugin/logrequest"
 	"github.com/josephspurrier/ambient/plugin/notrailingslash"
 	"github.com/josephspurrier/ambient/plugin/pluginmanager"
@@ -54,7 +54,7 @@ func Plugins() *ambient.PluginLoader {
 
 	return &ambient.PluginLoader{
 		Router:         awayrouter.New(nil),
-		TemplateEngine: htmltemplate.New(),
+		TemplateEngine: htmlengine.New(),
 		// Trusted plugins are required to boot the application so they will be
 		// given full access.
 		TrustedPlugins: map[string]bool{
