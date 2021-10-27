@@ -35,25 +35,29 @@ gcp-push:
 		--platform managed \
 		--allow-unauthenticated \
 		--region ${AMB_GCP_REGION} ${AMB_GCP_CLOUDRUN_NAME} \
-		--update-env-vars AMB_USERNAME=${AMB_USERNAME} \
 		--update-env-vars AMB_SESSION_KEY=${AMB_SESSION_KEY} \
 		--update-env-vars AMB_PASSWORD_HASH=${AMB_PASSWORD_HASH} \
-		--update-env-vars AMB_MFA_KEY="${AMB_MFA_KEY}" \
 		--update-env-vars AMB_GCP_PROJECT_ID=${AMB_GCP_PROJECT_ID} \
-		--update-env-vars AMB_GCP_BUCKET_NAME=${AMB_GCP_BUCKET_NAME} \
-		--update-env-vars AMB_ALLOW_HTML=${AMB_ALLOW_HTML}
+		--update-env-vars AMB_GCP_BUCKET_NAME=${AMB_GCP_BUCKET_NAME}
 
 .PHONY: privatekey
 privatekey:
 	@echo Generating private key for encrypting sessions.
 	@echo You can paste private key this into your .env file:
-	@go run cmd/privatekey/main.go
+	@go run plugin/scssession/cmd/privatekey/main.go
+
+# Save the ARGS.
+# https://stackoverflow.com/a/14061796
+ifeq (mfa,$(firstword $(MAKECMDGOALS)))
+  ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  $(eval $(ARGS):;@:)
+endif
 
 .PHONY: mfa
 mfa:
 	@echo Generating MFA for user.
 	@echo You can paste private key this into your .env file:
-	@go run cmd/mfa/main.go
+	@go run plugin/bearblog/cmd/mfa/main.go ${ARGS}
 
 # Save the ARGS.
 # https://stackoverflow.com/a/14061796
@@ -66,7 +70,7 @@ endif
 passhash:
 	@echo Generating password hash.
 	@echo You can paste private key this into your .env file:
-	@go run cmd/passhash/main.go ${ARGS}
+	@go run plugin/bearblog/cmd/passhash/main.go ${ARGS}
 
 .PHONY: local-init
 local-init:

@@ -21,15 +21,17 @@ func init() {
 }
 
 func main() {
-	username := os.Getenv("AMB_USERNAME")
-	if len(username) == 0 {
-		log.Fatalln("Environment variable missing:", "AMB_USERNAME")
+	if len(os.Args) == 1 {
+		log.Fatalln("Parameters missing:", "username issuer")
 	}
-
-	issuer := os.Getenv("AMB_ISSUER")
-	if len(issuer) == 0 {
-		log.Fatalln("Environment variable missing:", "AMB_ISSUER")
+	if len(os.Args) < 2 {
+		log.Fatalln("Parameter missing:", "username")
 	}
+	if len(os.Args) < 3 {
+		log.Fatalln("Parameter missing:", "issuer")
+	}
+	username := os.Args[1]
+	issuer := os.Args[2]
 
 	// Generate a MFA.
 	URI, secret, err := totp.GenerateURL(username, issuer)
