@@ -21,7 +21,7 @@ Ambient will probably appeal to individual developers or small development teams
 Ambient is a web server that accepts an app name, app version, logger, storage system, and a collection of plugins (which must include a session manager, router, and template engine).
 
 Plugins:
-- have to satisfy interfaces in order to work with Ambient.
+- have to satisfy [interfaces](ambient.go) in order to work with Ambient.
 - must request permissions and the admin must grant each permission.
 - can modify or interact with almost any part of a web app:
   - logger
@@ -32,7 +32,7 @@ Plugins:
   - pages or API endpoints
   - content for HTML head, content, navigation, footer, etc.
 
-A pluginmanager is included that allows you to:
+A [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go) is included that allows you to:
   - Enable/disable a plugin
   - Grant permissions to a plugin
   - Modify the settings for a plugin
@@ -45,13 +45,13 @@ You can follow the [tutorial](cmd/myapp/README.md) to quickly get the sample app
 
 ## Screenshots
 
-Below are screenshots of the sample app and with links to the plugin to help explain the architecture.
+Below are screenshots of the sample app with links to the plugins to help explain the architecture.
 
 The terminal shows the [logger plugin](plugin/logruslogger/logruslogger.go) that outputs based on log level.
 
 ![Terminal](doc/screenshot/terminal.png)
 
-The home screen is from the [simplelogin plugin](plugin/simplelogin/simplelogin.go) and demonstrates the styling from the [bearcss plugin](plugin/bearcss/bearcss.go). Routing is handled through the [awayrouter plugin](plugin/awayrouter).
+The home screen is from the [simplelogin plugin](plugin/simplelogin/simplelogin.go) and demonstrates the styling from the [bearcss plugin](plugin/bearcss/bearcss.go). Routing is handled through the [awayrouter plugin](plugin/awayrouter/awayrouter.go).
 
 ![Home](doc/screenshot/home.png)
 
