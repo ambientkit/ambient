@@ -44,7 +44,7 @@ To test out an example web app:
 ```bash
 # Local Development
 ## Set this to any value to allow you to do testing locally without GCP access.
-## See 'Local Development Flag' section below for more information.
+## See 'Local Development Flags' section below for more information.
 AMB_LOCAL=true
 
 # App Configuration
@@ -83,12 +83,35 @@ To login, you'll need:
 
 Once you are logged in, you should see a new menu option call `Plugins`. From this screen, you'll be able to use the Plugin Manager to make changes to the plugin state, permissions, and settings.
 
-### Local Development Flag
+### Local Development Flags
 
-When `AMB_LOCAL` is set, the following things will happen:
+When `AMB_LOCAL` is set to `true`:
 
 - data storage will be the local filesystem instead of in Google Cloud Storage
 - if you try to access the application, it will listen on all IPs/addresses, instead of redirecting like it does in production
+
+You can use `envdetect.RunningLocalDev()` to detect if the flag is set to true or not.
+
+When `AMB_TIMEZONE` is set to a timezone like `America/New_York`, the application will use that timezone. This is required if using time-based packages like MFA.
+
+### Application Settings
+
+In the main.go file, you can modify your log level:
+
+```go
+ambientApp, err := ambient.NewApp(...)
+ambientApp.SetLogLevel(ambient.LogLevelDebug)
+ambientApp.SetLogLevel(ambient.LogLevelInfo)
+ambientApp.SetLogLevel(ambient.LogLevelError)
+ambientApp.SetLogLevel(ambient.LogLevelFatal)
+```
+
+In the main.go file, you can enable `span` tags around HTML elements to determine which content is loaded from which plugins:
+
+```go
+ambientApp, err := ambient.NewApp(...)
+ambientApp.SetDebugTemplates(true)
+```
 
 ## Development Workflow
 
