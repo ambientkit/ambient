@@ -10,18 +10,20 @@ Ambient is framework in Go for building web apps using plugins. You can use the 
 
 ### Why was this created?
 
-Each time I write a new web app, I reuse much of the same foundational code. I wrote Ambient to help me standardize existing code, enable/disable packages on demand, modify plugin behaviors using settings, and build new functionality in a reusable way.
+Each time I write a new web app, there is a lot of reuse of foundational code. I created Ambient to help myself standardize existing code, enable/disable packages on demand, modify plugin behaviors using a configurable settings page, and build new functionality in a reusable way.
 
 ### Who is this for?
 
-Ambient will probably appeal to individual developers or small development teams who need to build one or many web apps using the same backend framework. Large teams will probably want a framework more established.
+Ambient will probably appeal to individual developers or small development teams who need to build one or many web apps using a pluggable framework. Large teams will probably want a framework more established - but if you find it works well, drop me a [line](issues/new) 😁 .
 
 ### How does it work?
 
-- Ambient is a web server that accepts an app name, app version, logger, storage system, and a collection of plugins (which must include a session manager, router, template engine).
-- Plugins have to satisfy interfaces in order to work with Ambient.
-- Plugins must request permissions and the admin must grant each permission.
-- Plugins can modify almost any part of a web application:
+Ambient is a web server that accepts an app name, app version, logger, storage system, and a collection of plugins (which must include a session manager, router, and template engine).
+
+Plugins:
+- have to satisfy interfaces in order to work with Ambient.
+- must request permissions and the admin must grant each permission.
+- can modify or interact with almost any part of a web app:
   - logger
   - session manager
   - router
@@ -29,18 +31,21 @@ Ambient will probably appeal to individual developers or small development teams
   - template engine
   - pages or API endpoints
   - content for HTML head, content, navigation, footer, etc.
-- Plugin manager allows you to:
+
+A pluginmanager is included that allows you to:
   - Enable/disable a plugin
   - Grant permissions to a plugin
   - Modify the settings for a plugin
 
+There is a [library of plugins](plugins) that you can use in your apps or you can use to learn how create your own plugins.
+
 ## Quickstart
 
-You can follow the [tutorial](cmd/myapp/README.md) to quickly get the application up and running locally.
+You can follow the [tutorial](cmd/myapp/README.md) to quickly get the sample app up and running locally.
 
 ## Screenshots
 
-Below are screens of the sample application that you'll see if you follow the tutorial.
+Below are screenshots of the sample app and with links to the plugin to help explain the architecture.
 
 The terminal shows the [logger plugin](plugin/logruslogger/logruslogger.go) that outputs based on log level.
 
@@ -62,7 +67,7 @@ The settings page (part of the [pluginmanager plugin](plugin/pluginmanager/plugi
 
 ![Settings](doc/screenshot/settings.png)
 
-The grants page (part of the [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go)) allows you to allow or deny modifications to the application by the [author plugin](plugin/author/author.go).
+The grants page (part of the [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go)) allows you to allow or deny modifications to the app by the [author plugin](plugin/author/author.go).
 
 ![Grants](doc/screenshot/grants.png)
 
