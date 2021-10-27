@@ -42,34 +42,34 @@ You can follow the [tutorial](cmd/myapp/README.md) to quickly get the applicatio
 
 Below are screens of the sample application that you'll see if you follow the tutorial.
 
-The terminal shows the logger that outputs based on log level.
+The terminal shows the [logger plugin](plugin/logruslogger/logger.go) that outputs based on log level.
 
 ![Terminal](doc/screenshot/terminal.png)
 
-The home screen uses the Bear Blog CSS for styling.
+The home screen is simple and demonstrates the [bearcss plugin](plugin/bearcss/bearcss.go) which provides styling.
 
 ![Home](doc/screenshot/home.png)
 
-The login page takes a username and password. The password hash is read from the environment variable: `AMB_PASSWORD_HASH`.
+The login page takes a username and password which is from the [simplelogin plugin](plugin/simplelogin/simplelogin.go). The password hash is read from the environment variable: `AMB_PASSWORD_HASH`.
 
 ![Login](doc/screenshot/login.png)
 
-The Plugin Manager provides easy access to plugins.
+The [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go) provides easy access to modify plugins.
 
 ![Plugin Manager](doc/screenshot/pluginmanager.png)
 
-The settings of the Author plugin allows you to customize the value.
+The settings of the [author plugin](plugin/author/author.go) allows you to customize the value.
 
 ![Settings](doc/screenshot/settings.png)
 
-The grants page allows you to allow or deny modifications to the application by the plugin.
+The grants page (part of the [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go)) allows you to allow or deny modifications to the application by the plugin.
 
 ![Grants](doc/screenshot/grants.png)
 
-The plugin has modified the HTML header to add in a meta tag for the author.
+Once enabled, the [author plugin](plugin/author/author.go) modifies the HTML header to add in a meta tag with the value from the settings page.
 
 ![HTML](doc/screenshot/htmlauthor.png)
 
-The [backend storage](plugin/gcpbucketstorage/gcpbucketstorage.go) for the web app is in a JSON file on the local filesystem, but supports any storage system via a plugin that satisfies the [`DataStorer`](ambient_datastorer.go) interface:
+The backend storage is provided by the [gcpbucketstorage plugin](plugin/gcpbucketstorage/gcpbucketstorage.go) for the web app is in a JSON file on the local filesystem, but supports any storage system via a plugin that satisfies the [`DataStorer`](ambient_datastorer.go) interface:
 
 ![Storage](doc/screenshot/storage.png)
