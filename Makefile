@@ -1,44 +1,18 @@
 # This Makefile is an easy way to run common operations.
 # Execute commands like this:
 # * make
-# * make gcp-init
-# * make gcp-push
-# * make privatekey
-# * make mfa
-# * make passhash passwordhere
-# * make local-init
-# * make local-run
+# * make storage
+# * make run
 
 # Load the environment variables.
 include .env
 
 .PHONY: default
-default: gcp-push
+default: run
 
 ################################################################################
-# Deploy application
+# Setup application
 ################################################################################
-
-.PHONY: gcp-init
-gcp-init:
-	@echo Pushing the initial files to Google Cloud Storage.
-	gsutil mb -p $(AMB_GCP_PROJECT_ID) -l ${AMB_GCP_REGION} -c Standard gs://${AMB_GCP_BUCKET_NAME}
-	gsutil versioning set on gs://${AMB_GCP_BUCKET_NAME}
-	gsutil cp testdata/empty.json gs://${AMB_GCP_BUCKET_NAME}/storage/site.json
-	gsutil cp testdata/empty.json gs://${AMB_GCP_BUCKET_NAME}/storage/session.json
-
-.PHONY: gcp-push
-gcp-push:
-	@echo Pushing to Google Cloud Run.
-	gcloud builds submit --tag gcr.io/$(AMB_GCP_PROJECT_ID)/${AMB_GCP_IMAGE_NAME}
-	gcloud run deploy --image gcr.io/$(AMB_GCP_PROJECT_ID)/${AMB_GCP_IMAGE_NAME} \
-		--platform managed \
-		--allow-unauthenticated \
-		--region ${AMB_GCP_REGION} ${AMB_GCP_CLOUDRUN_NAME} \
-		--update-env-vars AMB_SESSION_KEY=${AMB_SESSION_KEY} \
-		--update-env-vars AMB_PASSWORD_HASH=${AMB_PASSWORD_HASH} \
-		--update-env-vars AMB_GCP_PROJECT_ID=${AMB_GCP_PROJECT_ID} \
-		--update-env-vars AMB_GCP_BUCKET_NAME=${AMB_GCP_BUCKET_NAME}
 
 .PHONY: privatekey
 privatekey:
@@ -72,17 +46,42 @@ passhash:
 	@echo You can paste private key this into your .env file:
 	@go run plugin/bearblog/cmd/passhash/main.go ${ARGS}
 
-.PHONY: local-init
-local-init:
+.PHONY: storage
+storage:
 	@echo Creating session and site storage files locally.
-	cp cmd/myapp/storage/initial/session.bin storage/session.bin
-	cp cmd/myapp/storage/initial/site.json storage/site.json
+	cp cmd/myapp/storage/initial/session.bin cmd/myapp/storage/session.bin
+	cp cmd/myapp/storage/initial/site.json cmd/myapp/storage/site.json
 
-.PHONY: local-run
-local-run:
+.PHONY: run
+run:
 	@echo Starting local server.
-	LOCALDEV=true go run main.go
+	LOCALDEV=true go run cmd/myapp/main.go
 
 .PHONY: amb
 amb:
 	go run cmd/amb/main.go
+
+################################################################################
+# Deploy application
+################################################################################
+
+.PHONY: gcp-init
+gcp-init:
+	@echo Pushing the initial files to Google Cloud Storage.
+	gsutil mb -p $(AMB_GCP_PROJECT_ID) -l ${AMB_GCP_REGION} -c Standard gs://${AMB_GCP_BUCKET_NAME}
+	gsutil versioning set on gs://${AMB_GCP_BUCKET_NAME}
+	gsutil cp testdata/empty.json gs://${AMB_GCP_BUCKET_NAME}/storage/site.json
+	gsutil cp testdata/empty.json gs://${AMB_GCP_BUCKET_NAME}/storage/session.json
+
+.PHONY: gcp-push
+gcp-push:
+	@echo Pushing to Google Cloud Run.
+	gcloud builds submit --tag gcr.io/$(AMB_GCP_PROJECT_ID)/${AMB_GCP_IMAGE_NAME}
+	gcloud run deploy --image gcr.io/$(AMB_GCP_PROJECT_ID)/${AMB_GCP_IMAGE_NAME} \
+		--platform managed \
+		--allow-unauthenticated \
+		--region ${AMB_GCP_REGION} ${AMB_GCP_CLOUDRUN_NAME} \
+		--update-env-vars AMB_SESSION_KEY=${AMB_SESSION_KEY} \
+		--update-env-vars AMB_PASSWORD_HASH=${AMB_PASSWORD_HASH} \
+		--update-env-vars AMB_GCP_PROJECT_ID=${AMB_GCP_PROJECT_ID} \
+		--update-env-vars AMB_GCP_BUCKET_NAME=${AMB_GCP_BUCKET_NAME}
