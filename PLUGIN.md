@@ -1,6 +1,11 @@
-# Plugin Development Guide
+# Plugin Development Guide <!-- omit in toc -->
 
 This guide will walk you through creating a plugin for Ambient.
+
+- [Minimum Viable Plugin (MVP)](#minimum-viable-plugin-mvp)
+- [Types of Plugins](#types-of-plugins)
+	- [Logger Plugin](#logger-plugin)
+- [Things to Know](#things-to-know)
 
 ## Minimum Viable Plugin (MVP)
 
@@ -85,7 +90,7 @@ func Plugins() *ambient.PluginLoader {
 			"bearcss":       true, // Bear Blog styling.
 		},
 		Plugins: []ambient.Plugin{
-            pluginmanager.New(),           // Page to manage plugins.
+			pluginmanager.New(),           // Page to manage plugins.
 			simplelogin.New(passwordHash), // Simple login page.
 			bearcss.New(),                 // Bear Blog styling.
 			mvp.New(),                     // Your new plugin.
@@ -99,7 +104,7 @@ func Plugins() *ambient.PluginLoader {
 }
 ```
 
-When you start the application, the plugin will not be enabled. You must navigate to: http://localhost:8080/dashboard/plugins. Put a checkmark next to the plugin and then click the **Save** button at the bottom of the page. Your plugin is now enabled! It doesn't do anything so don't get too excited, but you've got the scaffolding of a plugin so on to the next step where you choose the type of plugin to create.
+When you start the application, the plugin will not be enabled. You must login and then navigate to: http://localhost:8080/dashboard/plugins. Put a checkmark next to the plugin and then click the **Save** button at the bottom of the page. Your plugin is now enabled! It doesn't do anything so don't get too excited, but you've got the scaffolding of a plugin so on to the next step where you choose the type of plugin to create.
 
 ## Types of Plugins
 
