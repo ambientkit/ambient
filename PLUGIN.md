@@ -4,8 +4,15 @@ This guide will walk you through creating a plugin for Ambient.
 
 - [Minimum Viable Plugin (MVP)](#minimum-viable-plugin-mvp)
 - [Types of Plugins](#types-of-plugins)
-	- [Logger Plugin](#logger-plugin)
-- [Things to Know](#things-to-know)
+	- [Logger](#logger)
+	- [Storage System](#storage-system)
+	- [Session Manager](#session-manager)
+	- [Template engine](#template-engine)
+	- [Router](#router)
+	- [Middleware](#middleware)
+	- [Generic Plugin](#generic-plugin)
+- [Good Practices](#good-practices)
+- [Misc](#misc)
 
 ## Minimum Viable Plugin (MVP)
 
@@ -108,7 +115,7 @@ When you start the application, the plugin will not be enabled. You must login a
 
 ## Types of Plugins
 
-You need to determine which kind of plugin you want to create:
+Ambient supports the following types of plugins:
 
 - logger
 - storage system
@@ -118,9 +125,13 @@ You need to determine which kind of plugin you want to create:
 - middleware
 - generic plugin
 
-### Logger Plugin
+The main difference between the plugins is what functions are called in them
 
-A [logger plugin](plugin/logruslogger/logruslogger.go) must include the MVP code as well as the `Logger` function.
+### Logger
+
+A [logger](plugin/logruslogger/logruslogger.go) is what is used to output messages at different levels: fatal, error, warn, info, and debug. It's helpful when you can provide more information during troubleshooting by changing the log level because you can get to the bottom of issues quicker. The logger is used by the Ambient internal system and is made available 
+
+The logger plugin must include the MVP code as well as the `Logger` function.
 
 ```go
 // Logger returns a logger.
@@ -174,9 +185,30 @@ const (
 )
 ```
 
+### Storage System
 
-## Things to Know
+A [storage system](plugin/gcpbucketstorage/gcpbucketstorage.go) is what is used to store the web app settings (title, content, scheme, URL, etc.) as well as plugin status (enabled/disabled), settings, and permissions granted.
+
+
+
+### Session Manager
+
+### Template engine
+
+### Router
+
+### Middleware
+
+### Generic Plugin
+
+## Good Practices
+
+- Use the Ambient logger with all it's different levels: fatal, error, warn, info, and debug. You shouldn't use `log` or `fmt` package to output any messages because they are not standardized.
+- If you run background jobs in your plugin, make sure you implement the `Disable()` function to stop the background job.
+- When creating a funcmap, you must prefix each one with your plugin name so there are no collisions in the templates. An error message will be throw if any of the funcmaps are not named properly.
+- You must return every permission your plugin needs to use in the `GrantRequests()` function. Otherwise, the plugin will not work properly when enabled.
+
+## Misc
 
 - How to use the logger
 - How to use the router
-- 
