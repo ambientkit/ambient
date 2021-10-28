@@ -1,5 +1,4 @@
-// Package gzipresponse provides gzip content compression
-// for an Ambient application.
+// Package gzipresponse is an Ambient plugin that provides gzip content compression midddleware.
 package gzipresponse
 
 import (
@@ -14,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new gzip plugin.
+// New returns an Ambient plugin that provides gzip content compression midddleware.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

@@ -1,5 +1,4 @@
-// Package viewport provides viewport functionality
-// for an Ambient application.
+// Package viewport is an Ambient plugin that sets a viewport meta tag in the HTML header.
 package viewport
 
 import (
@@ -14,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new viewport plugin.
+// New returns an Ambient plugin that sets a viewport meta tag in the HTML header.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

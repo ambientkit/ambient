@@ -1,5 +1,4 @@
-// Package bearcss provides styles from the Bear Blog (https://bearblog.dev/)
-// for an Ambient application.
+// Package bearcss is an Ambient plugin that provides styles from the Bear Blog (https://bearblog.dev/).
 package bearcss
 
 import (
@@ -17,7 +16,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new bearcss plugin.
+// New returns an Ambient plugin that provides styles from the Bear Blog (https://bearblog.dev/).
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

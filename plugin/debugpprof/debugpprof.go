@@ -1,5 +1,4 @@
-// Package debugpprof provides pprof functionality
-// for an Ambient application.
+// Package debugpprof is an Ambient plugin that provides pprof functionality.
 package debugpprof
 
 import (
@@ -15,7 +14,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new debugpprof plugin.
+// New returns an Ambient plugin that provides pprof functionality.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

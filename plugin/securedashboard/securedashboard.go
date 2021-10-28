@@ -1,5 +1,4 @@
-// Package securedashboard prevent unauthenticated access to the /dashboard routes
-// for an Ambient application.
+// Package securedashboard is an Ambient plugins that prevents unauthenticated access to the /dashboard routes.
 package securedashboard
 
 import (
@@ -15,7 +14,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new securedashboard plugin.
+// New returns an Ambient plugins that prevents unauthenticated access to the /dashboard routes.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

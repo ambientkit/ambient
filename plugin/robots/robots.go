@@ -1,5 +1,4 @@
-// Package robots provides robots functionality
-// for an Ambient application.
+// Package robots is an Ambient plugin that serves a robots.txt file.
 package robots
 
 import "github.com/josephspurrier/ambient"
@@ -10,7 +9,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new robots plugin.
+// New returns an Ambient plugin that serves a robots.txt file.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

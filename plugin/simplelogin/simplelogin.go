@@ -1,4 +1,4 @@
-// Package simplelogin provides a basic login page for an Ambient application.
+// Package simplelogin is an Ambient plugin that provides a basic website template with a login page.
 package simplelogin
 
 import (
@@ -21,7 +21,7 @@ type Plugin struct {
 	passwordHash string
 }
 
-// New returns a new hello plugin.
+// New returns an Ambient plugin that provides a basic website template with a login page.
 func New(passwordHash string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

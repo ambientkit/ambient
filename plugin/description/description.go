@@ -1,5 +1,4 @@
-// Package description provides description functionality
-// for an Ambient application.
+// Package description is an Ambient plugin that sets a description meta tag in the HTML header.
 package description
 
 import (
@@ -15,7 +14,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new description plugin.
+// New returns an Ambient plugin that sets a description meta tag in the HTML header.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

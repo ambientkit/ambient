@@ -1,5 +1,4 @@
-// Package sitemap provides sitemap functionality
-// for an Ambient application.
+// Package sitemap is an Ambient plugin that provides a sitemap.
 package sitemap
 
 import "github.com/josephspurrier/ambient"
@@ -10,7 +9,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new sitemap plugin.
+// New returns an Ambient plugin that provides a sitemap.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

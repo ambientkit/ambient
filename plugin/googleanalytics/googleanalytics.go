@@ -1,5 +1,4 @@
-// Package googleanalytics provides Google Analytics tracking
-// for an Ambient application.
+// Package googleanalytics is an Ambient plugin that provides Google Analytics tracking.
 package googleanalytics
 
 import (
@@ -18,7 +17,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new googleanalytics plugin.
+// New returns an Ambient plugin that provides Google Analytics tracking.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

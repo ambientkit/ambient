@@ -1,5 +1,4 @@
-// Package styles provides a styles page
-// for an Ambient application.
+// Package styles is an Ambient plugin that provides a page to edit styles.
 package styles
 
 import (
@@ -14,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new styles plugin.
+// New returns an Ambient plugin that provides a page to edit styles.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

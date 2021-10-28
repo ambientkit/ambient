@@ -1,5 +1,4 @@
-// Package notrailingslash removes trailing slash from requests
-// for an Ambient application.
+// Package notrailingslash is an Ambient plugin with middleware that removes trailing slashes from requests.
 package notrailingslash
 
 import (
@@ -22,7 +21,7 @@ func New() *Plugin {
 	}
 }
 
-// PluginName returns the plugin name.
+// PluginName an Ambient plugin with middleware that removes trailing slashes from requests.
 func (p *Plugin) PluginName() string {
 	return "notrailingslash"
 }

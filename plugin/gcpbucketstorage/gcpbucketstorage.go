@@ -1,5 +1,4 @@
-// Package gcpbucketstorage provides GCP storage and local when AMB_LOCAL is set
-// for an Ambient application.
+// Package gcpbucketstorage is an Ambient plugin that provides GCP storage and local storage when AMB_LOCAL is set.
 package gcpbucketstorage
 
 import (
@@ -17,7 +16,7 @@ type Plugin struct {
 	sessionPath string
 }
 
-// New returns a new gcpbucketstorage plugin.
+// New returns an Ambient plugin that provides GCP storage and local storage when AMB_LOCAL is set.
 func New(sitePath string, sessionPath string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

@@ -1,5 +1,4 @@
-// Package rssfeed provides rss feed functionality
-// for an Ambient application.
+// Package rssfeed is an Ambient plugin that provides an RSS feed.
 package rssfeed
 
 import (
@@ -14,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new rssfeed plugin.
+// New returns an Ambient plugin that provides an RSS feed.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

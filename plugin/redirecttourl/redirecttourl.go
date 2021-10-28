@@ -1,5 +1,4 @@
-// Package redirecttourl redirects to the correct site URL
-// for an Ambient application.
+// Package redirecttourl is an Ambient plugin with middlware that redirects to the correct site URL.
 package redirecttourl
 
 import (
@@ -14,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new notrailingslash plugin.
+// New returns an Ambient plugin with middlware that redirects to the correct site URL.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

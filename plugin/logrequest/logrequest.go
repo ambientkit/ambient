@@ -1,5 +1,4 @@
-// Package logrequest provides a request logging
-// for an Ambient application.
+// Package logrequest is an Ambient plugin that provides request logging middleware.
 package logrequest
 
 import (
@@ -14,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new logrequest plugin.
+// New an Ambient plugin that provides request logging middleware.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

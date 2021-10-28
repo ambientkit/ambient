@@ -1,5 +1,4 @@
-// Package charset provides charset functionality
-// for an Ambient application.
+// Package charset is an Ambient plugin that sets a charset meta tag in the HTML header.
 package charset
 
 import (
@@ -14,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new charset plugin.
+// New returns an Ambient plugin that sets a charset meta tag in the HTML header.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

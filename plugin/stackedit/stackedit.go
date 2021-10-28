@@ -1,5 +1,4 @@
-// Package stackedit provides a markdown editor to content blocks for an Ambient
-// application.
+// Package stackedit is an Ambient plugin that provides a markdown editor using StackEdit.
 package stackedit
 
 import (
@@ -17,7 +16,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new stackedit plugin.
+// New returns an Ambient plugin that provides a markdown editor using StackEdit.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

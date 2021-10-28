@@ -1,4 +1,4 @@
-// Package pluginmanager provides a plugin management page for an Ambient application.
+// Package pluginmanager is an Ambient plugin that provides a plugin management system.
 package pluginmanager
 
 import (
@@ -16,7 +16,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new plugins plugin.
+// New returns an Ambient plugin that provides a plugin management system.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

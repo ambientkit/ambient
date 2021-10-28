@@ -1,5 +1,4 @@
-// Package proxyrequest provides a request logging
-// for an Ambient application.
+// Package proxyrequest is an Ambient plugin with middleware that proxies requests.
 package proxyrequest
 
 import (
@@ -21,7 +20,7 @@ type Plugin struct {
 	handlerUI http.Handler
 }
 
-// New returns a new proxyrequest plugin.
+// New returns an Ambient plugin with middleware that proxies requests.
 func New(urlForProxy *url.URL, prefixForAPI string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

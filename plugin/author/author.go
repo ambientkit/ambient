@@ -1,5 +1,4 @@
-// Package author provides author functionality
-// for an Ambient application.
+// Package author is an Ambient plugin that sets an author meta tag in the HTML header.
 package author
 
 import (
@@ -14,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new author plugin.
+// New returns an Ambient plugin that sets an author meta tag in the HTML header.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

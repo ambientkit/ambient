@@ -1,5 +1,4 @@
-// Package uptimerobotok sends 200 when a HEAD request is sent to /
-// for an Ambient application.
+// Package uptimerobotok is an Ambient plugin to support UptimeRobot that sends a 200 status code when a HEAD request is sent to /.
 package uptimerobotok
 
 import (
@@ -14,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new uptimerobotok plugin.
+// New returns an Ambient plugin to support UptimeRobot that sends a 200 status code when a HEAD request is sent to /.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

@@ -1,5 +1,4 @@
-// Package zaplogger provides log functionality
-// for an Ambient application.
+// Package zaplogger is an Ambient plugin that provides logging using zap.
 package zaplogger
 
 import "github.com/josephspurrier/ambient"
@@ -12,7 +11,7 @@ type Plugin struct {
 	log *Logger
 }
 
-// New returns a new zaplogger plugin.
+// New returns an Ambient plugin that provides logging using zap.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

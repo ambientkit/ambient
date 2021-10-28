@@ -1,5 +1,4 @@
-// Package logruslogger provides log functionality
-// for an Ambient application.
+// Package logruslogger is an Ambient plugin that provides log functionality using logrus.
 package logruslogger
 
 import "github.com/josephspurrier/ambient"
@@ -10,7 +9,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new logruslogger plugin.
+// New returns an Ambient plugin that provides log functionality using logrus.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

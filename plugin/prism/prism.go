@@ -1,5 +1,4 @@
-// Package prism provides syntax highlighting using Prism (https://prismjs.com/)
-// for an Ambient application.
+// Package prism is an Ambient plugin that provides syntax highlighting using Prism (https://prismjs.com/).
 package prism
 
 import (
@@ -19,7 +18,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new prism plugin.
+// New returns an Ambient plugin that provides syntax highlighting using Prism (https://prismjs.com/).
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

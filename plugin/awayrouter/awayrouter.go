@@ -1,5 +1,4 @@
-// Package awayrouter provides a router using a forked version of way
-// for an Ambient application.
+// Package awayrouter is an Ambient plugin for a router using a variation of the way router.
 package awayrouter
 
 import (
@@ -24,7 +23,7 @@ type Plugin struct {
 	serveHTTP LoggerHandler
 }
 
-// New returns a new awayrouter plugin.
+// New returns an Ambient plugin for a router using a variation of the way router.
 func New(serveHTTP LoggerHandler) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

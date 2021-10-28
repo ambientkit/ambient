@@ -1,5 +1,4 @@
-// Package disqus provides Disqus commenting
-// for an Ambient application.
+// Package disqus is an Ambient plugin that provides Disqus commenting.
 package disqus
 
 import (
@@ -19,7 +18,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new disqus plugin.
+// New returns an Ambient plugin that provides Disqus commenting.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

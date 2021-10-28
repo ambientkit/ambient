@@ -1,5 +1,4 @@
-// Package bearblog provides basic blog functionality
-// for an Ambient application.
+// Package bearblog is an Ambient plugin that provides basic blog functionality.
 package bearblog
 
 import (
@@ -22,7 +21,7 @@ type Plugin struct {
 	passwordHash string
 }
 
-// New returns a new bearblog plugin.
+// New returns an Ambient plugin that provides basic blog functionality.
 func New(passwordHash string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},

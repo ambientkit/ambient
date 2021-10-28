@@ -1,5 +1,4 @@
-// Package scssession provides session capability with scs
-// for an Ambient application.
+// Package scssession is an Ambient plugin that provides session management using SCS.
 package scssession
 
 import (
@@ -22,7 +21,7 @@ type Plugin struct {
 	sessionKey string
 }
 
-// New returns a new scssession plugin.
+// New returns an Ambient plugin that provides session management using SCS.
 func New(sessionKey string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},
