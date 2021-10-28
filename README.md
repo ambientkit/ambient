@@ -1,6 +1,15 @@
-# Ambient 🏖️
+# Ambient 🏖️  <!-- omit in toc -->
 
 [![GitHub Actions status](https://github.com/josephspurrier/ambient/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/josephspurrier/ambient/actions)
+
+- [Overview](#overview)
+  - [What is it?](#what-is-it)
+  - [Why was this created?](#why-was-this-created)
+  - [Who is this for?](#who-is-this-for)
+  - [How does it work?](#how-does-it-work)
+- [Quickstart](#quickstart)
+- [Plugin Development Guide](#plugin-development-guide)
+- [Screenshots](#screenshots)
 
 ## Overview
 
