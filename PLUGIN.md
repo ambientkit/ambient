@@ -15,8 +15,7 @@ This guide will walk you through creating a plugin for Ambient.
 	- [Settings](#settings)
 	- [Assets](#assets)
 	- [Funcmaps](#funcmaps)
-- [Good Practices](#good-practices)
-- [Misc](#misc)
+- [Good Plugin Practices](#good-plugin-practices)
 
 ## Minimum Viable Plugin (MVP)
 
@@ -152,7 +151,7 @@ func (p *Plugin) Logger(appName string, appVersion string) (ambient.AppLogger, e
 }
 ```
 
-The function should return an object that satisfies the [`AppLogger`](ambient_logger.go) interface.
+The function should return an object that satisfies the [`AppLogger`](ambient_logger.go) interface. You should probably also add in an option to output in either human readable format (tabs) or JSON to make it easy to work with in development or in production.
 
 ```go
 package ambient
@@ -226,7 +225,7 @@ func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.Ses
 }
 ```
 
-The function should return objects that satisfy the [`DataStorer`](ambient_datastorer.go) interface and the [`SessionStorer`](ambient_sessionstorer.go) interface.
+The function should return objects that satisfy the [`DataStorer`](ambient_datastorer.go) interface and the [`SessionStorer`](ambient_sessionstorer.go) interface. Notice you don't have to worry about the type of data. This makes it easy to read or write to any medium.
 
 ```go
 // DataStorer reads and writes data to an object.
@@ -278,7 +277,7 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 }
 ```
 
-The `SessionManager()` function should return an object that satisfies the [`AppSession`](ambient_session.go) interface. The `Middleware()` function should return an object that satisfies the `http.Handler` interface.
+The `SessionManager()` function should return an object that satisfies the [`AppSession`](ambient_session.go) interface. The `Middleware()` function should return an object that satisfies the `[]func(next http.Handler) http.Handler` definition.
 
 ```go
 // AppSession represents a user session.
@@ -289,11 +288,6 @@ type AppSession interface {
 	Persist(r *http.Request, persist bool)
 	SetCSRF(r *http.Request) string
 	CSRF(r *http.Request) bool
-}
-
-// Handler from the http standard library package.
-type Handler interface {
-	ServeHTTP(ResponseWriter, *Request)
 }
 ```
 
@@ -311,7 +305,7 @@ func (p *Plugin) TemplateEngine(logger ambient.Logger, injector ambient.AssetInj
 }
 ```
 
-The function should return an object that satisfies the [`Renderer`](ambient_renderer.go) interface.
+The function should return an object that satisfies the [`Renderer`](ambient_renderer.go) interface. The page and post allow you to define two different formats when rendering content so you can have the assets affect each differently.
 
 ```go
 // Renderer represents a template renderer.
@@ -348,7 +342,7 @@ func (p *Plugin) Router(logger ambient.Logger, te ambient.Renderer) (ambient.App
 }
 ```
 
-The function should return an object that satisfies the [`AppRouter`](ambient_router.go) interface.
+The function should return an object that satisfies the [`AppRouter`](ambient_router.go) interface. Note the router needs to support clearing routes which may require extending popular router packages.
 
 ```go
 // AppRouter represents a router.
@@ -391,14 +385,7 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 }
 ```
 
-The `Middleware()` function should return an object that satisfies the `http.Handler` interface.
-
-```go
-// Handler from the http standard library package.
-type Handler interface {
-	ServeHTTP(ResponseWriter, *Request)
-}
-```
+The `Middleware()` function should return an object that satisfies the `[]func(next http.Handler) http.Handler` definition. The middleware load from bottom to top so be sure to organize them accordingly. They will also be ordered based on the position in the `plugin.go` file.
 
 ### Routes
 
@@ -504,7 +491,7 @@ You can see all of the available setting types in the [model_setting.go](model_s
 
 ### Assets
 
-The `Assets()` function returns a list of assets that can modify the template output.
+The `Assets()` function returns a list of assets that can modify the template output. They can be used to link to local resources like stylesheets and javascript files or they can link to external resources. You can also define the header and footer for template output. Assets support templating from a string or from a template. You can even add HTML tags to the template output. They are pretty powerful and support a bunch of use cases.
 
 A [plugin](plugin/simplelogin/simplelogin.go) that has assets should use MVP code as well as the `Assets()` function.
 
@@ -586,7 +573,7 @@ You can see all of the available setting types in the [asset.go](asset.go) file.
 
 ### Funcmaps
 
-The `FuncMap()` function returns a `template.FuncMap` that can be used in the templates.
+The `FuncMap()` function returns a `template.FuncMap` that can be used in the templates. They can also be used in assets which is pretty cool.
 
 A [plugin](plugin/disqus/diqus.go) that needs a FuncMap for templates should use MVP code as well as the `Assets()` function.
 
@@ -604,14 +591,10 @@ func (p *Plugin) FuncMap() func(r *http.Request) template.FuncMap {
 }
 ```
 
-## Good Practices
+## Good Plugin Practices
 
 - Use the Ambient logger with all it's different levels: fatal, error, warn, info, and debug. You shouldn't use `log` or `fmt` package to output any messages because they are not standardized.
 - If you run background jobs in your plugin, make sure you implement the `Disable()` function to stop the background job.
 - When creating a funcmap, you must prefix each one with your plugin name so there are no collisions in the templates. An error message will be throw if any of the funcmaps are not named properly.
 - You must return every permission your plugin needs to use in the `GrantRequests()` function. Otherwise, the plugin will not work properly when enabled.
-
-## Misc
-
-- How to use the logger
-- How to use the router
+- Routes can be overwritten by other plugins so it's best to namespace with the plugin name since plugin names are unique
