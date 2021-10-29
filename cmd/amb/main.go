@@ -32,16 +32,21 @@ func main() {
 	plugins = app.Plugins()
 
 	// Create the ambient app.
-	ambientApp, err := ambient.NewApp(appName, appVersion,
+	ambientApp, log, err := ambient.NewApp(appName, appVersion,
 		zaplogger.New(),
 		gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
 		plugins)
 	if err != nil {
-		stdlog.Fatalln(err.Error())
+		if log != nil {
+			// Use the logger if it's available.
+			log.Fatal("", err.Error())
+		} else {
+			// Else use the standard logger.
+			stdlog.Fatalln(err.Error())
+		}
 	}
 
-	// Get the logger and plugin system.
-	log = ambientApp.Logger()
+	// Get the plugin system.
 	pluginsystem = ambientApp.PluginSystem()
 
 	// Create secure site for the core application and use "ambient" so it gets

@@ -115,18 +115,18 @@ aws-deploy:
 	-aws ecr create-repository --repository-name ${AMB_GCP_IMAGE_NAME}
 #	docker build -t ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AMB_GCP_IMAGE_NAME}:1.0 .
 	docker push ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AMB_GCP_IMAGE_NAME}:1.0
-	-aws cloudformation create-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME} --template-body file://aws-apprunner.json --capabilities CAPABILITY_IAM --parameters ParameterKey=ParameterSessionKey,ParameterValue=${AMB_SESSION_KEY} ParameterKey=ParameterPasswordHash,ParameterValue=${AMB_PASSWORD_HASH} ParameterKey=ParameterAWSS3Bucket,ParameterValue=${AMB_AWS_BUCKET_NAME} ParameterKey=ParameterAWSRegion,ParameterValue=${AWS_REGION}
-	-aws cloudformation update-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME} --template-body file://aws-apprunner.json --capabilities CAPABILITY_IAM --parameters ParameterKey=ParameterSessionKey,ParameterValue=${AMB_SESSION_KEY} ParameterKey=ParameterPasswordHash,ParameterValue=${AMB_PASSWORD_HASH} ParameterKey=ParameterAWSS3Bucket,ParameterValue=${AMB_AWS_BUCKET_NAME} ParameterKey=ParameterAWSRegion,ParameterValue=${AWS_REGION}
-
-#	gcloud builds submit --tag gcr.io/$(AMB_GCP_PROJECT_ID)/${AMB_GCP_IMAGE_NAME}
-#	gcloud run deploy --image gcr.io/$(AMB_GCP_PROJECT_ID)/${AMB_GCP_IMAGE_NAME} \
-		--platform managed \
-		--allow-unauthenticated \
-		--region ${AMB_GCP_REGION} ${AMB_GCP_CLOUDRUN_NAME} \
-		--update-env-vars AMB_SESSION_KEY=${AMB_SESSION_KEY} \
-		--update-env-vars AMB_PASSWORD_HASH=${AMB_PASSWORD_HASH} \
-		--update-env-vars AMB_GCP_PROJECT_ID=${AMB_GCP_PROJECT_ID} \
-		--update-env-vars AMB_GCP_BUCKET_NAME=${AMB_GCP_BUCKET_NAME}
+	-aws cloudformation create-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME} \
+		--template-body file://aws-apprunner.json --capabilities CAPABILITY_IAM \
+		--parameters ParameterKey=ParameterSessionKey,ParameterValue=${AMB_SESSION_KEY} \
+		ParameterKey=ParameterPasswordHash,ParameterValue=${AMB_PASSWORD_HASH} \
+		ParameterKey=ParameterAWSS3Bucket,ParameterValue=${AMB_AWS_BUCKET_NAME} \
+		ParameterKey=ParameterAWSRegion,ParameterValue=${AWS_REGION}
+	-aws cloudformation update-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME} \
+		--template-body file://aws-apprunner.json --capabilities CAPABILITY_IAM \
+		--parameters ParameterKey=ParameterSessionKey,ParameterValue=${AMB_SESSION_KEY} \
+		ParameterKey=ParameterPasswordHash,ParameterValue=${AMB_PASSWORD_HASH} \
+		ParameterKey=ParameterAWSS3Bucket,ParameterValue=${AMB_AWS_BUCKET_NAME} \
+		ParameterKey=ParameterAWSRegion,ParameterValue=${AWS_REGION}
 
 .PHONY: aws-delete
 aws-delete:
