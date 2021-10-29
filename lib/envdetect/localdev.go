@@ -3,10 +3,11 @@ package envdetect
 
 import (
 	"os"
+	"strconv"
 )
 
 // RunningLocalDev returns true if the AMB_LOCAL environment variable is set.
 func RunningLocalDev() bool {
-	s := os.Getenv("AMB_LOCAL")
-	return len(s) > 0
+	result, _ := strconv.ParseBool(os.Getenv("AMB_LOCAL"))
+	return result
 }

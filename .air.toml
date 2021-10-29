@@ -10,8 +10,8 @@ tmp_dir = "tmp"
 cmd = "go build -o ./tmp/main cmd/myapp/main.go"
 # Binary file yields from `cmd`.
 bin = "tmp/main"
-# Customize binary.
-full_bin = "AMB_LOCAL=true ./tmp/main"
+# Customize binary with any arguments.
+full_bin = "./tmp/main"
 # Watch these filename extensions.
 include_ext = ["go", "tmpl", "css", "js"]
 # Ignore these filename extensions or directories.

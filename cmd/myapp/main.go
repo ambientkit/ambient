@@ -14,16 +14,27 @@ var (
 	appVersion = "1.0"
 )
 
+func init() {
+	// Verbose logging with file name and line number for the standard logger.
+	stdlog.SetFlags(stdlog.Lshortfile)
+}
+
 func main() {
 	// Create the ambient app.
 	plugins := app.Plugins()
-	ambientApp, err := ambient.NewApp(appName, appVersion,
+	ambientApp, log, err := ambient.NewApp(appName, appVersion,
 		zaplogger.New(),
 		//gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
 		awsbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
 		plugins)
 	if err != nil {
-		stdlog.Fatalln(err.Error())
+		if log != nil {
+			// Use the logger if it's available.
+			log.Fatal("", err.Error())
+		} else {
+			// Else use the standard logger.
+			stdlog.Fatalln(err.Error())
+		}
 	}
 
 	// Set the log level.
@@ -37,9 +48,6 @@ func main() {
 
 	// Enable the trusted plugins.
 	ambientApp.GrantAccess(plugins)
-
-	// Get the logger.
-	log := ambientApp.Logger()
 
 	// Load the plugins and return the handler.
 	mux, err := ambientApp.Handler()

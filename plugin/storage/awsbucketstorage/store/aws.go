@@ -28,23 +28,15 @@ func NewAWSStorage(bucket string, object string) *AWSStorage {
 // Load downloads an object from a bucket and returns an error if it cannot
 // be read.
 func (s *AWSStorage) Load() ([]byte, error) {
-	// // Create new session.
-	// sess := session.Must(session.NewSession())
-
-	// // Create a downloader with the session and default options.
-	// downloader := s3manager.NewDownloader(sess)
-
-	var buf []byte
-	f := manager.NewWriteAtBuffer(buf)
-
 	// Load config.
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		return nil, err
 	}
 
-	//f := aws.NewWriteAtBuffer([]byte{})
-	//w2 := &aws.WriteAtBuffer{}
+	// Create the buffer to save the file.
+	var buf []byte
+	f := manager.NewWriteAtBuffer(buf)
 
 	// Create an uploader with the session and default options.
 	client := s3.NewFromConfig(cfg)
@@ -56,15 +48,6 @@ func (s *AWSStorage) Load() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// // Write the contents of S3 Object to the buffer.
-	// _, err := downloader.Download(f, &s3.GetObjectInput{
-	// 	Bucket: aws.String(s.bucket),
-	// 	Key:    aws.String(s.object),
-	// })
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	return f.Bytes(), nil
 }
@@ -81,8 +64,6 @@ func (s *AWSStorage) Save(b []byte) error {
 	// Create an uploader with the session and default options.
 	client := s3.NewFromConfig(cfg)
 	uploader := manager.NewUploader(client)
-
-	//uploader := manager.NewUploader(client)
 	_, err = uploader.Upload(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(s.bucket),
 		Key:    aws.String(s.object),

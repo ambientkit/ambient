@@ -1,0 +1,188 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creates an App Runner service.",
+    "Metadata": {
+        "VersionDate": {
+            "Value": "20211029"
+        },
+        "Identifier": {
+            "Value": "aws-apprunner.json"
+        }
+    },
+    "Parameters": {
+        "ParameterSessionKey": {
+            "Type": "String",
+            "Description": "Session key used to encrypt sessions."
+        },
+        "ParameterPasswordHash": {
+            "Type": "String",
+            "Description": "Password hash for the administrator."
+        },
+        "ParameterAWSS3Bucket": {
+            "Type": "String",
+            "Description": "S3 bucket where to store the app state."
+        },
+        "ParameterAWSRegion": {
+            "Type": "String",
+            "Description": "Region in AWS."
+        }
+    },
+    "Resources": {
+        "AppRunnerRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": "AWSAppRunnerPolicy",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "logs:CreateLogGroup",
+                                        "logs:PutRetentionPolicy"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": "arn:aws:logs:*:*:log-group:/aws/apprunner/*"
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents",
+                                        "logs:DescribeLogStreams"
+                                    ],
+                                    "Resource": [
+                                        "arn:aws:logs:*:*:log-group:/aws/apprunner/*:log-stream:*"
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "events:PutRule",
+                                        "events:PutTargets",
+                                        "events:DeleteRule",
+                                        "events:RemoveTargets",
+                                        "events:DescribeRule",
+                                        "events:EnableRule",
+                                        "events:DisableRule"
+                                    ],
+                                    "Resource": "arn:aws:events:*:*:rule/AWSAppRunnerManagedRule*"
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:ListBucket"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Sub": "arn:aws:s3:::${ParameterAWSS3Bucket}"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:ListAllMyBuckets"
+                                    ],
+                                    "Resource": [
+                                        "*"
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:PutObject",
+                                        "s3:GetObject",
+                                        "s3:DeleteObject",
+                                        "s3:GetObjectAcl",
+                                        "s3:PutObjectAcl"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Sub": "arn:aws:s3:::${ParameterAWSS3Bucket}/*"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "ManagedPolicyArns": [
+                    {
+                        "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess"
+                    }
+                ],
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "build.apprunner.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "tasks.apprunner.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                }
+            }
+        },
+        "AppRunner": {
+            "Type": "AWS::AppRunner::Service",
+            "Properties": {
+                "ServiceName": "ambient-myapp",
+                "SourceConfiguration": {
+                    "ImageRepository": {
+                        "ImageIdentifier": "971913463428.dkr.ecr.us-east-1.amazonaws.com/ambient:1.0",
+                        "ImageConfiguration": {
+                            "RuntimeEnvironmentVariables": [
+                                {
+                                    "Name": "AMB_SESSION_KEY",
+                                    "Value": {
+                                        "Ref": "ParameterSessionKey"
+                                    }
+                                },
+                                {
+                                    "Name": "AMB_PASSWORD_HASH",
+                                    "Value": {
+                                        "Ref": "ParameterPasswordHash"
+                                    }
+                                },
+                                {
+                                    "Name": "AMB_AWS_BUCKET_NAME",
+                                    "Value": {
+                                        "Ref": "ParameterAWSS3Bucket"
+                                    }
+                                },
+                                {
+                                    "Name": "AWS_REGION",
+                                    "Value": {
+                                        "Ref": "ParameterAWSRegion"
+                                    }
+                                }
+                            ],
+                            "Port": "8080"
+                        },
+                        "ImageRepositoryType": "ECR"
+                    },
+                    "AuthenticationConfiguration": {
+                        "AccessRoleArn": {
+                            "Fn::GetAtt": [
+                                "AppRunnerRole",
+                                "Arn"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
