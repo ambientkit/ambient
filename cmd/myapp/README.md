@@ -10,25 +10,26 @@ To test out the sample web app from the `cmd/myapp` folder
 - Create a new file called `.env` in the root of the repository with this content:
 
 ```bash
-# Local Development
-## Set this to any value to allow you to do testing locally without GCP access.
-## See 'Local Development Flags' section below for more information.
+# App version.
+AMB_APP_VERSION=1.0
+
+# Set this to any value to allow you to do testing locally without cloud access.
+# See 'Local Development Flags' section below for more information.
 AMB_LOCAL=true
 
-# App Configuration
-## Session key to encrypt the cookie store. Generate with: make privatekey
+# Session key to encrypt the cookie store. Generate with: make privatekey
 AMB_SESSION_KEY=
-## Password hash that is base64 encoded. Generate with: make passhash passwordhere
+# Password hash that is base64 encoded. Generate with: make passhash passwordhere
 AMB_PASSWORD_HASH=
 
-## Optional: set the time zone from here:
-## https://golang.org/src/time/zoneinfo_abbrs_windows.go
+# Optional: set the time zone from here:
+# https://golang.org/src/time/zoneinfo_abbrs_windows.go
 # AMB_TIMEZONE=America/New_York
 
-## Optional: set the web server port.
+# Optional: set the web server port.
 # PORT=8080
 
-## Optional: set the URL prefix if behind a proxy.
+# Optional: set the URL prefix if behind a proxy.
 # AMB_URL_PREFIX=/api
 ```
 

@@ -55,7 +55,7 @@ storage:
 .PHONY: run
 run:
 	@echo Starting local server.
-	LOCALDEV=true go run cmd/myapp/main.go
+	go run cmd/myapp/main.go
 
 .PHONY: amb
 amb:
@@ -113,24 +113,27 @@ aws-deploy:
 	@echo Deploying to AWS App Runner.
 	aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com
 	-aws ecr create-repository --repository-name ${AMB_GCP_IMAGE_NAME}
-	docker build -t ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AMB_GCP_IMAGE_NAME}:1.0 .
-	docker push ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AMB_GCP_IMAGE_NAME}:1.0
+	docker build -t ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AMB_GCP_IMAGE_NAME}:${AMB_APP_VERSION} .
+	docker push ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AMB_GCP_IMAGE_NAME}:${AMB_APP_VERSION}
 	-aws cloudformation create-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME} \
 		--template-body file://deploy/aws-apprunner.json --capabilities CAPABILITY_IAM \
 		--parameters ParameterKey=ParameterSessionKey,ParameterValue=${AMB_SESSION_KEY} \
 		ParameterKey=ParameterPasswordHash,ParameterValue=${AMB_PASSWORD_HASH} \
 		ParameterKey=ParameterAWSS3Bucket,ParameterValue=${AMB_AWS_BUCKET_NAME} \
-		ParameterKey=ParameterAWSECRName,ParameterValue=${AMB_GCP_IMAGE_NAME}
+		ParameterKey=ParameterAWSECRName,ParameterValue=${AMB_GCP_IMAGE_NAME} \
+		ParameterKey=ParameterAppVersion,ParameterValue=${AMB_APP_VERSION}
 	-aws cloudformation update-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME} \
 		--template-body file://deploy/aws-apprunner.json --capabilities CAPABILITY_IAM \
 		--parameters ParameterKey=ParameterSessionKey,ParameterValue=${AMB_SESSION_KEY} \
 		ParameterKey=ParameterPasswordHash,ParameterValue=${AMB_PASSWORD_HASH} \
 		ParameterKey=ParameterAWSS3Bucket,ParameterValue=${AMB_AWS_BUCKET_NAME} \
-		ParameterKey=ParameterAWSECRName,ParameterValue=${AMB_GCP_IMAGE_NAME}
+		ParameterKey=ParameterAWSECRName,ParameterValue=${AMB_GCP_IMAGE_NAME} \
+		ParameterKey=ParameterAppVersion,ParameterValue=${AMB_APP_VERSION}
 
 .PHONY: aws-delete
 aws-delete:
 	@echo Removing files from AWS.
-	aws cloudformation delete-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME}
+	-aws cloudformation delete-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME}
+	-aws ecr delete-repository --repository-name ${AMB_GCP_IMAGE_NAME} --force
 	-aws s3 rm s3://${AMB_AWS_BUCKET_NAME} --recursive
 	-aws s3api delete-bucket --bucket ${AMB_AWS_BUCKET_NAME}

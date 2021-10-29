@@ -1,4 +1,9 @@
-# Deployment Guide
+# Deployment Guide <!-- omit in toc -->
+
+- [Environment Variables Management](#environment-variables-management)
+- [Deployments](#deployments)
+  - [GCP Deployment](#gcp-deployment)
+  - [AWS Deployment](#aws-deployment)
 
 ## Environment Variables Management
 
@@ -20,27 +25,54 @@ When you open up your terminal, you will be prompted with this message. You shou
 direnv: error /Users/YOURPATH/.envrc is blocked. Run `direnv allow` to approve its content
 ```
 
-## GCP Deployment
+## Deployments
+
+For all deployments, you need to create a new file called `.env` in the root of the repository with this content:
+
+```bash
+# App version.
+AMB_APP_VERSION=1.0
+
+# Set this to any value to allow you to do testing locally without cloud access.
+# See 'Local Development Flags' section below for more information.
+AMB_LOCAL=true
+
+# Session key to encrypt the cookie store. Generate with: make privatekey
+AMB_SESSION_KEY=
+# Password hash that is base64 encoded. Generate with: make passhash passwordhere
+AMB_PASSWORD_HASH=
+
+# Optional: set the time zone from here:
+# https://golang.org/src/time/zoneinfo_abbrs_windows.go
+# AMB_TIMEZONE=America/New_York
+
+# Optional: set the web server port.
+# PORT=8080
+
+# Optional: set the URL prefix if behind a proxy.
+# AMB_URL_PREFIX=/api
+```
+
+### GCP Deployment
 
 To deploy an Ambient application to Google Cloud Run:
 
 - Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install).
-- Generate a [service account key](https://console.cloud.google.com/apis/credentials/serviceaccountkey). Download it on your system and add reference it from your .envrc file: `GOOGLE_APPLICATION_CREDENTIALS=~/gcp-cloud-key.json`.
+- Generate a [service account key](https://console.cloud.google.com/apis/credentials/serviceaccountkey). Download it on your system and add reference it from your .envrc file: `GOOGLE_APPLICATION_CREDENTIALS=~/gcp-cloud-key.json`. This is needed only if you want to test locally.
 - Create a Google Cloud project.
-- Create/update your .env file with the Google Cloud information - replace the values with your own information:
+- Update your .env file with the Google Cloud information - replace the values with your own information:
 
 ```bash
-# GCP Deployment
-## GCP project ID.
+# GCP project ID.
 AMB_GCP_PROJECT_ID=my-sample-project-191923
-## GCP bucket name (this can be one that doesn't exist yet).
+# GCP bucket name (this can be one that doesn't exist yet).
 AMB_GCP_BUCKET_NAME=sample-bucket
-## Name of the docker image that will be created and stored in GCP Repository.
+# Name of the docker image that will be created and stored in GCP Repository.
 AMB_GCP_IMAGE_NAME=sample-image
-## Name of the Cloud Run service to create.
+# Name of the Cloud Run service to create.
 AMB_GCP_CLOUDRUN_NAME=sample-service
-## Region (not zone) where the Cloud Run service will be created:
-## https://cloud.google.com/compute/docs/regions-zones#available
+# Region (not zone) where the Cloud Run service will be created:
+# https://cloud.google.com/compute/docs/regions-zones#available
 AMB_GCP_REGION=us-central1
 ```
 
@@ -64,3 +96,38 @@ make gcp-deploy
 
 - You should now be able to access the URL that appeared in your terminal like this: `Service URL: https://ambient-someurl-uc.a.run.app`
 - To remove the service and bucket from GCP, run: `make gcp-delete`.
+
+### AWS Deployment
+
+To deploy an Ambient appliation to AWS App Runner:
+
+- Install the [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
+- Generate access keys from your AWS account.
+- Update your .env file with the AWS information - replace the values with your own information:
+
+```bash
+# AWS account number.
+AMB_AWS_ACCOUNT_NUMBER=121212121212
+# AWS S3 bucket name (this can be one that doesn't exist yet).
+AMB_AWS_BUCKET_NAME=sample-storage
+# AWS region.
+AWS_REGION=us-east-1
+# AWS access keys.
+AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+```
+
+- Run these commands:
+
+```bash
+# Create a bucket in AWS, enable versioning, and create blank site.json
+# and session.bin.
+make aws-init
+
+# Run a docker build to create the docker image, push to the AWS ECR, and then
+# deploy to AWS App Runner.
+make aws-deploy
+```
+
+- You should now be able to access the URL from the App Runner service: like this: `Default domain: https://someurl.us-east-1.awsapprunner.com`
+- To remove the service and bucket from AWS, run: `make aws-delete`.

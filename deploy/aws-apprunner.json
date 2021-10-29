@@ -25,6 +25,10 @@
         "ParameterAWSECRName": {
             "Type": "String",
             "Description": "ECR repository where to store the docker images."
+        },
+        "ParameterAppVersion": {
+            "Type": "String",
+            "Description": "Version of the docker image."
         }
     },
     "Resources": {
@@ -150,7 +154,7 @@
                 "SourceConfiguration": {
                     "ImageRepository": {
                         "ImageIdentifier": {
-                            "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ParameterAWSECRName}:1.0"
+                            "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ParameterAWSECRName}:${ParameterAppVersion}"
                         },
                         "ImageConfiguration": {
                             "RuntimeEnvironmentVariables": [
