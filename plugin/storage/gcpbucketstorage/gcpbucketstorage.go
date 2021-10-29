@@ -6,7 +6,7 @@ import (
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/lib/envdetect"
-	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage/store"
+	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage/store"
 )
 
 // Plugin represents an Ambient plugin.

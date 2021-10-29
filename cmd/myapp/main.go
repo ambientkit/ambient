@@ -5,8 +5,8 @@ import (
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/myapp/app"
-	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage"
-	"github.com/josephspurrier/ambient/plugin/zaplogger"
+	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
+	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage"
 )
 
 var (
