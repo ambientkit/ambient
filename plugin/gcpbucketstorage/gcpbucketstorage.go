@@ -2,6 +2,8 @@
 package gcpbucketstorage
 
 import (
+	"os"
+
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/lib/envdetect"
 	"github.com/josephspurrier/ambient/plugin/gcpbucketstorage/store"
@@ -66,10 +68,11 @@ func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.Ses
 		ds = store.NewLocalStorage(p.sitePath)
 		ss = store.NewLocalStorage(p.sessionPath)
 	} else {
-		bucket, err := p.Site.PluginSettingString(Bucket)
-		if err != nil {
-			return nil, nil, err
-		}
+		// bucket, err := p.Site.PluginSettingString(Bucket)
+		// if err != nil {
+		// 	return nil, nil, err
+		// }
+		bucket := os.Getenv("AMB_GCP_BUCKET_NAME")
 
 		// Use Google when running in GCP.
 		ds = store.NewGCPStorage(bucket, p.sitePath)

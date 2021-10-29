@@ -7,7 +7,8 @@
   - [Why was this created?](#why-was-this-created)
   - [Who is this for?](#who-is-this-for)
   - [How does it work?](#how-does-it-work)
-- [Quickstart](#quickstart)
+- [Quickstart/Sample App Tutorial](#quickstartsample-app-tutorial)
+- [Deployment Guide](#deployment-guide)
 - [Plugin Development Guide](#plugin-development-guide)
 - [Screenshots](#screenshots)
 
@@ -48,9 +49,13 @@ A [pluginmanager plugin](plugin/pluginmanager/pluginmanager.go) is included that
 
 There is a [library of plugins](plugin) that you can use in your apps or you can use to learn how create your own plugins.
 
-## Quickstart
+## Quickstart/Sample App Tutorial
 
-You can follow the [tutorial](cmd/myapp/README.md) to quickly get the sample app up and running locally.
+You can follow the [Sample App Tutorial](cmd/myapp/README.md) to quickly get the sample app up and running locally.
+
+## Deployment Guide
+
+You can follow the [Deployment Guide](DEPLOYMENT.md) to push an Ambient app to Google Cloud, AWS, or Azure.
 
 ## Plugin Development Guide
 
