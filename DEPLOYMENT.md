@@ -2,8 +2,8 @@
 
 - [Environment Variables Management](#environment-variables-management)
 - [Deployments](#deployments)
-  - [GCP Deployment](#gcp-deployment)
-  - [AWS Deployment](#aws-deployment)
+  - [GCP](#gcp)
+  - [AWS](#aws)
 
 ## Environment Variables Management
 
@@ -53,7 +53,7 @@ AMB_PASSWORD_HASH=
 # AMB_URL_PREFIX=/api
 ```
 
-### GCP Deployment
+### GCP
 
 To deploy an Ambient application to Google Cloud Run:
 
@@ -97,7 +97,7 @@ make gcp-deploy
 - You should now be able to access the URL that appeared in your terminal like this: `Service URL: https://ambient-someurl-uc.a.run.app`
 - To remove the service and bucket from GCP, run: `make gcp-delete`.
 
-### AWS Deployment
+### AWS
 
 To deploy an Ambient appliation to AWS App Runner:
 
