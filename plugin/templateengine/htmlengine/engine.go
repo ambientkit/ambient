@@ -10,7 +10,7 @@ import (
 	"runtime"
 
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/htmlengine/lib/templatebuffer"
+	"github.com/josephspurrier/ambient/plugin/templateengine/htmlengine/lib/templatebuffer"
 )
 
 // Engine represents a HTML template engine.

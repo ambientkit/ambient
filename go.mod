@@ -5,8 +5,13 @@ go 1.16
 require (
 	cloud.google.com/go/storage v1.14.0
 	github.com/alexedwards/scs/v2 v2.4.0
+	github.com/aws/aws-sdk-go-v2 v1.10.0 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.9.0 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.6.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.17.0 // indirect
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/dgryski/dgoogauth v0.0.0-20190221195224-5a805980a5f3
+	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/mattn/go-colorable v0.1.7
 	github.com/mdp/qrterminal/v3 v3.0.0
 	github.com/microcosm-cc/bluemonday v1.0.4

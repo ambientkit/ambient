@@ -6,7 +6,7 @@ import (
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/myapp/app"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
-	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage"
+	"github.com/josephspurrier/ambient/plugin/storage/awsbucketstorage"
 )
 
 var (
@@ -19,7 +19,8 @@ func main() {
 	plugins := app.Plugins()
 	ambientApp, err := ambient.NewApp(appName, appVersion,
 		zaplogger.New(),
-		gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
+		//gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
+		awsbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
 		plugins)
 	if err != nil {
 		stdlog.Fatalln(err.Error())

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/bearblog/lib/uuid"
+	"github.com/josephspurrier/ambient/plugin/generic/bearblog/lib/uuid"
 )
 
 func (p *Plugin) postAdminIndex(w http.ResponseWriter, r *http.Request) (status int, err error) {

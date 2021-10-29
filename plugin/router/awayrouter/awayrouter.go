@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/awayrouter/router"
+	"github.com/josephspurrier/ambient/plugin/router/awayrouter/router"
 )
 
 // LoggerHandler -

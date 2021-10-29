@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/josephspurrier/ambient/plugin/uptimerobotok"
+	"github.com/josephspurrier/ambient/plugin/middleware/uptimerobotok"
 	"github.com/stretchr/testify/assert"
 )
 

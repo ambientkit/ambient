@@ -7,7 +7,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/scssession/websession"
+	"github.com/josephspurrier/ambient/plugin/sessionmanager/scssession/websession"
 )
 
 // Plugin represents an Ambient plugin.

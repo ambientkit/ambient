@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/josephspurrier/ambient/plugin/bearblog/lib/totp"
+	"github.com/josephspurrier/ambient/plugin/generic/bearblog/lib/totp"
 	"github.com/mdp/qrterminal/v3"
 )
 

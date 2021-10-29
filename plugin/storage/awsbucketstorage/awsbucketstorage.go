@@ -1,12 +1,13 @@
-// Package gcpbucketstorage is an Ambient plugin that provides GCP storage and local storage when AMB_LOCAL is set.
-package gcpbucketstorage
+// Package awsbucketstorage is an Ambient plugin that provides GCP storage and local storage when AMB_LOCAL is set.
+package awsbucketstorage
 
 import (
 	"os"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/lib/envdetect"
-	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage/store"
+	"github.com/josephspurrier/ambient/plugin/storage/awsbucketstorage/store"
+	local "github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage/store"
 )
 
 // Plugin represents an Ambient plugin.
@@ -30,7 +31,7 @@ func New(sitePath string, sessionPath string) *Plugin {
 
 // PluginName returns the plugin name.
 func (p *Plugin) PluginName() string {
-	return "gcpbucketstorage"
+	return "awsbucketstorage"
 }
 
 // PluginVersion returns the plugin version.
@@ -45,7 +46,7 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 }
 
 const (
-	// Bucket allows user to set the GCP bucket.
+	// Bucket allows user to set the AWS bucket.
 	Bucket = "Bucket"
 )
 
@@ -65,10 +66,10 @@ func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.Ses
 
 	if envdetect.RunningLocalDev() {
 		// Use local filesytem when developing.
-		ds = store.NewLocalStorage(p.sitePath)
-		ss = store.NewLocalStorage(p.sessionPath)
+		ds = local.NewLocalStorage(p.sitePath)
+		ss = local.NewLocalStorage(p.sessionPath)
 	} else {
-		bucket := os.Getenv("AMB_GCP_BUCKET_NAME")
+		bucket := os.Getenv("AMB_AWS_BUCKET_NAME")
 		if len(bucket) == 0 {
 			var err error
 			bucket, err = p.Site.PluginSettingString(Bucket)
@@ -77,9 +78,9 @@ func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.Ses
 			}
 		}
 
-		// Use Google when running in GCP.
-		ds = store.NewGCPStorage(bucket, p.sitePath)
-		ss = store.NewGCPStorage(bucket, p.sessionPath)
+		// Use S3 when running in AWS.
+		ds = store.NewAWSStorage(bucket, p.sitePath)
+		ss = store.NewAWSStorage(bucket, p.sessionPath)
 	}
 
 	return ds, ss, nil
