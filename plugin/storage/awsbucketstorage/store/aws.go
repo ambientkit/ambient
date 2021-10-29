@@ -42,8 +42,8 @@ func (s *AWSStorage) Load() ([]byte, error) {
 	client := s3.NewFromConfig(cfg)
 	downloader := manager.NewDownloader(client)
 	_, err = downloader.Download(context.TODO(), f, &s3.GetObjectInput{
-		Bucket: aws.String("my-bucket"),
-		Key:    aws.String("my-key"),
+		Bucket: aws.String(s.bucket),
+		Key:    aws.String(s.object),
 	})
 	if err != nil {
 		return nil, err

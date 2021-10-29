@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Creates an App Runner service.",
+    "Description": "Creates an App Runner service using an Ambient app.",
     "Metadata": {
         "VersionDate": {
             "Value": "20211029"
@@ -22,9 +22,9 @@
             "Type": "String",
             "Description": "S3 bucket where to store the app state."
         },
-        "ParameterAWSRegion": {
+        "ParameterAWSECRName": {
             "Type": "String",
-            "Description": "Region in AWS."
+            "Description": "ECR repository where to store the docker images."
         }
     },
     "Resources": {
@@ -139,9 +139,19 @@
             "Type": "AWS::AppRunner::Service",
             "Properties": {
                 "ServiceName": "ambient-myapp",
+                "InstanceConfiguration": {
+                    "InstanceRoleArn": {
+                        "Fn::GetAtt": [
+                            "AppRunnerRole",
+                            "Arn"
+                        ]
+                    }
+                },
                 "SourceConfiguration": {
                     "ImageRepository": {
-                        "ImageIdentifier": "971913463428.dkr.ecr.us-east-1.amazonaws.com/ambient:1.0",
+                        "ImageIdentifier": {
+                            "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ParameterAWSECRName}:1.0"
+                        },
                         "ImageConfiguration": {
                             "RuntimeEnvironmentVariables": [
                                 {
@@ -165,7 +175,7 @@
                                 {
                                     "Name": "AWS_REGION",
                                     "Value": {
-                                        "Ref": "ParameterAWSRegion"
+                                        "Ref": "AWS::Region"
                                     }
                                 }
                             ],

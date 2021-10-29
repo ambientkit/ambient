@@ -99,7 +99,7 @@ gcp-delete:
 .PHONY: aws-init
 aws-init:
 	@echo Creating the initial files in AWS S3.
-ifeq "${AWS_REGION}" "us-east-1")
+ifeq "${AWS_REGION}" "us-east-1"
 	aws s3api create-bucket --bucket ${AMB_AWS_BUCKET_NAME}
 else
 	aws s3api create-bucket --bucket ${AMB_AWS_BUCKET_NAME} --create-bucket-configuration '{"LocationConstraint": "${AWS_REGION}"}'
@@ -113,20 +113,20 @@ aws-deploy:
 	@echo Deploying to AWS App Runner.
 	aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com
 	-aws ecr create-repository --repository-name ${AMB_GCP_IMAGE_NAME}
-#	docker build -t ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AMB_GCP_IMAGE_NAME}:1.0 .
+	docker build -t ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AMB_GCP_IMAGE_NAME}:1.0 .
 	docker push ${AMB_AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AMB_GCP_IMAGE_NAME}:1.0
 	-aws cloudformation create-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME} \
-		--template-body file://aws-apprunner.json --capabilities CAPABILITY_IAM \
+		--template-body file://deploy/aws-apprunner.json --capabilities CAPABILITY_IAM \
 		--parameters ParameterKey=ParameterSessionKey,ParameterValue=${AMB_SESSION_KEY} \
 		ParameterKey=ParameterPasswordHash,ParameterValue=${AMB_PASSWORD_HASH} \
 		ParameterKey=ParameterAWSS3Bucket,ParameterValue=${AMB_AWS_BUCKET_NAME} \
-		ParameterKey=ParameterAWSRegion,ParameterValue=${AWS_REGION}
+		ParameterKey=ParameterAWSECRName,ParameterValue=${AMB_GCP_IMAGE_NAME}
 	-aws cloudformation update-stack --stack-name ${AMB_GCP_CLOUDRUN_NAME} \
-		--template-body file://aws-apprunner.json --capabilities CAPABILITY_IAM \
+		--template-body file://deploy/aws-apprunner.json --capabilities CAPABILITY_IAM \
 		--parameters ParameterKey=ParameterSessionKey,ParameterValue=${AMB_SESSION_KEY} \
 		ParameterKey=ParameterPasswordHash,ParameterValue=${AMB_PASSWORD_HASH} \
 		ParameterKey=ParameterAWSS3Bucket,ParameterValue=${AMB_AWS_BUCKET_NAME} \
-		ParameterKey=ParameterAWSRegion,ParameterValue=${AWS_REGION}
+		ParameterKey=ParameterAWSECRName,ParameterValue=${AMB_GCP_IMAGE_NAME}
 
 .PHONY: aws-delete
 aws-delete:
