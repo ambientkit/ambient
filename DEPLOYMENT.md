@@ -4,6 +4,7 @@
 - [Deployments](#deployments)
   - [GCP](#gcp)
   - [AWS](#aws)
+  - [Azure](#azure)
 
 ## Environment Variables Management
 
@@ -99,7 +100,7 @@ make gcp-deploy
 
 ### AWS
 
-To deploy an Ambient appliation to AWS App Runner:
+To deploy an Ambient app to AWS App Runner:
 
 - Install the [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
 - Generate access keys from your AWS account.
@@ -131,3 +132,35 @@ make aws-deploy
 
 - You should now be able to access the URL from the App Runner service: like this: `Default domain: https://someurl.us-east-1.awsapprunner.com`
 - To remove the service and bucket from AWS, run: `make aws-delete`.
+
+### Azure
+
+To deploy an Ambient app to an Azure Function, you will need the Azure CLI.
+
+If you don't have the Azure CLI installed, you can either [install it](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) or run it from a container. You can skip the next few steps if you already have the Azure CLI installed.
+
+To run the Azure CLI from a docker container, first paste this into your .bash_profile to act as an alias:
+
+```bash
+az() {
+  docker exec azurecli az "$@"
+}
+```
+
+Refresh your terminal session and then run these commands:
+
+```bash
+# Start docker in the background so you can use the Azure CLI without installing it.
+make az-start
+
+# Login to Azure.
+az login
+
+# Load storage accounts.
+az storage account list
+
+# When you're done, you can stop the Azure CLI docker container from running in the background.
+make az-stop
+```
+
+

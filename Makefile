@@ -137,3 +137,23 @@ aws-delete:
 	-aws ecr delete-repository --repository-name ${AMB_GCP_IMAGE_NAME} --force
 	-aws s3 rm s3://${AMB_AWS_BUCKET_NAME} --recursive
 	-aws s3api delete-bucket --bucket ${AMB_AWS_BUCKET_NAME}
+
+################################################################################
+# Deploy application to Azure
+################################################################################
+
+.PHONY: az-start
+az-start:
+	@echo Starting Azure CLI in docker container.
+	# Run docker in the background
+	docker run -d -t --name azurecli -v $(shell pwd):/root mcr.microsoft.com/azure-cli
+
+.PHONY: az-stop
+az-stop:
+	@echo Stopping Azure CLI in docker container.
+	docker rm -f azurecli
+
+.PHONY: az-init
+az-init:
+	@echo Creating the initial files in Azure storage.
+	./deploy/azure-init.sh

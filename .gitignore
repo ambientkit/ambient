@@ -18,3 +18,5 @@
 /tmp
 /bin
 .env*
+.azure/
+.bash_history
