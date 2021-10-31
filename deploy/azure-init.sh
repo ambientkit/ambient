@@ -27,5 +27,5 @@ echo Creating storage container.
 az storage container create --name ${AZURE_CONTAINER_NAME} --account-name ${AZURE_STORAGE_ACCOUNT} --account-name ${AZURE_STORAGE_ACCOUNT} --account-key $(az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT} --query '[0].value' -o tsv)
 
 echo Uploading files.
-az storage blob upload --container-name ${AZURE_CONTAINER_NAME} --file /root/storage/initial/site.json --account-name ${AZURE_STORAGE_ACCOUNT} --account-key $(az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT} --query '[0].value' -o tsv)
-az storage blob upload --container-name ${AZURE_CONTAINER_NAME} --file /root/storage/initial/session.bin --account-name ${AZURE_STORAGE_ACCOUNT} --account-key $(az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT} --query '[0].value' -o tsv)
+az storage blob upload --container-name ${AZURE_CONTAINER_NAME} --file /root/storage/initial/site.json --name storage/site.json --account-name ${AZURE_STORAGE_ACCOUNT} --account-key $(az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT} --query '[0].value' -o tsv)
+az storage blob upload --container-name ${AZURE_CONTAINER_NAME} --file /root/storage/initial/session.bin --name storage/session.bin --account-name ${AZURE_STORAGE_ACCOUNT} --account-key $(az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT} --query '[0].value' -o tsv)

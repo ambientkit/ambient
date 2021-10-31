@@ -1,12 +1,12 @@
-// Package awsbucketstorage is an Ambient plugin that provides AWS storage and local storage when AMB_LOCAL is set.
-package awsbucketstorage
+// Package azureblobstorage is an Ambient plugin that provides Azure storage and local storage when AMB_LOCAL is set.
+package azureblobstorage
 
 import (
 	"os"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/lib/envdetect"
-	"github.com/josephspurrier/ambient/plugin/storage/awsbucketstorage/store"
+	"github.com/josephspurrier/ambient/plugin/storage/azureblobstorage/store"
 	local "github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage/store"
 )
 
@@ -31,7 +31,7 @@ func New(sitePath string, sessionPath string) *Plugin {
 
 // PluginName returns the plugin name.
 func (p *Plugin) PluginName() string {
-	return "awsbucketstorage"
+	return "azureblobstorage"
 }
 
 // PluginVersion returns the plugin version.
@@ -46,15 +46,15 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 }
 
 const (
-	// Bucket allows user to set the AWS bucket.
-	Bucket = "Bucket"
+	// Container allows user to set the Blob container.
+	Container = "Container"
 )
 
 // Settings returns a list of user settable fields.
 func (p *Plugin) Settings() []ambient.Setting {
 	return []ambient.Setting{
 		{
-			Name: Bucket,
+			Name: Container,
 		},
 	}
 }
@@ -69,18 +69,18 @@ func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.Ses
 		ds = local.NewLocalStorage(p.sitePath)
 		ss = local.NewLocalStorage(p.sessionPath)
 	} else {
-		bucket := os.Getenv("AMB_AWS_BUCKET_NAME")
-		if len(bucket) == 0 {
+		container := os.Getenv("AZURE_CONTAINER_NAME")
+		if len(container) == 0 {
 			var err error
-			bucket, err = p.Site.PluginSettingString(Bucket)
+			container, err = p.Site.PluginSettingString(Container)
 			if err != nil {
 				return nil, nil, err
 			}
 		}
 
-		// Use S3 when running in AWS.
-		ds = store.NewAWSStorage(bucket, p.sitePath)
-		ss = store.NewAWSStorage(bucket, p.sessionPath)
+		// Use S3 when running in Blob.
+		ds = store.NewAzureBlobStorage(container, p.sitePath)
+		ss = store.NewAzureBlobStorage(container, p.sessionPath)
 	}
 
 	return ds, ss, nil

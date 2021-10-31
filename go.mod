@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	cloud.google.com/go/storage v1.14.0
+	github.com/Azure/azure-storage-blob-go v0.14.0 // indirect
 	github.com/alexedwards/scs/v2 v2.4.0
 	github.com/aws/aws-sdk-go-v2 v1.10.0 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.9.0 // indirect
@@ -22,6 +23,6 @@ require (
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/stretchr/testify v1.5.1
 	go.uber.org/zap v1.16.0
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
 	jaytaylor.com/html2text v0.0.0-20200412013138-3577fbdbcff7
 )

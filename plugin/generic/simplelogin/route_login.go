@@ -24,6 +24,7 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 	// CSRF protection.
 	success := p.Site.CSRF(r)
 	if !success {
+		p.Log.Debug("simplelogin: failed CSRF validation")
 		return http.StatusBadRequest, nil
 	}
 
