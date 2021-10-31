@@ -70,7 +70,7 @@ The login page takes a username and password (handled by the [simplelogin plugin
 
 The [pluginmanager plugin](plugin/generic/pluginmanager/pluginmanager.go) provides an easy way to modify plugins.
 
-![Plugin Manager](doc/screenshot/generic/pluginmanager.png)
+![Plugin Manager](doc/screenshot/pluginmanager.png)
 
 The settings page (part of the [pluginmanager plugin](plugin/generic/pluginmanager/pluginmanager.go)) allows you to customize the value that gets displayed in the meta tag that is set by the [author plugin](plugin/generic/author/author.go).
 
