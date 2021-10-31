@@ -156,11 +156,11 @@ az() {
 
 ```bash
 # Azure resource group where storage account will be created. New or existing.
-AMB_AZURE_RESOURCE_GROUP=ambient-rg
+AMB_AZURE_RESOURCE_GROUP=sample-rg
 # Azure storage account where the storage container will be created. New or existing.
-AZURE_STORAGE_ACCOUNT=ambient-storage
+AZURE_STORAGE_ACCOUNT=sample-storage
 # Azure container where the site and session files will be stored. New or existing.
-AMB_AZURE_CONTAINER=ambient-container
+AMB_AZURE_CONTAINER=sample-container
 ```
 
 Refresh your terminal session and then run these commands:
