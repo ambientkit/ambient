@@ -12,7 +12,7 @@ if ! command -v az &> /dev/null; then
 fi
 
 echo Creating resource group.
-az group create --location eastus --resource-group ${AMB_AZURE_RESOURCE_GROUP}
+az group create --location ${AMB_AZURE_REGION} --resource-group ${AMB_AZURE_RESOURCE_GROUP}
 
 echo Creating storage account.
 az storage account create --name ${AZURE_STORAGE_ACCOUNT} --resource-group ${AMB_AZURE_RESOURCE_GROUP}

@@ -160,5 +160,5 @@ az-init:
 
 .PHONY: az-deploy
 az-deploy:
-	@echo Deploying to TDB.
-	# NEED TO IMPLEMENT
+	@echo Deploying to Azure Functions.
+	./deploy/azure-deploy.sh

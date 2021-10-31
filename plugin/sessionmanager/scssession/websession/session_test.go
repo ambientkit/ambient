@@ -11,7 +11,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/josephspurrier/ambient/plugin/sessionmanager/scssession/websession"
-	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage/store"
+	"github.com/josephspurrier/ambient/plugin/storage/localstorage/store"
 	"github.com/stretchr/testify/assert"
 )
 

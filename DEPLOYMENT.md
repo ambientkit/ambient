@@ -157,10 +157,12 @@ az() {
 ```bash
 # Azure resource group where storage account will be created. New or existing.
 AMB_AZURE_RESOURCE_GROUP=sample-rg
-# Azure storage account where the storage container will be created. New or existing.
-AZURE_STORAGE_ACCOUNT=sample-storage
+# Azure storage account where the storage container will be created. New or existing. Unique.
+AZURE_STORAGE_ACCOUNT=samplestorage
 # Azure container where the site and session files will be stored. New or existing.
 AMB_AZURE_CONTAINER=sample-container
+# Azure function name. Unique.
+AMB_AZURE_FUNCTION_NAME=ambientapp
 ```
 
 Refresh your terminal session and then run these commands:

@@ -80,12 +80,25 @@ func (app *App) SetLogLevel(level LogLevel) {
 }
 
 // ListenAndServe will start the web listener on port 8080 or will pull the
-// environment variable from: PORT.
+// environment variable from:
+// PORT (GCP), _LAMBDA_SERVER_PORT (AWS), or FUNCTIONS_CUSTOMHANDLER_PORT (Azure).
 func (app *App) ListenAndServe(h http.Handler) {
-	// Start the web server.
+	// Start the web server. Google Cloud uses standardized PORT env variable.
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
+	}
+
+	// Get the AWS Lambda port if it's set.
+	awsPort, exists := os.LookupEnv("_LAMBDA_SERVER_PORT")
+	if exists {
+		port = awsPort
+	}
+
+	// Get the Microsoft Azure Functions port if it's set.
+	azurePort, exists := os.LookupEnv("FUNCTIONS_CUSTOMHANDLER_PORT")
+	if exists {
+		port = azurePort
 	}
 
 	app.log.Info("ambient: web server listening on port: %v", port)
