@@ -171,7 +171,7 @@
                                     }
                                 },
                                 {
-                                    "Name": "AMB_AWS_BUCKET_NAME",
+                                    "Name": "AMB_AWS_BUCKET",
                                     "Value": {
                                         "Ref": "ParameterAWSS3Bucket"
                                     }

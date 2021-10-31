@@ -67,9 +67,9 @@ To deploy an Ambient application to Google Cloud Run:
 # GCP project ID.
 AMB_GCP_PROJECT_ID=my-sample-project-191923
 # GCP bucket name (this can be one that doesn't exist yet).
-AMB_GCP_BUCKET_NAME=sample-bucket
+AMB_GCP_BUCKET=sample-bucket
 # Name of the docker image that will be created and stored in GCP Repository.
-AMB_GCP_IMAGE_NAME=sample-image
+AMB_GCP_IMAGE=sample-image
 # Name of the Cloud Run service to create.
 AMB_GCP_CLOUDRUN_NAME=sample-service
 # Region (not zone) where the Cloud Run service will be created:
@@ -104,18 +104,23 @@ To deploy an Ambient app to AWS App Runner:
 
 - Install the [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
 - Generate access keys from your AWS account.
-- Update your .env file with the AWS information - replace the values with your own information:
+- Update your .envrc file with the AWS credentials - replace the values with your own information:
 
 ```bash
-# AWS account number.
-AMB_AWS_ACCOUNT_NUMBER=121212121212
-# AWS S3 bucket name (this can be one that doesn't exist yet).
-AMB_AWS_BUCKET_NAME=sample-storage
-# AWS region.
-AWS_REGION=us-east-1
 # AWS access keys.
 AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
 AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+```
+
+- Update your .env file with the AWS information - replace the values with your own information:
+
+```bash
+# AWS account number where the App Runner will be created.
+AMB_AWS_ACCOUNT=121212121212
+# AWS region where the App Runner will be created.
+AWS_REGION=us-east-1
+# AWS S3 bucket name where the site and session files will be stored. New or existing.
+AMB_AWS_BUCKET=sample-storage
 ```
 
 - Run these commands:
@@ -145,6 +150,17 @@ To run the Azure CLI from a docker container, first paste this into your .bash_p
 az() {
   docker exec azurecli az "$@"
 }
+```
+
+- Update your .env file with the Azure information - replace the values with your own information:
+
+```bash
+# Azure resource group where storage account will be created. New or existing.
+AMB_AZURE_RESOURCE_GROUP=ambient-rg
+# Azure storage account where the storage container will be created. New or existing.
+AZURE_STORAGE_ACCOUNT=ambient-storage
+# Azure container where the site and session files will be stored. New or existing.
+AMB_AZURE_CONTAINER=ambient-container
 ```
 
 Refresh your terminal session and then run these commands:

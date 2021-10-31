@@ -59,7 +59,7 @@ func (p *Plugin) Settings() []ambient.Setting {
 
 // Storage returns data and session storage.
 func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
-	bucket := os.Getenv("AMB_GCP_BUCKET_NAME")
+	bucket := os.Getenv("AMB_GCP_BUCKET")
 	if len(bucket) == 0 {
 		var err error
 		bucket, err = p.Site.PluginSettingString(Bucket)
