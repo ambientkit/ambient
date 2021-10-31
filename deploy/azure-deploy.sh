@@ -12,7 +12,7 @@ echo Detecting existence of Azure Function.
 if az functionapp config show --resource-group ${AMB_AZURE_RESOURCE_GROUP} --name ${AMB_AZURE_FUNCTION_NAME} --query 'name' -o tsv >/dev/null 2>&1; then
     echo Azure function found - will update it now.
 else
-    echo Creating Azure Function. If it returns, 'Conflict', then you need a unique Function name.
+    echo Creating Azure Function. If it returns 'Conflict', then you need a unique Function name. If it returns 'Bad Request', you may need to wait a few minutes before trying again.
     az functionapp create --resource-group ${AMB_AZURE_RESOURCE_GROUP} --name ${AMB_AZURE_FUNCTION_NAME} --storage-account ${AZURE_STORAGE_ACCOUNT} --runtime custom --functions-version 3 --consumption-plan-location ${AMB_AZURE_REGION} --os-type linux
 fi
 

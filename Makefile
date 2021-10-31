@@ -142,14 +142,14 @@ aws-delete:
 # Deploy application to Azure
 ################################################################################
 
-.PHONY: az-start
-az-start:
+.PHONY: azcli-start
+azcli-start:
 	@echo Starting Azure CLI in docker container.
 	# Run docker in the background
 	docker run -d -t --name azurecli -v $(shell pwd):/root mcr.microsoft.com/azure-cli
 
-.PHONY: az-stop
-az-stop:
+.PHONY: azcli-stop
+azcli-stop:
 	@echo Stopping Azure CLI in docker container.
 	docker rm -f azurecli
 
@@ -162,3 +162,10 @@ az-init:
 az-deploy:
 	@echo Deploying to Azure Functions.
 	./deploy/azure-deploy.sh
+
+.PHONY: az-delete
+az-delete:
+	@echo Removing Function and storage account from Azure.
+#	-az functionapp delete --resource-group ${AMB_AZURE_RESOURCE_GROUP} --name ${AMB_AZURE_FUNCTION_NAME}
+#	-az storage account delete --resource-group ${AMB_AZURE_RESOURCE_GROUP} --name ${AZURE_STORAGE_ACCOUNT}
+	-az group delete --name ${AMB_AZURE_RESOURCE_GROUP} --yes

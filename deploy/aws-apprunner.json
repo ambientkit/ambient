@@ -142,7 +142,7 @@
         "AppRunner": {
             "Type": "AWS::AppRunner::Service",
             "Properties": {
-                "ServiceName": "ambient-myapp",
+                "ServiceName": "ambientapp",
                 "InstanceConfiguration": {
                     "InstanceRoleArn": {
                         "Fn::GetAtt": [

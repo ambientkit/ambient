@@ -176,7 +176,7 @@ Refresh your terminal session and then run these commands:
 
 ```bash
 # Start docker in the background so you can use the Azure CLI without installing it.
-make az-start
+make azcli-start
 
 # Login to Azure.
 az login
@@ -189,14 +189,19 @@ az storage account list
 make az-init
 
 # You should get an output of your storage access key and connection string.
-# Add it to your .envrc file.
+# Add it to your .envrc file. Then run the command to trust and reload the 
+# env variables.
+direnv allow
 
 # Create or update an Azure Function with a custom runtime, update env variables,
 # and then deploy the Go binary.
 make az-deploy
 
+# Remove resource group which removes the Azure Function and storage account.
+make az-delete
+
 # When you're done, you can stop the Azure CLI docker container from running in the background.
-make az-stop
+make azcli-stop
 ```
 
 
