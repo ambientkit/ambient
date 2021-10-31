@@ -163,6 +163,8 @@ az storage account list
 # blank site.json and session.bin.
 make az-init
 
+# You should get an output of your storage access key. Add it to your .envrc file.
+
 # TBD
 make az-deploy
 
