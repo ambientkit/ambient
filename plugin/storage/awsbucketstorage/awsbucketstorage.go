@@ -1,13 +1,11 @@
-// Package awsbucketstorage is an Ambient plugin that provides AWS storage and local storage when AMB_LOCAL is set.
+// Package awsbucketstorage is an Ambient plugin that provides storage in AWS S3.
 package awsbucketstorage
 
 import (
 	"os"
 
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/lib/envdetect"
 	"github.com/josephspurrier/ambient/plugin/storage/awsbucketstorage/store"
-	local "github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage/store"
 )
 
 // Plugin represents an Ambient plugin.
@@ -19,7 +17,7 @@ type Plugin struct {
 	sessionPath string
 }
 
-// New returns an Ambient plugin that provides GCP storage and local storage when AMB_LOCAL is set.
+// New returns an Ambient plugin that provides storage in AWS S3.
 func New(sitePath string, sessionPath string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},
@@ -61,27 +59,17 @@ func (p *Plugin) Settings() []ambient.Setting {
 
 // Storage returns data and session storage.
 func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
-	var ds ambient.DataStorer
-	var ss ambient.SessionStorer
-
-	if envdetect.RunningLocalDev() {
-		// Use local filesytem when developing.
-		ds = local.NewLocalStorage(p.sitePath)
-		ss = local.NewLocalStorage(p.sessionPath)
-	} else {
-		bucket := os.Getenv("AMB_AWS_BUCKET_NAME")
-		if len(bucket) == 0 {
-			var err error
-			bucket, err = p.Site.PluginSettingString(Bucket)
-			if err != nil {
-				return nil, nil, err
-			}
+	bucket := os.Getenv("AMB_AWS_BUCKET_NAME")
+	if len(bucket) == 0 {
+		var err error
+		bucket, err = p.Site.PluginSettingString(Bucket)
+		if err != nil {
+			return nil, nil, err
 		}
-
-		// Use S3 when running in AWS.
-		ds = store.NewAWSStorage(bucket, p.sitePath)
-		ss = store.NewAWSStorage(bucket, p.sessionPath)
 	}
+
+	ds := store.NewAWSStorage(bucket, p.sitePath)
+	ss := store.NewAWSStorage(bucket, p.sessionPath)
 
 	return ds, ss, nil
 }

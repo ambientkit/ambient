@@ -5,8 +5,10 @@ import (
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/myapp/app"
+	"github.com/josephspurrier/ambient/lib/envdetect"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
-	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage"
+	"github.com/josephspurrier/ambient/plugin/storage/azureblobstorage"
+	"github.com/josephspurrier/ambient/plugin/storage/localstorage"
 )
 
 var (
@@ -20,13 +22,21 @@ func init() {
 }
 
 func main() {
+	// Select the storage engine for site and session information.
+	var storage ambient.StoragePlugin
+	if envdetect.RunningLocalDev() {
+		storage = localstorage.New(app.StorageSitePath, app.StorageSessionPath)
+	} else {
+		//storage = gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath)
+		//storage = awsbucketstorage.New(app.StorageSitePath, app.StorageSessionPath)
+		storage = azureblobstorage.New(app.StorageSitePath, app.StorageSessionPath)
+	}
+
 	// Create the ambient app.
 	plugins := app.Plugins()
 	ambientApp, log, err := ambient.NewApp(appName, appVersion,
 		zaplogger.New(),
-		gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
-		//awsbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
-		//azureblobstorage.New(app.StorageSitePath, app.StorageSessionPath),
+		storage,
 		plugins)
 	if err != nil {
 		if log != nil {

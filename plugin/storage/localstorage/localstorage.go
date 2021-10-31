@@ -1,11 +1,9 @@
-// Package gcpbucketstorage is an Ambient plugin that provides storage in GCP Cloud Storage.
-package gcpbucketstorage
+// Package localstorage is an Ambient plugin that provides local storage.
+package localstorage
 
 import (
-	"os"
-
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage/store"
+	"github.com/josephspurrier/ambient/plugin/storage/localstorage/store"
 )
 
 // Plugin represents an Ambient plugin.
@@ -17,7 +15,7 @@ type Plugin struct {
 	sessionPath string
 }
 
-// New returns an Ambient plugin that provides storage in GCP Cloud Storage.
+// New returns an Ambient plugin that provides local storage.
 func New(sitePath string, sessionPath string) *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},
@@ -29,7 +27,7 @@ func New(sitePath string, sessionPath string) *Plugin {
 
 // PluginName returns the plugin name.
 func (p *Plugin) PluginName() string {
-	return "gcpbucketstorage"
+	return "localstorage"
 }
 
 // PluginVersion returns the plugin version.
@@ -43,33 +41,11 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	return nil
 }
 
-const (
-	// Bucket allows user to set the GCP bucket.
-	Bucket = "Bucket"
-)
-
-// Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []ambient.Setting {
-	return []ambient.Setting{
-		{
-			Name: Bucket,
-		},
-	}
-}
-
 // Storage returns data and session storage.
 func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
-	bucket := os.Getenv("AMB_GCP_BUCKET_NAME")
-	if len(bucket) == 0 {
-		var err error
-		bucket, err = p.Site.PluginSettingString(Bucket)
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	ds := store.NewGCPStorage(bucket, p.sitePath)
-	ss := store.NewGCPStorage(bucket, p.sessionPath)
+	// Use local filesytem for site and session information.
+	ds := store.NewLocalStorage(p.sitePath)
+	ss := store.NewLocalStorage(p.sessionPath)
 
 	return ds, ss, nil
 }

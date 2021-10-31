@@ -2,7 +2,7 @@
 
 - [Environment Variables Management](#environment-variables-management)
 - [Deployments](#deployments)
-  - [GCP](#gcp)
+  - [Google Cloud](#google-cloud)
   - [AWS](#aws)
   - [Azure](#azure)
 
@@ -54,7 +54,7 @@ AMB_PASSWORD_HASH=
 # AMB_URL_PREFIX=/api
 ```
 
-### GCP
+### Google Cloud
 
 To deploy an Ambient application to Google Cloud Run:
 
@@ -86,8 +86,8 @@ gcloud auth login
 # Set current project - replace the value with your own information.
 gcloud config set project my-sample-project-191923
 
-# Create a bucket in Google Cloud, enable versioning, and create blank site.json
-# and session.bin.
+# Create a bucket in Google Cloud, enable versioning, and upload a
+# blank site.json and session.bin.
 make gcp-init
 
 # Run a Google Cloud Build to build the docker image, push to the Container
@@ -121,7 +121,7 @@ AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 - Run these commands:
 
 ```bash
-# Create a bucket in AWS, enable versioning, and create blank site.json
+# Create a bucket in AWS, enable versioning, and upload a blank site.json
 # and session.bin.
 make aws-init
 
@@ -139,7 +139,7 @@ To deploy an Ambient app to an Azure Function, you will need the Azure CLI.
 
 If you don't have the Azure CLI installed, you can either [install it](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) or run it from a container. You can skip the next few steps if you already have the Azure CLI installed.
 
-To run the Azure CLI from a docker container, first paste this into your .bash_profile to act as an alias:
+To run the Azure CLI from a docker container, first paste this into your .bash_profile or .bashrc to act as an alias (if using a shell other than bash, you will need to convert to the equivalent for your shell):
 
 ```bash
 az() {
@@ -156,8 +156,15 @@ make az-start
 # Login to Azure.
 az login
 
-# Load storage accounts.
+# Test acccess by trying to load storage accounts.
 az storage account list
+
+# Create a resource group, storage account, storage container, and upload a
+# blank site.json and session.bin.
+make az-init
+
+# TBD
+make az-deploy
 
 # When you're done, you can stop the Azure CLI docker container from running in the background.
 make az-stop

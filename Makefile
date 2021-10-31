@@ -157,3 +157,8 @@ az-stop:
 az-init:
 	@echo Creating the initial files in Azure storage.
 	./deploy/azure-init.sh
+
+.PHONY: az-deploy
+az-deploy:
+	@echo Deploying to TDB.
+	# NEED TO IMPLEMENT

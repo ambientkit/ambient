@@ -10,13 +10,13 @@ import (
 	"github.com/Azure/azure-storage-blob-go/azblob"
 )
 
-// AzureBlobStorage represents a Azure Storage object.
+// AzureBlobStorage represents an Azure Storage object.
 type AzureBlobStorage struct {
 	container string
 	object    string
 }
 
-// NewAzureBlobStorage returns a Azure storage item given a container and an object
+// NewAzureBlobStorage returns an Azure storage item given a container and an object
 // path.
 func NewAzureBlobStorage(container string, object string) *AzureBlobStorage {
 	return &AzureBlobStorage{
