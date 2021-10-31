@@ -1,5 +1,4 @@
-// Package urlrewrite removes trailing slash from requests
-// for an Ambient application.
+// Package urlrewrite removes trailing slash from requests for an Ambient app.
 package urlrewrite
 
 import (

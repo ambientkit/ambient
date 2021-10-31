@@ -1,5 +1,4 @@
-// Package navigation provides a navigation page
-// for an Ambient application.
+// Package navigation provides a navigation page for an Ambient app.
 package navigation
 
 import (

@@ -69,7 +69,7 @@ func (app *App) Handler() (http.Handler, error) {
 		return nil, fmt.Errorf("ambient: no router found")
 	}
 
-	// Create secure site for the core application and use "ambient" so it gets
+	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
 	securesite := NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer)
 
@@ -102,7 +102,7 @@ func (app *App) GrantAccess(plugins *PluginLoader) {
 	// Get the plugin system.
 	pluginsystem := app.PluginSystem()
 
-	// Create secure site for the core application and use "ambient" so it gets
+	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
 	securestorage := NewSecureSite("ambient", app.log, pluginsystem, nil, nil, nil)
 

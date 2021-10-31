@@ -6,7 +6,7 @@ import (
 )
 
 // ProxyRequest will send all requests prefixed with the specified API path to
-// the Ambient application while all other requests to the proxy URL.
+// the Ambient app while all other requests to the proxy URL.
 func (p *Plugin) ProxyRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// If the path starts with the specific string, serve the API.

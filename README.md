@@ -7,9 +7,6 @@
   - [Why was this created?](#why-was-this-created)
   - [Who is this for?](#who-is-this-for)
   - [How does it work?](#how-does-it-work)
-- [Quickstart/Sample App Tutorial](#quickstartsample-app-tutorial)
-- [Deployment Guide](#deployment-guide)
-- [Plugin Development Guide](#plugin-development-guide)
 - [Screenshots](#screenshots)
 
 ## Overview
@@ -17,6 +14,12 @@
 ### What is it?
 
 Ambient is framework in Go for building web apps using plugins. You can use the plugins already included to stand up a blog just like the [Bear Blog](https://bearblog.dev/) or create your own plugins to build your own web app.
+
+Use the [Sample App Tutorial](cmd/myapp/README.md) to quickly get the sample app up and running locally.
+
+Use the [Deployment Guide](DEPLOYMENT.md) to deploy serverless on Google Cloud (Cloud Run), AWS (App Runner), or Azure (Functions).
+
+Use the [Plugin Development Guide](PLUGIN.md) to build your own plugins.
 
 ### Why was this created?
 
@@ -48,18 +51,6 @@ A [pluginmanager plugin](plugin/generic/pluginmanager/pluginmanager.go) is inclu
   - Modify the settings for a plugin
 
 There is a [library of plugins](plugin) that you can use in your apps or you can use to learn how create your own plugins.
-
-## Quickstart/Sample App Tutorial
-
-You can follow the [Sample App Tutorial](cmd/myapp/README.md) to quickly get the sample app up and running locally.
-
-## Deployment Guide
-
-You can follow the [Deployment Guide](DEPLOYMENT.md) to push an Ambient app to Google Cloud, AWS, or Azure.
-
-## Plugin Development Guide
-
-You can follow the [Plugin Development Guide](PLUGIN.md) to build your own plugins.
 
 ## Screenshots
 

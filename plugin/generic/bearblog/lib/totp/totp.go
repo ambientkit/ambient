@@ -40,7 +40,7 @@ func generateSecretKey() (string, error) {
 	return base32.StdEncoding.EncodeToString(key), nil
 }
 
-// configuration returns the application configuration for TOTP.
+// configuration returns the aoo configuration for TOTP.
 func configuration(secret string) *dgoogauth.OTPConfig {
 	return &dgoogauth.OTPConfig{
 		Secret:       secret,

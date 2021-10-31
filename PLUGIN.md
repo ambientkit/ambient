@@ -92,7 +92,7 @@ func Plugins() *ambient.PluginLoader {
 	return &ambient.PluginLoader{
 		Router:         awayrouter.New(nil),
 		TemplateEngine: htmlengine.New(),
-		// Trusted plugins are required to boot the application so they will be
+		// Trusted plugins are required to boot the app so they will be
 		// given full access.
 		TrustedPlugins: map[string]bool{
 			"scssession":    true, // Session manager.
@@ -115,7 +115,7 @@ func Plugins() *ambient.PluginLoader {
 }
 ```
 
-When you start the application, the plugin will not be enabled. You must login and then navigate to: http://localhost:8080/dashboard/plugins. Put a checkmark next to the plugin and then click the **Save** button at the bottom of the page. Your plugin is now enabled! It doesn't do anything so don't get too excited, but you've got the scaffolding of a plugin so on to the next step where you choose the type of plugin function to use.
+When you start the app, the plugin will not be enabled. You must login and then navigate to: http://localhost:8080/dashboard/plugins. Put a checkmark next to the plugin and then click the **Save** button at the bottom of the page. Your plugin is now enabled! It doesn't do anything so don't get too excited, but you've got the scaffolding of a plugin so on to the next step where you choose the type of plugin function to use.
 
 ## Plugin Functions
 
@@ -157,11 +157,11 @@ The function should return an object that satisfies the [`AppLogger`](ambient_lo
 ```go
 package ambient
 
-// AppLogger represents the log service for the application.
+// AppLogger represents the log service for the app.
 type AppLogger interface {
 	Logger
 
-	// Fatal is reserved for the application level only.
+	// Fatal is reserved for the app level only.
 	Fatal(format string, v ...interface{})
 	SetLogLevel(level LogLevel)
 }
@@ -187,9 +187,9 @@ const (
 	// permission warnings for plugins.
 	LogLevelWarn
 	// LogLevelError is for messages when something is wrong with the
-	// application and it needs to be corrected.
+	// app and it needs to be corrected.
 	LogLevelError
-	// LogLevelFatal is for messages when the application cannot continue and
+	// LogLevelFatal is for messages when the app cannot continue and
 	// will halt.
 	LogLevelFatal
 )
@@ -418,9 +418,9 @@ func (p *Plugin) Home(w http.ResponseWriter, r *http.Request) (status int, err e
 
 ### Grant Requests
 
-The `GrantRequests()` function returns a list of permissions required by the plugin. The admin of the application must enable each of the permissions.
+The `GrantRequests()` function returns a list of permissions required by the plugin. The admin of the app must enable each of the permissions.
 
-A [plugin](plugin/prism/prism.go) that needs to make changes to the application or interact with its data must include the MVP code as well as the `GrantRequests()` function.
+A [plugin](plugin/prism/prism.go) that needs to make changes to the app or interact with its data must include the MVP code as well as the `GrantRequests()` function.
 
 ```go
 // GrantRequests returns a list of grants requested by the plugin.
@@ -612,7 +612,7 @@ You could group by type as well. You may want to keep most of your middleware or
 
 **How should I approach wrapping a package as a plugin?**
 
-Regardless if you're using Ambient or not, Go packages should be designed so they can be reused by other people and projects without tightly coupling dependencies. If you are creating a new plugin, build the package so it follows [Go best practices](https://talks.golang.org/2013/bestpractices.slide) and then import it to the plugin package. That way you can use it with other applications as well.
+Regardless if you're using Ambient or not, Go packages should be designed so they can be reused by other people and projects without tightly coupling dependencies. If you are creating a new plugin, build the package so it follows [Go best practices](https://talks.golang.org/2013/bestpractices.slide) and then import it to the plugin package. That way you can use it with other apps as well.
 
 **Should I be worred about creating too many plugins?**
 

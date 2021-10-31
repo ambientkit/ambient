@@ -2,7 +2,7 @@ package ambient
 
 import "sort"
 
-// PluginLoader contains the plugins for the Ambient application.
+// PluginLoader contains the plugins for the Ambient app.
 type PluginLoader struct {
 	Router         RouterPlugin
 	TemplateEngine TemplateEnginePlugin

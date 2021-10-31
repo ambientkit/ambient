@@ -49,7 +49,7 @@ func main() {
 	// Get the plugin system.
 	pluginsystem = ambientApp.PluginSystem()
 
-	// Create secure site for the core application and use "ambient" so it gets
+	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
 	securestorage = ambient.NewSecureSite("ambient", log, pluginsystem, nil, nil, nil)
 

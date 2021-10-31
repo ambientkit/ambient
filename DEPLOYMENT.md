@@ -56,7 +56,7 @@ AMB_PASSWORD_HASH=
 
 ### Google Cloud
 
-To deploy an Ambient application to Google Cloud Run:
+To deploy an Ambient app to Google Cloud Run:
 
 - Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install).
 - Generate a [service account key](https://console.cloud.google.com/apis/credentials/serviceaccountkey). Download it on your system and add reference it from your .envrc file: `GOOGLE_APPLICATION_CREDENTIALS=~/gcp-cloud-key.json`. This is needed only if you want to test locally.

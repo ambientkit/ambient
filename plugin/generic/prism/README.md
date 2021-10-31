@@ -15,7 +15,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/prism"
 )
 
-// Plugins defines the plugins to use in the application. The order does matter.
+// Plugins defines the plugins to use in the app. The order does matter.
 var Plugins = func() *ambient.PluginLoader {
 	return &ambient.PluginLoader{
 		Plugins: []ambient.Plugin{

@@ -1,4 +1,4 @@
-// Package hello provides a hello page for an Ambient application.
+// Package hello provides a hello page for an Ambient app.
 package hello
 
 import (

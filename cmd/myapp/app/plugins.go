@@ -58,7 +58,7 @@ func Plugins() *ambient.PluginLoader {
 	return &ambient.PluginLoader{
 		Router:         awayrouter.New(nil),
 		TemplateEngine: htmlengine.New(),
-		// Trusted plugins are required to boot the application so they will be
+		// Trusted plugins are required to boot the app so they will be
 		// given full access.
 		TrustedPlugins: map[string]bool{
 			"scssession":    true, // Session manager.

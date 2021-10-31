@@ -11,7 +11,7 @@ include .env
 default: run
 
 ################################################################################
-# Setup application
+# Setup app
 ################################################################################
 
 .PHONY: privatekey
@@ -62,7 +62,7 @@ amb:
 	go run cmd/amb/main.go
 
 ################################################################################
-# Deploy application to Google Cloud
+# Deploy app to Google Cloud
 ################################################################################
 
 .PHONY: gcp-init
@@ -93,7 +93,7 @@ gcp-delete:
 	-gsutil -m rm -r -f gs://${AMB_GCP_BUCKET}
 
 ################################################################################
-# Deploy application to AWS
+# Deploy app to AWS
 ################################################################################
 
 .PHONY: aws-init
@@ -139,7 +139,7 @@ aws-delete:
 	-aws s3api delete-bucket --bucket ${AMB_AWS_BUCKET}
 
 ################################################################################
-# Deploy application to Azure
+# Deploy app to Azure
 ################################################################################
 
 .PHONY: azcli-start

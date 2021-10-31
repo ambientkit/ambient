@@ -1,10 +1,10 @@
 package ambient
 
-// AppLogger represents the log service for the application.
+// AppLogger represents the log service for the app.
 type AppLogger interface {
 	Logger
 
-	// Fatal is reserved for the application level only.
+	// Fatal is reserved for the app level only.
 	Fatal(format string, v ...interface{})
 	SetLogLevel(level LogLevel)
 }
@@ -30,9 +30,9 @@ const (
 	// permission warnings for plugins.
 	LogLevelWarn
 	// LogLevelError is for messages when something is wrong with the
-	// application and it needs to be corrected.
+	// app and it needs to be corrected.
 	LogLevelError
-	// LogLevelFatal is for messages when the application cannot continue and
+	// LogLevelFatal is for messages when the app cannot continue and
 	// will halt.
 	LogLevelFatal
 )
