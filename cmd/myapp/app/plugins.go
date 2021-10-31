@@ -14,6 +14,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/generic/debugpprof"
 	"github.com/josephspurrier/ambient/plugin/generic/description"
 	"github.com/josephspurrier/ambient/plugin/generic/disqus"
+	"github.com/josephspurrier/ambient/plugin/generic/envinfo"
 	"github.com/josephspurrier/ambient/plugin/generic/googleanalytics"
 	"github.com/josephspurrier/ambient/plugin/generic/pluginmanager"
 	"github.com/josephspurrier/ambient/plugin/generic/prism"
@@ -85,6 +86,7 @@ func Plugins() *ambient.PluginLoader {
 			sitemap.New(),                 // Sitemap generator.
 			rssfeed.New(),                 // RSS feed generator.
 			styles.New(),                  // Style editing page.
+			envinfo.New(),                 // Show environment variables on the server.
 
 			// App plugins.
 			hello.New(),

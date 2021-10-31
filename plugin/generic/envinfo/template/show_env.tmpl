@@ -1,0 +1,14 @@
+<h1>{{.title}}</h1>
+{{if .envs }}
+    {{range $p := .envs}}
+    <div>{{.}}</div>
+    {{end}}
+{{else}}
+<p>
+    <span>
+        <i>
+            None detected.
+        </i>
+    </span>
+</p>
+{{end}}
