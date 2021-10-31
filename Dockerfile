@@ -3,7 +3,7 @@
 # https://hub.docker.com/_/golang
 FROM golang:1.16-buster as builder
 
-# Create and change to the app directory.
+# Create and change to the app folder.
 WORKDIR /app
 
 # Retrieve app dependencies.
@@ -29,7 +29,7 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/server /app/server
 
-# Create and change to the app directory.
+# Create and change to the app folder.
 WORKDIR /app
 
 # Run the web service on container startup.

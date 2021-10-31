@@ -209,7 +209,7 @@ func embeddedAssets(mux Router, sess AppSession, pluginName string, files []Asse
 		}
 
 		mux.Get(fileurl, func(w http.ResponseWriter, r *http.Request) (statusCode int, err error) {
-			// Don't allow directory browsing.
+			// Don't allow folder browsing.
 			if strings.HasSuffix(r.URL.Path, "/") {
 				return http.StatusNotFound, nil
 			}

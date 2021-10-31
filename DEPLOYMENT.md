@@ -1,14 +1,14 @@
 # Deployment Guide <!-- omit in toc -->
 
-- [Environment Variables Management](#environment-variables-management)
+- [Environment Variable Management](#environment-variable-management)
 - [Deployments](#deployments)
   - [Google Cloud](#google-cloud)
   - [AWS](#aws)
   - [Azure](#azure)
 
-## Environment Variables Management
+## Environment Variable Management
 
-It's recommended to install [direnv](https://direnv.net/docs/installation.html) to help manage your environment variables out of a `.envrc` file. The benefit is when you CD out of the folder, the environment variables will be removed so they are just specific to that folder hierarchy. The directions below will assume you have this utility installed.
+It's recommended to install [direnv](https://direnv.net/docs/installation.html) to help manage your environment variables out of a `.envrc` file. The benefit is when you CD out of the folder, the environment variables will be unset so they are available to the root folder and all child folders. The directions below will assume you have this utility installed.
 
 Once you have `direnv` installed, create a .envrc file in the root of your project:
 

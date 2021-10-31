@@ -13,9 +13,9 @@ import (
 
 func main() {
 	dir := "plugin/prism"
-	fmt.Println("Directory:", dir)
+	fmt.Println("Folder:", dir)
 
-	// Go up two directories.
+	// Go up two folders.
 	root, err := filepath.Abs("../..")
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -23,13 +23,13 @@ func main() {
 
 	absDir := filepath.Join(root, dir)
 
-	// Ensure the directory exists.
+	// Ensure the folder exists.
 	_, err = os.ReadDir(absDir)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
-	// Get the directory name
+	// Get the folder name
 	dirName := filepath.Base(dir)
 	fmt.Println(dirName)
 

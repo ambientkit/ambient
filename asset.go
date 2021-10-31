@@ -227,7 +227,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 func (file *Asset) Contents(assets fs.FS) (ff []byte, status int, err error) {
 	// Get the contents from the path if the content field is not filled in.
 	if len(file.Path) > 0 {
-		// Use the root directory.
+		// Use the root folder.
 		fsys, err := fs.Sub(assets, ".")
 		if err != nil {
 			return nil, http.StatusInternalServerError, err
