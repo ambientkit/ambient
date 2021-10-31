@@ -2,9 +2,9 @@
 
 - [Environment Variable Management](#environment-variable-management)
 - [Deployments](#deployments)
-  - [Google Cloud](#google-cloud)
-  - [AWS](#aws)
-  - [Azure](#azure)
+  - [Google Cloud - Cloud Run](#google-cloud---cloud-run)
+  - [AWS - App Runner](#aws---app-runner)
+  - [Azure - Functions](#azure---functions)
 
 ## Environment Variable Management
 
@@ -49,7 +49,7 @@ AMB_PASSWORD_HASH=
 # AMB_URL_PREFIX=/api
 ```
 
-### Google Cloud
+### Google Cloud - Cloud Run
 
 To deploy an Ambient app to Google Cloud Run:
 
@@ -93,7 +93,7 @@ make gcp-deploy
 - You should now be able to access the URL that appeared in your terminal like this: `Service URL: https://ambient-someurl-uc.a.run.app`
 - To remove the service and bucket from GCP, run: `make gcp-delete`.
 
-### AWS
+### AWS - App Runner
 
 To deploy an Ambient app to AWS App Runner:
 
@@ -133,7 +133,7 @@ make aws-deploy
 - You should now be able to access the URL from the App Runner service: like this: `Default domain: https://someurl.us-east-1.awsapprunner.com`
 - To remove the service and bucket from AWS, run: `make aws-delete`.
 
-### Azure
+### Azure - Functions
 
 To deploy an Ambient app to an Azure Function, you will need the Azure CLI.
 
