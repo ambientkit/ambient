@@ -59,7 +59,7 @@ func (p *Plugin) Settings() []ambient.Setting {
 
 // Storage returns data and session storage.
 func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
-	container := os.Getenv("AZURE_CONTAINER_NAME")
+	container := os.Getenv("AMB_AZURE_CONTAINER")
 	if len(container) == 0 {
 		var err error
 		container, err = p.Site.PluginSettingString(Container)

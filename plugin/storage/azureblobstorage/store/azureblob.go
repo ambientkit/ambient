@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
 )
@@ -80,10 +81,33 @@ func (s *AzureBlobStorage) Save(b []byte) error {
 }
 
 func (s *AzureBlobStorage) containerURL() (azblob.ContainerURL, error) {
-	// Get the storage account name and key and set environment variables.
-	accountName, accountKey := os.Getenv("AZURE_STORAGE_ACCOUNT"), os.Getenv("AZURE_STORAGE_ACCESS_KEY")
-	if len(accountName) == 0 || len(accountKey) == 0 {
-		return azblob.ContainerURL{}, fmt.Errorf("either the AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCESS_KEY environment variable is not set")
+	accountName := ""
+	accountKey := ""
+
+	// Get the Azure credentials.
+	connString := os.Getenv("AzureWebJobsStorage")
+	if len(connString) == 0 {
+		// Get the storage account name and key and set environment variables.
+		accountName, accountKey = os.Getenv("AZURE_STORAGE_ACCOUNT"), os.Getenv("AZURE_STORAGE_ACCESS_KEY")
+		if len(accountName) == 0 || len(accountKey) == 0 {
+			return azblob.ContainerURL{}, fmt.Errorf("either the AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCESS_KEY environment variable is not set")
+		}
+	} else {
+		// Parse the connection string.
+		arr := strings.Split(connString, ";")
+		for _, v := range arr {
+			pair := strings.SplitN(v, "=", 2)
+			if len(pair) < 2 {
+				continue
+			}
+
+			switch pair[0] {
+			case "AccountName":
+				accountName = pair[1]
+			case "AccountKey":
+				accountKey = pair[1]
+			}
+		}
 	}
 
 	// Create a default request pipeline using the storage account name and account key.

@@ -17,7 +17,7 @@ Once you have `direnv` installed, create a .envrc file in the root of your proje
 # Export the vars in .env into the shell.
 export $(egrep -v '^#' .env | xargs)
 
-export PATH=$PATH:$(pwd)/bin
+export PATH=$PATH:$(pwd)/bin:$(pwd)/node_modules/.bin
 ```
 
 When you open up your terminal, you will be prompted with this message. You should type `direnv allow` to allow the system to load environment variables from the file.
@@ -144,12 +144,19 @@ To deploy an Ambient app to an Azure Function, you will need the Azure CLI.
 
 If you don't have the Azure CLI installed, you can either [install it](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) or run it from a container. You can skip the next few steps if you already have the Azure CLI installed.
 
-To run the Azure CLI from a docker container, first paste this into your .bash_profile or .bashrc to act as an alias (if using a shell other than bash, you will need to convert to the equivalent for your shell):
+To run the Azure CLI from a docker container, paste the code below into a new file: `bin/az`. It will allow you to use the the dockerize version of the Azure CLI. The path to the bin folder should be included in the PATH already because of the .envrc file above.
 
 ```bash
-az() {
-  docker exec azurecli az "$@"
-}
+#!/usr/bin/env bash
+
+docker exec azurecli az "$@"
+```
+
+You will also need to install the Azure Functions Core Tools. You could [install for your operating system](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local) or run this command to install it using npm:
+
+```bash
+# Install v3 of the Azure Functions Core Tools locally using npm.
+npm install azure-functions-core-tools@3 --unsafe-perm true
 ```
 
 - Update your .env file with the Azure information - replace the values with your own information:
@@ -181,9 +188,11 @@ az storage account list
 # blank site.json and session.bin.
 make az-init
 
-# You should get an output of your storage access key. Add it to your .envrc file.
+# You should get an output of your storage access key and connection string.
+# Add it to your .envrc file.
 
-# TBD
+# Create or update an Azure Function with a custom runtime, update env variables,
+# and then deploy the Go binary.
 make az-deploy
 
 # When you're done, you can stop the Azure CLI docker container from running in the background.

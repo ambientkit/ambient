@@ -2,22 +2,30 @@
     "version": "2.0",
     "extensionBundle": {
         "id": "Microsoft.Azure.Functions.ExtensionBundle",
-        "version": "[1.*, 2.0.0)"
+        "version": "[2.*, 3.0.0)"
     },
-    "extensions": {
-        "http": {
-            "routePrefix": ""
+    "logging": {
+        "logLevel": {
+            "default": "Error"
+        },
+        "applicationInsights": {
+            "samplingSettings": {
+                "isEnabled": true,
+                "excludedTypes": "Request"
+            }
         }
     },
     "customHandler": {
         "description": {
-            "defaultExecutablePath": "ambient"
+            "defaultExecutablePath": "ambient",
+            "workingDirectory": "",
+            "arguments": []
         },
         "enableForwardingHttpRequest": true
     },
-    "logging": {
-        "logLevel": {
-            "default": "Trace"
+    "extensions": {
+        "http": {
+            "routePrefix": ""
         }
     }
 }
