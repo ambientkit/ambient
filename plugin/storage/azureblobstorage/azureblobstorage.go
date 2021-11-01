@@ -2,6 +2,7 @@
 package azureblobstorage
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/josephspurrier/ambient"
@@ -37,35 +38,20 @@ func (p *Plugin) PluginVersion() string {
 	return "1.0.0"
 }
 
-// Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
-	p.Toolkit = toolkit
-	return nil
-}
-
 const (
-	// Container allows user to set the Blob container.
-	Container = "Container"
+	// ContainerEnv is the Azure Storage container environment variable.
+	ContainerEnv = "AMB_AZURE_CONTAINER"
 )
-
-// Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []ambient.Setting {
-	return []ambient.Setting{
-		{
-			Name: Container,
-		},
-	}
-}
 
 // Storage returns data and session storage.
 func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
-	container := os.Getenv("AMB_AZURE_CONTAINER")
+	// Store the logger so it can be used by the plugin.
+	p.Log = logger
+
+	// Load the container from the environment variable.
+	container := os.Getenv(ContainerEnv)
 	if len(container) == 0 {
-		var err error
-		container, err = p.Site.PluginSettingString(Container)
-		if err != nil {
-			return nil, nil, err
-		}
+		return nil, nil, fmt.Errorf("%v: environment variable, %v, is missing", p.PluginName(), ContainerEnv)
 	}
 
 	ds := store.NewAzureBlobStorage(container, p.sitePath)

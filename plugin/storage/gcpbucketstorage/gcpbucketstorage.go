@@ -2,6 +2,7 @@
 package gcpbucketstorage
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/josephspurrier/ambient"
@@ -37,35 +38,20 @@ func (p *Plugin) PluginVersion() string {
 	return "1.0.0"
 }
 
-// Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
-	p.Toolkit = toolkit
-	return nil
-}
-
 const (
-	// Bucket allows user to set the GCP bucket.
-	Bucket = "Bucket"
+	// BucketEnv is the Google Storage bucket environment variable.
+	BucketEnv = "AMB_GCP_BUCKET"
 )
-
-// Settings returns a list of user settable fields.
-func (p *Plugin) Settings() []ambient.Setting {
-	return []ambient.Setting{
-		{
-			Name: Bucket,
-		},
-	}
-}
 
 // Storage returns data and session storage.
 func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
-	bucket := os.Getenv("AMB_GCP_BUCKET")
+	// Store the logger so it can be used by the plugin.
+	p.Log = logger
+
+	// Load the bucket from the environment variable.
+	bucket := os.Getenv(BucketEnv)
 	if len(bucket) == 0 {
-		var err error
-		bucket, err = p.Site.PluginSettingString(Bucket)
-		if err != nil {
-			return nil, nil, err
-		}
+		return nil, nil, fmt.Errorf("%v: environment variable, %v, is missing", p.PluginName(), BucketEnv)
 	}
 
 	ds := store.NewGCPStorage(bucket, p.sitePath)
