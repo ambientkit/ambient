@@ -5,12 +5,8 @@ import (
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/myapp/app"
-	"github.com/josephspurrier/ambient/lib/envdetect"
+	"github.com/josephspurrier/ambient/lib/cloudstorage"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
-	"github.com/josephspurrier/ambient/plugin/storage/awsbucketstorage"
-	"github.com/josephspurrier/ambient/plugin/storage/azureblobstorage"
-	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage"
-	"github.com/josephspurrier/ambient/plugin/storage/localstorage"
 )
 
 var (
@@ -24,20 +20,9 @@ func init() {
 }
 
 func main() {
-	// Select the storage engine for site and session information.
-	var storage ambient.StoragePlugin
-	if envdetect.RunningLocalDev() {
-		storage = localstorage.New(app.StorageSitePath, app.StorageSessionPath)
-	} else if envdetect.RunningInGoogle() {
-		storage = gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath)
-	} else if envdetect.RunningInAWS() {
-		storage = awsbucketstorage.New(app.StorageSitePath, app.StorageSessionPath)
-	} else if envdetect.RunningInAzureFunction() {
-		storage = azureblobstorage.New(app.StorageSitePath, app.StorageSessionPath)
-	} else {
-		// Defaulting to local storage.
-		storage = localstorage.New(app.StorageSitePath, app.StorageSessionPath)
-	}
+	// Determine cloud storage engine for site and session information.
+	storage := cloudstorage.StorageBasedOnCloud(app.StorageSitePath,
+		app.StorageSessionPath)
 
 	// Create the ambient app.
 	plugins := app.Plugins()
@@ -57,12 +42,6 @@ func main() {
 
 	// Set the log level.
 	// ambientApp.SetLogLevel(ambient.LogLevelDebug)
-	// ambientApp.SetLogLevel(ambient.LogLevelInfo)
-	// ambientApp.SetLogLevel(ambient.LogLevelError)
-	// ambientApp.SetLogLevel(ambient.LogLevelFatal)
-
-	// Add template debug information.
-	// ambientApp.SetDebugTemplates(true)
 
 	// Enable the trusted plugins.
 	ambientApp.GrantAccess(plugins)

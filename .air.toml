@@ -15,7 +15,7 @@ full_bin = "./tmp/main"
 # Watch these filename extensions.
 include_ext = ["go", "tmpl", "css", "js"]
 # Ignore these filename extensions or directories.
-exclude_dir = ["tmp", "vendor"]
+exclude_dir = ["tmp", "vendor", "node_modules"]
 # Watch these directories if you specified.
 #include_dir = ["./", "app", "assets", "cmd", "html", "plugin"]
 # Exclude files.
