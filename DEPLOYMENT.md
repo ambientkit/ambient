@@ -60,13 +60,13 @@ To deploy an Ambient app to Google Cloud Run:
 
 ```bash
 # GCP project ID.
-AMB_GCP_PROJECT_ID=my-sample-project-191923
+AMB_GCP_PROJECT_ID=myapp-191923
 # GCP bucket name (this can be one that doesn't exist yet).
-AMB_GCP_BUCKET=sample-bucket
+AMB_GCP_BUCKET=myapp-bucket
 # Name of the docker image that will be created and stored in GCP Repository.
-AMB_GCP_IMAGE=sample-image
+AMB_GCP_IMAGE=myapp-image
 # Name of the Cloud Run service to create.
-AMB_GCP_CLOUDRUN_NAME=sample-service
+AMB_GCP_CLOUDRUN_NAME=myapp-service
 # Region (not zone) where the Cloud Run service will be created:
 # https://cloud.google.com/compute/docs/regions-zones#available
 AMB_GCP_REGION=us-central1
@@ -79,7 +79,7 @@ AMB_GCP_REGION=us-central1
 gcloud auth login
 
 # Set current project - replace the value with your own information.
-gcloud config set project my-sample-project-191923
+gcloud config set project myapp-project-191923
 
 # Create a bucket in Google Cloud, enable versioning, and upload a
 # blank site.json and session.bin.
@@ -115,7 +115,7 @@ AMB_AWS_ACCOUNT=121212121212
 # AWS region where the App Runner will be created.
 AWS_REGION=us-east-1
 # AWS S3 bucket name where the site and session files will be stored. New or existing.
-AMB_AWS_BUCKET=sample-storage
+AMB_AWS_BUCKET=myapp-storage
 ```
 
 - Run these commands:
@@ -164,13 +164,13 @@ npm install azure-functions-core-tools@3 --unsafe-perm true
 
 ```bash
 # Azure resource group where storage account will be created. New or existing.
-AMB_AZURE_RESOURCE_GROUP=sample-rg
+AMB_AZURE_RESOURCE_GROUP=myapp-rg
 # Azure storage account where the storage container will be created. New or existing. Unique.
-AZURE_STORAGE_ACCOUNT=samplestorage
+AZURE_STORAGE_ACCOUNT=myappstorage191923
 # Azure container where the site and session files will be stored. New or existing.
-AMB_AZURE_CONTAINER=sample-container
+AMB_AZURE_CONTAINER=myapp-container
 # Azure function name. Unique.
-AMB_AZURE_FUNCTION_NAME=ambientapp
+AMB_AZURE_FUNCTION_NAME=myapp-191923
 ```
 
 Refresh your terminal session and then run these commands:
