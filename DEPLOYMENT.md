@@ -121,6 +121,12 @@ AMB_AWS_BUCKET=sample-storage
 - Run these commands:
 
 ```bash
+
+# You should get an output of your storage access key and connection string.
+# Add it to your .envrc file. Then run the command to trust and reload the 
+# env variables.
+direnv allow
+
 # Create a bucket in AWS, enable versioning, and upload a blank site.json
 # and session.bin.
 make aws-init
