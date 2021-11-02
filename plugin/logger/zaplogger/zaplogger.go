@@ -1,21 +1,18 @@
 // Package zaplogger is an Ambient plugin that provides logging using zap.
 package zaplogger
 
-import "github.com/josephspurrier/ambient"
+import (
+	"github.com/josephspurrier/ambient"
+)
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*ambient.PluginBase
-	*ambient.Toolkit
-
 	log *Logger
 }
 
 // New returns an Ambient plugin that provides logging using zap.
 func New() *Plugin {
-	return &Plugin{
-		PluginBase: &ambient.PluginBase{},
-	}
+	return &Plugin{}
 }
 
 // PluginName returns the plugin name.
@@ -34,10 +31,4 @@ func (p *Plugin) Logger(appName string, appVersion string) (ambient.AppLogger, e
 	p.log = NewLogger(appName, appVersion)
 
 	return p.log, nil
-}
-
-// Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
-	p.Toolkit = toolkit
-	return nil
 }

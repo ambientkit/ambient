@@ -1,19 +1,18 @@
 // Package logruslogger is an Ambient plugin that provides log functionality using logrus.
 package logruslogger
 
-import "github.com/josephspurrier/ambient"
+import (
+	"github.com/josephspurrier/ambient"
+)
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*ambient.PluginBase
-	*ambient.Toolkit
+	log *Logger
 }
 
 // New returns an Ambient plugin that provides log functionality using logrus.
 func New() *Plugin {
-	return &Plugin{
-		PluginBase: &ambient.PluginBase{},
-	}
+	return &Plugin{}
 }
 
 // PluginName returns the plugin name.
@@ -29,13 +28,7 @@ func (p *Plugin) PluginVersion() string {
 // Logger returns a logger.
 func (p *Plugin) Logger(appName string, appVersion string) (ambient.AppLogger, error) {
 	// Create the logger.
-	log := NewLogger(appName, appVersion)
+	p.log = NewLogger(appName, appVersion)
 
-	return log, nil
-}
-
-// Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
-	p.Toolkit = toolkit
-	return nil
+	return p.log, nil
 }

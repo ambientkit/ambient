@@ -17,17 +17,12 @@ type RouterHandler func(w http.ResponseWriter, r *http.Request, status int, err 
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*ambient.PluginBase
-	*ambient.Toolkit
-
 	serveHTTP LoggerHandler
 }
 
 // New returns an Ambient plugin for a router using a variation of the way router.
 func New(serveHTTP LoggerHandler) *Plugin {
 	return &Plugin{
-		PluginBase: &ambient.PluginBase{},
-
 		serveHTTP: serveHTTP,
 	}
 }
@@ -51,12 +46,6 @@ func (p *Plugin) Router(logger ambient.Logger, te ambient.Renderer) (ambient.App
 	p.setupRouter(logger, mux, te)
 
 	return mux, nil
-}
-
-// Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
-	p.Toolkit = toolkit
-	return nil
 }
 
 // setupRouter returns a router with the NotFound handler and the default

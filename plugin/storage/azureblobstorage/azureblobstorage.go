@@ -11,9 +11,6 @@ import (
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*ambient.PluginBase
-	*ambient.Toolkit
-
 	sitePath    string
 	sessionPath string
 }
@@ -21,8 +18,6 @@ type Plugin struct {
 // New returns an Ambient plugin that provides storage in Azure Blob Storage.
 func New(sitePath string, sessionPath string) *Plugin {
 	return &Plugin{
-		PluginBase: &ambient.PluginBase{},
-
 		sitePath:    sitePath,
 		sessionPath: sessionPath,
 	}
@@ -45,9 +40,6 @@ const (
 
 // Storage returns data and session storage.
 func (p *Plugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
-	// Store the logger so it can be used by the plugin.
-	p.Log = logger
-
 	// Load the container from the environment variable.
 	container := os.Getenv(ContainerEnv)
 	if len(container) == 0 {
