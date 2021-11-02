@@ -109,6 +109,10 @@ func (p *Plugin) Settings() []ambient.Setting {
 		{
 			Name: MFAKey,
 			Type: ambient.InputPassword,
+			Description: ambient.SettingDescription{
+				Text: "Generate an MFA key. Plugin must be enabled first.",
+				URL:  "/dashboard/mfa",
+			},
 		},
 		{
 			Name:    LoginURL,
@@ -144,6 +148,8 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/login", p.login)
 	p.Mux.Post("/login", p.loginPost)
 	p.Mux.Get("/dashboard", p.dashboard)
+	p.Mux.Get("/dashboard/mfa", p.mfa)
+	p.Mux.Post("/dashboard/mfa", p.mfaPost)
 	p.Mux.Get("/dashboard/logout", p.logout)
 }
 

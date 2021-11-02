@@ -78,7 +78,26 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		return p.Site.Error(err)
 	}
 
-	// Loop through each plugin to get the settings then save.
+	// Disable plugins: loop through each plugin to get the settings then save.
+	// Disable plugins first so they don't collide with enabling plugins that
+	// have the same routes, etc.
+	for _, name := range names {
+		info, ok := plugins[name]
+		if !ok {
+			continue
+		}
+
+		enable := (r.FormValue(name) == "on")
+		if !enable && info.Enabled {
+			// Disable the plugin.
+			err = p.Site.DisablePlugin(name, true)
+			if err != nil {
+				return p.Site.Error(err)
+			}
+		}
+	}
+
+	// Enable plugins: loop through each plugin to get the settings then save.
 	for _, name := range names {
 		info, ok := plugins[name]
 		if !ok {
@@ -88,12 +107,6 @@ func (p *Plugin) update(w http.ResponseWriter, r *http.Request) (status int, err
 		enable := (r.FormValue(name) == "on")
 		if enable && !info.Enabled {
 			err = p.Site.EnablePlugin(name, true)
-			if err != nil {
-				return p.Site.Error(err)
-			}
-		} else if !enable && info.Enabled {
-			// Disable the plugin.
-			err = p.Site.DisablePlugin(name, true)
 			if err != nil {
 				return p.Site.Error(err)
 			}

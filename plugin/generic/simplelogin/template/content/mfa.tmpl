@@ -1,0 +1,25 @@
+{{if .title}}
+<h1>{{.title}}</h1>
+{{end}}
+<form class="login" method="POST">
+    <input type="hidden" name="token" value="{{.token}}">
+    <p>
+        <label for="id_username">Username:</label>
+        <input type="text" name="username" placeholder="Username" autofocus="autofocus" required id="id_username">
+    </p>
+    <p>
+        <label for="id_issuer">Issuer:</label>
+        <input type="text" name="issuer" placeholder="Issuer" required id="id_issuer">
+    </p>
+    <button class="primaryAction" type="submit">Generate</button>
+
+    {{if .mfa}}
+    <div style="margin-top: 20px;">{{.mfa}}</div>
+    {{end}}
+    {{if .qrcode}}
+    <div style="margin-top: 20px;">
+        <div>You can take a photo of this QR with your phone and add it to Google Authenticator or another app that supports TOTP.</div>
+        <img style="display: block; margin-top: 20px;" src="data:image/png;base64,{{.qrcode}}" />
+    </div>
+    {{end}}
+</form>

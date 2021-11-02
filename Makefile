@@ -18,20 +18,7 @@ default: run
 privatekey:
 	@echo Generating private key for encrypting sessions.
 	@echo You can paste private key this into your .env file:
-	@go run plugin/scssession/cmd/privatekey/main.go
-
-# Save the ARGS.
-# https://stackoverflow.com/a/14061796
-ifeq (mfa,$(firstword $(MAKECMDGOALS)))
-  ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  $(eval $(ARGS):;@:)
-endif
-
-.PHONY: mfa
-mfa:
-	@echo Generating MFA for user.
-	@echo You can paste private key this into your .env file:
-	@go run plugin/bearblog/cmd/mfa/main.go ${ARGS}
+	@go run plugin/sessionmanager/scssession/cmd/privatekey/main.go
 
 # Save the ARGS.
 # https://stackoverflow.com/a/14061796
@@ -44,7 +31,7 @@ endif
 passhash:
 	@echo Generating password hash.
 	@echo You can paste private key this into your .env file:
-	@go run plugin/bearblog/cmd/passhash/main.go ${ARGS}
+	@go run plugin/generic/bearblog/cmd/passhash/main.go ${ARGS}
 
 .PHONY: storage
 storage:
