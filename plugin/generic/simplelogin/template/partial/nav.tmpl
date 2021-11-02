@@ -2,11 +2,11 @@
     <h2>{{simplelogin_SiteSubtitle}}</h2>
 </a>
 <nav>
+    <a href="{{URLPrefix}}/">Home</a>
     {{if simplelogin_Authenticated}}
     <a href="{{URLPrefix}}/dashboard">Dashboard</a>
     <a href="{{URLPrefix}}/dashboard/plugins">Plugins</a>
     {{end}}
-    <a href="{{URLPrefix}}/">Home</a>
     {{if simplelogin_Authenticated}}
     <a href="{{URLPrefix}}/dashboard/logout">Logout</a>
     {{else}}

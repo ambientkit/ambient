@@ -1,0 +1,41 @@
+<h1>{{.title}}</h1>
+<form method="POST" class="post-form">
+    <input type="hidden" name="token" value="{{.token}}">
+    <p>
+        <label for="id_title">Site title:</label>
+        <input type="text" name="title" value="{{.ptitle}}" maxlength="200" id="id_title">
+    </p>
+    <p>
+        <label for="id_subtitle">Site subtitle:</label>
+        <input type="text" name="subtitle" value="{{.subtitle}}" maxlength="200" id="id_subtitle">
+    </p>
+    <p>
+        <label for="id_domain">Site url:</label>
+        <select name="scheme" id="id_scheme" required>
+            <option value="http" {{ if eq .scheme "http" }}selected{{ end }}>http</option>
+            <option value="https" {{ if eq .scheme "https" }}selected{{ end }}>https</option>
+        </select>
+        <span class="helptext">://</span>
+        <input type="text" name="domain" value="{{.domain}}" id="id_domain" required>
+        <span class="helptext">(ex. www.example.com)</span>
+    </p>
+    <p>
+        <label for="id_footer">Site footer:</label>
+        <textarea name="footer" cols="40" rows="3" id="id_footer">{{.footer}}</textarea>
+    </p>
+    <p>
+        <label for="id_content">Homepage content (markdown):</label>
+        <textarea name="content" cols="40" rows="20" id="id_content">{{.homeContent}}</textarea>
+        <span class="helptext">
+            <a href='https://www.markdownguide.org/cheat-sheet/' target='_blank'>Markdown cheatsheet</a>
+        </span>
+        |
+        <span class="helptext">
+            <a href='https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md' target='_blank'>Emoji cheatsheet</a>
+        </span>
+    </p>
+    <button type="submit" class="save btn btn-default">Save</button>
+</form>
+<p>
+    <div>Maintenance: <a href="{{URLPrefix}}/dashboard/reload">Reload from storage</a></div>
+</p>

@@ -115,11 +115,6 @@ func (p *Plugin) Settings() []ambient.Setting {
 			},
 		},
 		{
-			Name:    LoginURL,
-			Default: "admin",
-			Hide:    true,
-		},
-		{
 			Name: Author,
 		},
 		{
@@ -144,10 +139,12 @@ func (p *Plugin) Settings() []ambient.Setting {
 
 // Routes gets routes for the plugin.
 func (p *Plugin) Routes() {
-	p.Mux.Get("/", p.home)
+	p.Mux.Get("/", p.index)
+	p.Mux.Get("/dashboard", p.edit)
+	p.Mux.Post("/dashboard", p.update)
+	p.Mux.Get("/dashboard/reload", p.reload)
 	p.Mux.Get("/login", p.login)
 	p.Mux.Post("/login", p.loginPost)
-	p.Mux.Get("/dashboard", p.dashboard)
 	p.Mux.Get("/dashboard/mfa", p.mfa)
 	p.Mux.Post("/dashboard/mfa", p.mfaPost)
 	p.Mux.Get("/dashboard/logout", p.logout)

@@ -45,6 +45,7 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 	return []ambient.GrantRequest{
 		{Grant: ambient.GrantPluginSettingRead, Description: "Access to the charset."},
+		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to write the charset meta tag."},
 	}
 }
 

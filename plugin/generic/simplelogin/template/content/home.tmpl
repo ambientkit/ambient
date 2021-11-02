@@ -2,9 +2,5 @@
 <h1>{{.title}}</h1>
 {{end}}
 <content>
-    {{if simplelogin_Authenticated}}
-        This is the home page when authenticated.
-    {{else}}
-        You must login to access the plugin manager.
-    {{end}}
+    {{.postcontent}}
 </content>

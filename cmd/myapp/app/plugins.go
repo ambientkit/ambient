@@ -69,11 +69,11 @@ func Plugins() *ambient.PluginLoader {
 		},
 		Plugins: []ambient.Plugin{
 			// Marketplace plugins.
+			charset.New(),                 // Charset to the HTML head.
 			simplelogin.New(passwordHash), // Simple login page.
 			bearblog.New(passwordHash),    // Bear Blog functionality.
 			bearcss.New(),                 // Bear Blog styling.
 			debugpprof.New(),              // Go pprof debug endpoints.
-			charset.New(),                 // Charset to the HTML head.
 			viewport.New(),                // Viewport in the HTML head.
 			author.New(),                  // Author in the HTML head.
 			description.New(),             // Description the HTML head.

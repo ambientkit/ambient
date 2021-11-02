@@ -117,7 +117,14 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 
 					switch file.Location {
 					case LocationHead:
-						pluginHead += txt + "\n    "
+						if strings.Contains(txt, "charset") {
+							// Move charset to the top of the location head.
+							// https://webhint.io/docs/user-guide/hints/hint-meta-charset-utf-8/?source=devtools
+							pluginHead = txt + "\n    " + pluginHead
+						} else {
+							// The rest can go after.
+							pluginHead += txt + "\n    "
+						}
 					case LocationHeader:
 						pluginHeader += txt + "\n    "
 					case LocationMain:
