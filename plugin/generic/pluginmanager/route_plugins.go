@@ -12,6 +12,7 @@ type pluginWithSettings struct {
 	ambient.PluginData
 	Settings []ambient.Setting
 	Grants   []ambient.GrantRequest
+	Trusted  bool
 }
 
 func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err error) {
@@ -44,11 +45,17 @@ func (p *Plugin) edit(w http.ResponseWriter, r *http.Request) (status int, err e
 			return p.Site.Error(err)
 		}
 
+		trusted, err := p.Site.PluginTrusted(pluginName)
+		if err != nil {
+			return p.Site.Error(err)
+		}
+
 		arr = append(arr, pluginWithSettings{
 			Name:       pluginName,
 			PluginData: plugins[pluginName],
 			Grants:     grantList,
 			Settings:   settingsList,
+			Trusted:    trusted,
 		})
 	}
 

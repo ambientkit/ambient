@@ -4,6 +4,9 @@
 <form method="POST" class="post-form">
     <input type="hidden" name="token" value="{{.token}}">
         {{if .grants }}
+            <div style="margin-top: 16px;">
+                <a href="javascript:void(0);" onClick="setCheckboxes(true);">Select all</a> <a href="javascript:void(0);" onClick="setCheckboxes(false);">Deselect all</a>
+            </div>
             {{range $id, $p := .grants}}
             <p>
                 <label for="id_field{{.Index}}">{{.Name}}</label>
@@ -26,3 +29,13 @@
         </p>
         {{end}}
 </form>
+
+<script type="application/javascript">
+function setCheckboxes(desired) {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked != desired)
+            checkboxes[i].checked = desired;
+    }
+}
+</script>
