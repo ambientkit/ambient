@@ -3,6 +3,7 @@ package ambient
 import (
 	"errors"
 	"fmt"
+	"sort"
 )
 
 var (
@@ -163,6 +164,30 @@ func (p *PluginSystem) RemovePlugin(pluginName string) error {
 // Names returns a list of plugin names.
 func (p *PluginSystem) Names() []string {
 	return p.names
+}
+
+// TrustedPluginNames returns a list of sorted trusted names.
+func (p *PluginSystem) TrustedPluginNames() []string {
+	names := make([]string, 0)
+	for name, trust := range p.trusted {
+		if trust {
+			names = append(names, name)
+		}
+	}
+
+	sort.Strings(names)
+
+	return names
+}
+
+// Trusted returns if a plugin is trusted.
+func (p *PluginSystem) Trusted(pluginName string) bool {
+	trust, found := p.trusted[pluginName]
+	if !found {
+		return false
+	}
+
+	return trust
 }
 
 // Plugins returns the plugin list.

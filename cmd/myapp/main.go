@@ -44,7 +44,7 @@ func main() {
 	// ambientApp.SetLogLevel(ambient.LogLevelDebug)
 
 	// Enable the trusted plugins.
-	ambientApp.GrantAccess(plugins)
+	ambientApp.GrantAccess()
 
 	// Load the plugins and return the handler.
 	mux, err := ambientApp.Handler()

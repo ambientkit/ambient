@@ -25,11 +25,10 @@ var (
 	log           ambient.AppLogger
 	pluginsystem  *ambient.PluginSystem
 	securestorage *ambient.SecureSite
-	plugins       *ambient.PluginLoader
 )
 
 func main() {
-	plugins = app.Plugins()
+	plugins := app.Plugins()
 
 	// Create the ambient app.
 	ambientApp, log, err := ambient.NewApp(appName, appVersion,
@@ -121,11 +120,8 @@ func pluginSuggestions() []prompt.Suggest {
 	arr := make([]prompt.Suggest, 0)
 	arr = append(arr, prompt.Suggest{Text: "all", Description: ""})
 
-	for _, pluginName := range plugins.TrustedPluginNames() {
-		trusted := plugins.TrustedPlugins[pluginName]
-		if trusted {
-			arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
-		}
+	for _, pluginName := range pluginsystem.TrustedPluginNames() {
+		arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
 	}
 
 	return arr
@@ -145,11 +141,8 @@ func executer(s string) {
 
 		if args[1] == "all" {
 			// Enable plugins.
-			for _, pluginName := range plugins.TrustedPluginNames() {
-				trusted := plugins.TrustedPlugins[pluginName]
-				if trusted {
-					enablePlugin(pluginName)
-				}
+			for _, pluginName := range pluginsystem.TrustedPluginNames() {
+				enablePlugin(pluginName)
 			}
 		} else {
 			enablePlugin(args[1])
@@ -164,11 +157,8 @@ func executer(s string) {
 
 		if args[1] == "all" {
 			// Enable plugin grants.
-			for _, pluginName := range plugins.TrustedPluginNames() {
-				trusted := plugins.TrustedPlugins[pluginName]
-				if trusted {
-					enableGrants(pluginName)
-				}
+			for _, pluginName := range pluginsystem.TrustedPluginNames() {
+				enableGrants(pluginName)
 			}
 		} else {
 			enableGrants(args[1])
