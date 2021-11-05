@@ -23,7 +23,7 @@ Use the [Plugin Development Guide](PLUGIN.md) to build your own plugins.
 
 ### Why was this created?
 
-Each time I write a new web app, there is a lot of reuse of foundational code. I created Ambient to help myself standardize existing code, enable/disable packages on demand, modify plugin behaviors using a configurable settings page, and build new functionality in a reusable way.
+Each time I write a new web app, there is a lot of foundational code reuse. I created Ambient to help myself standardize existing code, enable/disable packages on demand, modify plugin behaviors using a configurable settings page, and build new functionality in a reusable way.
 
 ### Who is this for?
 
@@ -31,18 +31,17 @@ Ambient will probably appeal to individual developers or small development teams
 
 ### How does it work?
 
-Ambient is a web server that accepts an app name, app version, logger, storage system, and a collection of plugins (which must include a session manager, router, and template engine).
+Ambient is a web server that accepts an app name, app version, logger, storage system, and a collection of plugins (which must include a router, template engine, and session manager).
 
 Plugins:
 - have to satisfy [interfaces](ambient.go) in order to work with Ambient.
 - must request permissions and the admin must grant each permission.
 - can modify or interact with almost any part of a web app:
-  - logger
-  - session manager
-  - router
-  - middleware
-  - template engine
-  - pages or API endpoints
+  - logging
+  - session management
+  - URL handling/routing for pages and API endpoints
+  - middleware on routes
+  - page templates
   - content for HTML head, content, navigation, footer, etc.
 
 A [pluginmanager plugin](plugin/generic/pluginmanager/pluginmanager.go) is included that allows you to:
@@ -50,13 +49,13 @@ A [pluginmanager plugin](plugin/generic/pluginmanager/pluginmanager.go) is inclu
   - Grant permissions to a plugin
   - Modify the settings for a plugin
 
-There is a [library of plugins](plugin) that you can use in your apps or you can use to learn how create your own plugins.
+There is a [library of plugins](plugin) that you can use in your apps or use as a reference when creating your own plugins.
 
 ## Screenshots
 
 Below are screenshots of the sample app with links to the plugins to help explain the architecture.
 
-The terminal shows the [logger plugin](plugin/logger/logruslogger/logruslogger.go) that outputs based on log level.
+The terminal shows the [logger plugin](plugin/logger/zaplogger/zaplogger.go) that outputs based on log level.
 
 ![Terminal](doc/screenshot/terminal.png)
 

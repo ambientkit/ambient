@@ -9,19 +9,14 @@ import (
 	"github.com/josephspurrier/ambient/plugin/router/awayrouter/router"
 )
 
-// LoggerHandler -
-type LoggerHandler func(log ambient.Logger, w http.ResponseWriter, r *http.Request, status int, err error)
-
-// RouterHandler -
-type RouterHandler func(w http.ResponseWriter, r *http.Request, status int, err error)
-
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	serveHTTP LoggerHandler
+	serveHTTP CustomServeHTTP
 }
 
 // New returns an Ambient plugin for a router using a variation of the way router.
-func New(serveHTTP LoggerHandler) *Plugin {
+// A custom CustomServeHTTP can be passed in to override how errors are handled.
+func New(serveHTTP CustomServeHTTP) *Plugin {
 	return &Plugin{
 		serveHTTP: serveHTTP,
 	}
@@ -47,6 +42,10 @@ func (p *Plugin) Router(logger ambient.Logger, te ambient.Renderer) (ambient.App
 
 	return mux, nil
 }
+
+// CustomServeHTTP allows customization of error handling by the router.
+type CustomServeHTTP func(log ambient.Logger, renderer ambient.Renderer,
+	w http.ResponseWriter, r *http.Request, status int, err error)
 
 // setupRouter returns a router with the NotFound handler and the default
 // handler set.
@@ -89,7 +88,7 @@ func (p *Plugin) setupRouter(logger ambient.Logger, mux ambient.AppRouter, te am
 	serveHTTP := defaultServeHTTP
 	if p.serveHTTP != nil {
 		serveHTTP = func(w http.ResponseWriter, r *http.Request, status int, err error) {
-			p.serveHTTP(logger, w, r, status, err)
+			p.serveHTTP(logger, te, w, r, status, err)
 		}
 	}
 
