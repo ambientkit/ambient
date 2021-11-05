@@ -76,7 +76,7 @@ ambientApp.SetDebugTemplates(true)
 
 ## Development Workflow
 
-If you would like to make changes to the code, I recommend `air` to help streamline your workflow.
+If you would like to make changes to the code, I recommend [`air`](https://github.com/cosmtrek/air) to help streamline your workflow.
 
 ```bash
 # Install air to allow hot reloading so you can make changes quickly.

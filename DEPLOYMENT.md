@@ -145,7 +145,7 @@ To deploy an Ambient app to an Azure Function, you will need the Azure CLI.
 
 If you don't have the Azure CLI installed, you can either [install it](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) or run it from a container. You can skip the next few steps if you already have the Azure CLI installed.
 
-To run the Azure CLI from a docker container, paste the code below into a new file: `bin/az`. It will allow you to use the the dockerize version of the Azure CLI. The path to the bin folder should be included in the PATH already because of the .envrc file above.
+To run the Azure CLI from a docker container, paste the code below into a new file: `bin/az`. It will allow you to use the the dockerized version of the Azure CLI. The path to the bin folder should be included in your `PATH` env variable already because of the .envrc file above.
 
 ```bash
 #!/usr/bin/env bash
@@ -204,5 +204,3 @@ make az-delete
 # When you're done, you can stop the Azure CLI docker container from running in the background.
 make azcli-stop
 ```
-
-
