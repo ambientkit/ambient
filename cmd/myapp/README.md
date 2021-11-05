@@ -67,11 +67,18 @@ ambientApp.SetLogLevel(ambient.LogLevelError)
 ambientApp.SetLogLevel(ambient.LogLevelFatal)
 ```
 
-In the main.go file, you can enable `span` tags around HTML elements to determine which content is loaded from which plugins with `SetDebugTemplates()`:
+You can enable `span` tags around HTML elements to determine which content is loaded from which plugins with `SetDebugTemplates()`:
 
 ```go
 ambientApp, err := ambient.NewApp(...)
 ambientApp.SetDebugTemplates(true)
+```
+
+You can disable template escaping with `SetEscapeTemplates()`:
+
+```go
+ambientApp, err := ambient.NewApp(...)
+ambientApp.SetEscapeTemplates(false)
 ```
 
 ## Development Workflow

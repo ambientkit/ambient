@@ -11,6 +11,7 @@ import (
 type AssetInjector interface {
 	Inject(injector LayoutInjector, t *template.Template, r *http.Request, layoutType LayoutType, vars map[string]interface{}) (*template.Template, error)
 	DebugTemplates() bool
+	EscapeTemplates() bool
 }
 
 // LayoutInjector represents an injector that the AssetInjector will call to inject assets in the correct place.
@@ -24,25 +25,32 @@ type LayoutInjector interface {
 
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
-	log            AppLogger
-	pluginsystem   *PluginSystem
-	sess           AppSession
-	debugTemplates bool
+	log             AppLogger
+	pluginsystem    *PluginSystem
+	sess            AppSession
+	debugTemplates  bool
+	escapeTemplates bool
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger AppLogger, plugins *PluginSystem, sess AppSession, debugTemplates bool) *PluginInjector {
+func NewPlugininjector(logger AppLogger, plugins *PluginSystem, sess AppSession, debugTemplates bool, escapeTemplates bool) *PluginInjector {
 	return &PluginInjector{
-		log:            logger,
-		pluginsystem:   plugins,
-		sess:           sess,
-		debugTemplates: debugTemplates,
+		log:             logger,
+		pluginsystem:    plugins,
+		sess:            sess,
+		debugTemplates:  debugTemplates,
+		escapeTemplates: escapeTemplates,
 	}
 }
 
 // DebugTemplates returns true if the templates should output debugging information.
 func (c *PluginInjector) DebugTemplates() bool {
 	return c.debugTemplates
+}
+
+// EscapeTemplates returns false if template escaping should be disabled.
+func (c *PluginInjector) EscapeTemplates() bool {
+	return c.escapeTemplates
 }
 
 // Inject will return a template and an error.

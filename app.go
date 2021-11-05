@@ -19,7 +19,8 @@ type App struct {
 	renderer      Renderer
 	sess          AppSession
 
-	debugTemplates bool
+	debugTemplates  bool
+	escapeTemplates bool
 }
 
 // NewApp returns a new Ambient app that supports plugins.
@@ -57,9 +58,10 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 	}
 
 	ambientApp := &App{
-		log:           log,
-		pluginsystem:  pluginsystem,
-		sessionstorer: sessionstorer,
+		log:             log,
+		pluginsystem:    pluginsystem,
+		sessionstorer:   sessionstorer,
+		escapeTemplates: true,
 	}
 
 	// Enable the trusted plugins.
@@ -87,6 +89,12 @@ func (app *App) SetDebugTemplates(enable bool) {
 // SetLogLevel sets the log level.
 func (app *App) SetLogLevel(level LogLevel) {
 	app.log.SetLogLevel(level)
+}
+
+// SetEscapeTemplates sets the injector to disable (enabled by default) escaping
+// templates.
+func (app *App) SetEscapeTemplates(enable bool) {
+	app.escapeTemplates = enable
 }
 
 // ListenAndServe will start the web listener on port 8080 or will pull the

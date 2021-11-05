@@ -16,16 +16,13 @@ import (
 // Engine represents a HTML template engine.
 type Engine struct {
 	assetInjector ambient.AssetInjector
-	escape        bool
 	log           ambient.Logger
 }
 
 // NewTemplateEngine returns a HTML template engine.
 func NewTemplateEngine(logger ambient.Logger, assetInjector ambient.AssetInjector) *Engine {
-	//TODO: Add a setting to enable or disable escaping.
 	return &Engine{
 		assetInjector: assetInjector,
-		escape:        true,
 		log:           logger,
 	}
 }
@@ -154,7 +151,7 @@ func (te *Engine) generateTemplate(r *http.Request, mainTemplate string, layoutT
 
 // escapeContent returns an escaped content block or an error is one occurs.
 func (te *Engine) escapeContent(t *template.Template, name string, content string) (*template.Template, error) {
-	if !te.escape {
+	if !te.assetInjector.EscapeTemplates() {
 		safeContent := fmt.Sprintf(`{{define "%s"}}%s{{end}}`, name, content)
 		var err error
 		t, err = t.Parse(safeContent)
