@@ -4,6 +4,7 @@ package ambient
 type PluginLoader struct {
 	Router         RouterPlugin
 	TemplateEngine TemplateEnginePlugin
+	SessionManager SessionManagerPlugin
 	TrustedPlugins map[string]bool
 	Plugins        []Plugin
 	Middleware     []MiddlewarePlugin

@@ -90,13 +90,18 @@ func Plugins() *ambient.PluginLoader {
 		log.Fatalf("app: environment variable is missing: %v\n", "AMB_PASSWORD_HASH")
 	}
 
+	// Define the session manager so it can be used as a core plugin and
+	// middleware.
+	sessionManager := scssession.New(secretKey)
+
 	return &ambient.PluginLoader{
+		// Core plugins are implicitly trusted.
 		Router:         awayrouter.New(nil),
 		TemplateEngine: htmlengine.New(),
+		SessionManager: sessionManager,
 		// Trusted plugins are required to boot the app so they will be
 		// given full access.
 		TrustedPlugins: map[string]bool{
-			"scssession":    true, // Session manager.
 			"pluginmanager": true, // Page to manage plugins.
 			"simplelogin":   true, // Simple login page.
 			"bearcss":       true, // Bear Blog styling.
@@ -109,8 +114,8 @@ func Plugins() *ambient.PluginLoader {
 		},
 		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.
-			scssession.New(secretKey), // Session manager.
-			logrequest.New(),          // Log every request as INFO.
+			sessionManager,   // Session manager middleware.
+			logrequest.New(), // Log every request as INFO.
 		},
 	}
 }
@@ -144,7 +149,7 @@ A few things to note:
 - Logger plugin and storage plugin are automatically trusted because they are loaded before the plugin system boots.
 - Router plugin and template engine plugin are automatically trusted because they are explicitly passed to the plugin system.
 - Logger, storage, template engine, and router won't have the `Enable()` func called so it will only be able to use parts of the toolkit that are passed in when their respective functions are called. You can also remove the `*ambient.PluginBase` and `*ambient.Toolkit` from the main struct since they won't be used. You can see [zaplogger](plugin/logger/zaplogger/zaplogger.go) as an example.
-- Session manager plugin must be in the trusted plugins list. The session manager should always have a middleware component to it so shouldn't be listed in the Plugins section, but it should be listed in the Middleware section.
+- Session manager should always have a middleware component to it so shouldn't be listed in the Plugins section, but it should be listed in the Middleware section. Be sure to define it only once and then use it as both a parameter for `ambient.PluginLoader.SessionManager` and `ambient.PluginLoader.Middleware`. You define it in middleware so you can control when it gets called relative to other middleware.
 - Plugin manager should be in the trusted plugins list since it's required to enable other plugins.
 
 ## Plugin Functions

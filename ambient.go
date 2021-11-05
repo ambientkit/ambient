@@ -28,9 +28,6 @@ type Plugin interface {
 	Settings() []Setting                             // optional, called during special operations
 	GrantRequests() []GrantRequest                   // optional, called during every plugin operation against data provider
 	FuncMap() func(r *http.Request) template.FuncMap // optional, called on every render
-
-	// Session manager should have middleware with it.
-	SessionManager(logger Logger, sessionStorer SessionStorer) (AppSession, error) // optional
 }
 
 // LoggingPlugin represents a logging plugin.
@@ -59,6 +56,15 @@ type TemplateEnginePlugin interface {
 	PluginCore
 
 	TemplateEngine(logger Logger, injector AssetInjector) (Renderer, error)
+}
+
+// SessionManagerPlugin represents a session manager plugin.
+type SessionManagerPlugin interface {
+	PluginCore
+
+	// Session manager should have middleware with it.
+	SessionManager(logger Logger, sessionStorer SessionStorer) (AppSession, error)
+	Middleware() []func(next http.Handler) http.Handler
 }
 
 // MiddlewarePlugin represents a middleware plugin.

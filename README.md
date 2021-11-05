@@ -13,7 +13,7 @@
 
 ### What is it?
 
-Ambient is framework in Go for building web apps using plugins. You can use the plugins already included to stand up a blog just like the [Bear Blog](https://bearblog.dev/) or create your own plugins to build your own web app.
+Ambient is framework in Go for building web apps using plugins. You can use the plugins already included to stand up a blog just like the [Bear Blog](https://bearblog.dev/) or create your own plugins to build your own web app. Plugins can be enabled/disable while the app is running so routes as well as middleware can also modified without restarting the app. Plugins must be granted permissions above being enabled which provides you with better control over your web app.
 
 Use the [Sample App Tutorial](cmd/myapp/README.md) to quickly get the sample app up and running locally.
 

@@ -45,17 +45,27 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 		return nil, log, err
 	}
 
+	// Implicitly trust session manager so the middleware will work properly.
+	if plugins.SessionManager != nil {
+		plugins.TrustedPlugins[plugins.SessionManager.PluginName()] = true
+	}
+
 	// Initialize the plugin system.
 	pluginsystem, err := NewPluginSystem(log, storage, plugins)
 	if err != nil {
 		log.Fatal("", err.Error())
 	}
 
-	return &App{
+	ambientApp := &App{
 		log:           log,
 		pluginsystem:  pluginsystem,
 		sessionstorer: sessionstorer,
-	}, log, nil
+	}
+
+	// Enable the trusted plugins.
+	ambientApp.GrantAccess()
+
+	return ambientApp, log, nil
 }
 
 // Logger returns the logger.

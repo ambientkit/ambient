@@ -56,13 +56,18 @@ func Plugins() *ambient.PluginLoader {
 		log.Fatalf("app: environment variable is missing: %v\n", "AMB_PASSWORD_HASH")
 	}
 
+	// Define the session manager so it can be used as a core plugin and
+	// middleware.
+	sessionManager := scssession.New(secretKey)
+
 	return &ambient.PluginLoader{
+		// Core plugins are implicitly trusted.
 		Router:         awayrouter.New(nil),
 		TemplateEngine: htmlengine.New(),
-		// Trusted plugins are required to boot the app so they will be
-		// given full access.
+		SessionManager: sessionManager,
+		// Trusted plugins are those that are typically needed to boot so they
+		// will be enabled and given full access.
 		TrustedPlugins: map[string]bool{
-			"scssession":    true, // Session manager.
 			"pluginmanager": true, // Page to manage plugins.
 			"simplelogin":   true, // Simple login page.
 			"bearcss":       true, // Bear Blog styling.
@@ -94,13 +99,13 @@ func Plugins() *ambient.PluginLoader {
 		},
 		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.
-			notrailingslash.New(),     // Redirect all requests with a trailing slash.
-			uptimerobotok.New(),       // Provide 200 on HEAD /.
-			securedashboard.New(),     // Secure all /dashboard routes.
-			redirecttourl.New(),       // Redirect to production URL.
-			gzipresponse.New(),        // Compress all HTTP responses.
-			scssession.New(secretKey), // Session manager.
-			logrequest.New(),          // Log every request as INFO.
+			notrailingslash.New(), // Redirect all requests with a trailing slash.
+			uptimerobotok.New(),   // Provide 200 on HEAD /.
+			securedashboard.New(), // Secure all /dashboard routes.
+			redirecttourl.New(),   // Redirect to production URL.
+			gzipresponse.New(),    // Compress all HTTP responses.
+			sessionManager,        // Session manager middleware.
+			logrequest.New(),      // Log every request as INFO.
 		},
 	}
 }

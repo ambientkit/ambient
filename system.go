@@ -27,6 +27,7 @@ type PluginSystem struct {
 	middlewareNames []string
 	router          RouterPlugin
 	templateEngine  TemplateEnginePlugin
+	sessionManager  SessionManagerPlugin
 	plugins         map[string]Plugin
 	trusted         map[string]bool
 
@@ -91,6 +92,7 @@ func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*Plugi
 		middlewareNames: middlewareNames,
 		router:          arr.Router,
 		templateEngine:  arr.TemplateEngine,
+		sessionManager:  arr.SessionManager,
 		trusted:         arr.TrustedPlugins,
 
 		plugins: plugins,

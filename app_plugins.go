@@ -7,29 +7,16 @@ import (
 
 // Handler loads the plugins and returns the handler.
 func (app *App) Handler() (http.Handler, error) {
+
 	// Get the session manager from the plugins.
-	for _, name := range app.pluginsystem.Names() {
-		// Get the plugin.
-		p, err := app.pluginsystem.Plugin(name)
-		if err != nil {
-			// This shouldn't happen because the names are based off the plugin list.
-			return nil, fmt.Errorf("ambient: could not find plugin (%v): %v", name, err.Error())
-		}
-
-		// Skip if the plugin isn't enabled. The session manager needs to be trusted.
-		if !app.pluginsystem.Enabled(name) {
-			continue
-		}
-
-		// Get the session manager.
-		sm, err := p.SessionManager(app.log, app.sessionstorer)
+	if app.pluginsystem.sessionManager != nil {
+		sm, err := app.pluginsystem.sessionManager.SessionManager(app.log, app.sessionstorer)
 		if err != nil {
 			app.log.Error("", err.Error())
 		} else if sm != nil {
 			// Only set the session manager once.
-			app.log.Info("ambient: using session manager from plugin: %v", name)
+			app.log.Info("ambient: using session manager from plugin: %v", app.pluginsystem.sessionManager.PluginName())
 			app.sess = sm
-			break
 		}
 	}
 	if app.sess == nil {
