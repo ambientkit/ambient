@@ -8,8 +8,6 @@ import (
 	"path"
 	"strings"
 	"time"
-
-	"github.com/josephspurrier/ambient/lib/cachecontrol"
 )
 
 // Plugins returns the plugin list.
@@ -227,12 +225,6 @@ func embeddedAssets(mux Router, sess AppSession, pluginName string, files []Asse
 			ff, status, err := file.Contents(assets)
 			if status != http.StatusOK {
 				return status, err
-			}
-
-			// Set the etag for cache control.
-			handled := cachecontrol.Handle(w, r, ff)
-			if handled {
-				return
 			}
 
 			// Assets all have the same time so it's pointless to use the FS

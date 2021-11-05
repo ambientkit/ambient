@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/josephspurrier/ambient/lib/cachecontrol"
 	"github.com/oxtoacart/bpool"
 )
 
@@ -70,19 +69,11 @@ func ParseExistingTemplateWithResponse(w http.ResponseWriter, r *http.Request, t
 		return err
 	}
 
-	ff := buf.Bytes()
-
-	// Set the etag for cache control.
-	handled := cachecontrol.Handle(w, r, ff)
-	if handled {
-		return nil
-	}
-
 	// Output the status code.
 	w.WriteHeader(status)
 
 	// Write out the template.
-	_, err = w.Write(ff)
+	_, err = w.Write(buf.Bytes())
 
 	return err
 }

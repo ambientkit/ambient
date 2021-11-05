@@ -25,6 +25,7 @@ import (
 	"github.com/josephspurrier/ambient/plugin/generic/stackedit"
 	"github.com/josephspurrier/ambient/plugin/generic/styles"
 	"github.com/josephspurrier/ambient/plugin/generic/viewport"
+	"github.com/josephspurrier/ambient/plugin/middleware/etagcache"
 	"github.com/josephspurrier/ambient/plugin/middleware/gzipresponse"
 	"github.com/josephspurrier/ambient/plugin/middleware/logrequest"
 	"github.com/josephspurrier/ambient/plugin/middleware/notrailingslash"
@@ -103,6 +104,7 @@ func Plugins() *ambient.PluginLoader {
 			uptimerobotok.New(),   // Provide 200 on HEAD /.
 			securedashboard.New(), // Secure all /dashboard routes.
 			redirecttourl.New(),   // Redirect to production URL.
+			etagcache.New(),       // Cache using Etag.
 			gzipresponse.New(),    // Compress all HTTP responses.
 			sessionManager,        // Session manager middleware.
 			logrequest.New(),      // Log every request as INFO.
