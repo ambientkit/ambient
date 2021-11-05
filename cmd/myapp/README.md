@@ -38,7 +38,7 @@ To login, you'll need:
 - the default username is: `admin`
 - the password from the .env file for which the `AMB_PASSWORD_HASH` was derived
 
-Once you are logged in, you should see a new menu option call `Plugins`. From this screen, you'll be able to use the Plugin Manager to make changes to the plugin state, permissions, and settings.
+Once you are logged in, you should see a new menu option call `Plugins`. From this screen, you'll be able to use the Plugin Manager to make changes to state, permissions, and settings for all plugins.
 
 ### Local Development Flags
 
@@ -57,7 +57,7 @@ When `AMB_URL_PREFIX` is set to a path like `/api`, the app will serve requests 
 
 ### App Settings
 
-In the main.go file, you can modify your log level:
+In the main.go file, you can modify your log level with `SetLogLevel()`:
 
 ```go
 ambientApp, err := ambient.NewApp(...)
@@ -67,7 +67,7 @@ ambientApp.SetLogLevel(ambient.LogLevelError)
 ambientApp.SetLogLevel(ambient.LogLevelFatal)
 ```
 
-In the main.go file, you can enable `span` tags around HTML elements to determine which content is loaded from which plugins:
+In the main.go file, you can enable `span` tags around HTML elements to determine which content is loaded from which plugins with `SetDebugTemplates()`:
 
 ```go
 ambientApp, err := ambient.NewApp(...)
@@ -76,7 +76,7 @@ ambientApp.SetDebugTemplates(true)
 
 ## Development Workflow
 
-If you would like to make changes to the code, I recommend [`air`](https://github.com/cosmtrek/air) to help streamline your workflow.
+If you would like to make changes to the code with hot reloading capabilities, I recommend [`air`](https://github.com/cosmtrek/air) to help streamline your workflow.
 
 ```bash
 # Install air to allow hot reloading so you can make changes quickly.
