@@ -9,8 +9,8 @@ import (
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/myapp/app"
+	"github.com/josephspurrier/ambient/lib/cloudstorage"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
-	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage"
 )
 
 var (
@@ -28,12 +28,17 @@ var (
 )
 
 func main() {
-	plugins := app.Plugins()
+	// Determine cloud storage engine for site and session information.
+	storage := cloudstorage.StorageBasedOnCloud(app.StorageSitePath,
+		app.StorageSessionPath)
 
 	// Create the ambient app.
-	ambientApp, log, err := ambient.NewApp(appName, appVersion,
+	var ambientApp *ambient.App
+	var err error
+	plugins := app.Plugins()
+	ambientApp, log, err = ambient.NewApp(appName, appVersion,
 		zaplogger.New(),
-		gcpbucketstorage.New(app.StorageSitePath, app.StorageSessionPath),
+		storage,
 		plugins)
 	if err != nil {
 		if log != nil {
