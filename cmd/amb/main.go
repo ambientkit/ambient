@@ -9,7 +9,9 @@ import (
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/myapp/app"
+	"github.com/josephspurrier/ambient/lib/aesdata"
 	"github.com/josephspurrier/ambient/lib/cloudstorage"
+	"github.com/josephspurrier/ambient/lib/requestclient"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
 )
 
@@ -28,6 +30,12 @@ var (
 )
 
 func main() {
+	// Get the environment variables.
+	secretKey := os.Getenv("AMB_SESSION_KEY")
+	if len(secretKey) == 0 {
+		stdlog.Fatalf("app: environment variable missing: %v\n", "AMB_SESSION_KEY")
+	}
+
 	// Determine cloud storage engine for site and session information.
 	storage := cloudstorage.StorageBasedOnCloud(app.StorageSitePath,
 		app.StorageSessionPath)
@@ -38,7 +46,14 @@ func main() {
 	plugins := app.Plugins()
 	ambientApp, log, err = ambient.NewApp(appName, appVersion,
 		zaplogger.New(),
-		storage,
+		ambient.StoragePluginGroup{
+			Storage: storage,
+			// TODO: Probably should remove encryption from here if the app
+			// is using a different type of encryption. Should probably change
+			// so that AMB doesn't interact with config directly, but does it
+			// through the web app itself.
+			Encryption: aesdata.NewEncryptedStorage(secretKey),
+		},
 		plugins)
 	if err != nil {
 		if log != nil {
@@ -71,9 +86,11 @@ func main() {
 }
 
 var (
-	execEnable = "enable"
-	execGrants = "grant"
-	execExit   = "exit"
+	execEnable  = "enable"
+	execGrants  = "grant"
+	execEncrypt = "encryptstorage"
+	execDecrypt = "decryptstorage"
+	execExit    = "exit"
 )
 
 func enablePlugin(name string) {
@@ -168,6 +185,22 @@ func executer(s string) {
 		} else {
 			enableGrants(args[1])
 		}
+	case execEncrypt:
+		rc := requestclient.New("http://localhost:8081", "")
+		err := rc.Post("/storage/encrypt", nil, nil)
+		if err != nil {
+			log.Error("error: encrypting storage: %v", err)
+		} else {
+			log.Info("encrypted storage")
+		}
+	case execDecrypt:
+		rc := requestclient.New("http://localhost:8081", "")
+		err := rc.Post("/storage/decrypt", nil, nil)
+		if err != nil {
+			log.Error("error: decrypted storage: %v", err)
+		} else {
+			log.Info("decrypted storage")
+		}
 	case execExit:
 		os.Exit(0)
 	default:
@@ -188,16 +221,13 @@ func completer(d prompt.Document) []prompt.Suggest {
 		return prompt.FilterHasPrefix([]prompt.Suggest{
 			{Text: execEnable, Description: "Enable the core plugins"},
 			{Text: execGrants, Description: "Add grants for the core plugins"},
+			{Text: execEncrypt, Description: "Encrypt storage"},
 			{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
 		}, args[0], true)
 	}
 
 	switch args[0] {
-	case "enable":
-		if len(args) == 2 {
-			return prompt.FilterHasPrefix(pluginSuggestions(), args[1], true)
-		}
-	case "grant":
+	case execEnable, execGrants, execEncrypt:
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(pluginSuggestions(), args[1], true)
 		}

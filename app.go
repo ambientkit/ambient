@@ -3,6 +3,11 @@ package ambient
 import (
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/josephspurrier/ambient/lib/envdetect"
+	"github.com/josephspurrier/ambient/plugin/router/awayrouter/router"
 )
 
 const (
@@ -24,7 +29,7 @@ type App struct {
 }
 
 // NewApp returns a new Ambient app that supports plugins.
-func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storagePlugin StoragePlugin, plugins *PluginLoader) (*App, AppLogger, error) {
+func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storagePluginGroup StoragePluginGroup, plugins *PluginLoader) (*App, AppLogger, error) {
 	// Set the time zone. Required for plugins that rely on timzone like MFA.
 	tz := os.Getenv("AMB_TIMEZONE")
 	if len(tz) > 0 {
@@ -41,7 +46,7 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 	log.SetLogLevel(LogLevelInfo)
 
 	// Get the storage manager.
-	storage, sessionstorer, err := loadStorage(log, storagePlugin)
+	storage, sessionstorer, err := loadStorage(log, storagePluginGroup)
 	if err != nil {
 		return nil, log, err
 	}
@@ -66,6 +71,46 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 
 	// Enable the trusted plugins.
 	ambientApp.GrantAccess()
+
+	// Start local dev server for configuration.
+	// TODO: Change so amb is a flag instead of a hard-coded name.
+	if envdetect.RunningLocalDev() && appName != "amb" {
+		// TODO: Make the port dynamic.
+		devPort := "8081"
+		log.Info("ambient: dev console started on: %v", devPort)
+
+		go func() {
+			mux := router.New()
+			mux.Post("/storage/encrypt", func(w http.ResponseWriter, r *http.Request) (int, error) {
+				log.Info("ambient: dev console - site.bin encrypted")
+				err = storage.LoadDecrypted()
+				if err != nil {
+					return http.StatusInternalServerError, err
+				}
+				err = storage.Save()
+				if err != nil {
+					return http.StatusInternalServerError, err
+				}
+
+				return http.StatusOK, nil
+			})
+
+			mux.Post("/storage/decrypt", func(w http.ResponseWriter, r *http.Request) (int, error) {
+				log.Info("ambient: dev console - site.bin decrypted")
+				err = storage.SaveDecrypted()
+				if err != nil {
+					return http.StatusInternalServerError, err
+				}
+
+				return http.StatusOK, nil
+			})
+
+			err = http.ListenAndServe(":"+devPort, mux)
+			if err != nil {
+				log.Error("ambient: dev config server cannot start: %v", err.Error())
+			}
+		}()
+	}
 
 	return ambientApp, log, nil
 }
@@ -119,6 +164,41 @@ func (app *App) ListenAndServe(h http.Handler) {
 		port = azurePort
 	}
 
+	app.handleExit()
+
 	app.log.Info("ambient: web server listening on port: %v", port)
 	app.log.Fatal("", http.ListenAndServe(":"+port, h))
+}
+
+// handleExit will handle app shutdown when Ctrl+c is pressed.
+func (app *App) handleExit() {
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		app.cleanup()
+		os.Exit(1)
+	}()
+}
+
+// cleanup runs the final steps to ensure the server shutdown doesn't leave
+// the application in a bad state.
+func (app *App) cleanup() {
+	var err error
+	app.log.Info("ambient: shutdown started")
+
+	// Load decrypted just in case the storage was decrypted by AMB.
+	app.log.Info("ambient: loading storage")
+	err = app.pluginsystem.storage.LoadDecrypted()
+	if err != nil {
+		app.log.Error("ambient: could not load storage: %v", err.Error())
+	}
+
+	app.log.Info("ambient: saving storage")
+	err = app.pluginsystem.storage.Save()
+	if err != nil {
+		app.log.Error("ambient: could not save storage: %v", err.Error())
+	}
+
+	app.log.Info("ambient: shutdown done")
 }

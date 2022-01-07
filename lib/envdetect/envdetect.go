@@ -1,4 +1,4 @@
-// Package envdetect detects inc which cloud an app is running based on environment variables.
+// Package envdetect detects in which cloud an app is running based on environment variables.
 // Source: https://www.josephspurrier.com/cloud-environment-variables
 package envdetect
 

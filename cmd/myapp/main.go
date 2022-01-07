@@ -2,9 +2,11 @@ package main
 
 import (
 	stdlog "log"
+	"os"
 
 	"github.com/josephspurrier/ambient"
 	"github.com/josephspurrier/ambient/cmd/myapp/app"
+	"github.com/josephspurrier/ambient/lib/aesdata"
 	"github.com/josephspurrier/ambient/lib/cloudstorage"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
 )
@@ -20,6 +22,12 @@ func init() {
 }
 
 func main() {
+	// Get the environment variables.
+	secretKey := os.Getenv("AMB_SESSION_KEY")
+	if len(secretKey) == 0 {
+		stdlog.Fatalf("app: environment variable missing: %v\n", "AMB_SESSION_KEY")
+	}
+
 	// Determine cloud storage engine for site and session information.
 	storage := cloudstorage.StorageBasedOnCloud(app.StorageSitePath,
 		app.StorageSessionPath)
@@ -28,7 +36,10 @@ func main() {
 	plugins := app.Plugins()
 	ambientApp, log, err := ambient.NewApp(appName, appVersion,
 		zaplogger.New(),
-		storage,
+		ambient.StoragePluginGroup{
+			Storage:    storage,
+			Encryption: aesdata.NewEncryptedStorage(secretKey),
+		},
 		plugins)
 	if err != nil {
 		if log != nil {

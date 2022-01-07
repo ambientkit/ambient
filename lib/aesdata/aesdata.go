@@ -1,4 +1,5 @@
-package websession
+// Package aesdata provide encryption/decryption of JSON data using AES.
+package aesdata
 
 import (
 	"crypto/aes"
@@ -10,20 +11,19 @@ import (
 
 // Resource: https://www.melvinvivas.com/how-to-encrypt-and-decrypt-data-using-aes/
 
-// EncryptedStorage -
+// EncryptedStorage represents a private key.
 type EncryptedStorage struct {
 	privatekey string
 }
 
-// NewEncryptedStorage -
+// NewEncryptedStorage returns an encrypted storage object.
 func NewEncryptedStorage(privatekey string) *EncryptedStorage {
 	return &EncryptedStorage{
 		privatekey: privatekey,
 	}
-
 }
 
-// Encrypt -
+// Encrypt data using private key.
 func (en *EncryptedStorage) Encrypt(data []byte) ([]byte, error) {
 	// Convert key to byte array.
 	key, err := hex.DecodeString(en.privatekey)
@@ -55,7 +55,7 @@ func (en *EncryptedStorage) Encrypt(data []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-// Decrypt -
+// Decrypt data using private key or return empty JSON array.
 func (en *EncryptedStorage) Decrypt(enc []byte) ([]byte, error) {
 	// Don't decrypt if there is no content.
 	if len(enc) == 0 {

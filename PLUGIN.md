@@ -133,17 +133,17 @@ An Ambient app follows this process when it boots:
 - Load session manager plugin by calling `SessionManager()` func.
 - Load template engine plugin by calling `TemplateEngine()` func.
 - Load router plugin by calling `Router()` func.
-- Load each plugin (except those above) only if enabled in `site.json` file:
+- Load each plugin (except those above) only if enabled in `site.bin` file:
   - Enable plugin by calling `Enable()` and passing in `ambient.Toolkit`.
   - Add routes from plugin to router by calling `Routes()`.
   - Load assets from plugin by calling `Assets()`.
 - Load each middleware plugin (first handler is the handler from router):
-  - Wrap the middleware around the previous handler by calling `Middleware()` func and adding a conditional so it's only run if enabled in `site.json` file.
+  - Wrap the middleware around the previous handler by calling `Middleware()` func and adding a conditional so it's only run if enabled in `site.bin` file.
 - Pass the handler to `ListenAndServe()` func.
 
 An Ambient app can have a plugin enabled or disabled while it's running (through the pluginmanager). It will then load or unload the plugin making changes to routes, assets, and middleware.
 
-When a change to the app is made or data is read or modified in `site.json` file, the permissions of the plugin are checked first to ensure the user granted the plugin permissions to perform their action. The permissions are stored in the `site.json` file.
+When a change to the app is made or data is read or modified in `site.bin` file, the permissions of the plugin are checked first to ensure the user granted the plugin permissions to perform their action. The permissions are stored in the `site.bin` file.
 
 A few things to note:
 - Logger plugin and storage plugin are automatically trusted because they are loaded before the plugin system boots.

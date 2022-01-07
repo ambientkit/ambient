@@ -37,11 +37,25 @@ type LoggingPlugin interface {
 	Logger(appName string, appVersion string) (AppLogger, error)
 }
 
+// StoragePluginGroup represents a storage plugin and an optional encryption
+// package.
+type StoragePluginGroup struct {
+	Storage    StoragePlugin
+	Encryption StorageEncryption
+}
+
 // StoragePlugin represents a storage plugin.
 type StoragePlugin interface {
 	PluginCore
 
 	Storage(logger Logger) (DataStorer, SessionStorer, error)
+}
+
+// StorageEncryption represents a encryption/decryption for a storage
+// plugin.
+type StorageEncryption interface {
+	Encrypt(data []byte) ([]byte, error)
+	Decrypt(enc []byte) ([]byte, error)
 }
 
 // RouterPlugin represents a router engine plugin.

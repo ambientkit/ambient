@@ -23,7 +23,14 @@ func loadLogger(appName string, appVersion string, plugin LoggingPlugin) (AppLog
 }
 
 // LoadStorage returns the storage.
-func loadStorage(log AppLogger, plugin StoragePlugin) (*Storage, SessionStorer, error) {
+func loadStorage(log AppLogger, pluginGroup StoragePluginGroup) (*Storage, SessionStorer, error) {
+	// Detect if storage plugin is missing.
+	if pluginGroup.Storage == nil {
+		return nil, nil, fmt.Errorf("ambient: storage plugin is missing")
+	}
+
+	plugin := pluginGroup.Storage
+
 	// Don't allow certain plugin names.
 	if allowed, ok := disallowedPluginNames[plugin.PluginName()]; ok && !allowed {
 		return nil, nil, fmt.Errorf("ambient: plugin name not allowed: %v", plugin.PluginName())
@@ -47,7 +54,7 @@ func loadStorage(log AppLogger, plugin StoragePlugin) (*Storage, SessionStorer, 
 	}
 
 	// Set up the data storage provider.
-	storage, err := NewStorage(ds)
+	storage, err := NewStorage(log, ds, pluginGroup.Encryption)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -82,7 +82,7 @@ gcloud auth login
 gcloud config set project myapp-project-191923
 
 # Create a bucket in Google Cloud, enable versioning, and upload a
-# blank site.json and session.bin.
+# blank site.bin and session.bin.
 make gcp-init
 
 # Run a Google Cloud Build to build the docker image, push to the Container
@@ -127,7 +127,7 @@ AMB_AWS_BUCKET=myapp-storage
 # env variables.
 direnv allow
 
-# Create a bucket in AWS, enable versioning, and upload a blank site.json
+# Create a bucket in AWS, enable versioning, and upload a blank site.bin
 # and session.bin.
 make aws-init
 
@@ -186,7 +186,7 @@ az login
 az storage account list
 
 # Create a resource group, storage account, storage container, and upload a
-# blank site.json and session.bin.
+# blank site.bin and session.bin.
 make az-init
 
 # You should get an output of your storage access key and connection string.

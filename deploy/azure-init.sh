@@ -14,7 +14,7 @@ az storage account create --name ${AZURE_STORAGE_ACCOUNT} --resource-group ${AMB
 az storage container create --name ${AMB_AZURE_CONTAINER} --account-name ${AZURE_STORAGE_ACCOUNT} --account-key $(az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT} --query '[0].value' -o tsv)
 
 # echo Uploading files.
-az storage blob upload --container-name ${AMB_AZURE_CONTAINER} --file /root/storage/initial/site.json --name storage/site.json --account-name ${AZURE_STORAGE_ACCOUNT} --account-key $(az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT} --query '[0].value' -o tsv)
+az storage blob upload --container-name ${AMB_AZURE_CONTAINER} --file /root/storage/initial/site.bin --name storage/site.bin --account-name ${AZURE_STORAGE_ACCOUNT} --account-key $(az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT} --query '[0].value' -o tsv)
 az storage blob upload --container-name ${AMB_AZURE_CONTAINER} --file /root/storage/initial/session.bin --name storage/session.bin --account-name ${AZURE_STORAGE_ACCOUNT} --account-key $(az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT} --query '[0].value' -o tsv)
 
 echo Getting access key. You should add these to your .envrc file:

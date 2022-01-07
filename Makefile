@@ -37,7 +37,7 @@ passhash:
 storage:
 	@echo Creating session and site storage files locally.
 	cp storage/initial/session.bin storage/session.bin
-	cp storage/initial/site.json storage/site.json
+	cp storage/initial/site.bin storage/site.bin
 
 .PHONY: run
 run:
@@ -57,7 +57,7 @@ gcp-init:
 	@echo Creating the initial files in Google Cloud Storage.
 	gsutil mb -p $(AMB_GCP_PROJECT_ID) -l ${AMB_GCP_REGION} -c Standard gs://${AMB_GCP_BUCKET}
 	gsutil versioning set on gs://${AMB_GCP_BUCKET}
-	gsutil cp storage/initial/site.json gs://${AMB_GCP_BUCKET}/storage/site.json
+	gsutil cp storage/initial/site.bin gs://${AMB_GCP_BUCKET}/storage/site.bin
 	gsutil cp storage/initial/session.bin gs://${AMB_GCP_BUCKET}/storage/session.bin
 
 .PHONY: gcp-deploy
@@ -92,7 +92,7 @@ else
 	aws s3api create-bucket --bucket ${AMB_AWS_BUCKET} --create-bucket-configuration '{"LocationConstraint": "${AWS_REGION}"}'
 endif
 	aws s3api put-public-access-block --bucket ${AMB_AWS_BUCKET} --public-access-block-configuration '{"BlockPublicAcls": true,"IgnorePublicAcls": true,"BlockPublicPolicy": true,"RestrictPublicBuckets": true}'
-	aws s3 cp storage/initial/site.json s3://${AMB_AWS_BUCKET}/storage/site.json
+	aws s3 cp storage/initial/site.bin s3://${AMB_AWS_BUCKET}/storage/site.bin
 	aws s3 cp storage/initial/session.bin s3://${AMB_AWS_BUCKET}/storage/session.bin
 
 .PHONY: aws-deploy

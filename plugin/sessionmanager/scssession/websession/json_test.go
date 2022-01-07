@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/josephspurrier/ambient/lib/aesdata"
 	"github.com/josephspurrier/ambient/plugin/sessionmanager/scssession/websession"
 	"github.com/josephspurrier/ambient/plugin/storage/localstorage/store"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +21,7 @@ func TestNewJSONSession(t *testing.T) {
 
 	// Set up the session storage provider.
 	secretkey := "82a18fbbfed2694bb15d512a70c53b1a088e669966918d3d474564b2ac44349b"
-	en := websession.NewEncryptedStorage(secretkey)
+	en := aesdata.NewEncryptedStorage(secretkey)
 	store, err := websession.NewJSONSession(ss, en)
 	assert.NoError(t, err)
 

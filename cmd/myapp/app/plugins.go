@@ -39,7 +39,7 @@ import (
 
 var (
 	// StorageSitePath is the location of the site file.
-	StorageSitePath = "storage/site.json"
+	StorageSitePath = "storage/site.bin"
 	// StorageSessionPath is the location of the session file.
 	StorageSessionPath = "storage/session.bin"
 )
