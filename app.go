@@ -177,7 +177,7 @@ func (app *App) handleExit() {
 	go func() {
 		<-c
 		app.cleanup()
-		os.Exit(1)
+		os.Exit(0)
 	}()
 }
 

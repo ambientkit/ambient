@@ -59,9 +59,11 @@ func (c *RequestClient) Get(urlSuffix string, returnData interface{}) error {
 		return fmt.Errorf("error GET response (%v): %v", resp.StatusCode, err.Error())
 	}
 
-	err = json.Unmarshal(body, returnData)
-	if err != nil {
-		return fmt.Errorf("error unmarshal: %v", err.Error())
+	if returnData != nil {
+		err = json.Unmarshal(body, returnData)
+		if err != nil {
+			return fmt.Errorf("error unmarshal: %v", err.Error())
+		}
 	}
 
 	return nil
@@ -117,9 +119,11 @@ func (c *RequestClient) Post(urlSuffix string, sendData interface{}, returnData 
 		return fmt.Errorf("error GET response (%v): %v", resp.StatusCode, err.Error())
 	}
 
-	err = json.Unmarshal(body, returnData)
-	if err != nil {
-		return fmt.Errorf("error unmarshal: %v", err.Error())
+	if returnData != nil {
+		err = json.Unmarshal(body, returnData)
+		if err != nil {
+			return fmt.Errorf("error unmarshal: %v", err.Error())
+		}
 	}
 
 	return nil

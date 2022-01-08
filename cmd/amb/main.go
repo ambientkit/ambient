@@ -222,6 +222,7 @@ func completer(d prompt.Document) []prompt.Suggest {
 			{Text: execEnable, Description: "Enable the core plugins"},
 			{Text: execGrants, Description: "Add grants for the core plugins"},
 			{Text: execEncrypt, Description: "Encrypt storage"},
+			{Text: execDecrypt, Description: "Decrypt storage"},
 			{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
 		}, args[0], true)
 	}
