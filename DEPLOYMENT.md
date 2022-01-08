@@ -35,6 +35,12 @@ For all deployments, you need to create a new file called `.env` in the root of 
 AMB_APP_VERSION=1.0
 # Set this to any value to allow you to do testing locally without cloud access.
 AMB_LOCAL=true
+# Optional: Enable the Dev Console that amb connects to. Default is: false
+AMB_DEVCONSOLE_ENABLE=true
+# Optional: Set the URL for the Dev Console that amb connects to. Default is: http://localhost
+# AMB_DEVCONSOLE_URL=http://localhost
+# Optional: Set the port for the Dev Console that amb connects to. Default is: 8081
+# AMB_DEVCONSOLE_PORT=8081
 # Session key to encrypt the cookie store. Generate with: make privatekey
 AMB_SESSION_KEY=
 # Password hash that is base64 encoded. Generate with: make passhash passwordhere

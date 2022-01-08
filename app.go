@@ -82,11 +82,10 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 	// Enable the trusted plugins.
 	ambientApp.GrantAccess()
 
-	// Start local dev server for configuration.
-	// TODO: Change so amb is a flag instead of a hard-coded name.
-	if envdetect.RunningLocalDev() && appName != "amb" {
-		// TODO: Probably need to store this somewhere so it can be enabled/disabled.
-		dc := NewDevConsole("8081", log, storage, pluginsystem)
+	// Start Dev Console if enabled via environment variable.
+	if envdetect.DevConsoleEnabled() {
+		// TODO: Should probably store in an object that can be edited by system.
+		dc := NewDevConsole(log, storage, pluginsystem)
 		dc.EnableDevConsole()
 	}
 

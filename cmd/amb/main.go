@@ -8,6 +8,7 @@ import (
 
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
+	"github.com/josephspurrier/ambient/lib/envdetect"
 	"github.com/josephspurrier/ambient/lib/requestclient"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
 )
@@ -60,8 +61,10 @@ func main() {
 		}
 	}
 
-	// TODO: Need to make this configurable.
-	rc = requestclient.New("http://localhost:8081", "")
+	// Set the URL for the Dev Console.
+	rc = requestclient.New(
+		fmt.Sprintf("%v:%v", envdetect.DevConsoleURL(), envdetect.DevConsolePort()),
+		"")
 
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(

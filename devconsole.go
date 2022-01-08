@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/josephspurrier/ambient/lib/envdetect"
 	"github.com/josephspurrier/ambient/plugin/router/awayrouter/router"
 )
 
 // DevConsole represents a web interface to receive commands from the amb tool.
 type DevConsole struct {
-	port         string
 	log          AppLogger
 	storage      *Storage
 	pluginsystem *PluginSystem
@@ -18,9 +18,8 @@ type DevConsole struct {
 
 // NewDevConsole returns the dev console object to receive commands from the amb
 // tool.
-func NewDevConsole(port string, log AppLogger, storage *Storage, pluginsystem *PluginSystem) *DevConsole {
+func NewDevConsole(log AppLogger, storage *Storage, pluginsystem *PluginSystem) *DevConsole {
 	return &DevConsole{
-		port:         port,
 		log:          log,
 		storage:      storage,
 		pluginsystem: pluginsystem,
@@ -42,7 +41,7 @@ func JSON(w http.ResponseWriter, data interface{}) (int, error) {
 
 // EnableDevConsole turns on the dev console web listener.
 func (dc *DevConsole) EnableDevConsole() {
-	dc.log.Info("ambient: dev console started on: %v", dc.port)
+	dc.log.Info("ambient: dev console started and available at: %v/%v", envdetect.DevConsoleURL(), envdetect.DevConsolePort())
 
 	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
@@ -86,7 +85,7 @@ func (dc *DevConsole) EnableDevConsole() {
 		// Enable one plugin.
 		mux.Post("/plugins/:pluginName/enable", func(w http.ResponseWriter, r *http.Request) (int, error) {
 			pluginName := mux.Param(r, "pluginName")
-			dc.log.Info("ambient: dev console - enable plugin: %v", pluginName)
+			dc.log.Debug("ambient: dev console - enable plugin: %v", pluginName)
 
 			err := securestorage.EnablePlugin(pluginName, false)
 			if err != nil {
@@ -98,7 +97,7 @@ func (dc *DevConsole) EnableDevConsole() {
 
 		// Enable all plugins.
 		mux.Post("/plugins/enable", func(w http.ResponseWriter, r *http.Request) (int, error) {
-			dc.log.Info("ambient: dev console - enable all plugins")
+			dc.log.Debug("ambient: dev console - enable all plugins")
 
 			// Loop through all the trusted plugins.
 			for _, pluginName := range dc.pluginsystem.TrustedPluginNames() {
@@ -116,7 +115,7 @@ func (dc *DevConsole) EnableDevConsole() {
 		// Enable all grants for one plugin.
 		mux.Post("/plugins/:pluginName/grant", func(w http.ResponseWriter, r *http.Request) (int, error) {
 			pluginName := mux.Param(r, "pluginName")
-			dc.log.Info("ambient: dev console - enable plugin grants: %v", pluginName)
+			dc.log.Debug("ambient: dev console - enable plugin grants: %v", pluginName)
 
 			p, err := dc.pluginsystem.Plugin(pluginName)
 			if err != nil {
@@ -124,7 +123,7 @@ func (dc *DevConsole) EnableDevConsole() {
 			}
 
 			for _, request := range p.GrantRequests() {
-				dc.log.Info("ambient: dev console - plugin, %v - add grant: %v", pluginName, request.Grant)
+				dc.log.Debug("ambient: dev console - plugin (%v), add grant: %v", pluginName, request.Grant)
 				err := securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
 				if err != nil {
 					return http.StatusBadRequest, fmt.Errorf("failed to enable plugin (%v) for grant, %v: %v", pluginName, request.Grant, err.Error())
@@ -137,7 +136,7 @@ func (dc *DevConsole) EnableDevConsole() {
 		// Enable all grants for all plugins.
 		mux.Post("/plugins/grant", func(w http.ResponseWriter, r *http.Request) (int, error) {
 			pluginName := mux.Param(r, "pluginName")
-			dc.log.Info("ambient: dev console - enable plugin grant: %v", pluginName)
+			dc.log.Debug("ambient: dev console - enable plugin grant: %v", pluginName)
 
 			// Loop through all the trusted plugins.
 			for _, pluginName := range dc.pluginsystem.TrustedPluginNames() {
@@ -147,7 +146,7 @@ func (dc *DevConsole) EnableDevConsole() {
 				}
 
 				for _, request := range p.GrantRequests() {
-					dc.log.Info("ambient: dev console - plugin, %v - add grant: %v", pluginName, request.Grant)
+					dc.log.Debug("ambient: dev console - plugin (%v), add grant: %v", pluginName, request.Grant)
 					err := securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
 					if err != nil {
 						return http.StatusBadRequest, fmt.Errorf("failed to enable plugin (%v) for grant, %v: %v", pluginName, request.Grant, err.Error())
@@ -158,9 +157,9 @@ func (dc *DevConsole) EnableDevConsole() {
 			return http.StatusOK, nil
 		})
 
-		err := http.ListenAndServe(":"+dc.port, mux)
+		err := http.ListenAndServe(":"+envdetect.DevConsolePort(), mux)
 		if err != nil {
-			dc.log.Error("ambient: dev config server cannot start: %v", err.Error())
+			dc.log.Error("ambient: dev console listener cannot start: %v", err.Error())
 		}
 	}()
 }
