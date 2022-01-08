@@ -8,7 +8,7 @@
 
 ## Environment Variable Management
 
-It's recommended to install [direnv](https://direnv.net/docs/installation.html) to help manage your environment variables out of a `.envrc` file. The benefit is when you CD out of the folder, the environment variables will be unset so they are available to the root folder and all child folders. The directions below will assume you have this utility installed.
+It's recommended to install [direnv](https://direnv.net/docs/installation.html) to help manage your environment variables out of a `.envrc` file. The benefit is when you change directory (CD) out of the project folder, the environment variables will be unset so they are only available to the project folder and all child folders. The directions below will assume you have this utility installed. Otherwise, you can copy and paste each of the commands into your terminal.
 
 Once you have `direnv` installed, create a .envrc file in the root of your project:
 
@@ -54,6 +54,8 @@ AMB_PASSWORD_HASH=
 # Optional: set the URL prefix if behind a proxy.
 # AMB_URL_PREFIX=/api
 ```
+
+Note: When you make changes to your .env file, you should run `direnv reload` to fresh your environment variables in your current terminal session.
 
 ### Google Cloud - Cloud Run
 

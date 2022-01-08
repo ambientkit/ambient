@@ -14,6 +14,12 @@ To test out the sample web app from the `cmd/myapp` folder
 AMB_APP_VERSION=1.0
 # Set this to any value to allow you to do testing locally without cloud access.
 AMB_LOCAL=true
+# Optional: Enable the Dev Console that amb connects to. Default is: false
+AMB_DEVCONSOLE_ENABLE=true
+# Optional: Set the URL for the Dev Console that amb connects to. Default is: http://localhost
+# AMB_DEVCONSOLE_URL=http://localhost
+# Optional: Set the port for the Dev Console that amb connects to. Default is: 8081
+# AMB_DEVCONSOLE_PORT=8081
 # Session key to encrypt the cookie store. Generate with: make privatekey
 AMB_SESSION_KEY=
 # Password hash that is base64 encoded. Generate with: make passhash passwordhere
@@ -28,8 +34,8 @@ AMB_PASSWORD_HASH=
 # AMB_URL_PREFIX=/api
 ```
 
-- To create the session and site files in the storage folder, run: `make local-init`
-- To start the webserver on port 8080, run: `make local-run`
+- To create the session and site files in the storage folder, run: `make storage`
+- To start the webserver on port 8080, run: `make`
 
 The login page is located at: http://localhost:8080/login.
 
