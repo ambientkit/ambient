@@ -1,23 +1,27 @@
-# Binaries for programs and plugins
+# OS cache files.
+.DS_Store
+thumbs.db
+
+# Binaries for programs and plugins.
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
 
-# Test binary, built with `go test -c`
+# Test binary, built with `go test -c`.
 *.test
 
-# Output of the go coverage tool, specifically when used with LiteIDE
+# Output of the go coverage tool, specifically when used with LiteIDE.
 *.out
 
-# App specific files.
-.DS_Store
+# Development files.
 /tmp
 /bin
-.env*
-.azure/
-.bash_history
-node_modules
-package-lock.json
+/.env*
+/.azure/
+/.bash_history
+/node_modules
+/package-lock.json
 /deploy/azure/ambient
+/deploy/azure/ambient/tmp
