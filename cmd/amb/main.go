@@ -13,14 +13,35 @@ import (
 )
 
 var (
+	// App information.
 	appName    = "amb"
 	appVersion = "1.0"
-	quit       = prompt.KeyBind{
+
+	// Commands available.
+	execEnable  = "enable"
+	execGrants  = "grant"
+	execEncrypt = "encryptstorage"
+	execDecrypt = "decryptstorage"
+	execExit    = "exit"
+
+	// Prompts should match 1:1 with the commands above.
+	promptSuggestions = []prompt.Suggest{
+		{Text: execEnable, Description: "Enable plugin..."},
+		{Text: execGrants, Description: "Add grants for plugin..."},
+		{Text: execEncrypt, Description: "Encrypt storage"},
+		{Text: execDecrypt, Description: "Decrypt storage"},
+		{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
+	}
+
+	// Key bindings.
+	quit = prompt.KeyBind{
 		Key: prompt.ControlC,
 		Fn: func(b *prompt.Buffer) {
 			os.Exit(0)
 		},
 	}
+
+	// Globals.
 	log ambient.AppLogger
 	rc  *requestclient.RequestClient
 )
@@ -55,32 +76,8 @@ func main() {
 	p.Run()
 }
 
-var (
-	execEnable  = "enable"
-	execGrants  = "grant"
-	execEncrypt = "encryptstorage"
-	execDecrypt = "decryptstorage"
-	execExit    = "exit"
-)
-
-func pluginSuggestions() []prompt.Suggest {
-	arr := make([]prompt.Suggest, 0)
-	arr = append(arr, prompt.Suggest{Text: "all", Description: ""})
-
-	// Get the plugin names.
-	pluginNames := make([]string, 0)
-	err := rc.Get("/plugins", &pluginNames)
-	if err != nil {
-		log.Error("amb: could not get plugin names: %v", err.Error())
-		return nil
-	}
-
-	// Build a list of suggestions.
-	for _, pluginName := range pluginNames {
-		arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
-	}
-
-	return arr
+func exitChecker(in string, breakline bool) bool {
+	return in == execExit && breakline
 }
 
 func executer(s string) {
@@ -156,6 +153,7 @@ func executer(s string) {
 	}
 }
 
+// completer handles the auto completion.
 func completer(d prompt.Document) []prompt.Suggest {
 	suggestions := []prompt.Suggest{}
 
@@ -166,13 +164,7 @@ func completer(d prompt.Document) []prompt.Suggest {
 	args := strings.Split(d.TextBeforeCursor(), " ")
 
 	if len(args) <= 1 {
-		return prompt.FilterHasPrefix([]prompt.Suggest{
-			{Text: execEnable, Description: "Enable plugin..."},
-			{Text: execGrants, Description: "Add grants for plugin..."},
-			{Text: execEncrypt, Description: "Encrypt storage"},
-			{Text: execDecrypt, Description: "Decrypt storage"},
-			{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
-		}, args[0], true)
+		return prompt.FilterHasPrefix(promptSuggestions, args[0], true)
 	}
 
 	switch args[0] {
@@ -186,6 +178,23 @@ func completer(d prompt.Document) []prompt.Suggest {
 	return prompt.FilterHasPrefix(suggestions, d.TextBeforeCursor(), true)
 }
 
-func exitChecker(in string, breakline bool) bool {
-	return in == execExit && breakline
+// pluginSuggestions returns a list of suggestions for plugins.
+func pluginSuggestions() []prompt.Suggest {
+	arr := make([]prompt.Suggest, 0)
+	arr = append(arr, prompt.Suggest{Text: "all", Description: ""})
+
+	// Get the plugin names.
+	pluginNames := make([]string, 0)
+	err := rc.Get("/plugins", &pluginNames)
+	if err != nil {
+		log.Error("amb: could not get plugin names: %v", err.Error())
+		return nil
+	}
+
+	// Build a list of suggestions.
+	for _, pluginName := range pluginNames {
+		arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
+	}
+
+	return arr
 }
