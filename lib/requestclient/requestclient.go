@@ -56,7 +56,7 @@ func (c *RequestClient) Get(urlSuffix string, returnData interface{}) error {
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("error GET response (%v): %v", resp.StatusCode, err.Error())
+		return fmt.Errorf("error GET response (%v): %v", resp.StatusCode, string(body))
 	}
 
 	if returnData != nil {
@@ -116,7 +116,7 @@ func (c *RequestClient) Post(urlSuffix string, sendData interface{}, returnData 
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("error GET response (%v): %v", resp.StatusCode, err.Error())
+		return fmt.Errorf("error GET response (%v): %v", resp.StatusCode, string(body))
 	}
 
 	if returnData != nil {

@@ -7,7 +7,6 @@ import (
 	"syscall"
 
 	"github.com/josephspurrier/ambient/lib/envdetect"
-	"github.com/josephspurrier/ambient/plugin/router/awayrouter/router"
 )
 
 const (
@@ -28,8 +27,8 @@ type App struct {
 	escapeTemplates bool
 }
 
-// NewApp returns a new Ambient app that supports plugins.
-func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storagePluginGroup StoragePluginGroup, plugins *PluginLoader) (*App, AppLogger, error) {
+// NewAppLogger returns a logger from Ambient without all the other dependencies.
+func NewAppLogger(appName string, appVersion string, logPlugin LoggingPlugin) (AppLogger, error) {
 	// Set the time zone. Required for plugins that rely on timzone like MFA.
 	tz := os.Getenv("AMB_TIMEZONE")
 	if len(tz) > 0 {
@@ -39,11 +38,22 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 	// Get the logger from the plugin.
 	log, err := loadLogger(appName, appVersion, logPlugin)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	// Set the default log level.
 	log.SetLogLevel(LogLevelInfo)
+
+	return log, nil
+}
+
+// NewApp returns a new Ambient app that supports plugins.
+func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storagePluginGroup StoragePluginGroup, plugins *PluginLoader) (*App, AppLogger, error) {
+	// Set up the logger first.
+	log, err := NewAppLogger(appName, appVersion, logPlugin)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	// Get the storage manager.
 	storage, sessionstorer, err := loadStorage(log, storagePluginGroup)
@@ -75,41 +85,9 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 	// Start local dev server for configuration.
 	// TODO: Change so amb is a flag instead of a hard-coded name.
 	if envdetect.RunningLocalDev() && appName != "amb" {
-		// TODO: Make the port dynamic.
-		devPort := "8081"
-		log.Info("ambient: dev console started on: %v", devPort)
-
-		go func() {
-			mux := router.New()
-			mux.Post("/storage/encrypt", func(w http.ResponseWriter, r *http.Request) (int, error) {
-				log.Info("ambient: dev console - site.bin encrypted")
-				err = storage.LoadDecrypted()
-				if err != nil {
-					return http.StatusInternalServerError, err
-				}
-				err = storage.Save()
-				if err != nil {
-					return http.StatusInternalServerError, err
-				}
-
-				return http.StatusOK, nil
-			})
-
-			mux.Post("/storage/decrypt", func(w http.ResponseWriter, r *http.Request) (int, error) {
-				log.Info("ambient: dev console - site.bin decrypted")
-				err = storage.SaveDecrypted()
-				if err != nil {
-					return http.StatusInternalServerError, err
-				}
-
-				return http.StatusOK, nil
-			})
-
-			err = http.ListenAndServe(":"+devPort, mux)
-			if err != nil {
-				log.Error("ambient: dev config server cannot start: %v", err.Error())
-			}
-		}()
+		// TODO: Probably need to store this somewhere so it can be enabled/disabled.
+		dc := NewDevConsole("8081", log, storage, pluginsystem)
+		dc.EnableDevConsole()
 	}
 
 	return ambientApp, log, nil

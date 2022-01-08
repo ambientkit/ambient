@@ -8,9 +8,6 @@ import (
 
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/cmd/myapp/app"
-	"github.com/josephspurrier/ambient/lib/aesdata"
-	"github.com/josephspurrier/ambient/lib/cloudstorage"
 	"github.com/josephspurrier/ambient/lib/requestclient"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
 )
@@ -24,53 +21,26 @@ var (
 			os.Exit(0)
 		},
 	}
-	log           ambient.AppLogger
-	pluginsystem  *ambient.PluginSystem
-	securestorage *ambient.SecureSite
+	log ambient.AppLogger
+	rc  *requestclient.RequestClient
 )
 
 func main() {
-	// Get the environment variables.
-	secretKey := os.Getenv("AMB_SESSION_KEY")
-	if len(secretKey) == 0 {
-		stdlog.Fatalf("app: environment variable missing: %v\n", "AMB_SESSION_KEY")
-	}
-
-	// Determine cloud storage engine for site and session information.
-	storage := cloudstorage.StorageBasedOnCloud(app.StorageSitePath,
-		app.StorageSessionPath)
-
-	// Create the ambient app.
-	var ambientApp *ambient.App
+	// Use an Ambient logger for consistency.
 	var err error
-	plugins := app.Plugins()
-	ambientApp, log, err = ambient.NewApp(appName, appVersion,
-		zaplogger.New(),
-		ambient.StoragePluginGroup{
-			Storage: storage,
-			// TODO: Probably should remove encryption from here if the app
-			// is using a different type of encryption. Should probably change
-			// so that AMB doesn't interact with config directly, but does it
-			// through the web app itself.
-			Encryption: aesdata.NewEncryptedStorage(secretKey),
-		},
-		plugins)
+	log, err = ambient.NewAppLogger(appName, appVersion, zaplogger.New())
 	if err != nil {
 		if log != nil {
 			// Use the logger if it's available.
-			log.Fatal("", err.Error())
+			log.Fatal(err.Error())
 		} else {
 			// Else use the standard logger.
 			stdlog.Fatalln(err.Error())
 		}
 	}
 
-	// Get the plugin system.
-	pluginsystem = ambientApp.PluginSystem()
-
-	// Create secure site for the core app and use "ambient" so it gets
-	// full permissions.
-	securestorage = ambient.NewSecureSite("ambient", log, pluginsystem, nil, nil, nil)
+	// TODO: Need to make this configurable.
+	rc = requestclient.New("http://localhost:8081", "")
 
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(
@@ -93,56 +63,20 @@ var (
 	execExit    = "exit"
 )
 
-func enablePlugin(name string) {
-	log.Info("enabling plugin: %v", name)
-	err := securestorage.EnablePlugin(name, false)
-	if err != nil {
-		log.Error("", err.Error())
-	}
-}
-
-func enableGrants(name string) {
-	log.Info("add plugin grants: %v", name)
-
-	p, err := pluginsystem.Plugin(name)
-	if err != nil {
-		log.Error("error with plugin (%v): %v", name, err.Error())
-		return
-	}
-
-	for _, request := range p.GrantRequests() {
-		log.Info("%v - add grant: %v", name, request.Grant)
-		err := securestorage.SetNeighborPluginGrant(name, request.Grant, true)
-		if err != nil {
-			log.Error("", err.Error())
-		}
-	}
-}
-
-func addGrantAll(name string) error {
-	// Set the grants for the CLI tool.
-	err := pluginsystem.SetGrant(name, ambient.GrantAll)
-	if err != nil {
-		return err
-	}
-	return pluginsystem.Save()
-}
-
-func removeGrantAll(name string) error {
-	// Remove the grants for the CLI tool.
-	err := pluginsystem.RemoveGrant(name, ambient.GrantAll)
-	if err != nil {
-		return err
-	}
-
-	return pluginsystem.Save()
-}
-
 func pluginSuggestions() []prompt.Suggest {
 	arr := make([]prompt.Suggest, 0)
 	arr = append(arr, prompt.Suggest{Text: "all", Description: ""})
 
-	for _, pluginName := range pluginsystem.TrustedPluginNames() {
+	// Get the plugin names.
+	pluginNames := make([]string, 0)
+	err := rc.Get("/plugins", &pluginNames)
+	if err != nil {
+		log.Error("amb: could not get plugin names: %v", err.Error())
+		return nil
+	}
+
+	// Build a list of suggestions.
+	for _, pluginName := range pluginNames {
 		arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
 	}
 
@@ -155,56 +89,70 @@ func executer(s string) {
 	switch args[0] {
 	case execEnable:
 		if len(args) < 2 {
-			log.Info("", "command not recognized")
+			log.Info("amb: command not recognized")
 			break
 		}
 
-		log.Info("", "enabling plugin")
-
 		if args[1] == "all" {
-			// Enable plugins.
-			for _, pluginName := range pluginsystem.TrustedPluginNames() {
-				enablePlugin(pluginName)
+			// Enable all plugins.
+			log.Info("amb: enabling all trusted plugins")
+
+			err := rc.Post("/plugins/enable", nil, nil)
+			if err != nil {
+				log.Error("amb: could not enable all plugins: %v", err.Error())
 			}
 		} else {
-			enablePlugin(args[1])
+			// Enable one plugin.
+			pluginName := args[1]
+			log.Info("amb: enabling plugin: %v", pluginName)
+
+			err := rc.Post(fmt.Sprintf("/plugins/%v/enable", pluginName), nil, nil)
+			if err != nil {
+				log.Error("amb: could not enable plugin, %v: %v", pluginName, err.Error())
+			}
 		}
 	case execGrants:
 		if len(args) < 2 {
-			log.Info("", "command not recognized")
+			log.Info("amb: command not recognized")
 			break
 		}
 
-		log.Info("", "adding plugin grants")
-
 		if args[1] == "all" {
-			// Enable plugin grants.
-			for _, pluginName := range pluginsystem.TrustedPluginNames() {
-				enableGrants(pluginName)
+			// Enable grants for all plugins.
+			log.Info("amb: adding grants for all trusted plugins")
+
+			err := rc.Post("/plugins/grant", nil, nil)
+			if err != nil {
+				log.Error("amb: cloud not enable all plugins grants: %v", err.Error())
 			}
 		} else {
-			enableGrants(args[1])
+			// Enable grants for one plugin.
+			pluginName := args[1]
+			log.Info("amb: adding grants for plugin: %v", pluginName)
+
+			err := rc.Post(fmt.Sprintf("/plugins/%v/grant", pluginName), nil, nil)
+			if err != nil {
+				log.Error("amb: cloud not enable plugin (%v) grants: %v", pluginName, err.Error())
+			}
 		}
 	case execEncrypt:
-		rc := requestclient.New("http://localhost:8081", "")
 		err := rc.Post("/storage/encrypt", nil, nil)
 		if err != nil {
-			log.Error("error: encrypting storage: %v", err)
+			log.Error("amb: error encrypting storage: %v", err)
 		} else {
-			log.Info("encrypted storage")
+			log.Info("amb: encrypted storage file: site.bin")
 		}
 	case execDecrypt:
-		rc := requestclient.New("http://localhost:8081", "")
 		err := rc.Post("/storage/decrypt", nil, nil)
 		if err != nil {
-			log.Error("error: decrypted storage: %v", err)
+			log.Error("amb: error decrypted storage: %v", err)
 		} else {
-			log.Info("decrypted storage")
+			log.Info("amb: decrypted storage file: site.bin")
 		}
 	case execExit:
 		os.Exit(0)
 	default:
-		log.Info("", "command not recognized")
+		log.Info("amb: command not recognized")
 	}
 }
 
@@ -219,8 +167,8 @@ func completer(d prompt.Document) []prompt.Suggest {
 
 	if len(args) <= 1 {
 		return prompt.FilterHasPrefix([]prompt.Suggest{
-			{Text: execEnable, Description: "Enable the core plugins"},
-			{Text: execGrants, Description: "Add grants for the core plugins"},
+			{Text: execEnable, Description: "Enable plugin..."},
+			{Text: execGrants, Description: "Add grants for plugin..."},
 			{Text: execEncrypt, Description: "Encrypt storage"},
 			{Text: execDecrypt, Description: "Decrypt storage"},
 			{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
@@ -228,7 +176,8 @@ func completer(d prompt.Document) []prompt.Suggest {
 	}
 
 	switch args[0] {
-	case execEnable, execGrants, execEncrypt:
+	case execEnable, execGrants:
+		// For these commands, show a secondary list of plugin suggestions.
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(pluginSuggestions(), args[1], true)
 		}
