@@ -4,57 +4,40 @@ import (
 	"github.com/c-bata/go-prompt"
 )
 
-var execExit = "exit"
+// Command represents all the information required to run a command, including
+// suggestions.
+type Command interface {
+	Command() string
+	Suggestion() prompt.Suggest
+	Executer(args []string)
+	Completer(d prompt.Document, args []string) []prompt.Suggest
+}
 
-// var (
-// 	// Commands available.
-// 	execCreateApp = "createapp"
-// 	execEnable    = "enable"
-// 	execGrants    = "grant"
-// 	execEncrypt   = "encryptstorage"
-// 	execDecrypt   = "decryptstorage"
-// 	execExit      = "exit"
+// CommandList is a collection of commands.
+type CommandList struct {
+	cmd []Command
+}
 
-// 	// Prompts should match 1:1 with the commands above.
-// 	promptSuggestions = []prompt.Suggest{
-// 		{Text: execCreateApp, Description: "Create new Ambient app"},
-// 		{Text: execEnable, Description: "Enable plugin..."},
-// 		{Text: execGrants, Description: "Add grants for plugin..."},
-// 		{Text: execEncrypt, Description: "Encrypt storage"},
-// 		{Text: execDecrypt, Description: "Decrypt storage"},
-// 		{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
-// 	}
-// )
+// NewCommandList returns a new collection of commands.
+func NewCommandList() *CommandList {
+	return &CommandList{
+		cmd: make([]Command, 0),
+	}
+}
 
-// InitialCommandSuggestions -
+// Add a command to the list.
+func (cl *CommandList) Add(c Command) {
+	cl.cmd = append(cl.cmd, c)
+}
+
+// InitialCommandSuggestions returns a list of the initial or top-level
+// commands.
 func (cl *CommandList) InitialCommandSuggestions() []prompt.Suggest {
 	arr := make([]prompt.Suggest, 0)
 
 	for _, v := range cl.cmd {
 		arr = append(arr, v.Suggestion())
 	}
-
-	return arr
-}
-
-// pluginSuggestions returns a list of suggestions for plugins.
-func pluginSuggestions() []prompt.Suggest {
-	arr := make([]prompt.Suggest, 0)
-	arr = append(arr, prompt.Suggest{Text: "all", Description: ""})
-
-	// Get the plugin names.
-	pluginNames := make([]string, 0)
-	err := rc.Get("/plugins", &pluginNames)
-	if err != nil {
-		log.Error("amb: could not get plugin names: %v", err.Error())
-		return nil
-	}
-
-	// Build a list of suggestions.
-	for _, pluginName := range pluginNames {
-		arr = append(arr, prompt.Suggest{Text: pluginName, Description: ""})
-	}
-	//arr = append(arr, ConvertToSuggestions(pluginNames)...)
 
 	return arr
 }

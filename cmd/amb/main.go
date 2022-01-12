@@ -48,8 +48,16 @@ func main() {
 	// TODO: Should make this a struct instead.
 	helper.SetGlobals(log, rc)
 
+	// Get the exit command.
+	exit := &helper.CmdExit{}
+
 	cmds := helper.NewCommandList()
 	cmds.Add(&helper.CmdCreateApp{})
+	cmds.Add(&helper.CmdEnable{})
+	cmds.Add(&helper.CmdGrant{})
+	cmds.Add(&helper.CmdEncrypt{})
+	cmds.Add(&helper.CmdDecrypt{})
+	cmds.Add(exit)
 
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(
@@ -58,7 +66,7 @@ func main() {
 		prompt.OptionTitle(fmt.Sprintf("%v: Ambient Interactive Client", appName)),
 		prompt.OptionPrefix(">>> "),
 		prompt.OptionInputTextColor(prompt.Yellow),
-		prompt.OptionSetExitCheckerOnInput(helper.ExitChecker),
+		prompt.OptionSetExitCheckerOnInput(exit.Checker),
 		prompt.OptionAddKeyBind(quit),
 	)
 	p.Run()

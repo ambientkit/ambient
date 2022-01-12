@@ -1,0 +1,36 @@
+package helper
+
+import (
+	"os"
+
+	"github.com/c-bata/go-prompt"
+)
+
+// CmdExit represents a command object.
+type CmdExit struct{}
+
+// Command returns the initial command.
+func (c *CmdExit) Command() string {
+	return "exit"
+}
+
+// Suggestion returns the suggestion for the initial command.
+func (c *CmdExit) Suggestion() prompt.Suggest {
+	return prompt.Suggest{Text: c.Command(), Description: "Exit the CLI (or press Ctrl+C)"}
+}
+
+// Executer executes the command.
+func (c *CmdExit) Executer(args []string) {
+	os.Exit(0)
+}
+
+// Completer returns a list of suggestions based on the user input.
+func (c *CmdExit) Completer(d prompt.Document, args []string) []prompt.Suggest {
+	// Return nothing.
+	return prompt.FilterHasPrefix([]prompt.Suggest{}, d.TextBeforeCursor(), true)
+}
+
+// Checker returns true if exiting.
+func (c *CmdExit) Checker(in string, breakline bool) bool {
+	return in == c.Command() && breakline
+}
