@@ -4,25 +4,38 @@ import (
 	"github.com/c-bata/go-prompt"
 )
 
-var (
-	// Commands available.
-	execCreateApp = "createapp"
-	execEnable    = "enable"
-	execGrants    = "grant"
-	execEncrypt   = "encryptstorage"
-	execDecrypt   = "decryptstorage"
-	execExit      = "exit"
+var execExit = "exit"
 
-	// Prompts should match 1:1 with the commands above.
-	promptSuggestions = []prompt.Suggest{
-		{Text: execCreateApp, Description: "Create new Ambient app"},
-		{Text: execEnable, Description: "Enable plugin..."},
-		{Text: execGrants, Description: "Add grants for plugin..."},
-		{Text: execEncrypt, Description: "Encrypt storage"},
-		{Text: execDecrypt, Description: "Decrypt storage"},
-		{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
+// var (
+// 	// Commands available.
+// 	execCreateApp = "createapp"
+// 	execEnable    = "enable"
+// 	execGrants    = "grant"
+// 	execEncrypt   = "encryptstorage"
+// 	execDecrypt   = "decryptstorage"
+// 	execExit      = "exit"
+
+// 	// Prompts should match 1:1 with the commands above.
+// 	promptSuggestions = []prompt.Suggest{
+// 		{Text: execCreateApp, Description: "Create new Ambient app"},
+// 		{Text: execEnable, Description: "Enable plugin..."},
+// 		{Text: execGrants, Description: "Add grants for plugin..."},
+// 		{Text: execEncrypt, Description: "Encrypt storage"},
+// 		{Text: execDecrypt, Description: "Decrypt storage"},
+// 		{Text: execExit, Description: "Exit the CLI (or press Ctrl+C)"},
+// 	}
+// )
+
+// InitialCommandSuggestions -
+func (cl *CommandList) InitialCommandSuggestions() []prompt.Suggest {
+	arr := make([]prompt.Suggest, 0)
+
+	for _, v := range cl.cmd {
+		arr = append(arr, v.Suggestion())
 	}
-)
+
+	return arr
+}
 
 // pluginSuggestions returns a list of suggestions for plugins.
 func pluginSuggestions() []prompt.Suggest {

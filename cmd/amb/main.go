@@ -45,12 +45,16 @@ func main() {
 		fmt.Sprintf("%v:%v", envdetect.DevConsoleURL(), envdetect.DevConsolePort()),
 		"")
 
+	// TODO: Should make this a struct instead.
 	helper.SetGlobals(log, rc)
+
+	cmds := helper.NewCommandList()
+	cmds.Add(&helper.CmdCreateApp{})
 
 	// Start the read–eval–print loop (REPL).
 	p := prompt.New(
-		helper.Executer,
-		helper.Completer,
+		cmds.Executer,
+		cmds.Completer,
 		prompt.OptionTitle(fmt.Sprintf("%v: Ambient Interactive Client", appName)),
 		prompt.OptionPrefix(">>> "),
 		prompt.OptionInputTextColor(prompt.Yellow),

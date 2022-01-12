@@ -44,8 +44,8 @@ func (g SmartSuggestGroup) Valid(list []string) (bool, string) {
 	return true, ""
 }
 
-// Suggest returns an array of suggestions.
-func (g SmartSuggestGroup) Suggest() []prompt.Suggest {
+// ToSuggest returns an array of suggestions.
+func (g SmartSuggestGroup) ToSuggest() []prompt.Suggest {
 	arr := make([]prompt.Suggest, 0)
 
 	for _, v := range g {
