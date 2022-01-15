@@ -28,7 +28,7 @@ func (g SmartSuggestGroup) Valid(list []string) (bool, string) {
 				if typed == suggestion.Text {
 					// Determine if there is a value that is not a parameter
 					// after it.
-					if len(list) > k+2 && !strings.HasPrefix(list[k+1], "--") {
+					if len(list) >= k+2 && !strings.HasPrefix(list[k+1], "--") {
 						found = true
 					}
 					break

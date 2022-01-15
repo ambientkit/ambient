@@ -39,7 +39,6 @@ func (c *CmdCreateApp) Executer(args []string) {
 // Completer returns a list of suggestions based on the user input.
 func (c *CmdCreateApp) Completer(d prompt.Document, args []string) []prompt.Suggest {
 	// Don't show any suggestions if type types: --parameter SPACE
-	// TODO: This should probably go to the top.
 	prevCursor := d.GetWordBeforeCursorWithSpace()
 	if strings.HasPrefix(prevCursor, "--") && strings.HasSuffix(prevCursor, " ") {
 		return nil
