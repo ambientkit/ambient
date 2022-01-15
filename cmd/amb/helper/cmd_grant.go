@@ -7,7 +7,9 @@ import (
 )
 
 // CmdGrant represents a command object.
-type CmdGrant struct{}
+type CmdGrant struct {
+	CmdBase
+}
 
 // Command returns the initial command.
 func (c *CmdGrant) Command() string {

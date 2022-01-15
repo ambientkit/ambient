@@ -15,6 +15,12 @@ func (cl *CommandList) Executer(s string) {
 	handled := false
 	for _, v := range cl.cmd {
 		if firstCommand == v.Command() {
+			// Ensure all required arguments exist.
+			if valid, missing := v.ArgumentSuggestions().Valid(args); !valid {
+				log.Error("amb: missing argument for '%v': %v", firstCommand, missing)
+				return
+			}
+			// Execute the command.
 			v.Executer(args)
 			handled = true
 			break

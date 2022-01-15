@@ -7,7 +7,9 @@ import (
 )
 
 // CmdEnable represents a command object.
-type CmdEnable struct{}
+type CmdEnable struct {
+	CmdBase
+}
 
 // Command returns the initial command.
 func (c *CmdEnable) Command() string {

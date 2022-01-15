@@ -7,7 +7,9 @@ import (
 )
 
 // CmdExit represents a command object.
-type CmdExit struct{}
+type CmdExit struct {
+	CmdBase
+}
 
 // Command returns the initial command.
 func (c *CmdExit) Command() string {
@@ -22,12 +24,6 @@ func (c *CmdExit) Suggestion() prompt.Suggest {
 // Executer executes the command.
 func (c *CmdExit) Executer(args []string) {
 	os.Exit(0)
-}
-
-// Completer returns a list of suggestions based on the user input.
-func (c *CmdExit) Completer(d prompt.Document, args []string) []prompt.Suggest {
-	// Return nothing.
-	return prompt.FilterHasPrefix([]prompt.Suggest{}, d.TextBeforeCursor(), true)
 }
 
 // Checker returns true if exiting.

@@ -5,7 +5,9 @@ import (
 )
 
 // CmdEncrypt represents a command object.
-type CmdEncrypt struct{}
+type CmdEncrypt struct {
+	CmdBase
+}
 
 // Command returns the initial command.
 func (c *CmdEncrypt) Command() string {
