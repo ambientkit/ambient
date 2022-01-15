@@ -34,7 +34,7 @@ func (c *CmdCreateApp) Suggestion() prompt.Suggest {
 // ArgumentSuggestions returns a smart suggestion group that includes validation.
 func (c *CmdCreateApp) ArgumentSuggestions() SmartSuggestGroup {
 	return SmartSuggestGroup{
-		{Suggest: prompt.Suggest{Text: paramFolder, Description: "Folder to create the project (default: myambapp)"}, Required: true},
+		{Suggest: prompt.Suggest{Text: paramFolder, Description: "Folder to create the project (default: myambapp)"}, Required: false},
 		{Suggest: prompt.Suggest{Text: paramTemplate, Description: "Template project to git clone (default: https://github.com/josephspurrier/ball)"}, Required: false},
 	}
 }
@@ -52,17 +52,8 @@ func (c *CmdCreateApp) param(args []string, name string) (string, error) {
 	return "", fmt.Errorf("param not found: %v", name)
 }
 
-// git clone --depth=1 --branch=master git@github.com:josephspurrier/ball.git .
-
 // Executer executes the command.
 func (c *CmdCreateApp) Executer(args []string) {
-	// Ensure all required arguments exist.
-	// TODO: Maybe move this up a level so it's called automatically?
-	if valid, missing := c.ArgumentSuggestions().Valid(args); !valid {
-		log.Error("amb: missing argument: %v", missing)
-		return
-	}
-
 	// Get folder name.
 	folderName, err := c.param(args, paramFolder)
 	if err != nil {
