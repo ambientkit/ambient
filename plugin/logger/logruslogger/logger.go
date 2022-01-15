@@ -40,21 +40,26 @@ func (l *Logger) logentry() *logrus.Entry {
 func (l *Logger) SetLogLevel(level ambient.LogLevel) {
 	// Set log level temporarily to info.
 	l.log.Level = logrus.InfoLevel
-	l.logentry().Infoln("log level set to:", level)
 
 	switch level {
 	case ambient.LogLevelDebug:
 		l.log.Level = logrus.DebugLevel
+		l.logentry().Infoln("logruslogger: log level set to:", "debug")
 	case ambient.LogLevelInfo:
 		l.log.Level = logrus.InfoLevel
+		l.logentry().Infoln("logruslogger: log level set to:", "info")
 	case ambient.LogLevelWarn:
 		l.log.Level = logrus.WarnLevel
+		l.logentry().Infoln("logruslogger: log level set to:", "warn")
 	case ambient.LogLevelError:
 		l.log.Level = logrus.ErrorLevel
+		l.logentry().Infoln("logruslogger: log level set to:", "error")
 	case ambient.LogLevelFatal:
 		l.log.Level = logrus.FatalLevel
+		l.logentry().Infoln("loglogrusloggerrus: log level set to:", "fatal")
 	default:
 		l.log.Level = logrus.InfoLevel
+		l.logentry().Infoln("logruslogger: log level set to:", "info")
 	}
 }
 

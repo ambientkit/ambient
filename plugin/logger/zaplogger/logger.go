@@ -50,23 +50,28 @@ func (l *Logger) logentry() *zap.SugaredLogger {
 func (l *Logger) SetLogLevel(level ambient.LogLevel) {
 	// Set log level temporarily to info.
 	l.loglevel.SetLevel(zap.InfoLevel)
-	l.logentry().Infof("log level set to: %v", level)
 
 	var loglevel zapcore.Level
 
 	switch level {
 	case ambient.LogLevelDebug:
 		loglevel = zapcore.DebugLevel
+		l.logentry().Infof("zaplogger: log level set to: %v", "debug")
 	case ambient.LogLevelInfo:
 		loglevel = zapcore.InfoLevel
+		l.logentry().Infof("zaplogger: log level set to: %v", "info")
 	case ambient.LogLevelWarn:
 		loglevel = zapcore.WarnLevel
+		l.logentry().Infof("zaplogger: log level set to: %v", "warn")
 	case ambient.LogLevelError:
 		loglevel = zapcore.ErrorLevel
+		l.logentry().Infof("zaplogger: log level set to: %v", "error")
 	case ambient.LogLevelFatal:
 		loglevel = zapcore.FatalLevel
+		l.logentry().Infof("zaplogger: log level set to: %v", "fatal")
 	default:
 		loglevel = zapcore.InfoLevel
+		l.logentry().Infof("zaplogger: log level set to: %v", "info")
 	}
 
 	l.loglevel.SetLevel(loglevel)

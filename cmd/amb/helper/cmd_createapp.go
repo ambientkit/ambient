@@ -2,7 +2,6 @@ package helper
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -12,8 +11,8 @@ import (
 )
 
 const (
-	paramFolder   = "--folder"
-	paramTemplate = "--template"
+	paramFolder   = "-folder"
+	paramTemplate = "-template"
 )
 
 // CmdCreateApp represents a command object.
@@ -39,23 +38,10 @@ func (c *CmdCreateApp) ArgumentSuggestions() SmartSuggestGroup {
 	}
 }
 
-// param returns the named parameter value.
-func (c *CmdCreateApp) param(args []string, name string) (string, error) {
-	for k, v := range args {
-		if v == name {
-			if len(args) >= k+2 {
-				return args[k+1], nil
-			}
-		}
-	}
-
-	return "", fmt.Errorf("param not found: %v", name)
-}
-
 // Executer executes the command.
 func (c *CmdCreateApp) Executer(args []string) {
 	// Get folder name.
-	folderName, err := c.param(args, paramFolder)
+	folderName, err := c.Param(args, paramFolder)
 	if err != nil {
 		folderName = "myambapp"
 	}
@@ -67,7 +53,7 @@ func (c *CmdCreateApp) Executer(args []string) {
 	}
 
 	// Get template name.
-	templateName, err := c.param(args, paramTemplate)
+	templateName, err := c.Param(args, paramTemplate)
 	if err != nil {
 		templateName = "https://github.com/josephspurrier/ball"
 	}
@@ -76,11 +62,11 @@ func (c *CmdCreateApp) Executer(args []string) {
 	log.Info("amb: creating new project from template: %v", templateName)
 	gitArgs := []string{"clone", "--depth=1", "--branch=master", templateName, folderName}
 	cmd := exec.Command("git", gitArgs...)
-	var out bytes.Buffer
-	cmd.Stderr = &out
+	var stdErr bytes.Buffer
+	cmd.Stderr = &stdErr
 	err = cmd.Run()
 	if err != nil {
-		log.Error("amb: couldn't create project (git %v): %v | %v", strings.Join(gitArgs, " "), err.Error(), out.String())
+		log.Error("amb: couldn't create project (git %v): %v %v", strings.Join(gitArgs, " "), err.Error(), stdErr.String())
 		return
 	}
 
@@ -99,7 +85,7 @@ func (c *CmdCreateApp) Executer(args []string) {
 func (c *CmdCreateApp) Completer(d prompt.Document, args []string) []prompt.Suggest {
 	// Don't show any suggestions if type types: --parameter SPACE
 	prevCursor := d.GetWordBeforeCursorWithSpace()
-	if strings.HasPrefix(prevCursor, "--") && strings.HasSuffix(prevCursor, " ") {
+	if strings.HasPrefix(prevCursor, "-") && strings.HasSuffix(prevCursor, " ") {
 		return nil
 	}
 

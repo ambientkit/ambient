@@ -28,7 +28,7 @@ type App struct {
 }
 
 // NewAppLogger returns a logger from Ambient without all the other dependencies.
-func NewAppLogger(appName string, appVersion string, logPlugin LoggingPlugin) (AppLogger, error) {
+func NewAppLogger(appName string, appVersion string, logPlugin LoggingPlugin, logLevel LogLevel) (AppLogger, error) {
 	// Set the time zone. Required for plugins that rely on timzone like MFA.
 	tz := os.Getenv("AMB_TIMEZONE")
 	if len(tz) > 0 {
@@ -41,8 +41,8 @@ func NewAppLogger(appName string, appVersion string, logPlugin LoggingPlugin) (A
 		return nil, err
 	}
 
-	// Set the default log level.
-	log.SetLogLevel(LogLevelInfo)
+	// Set the initial log level.
+	log.SetLogLevel(logLevel)
 
 	return log, nil
 }
@@ -50,7 +50,7 @@ func NewAppLogger(appName string, appVersion string, logPlugin LoggingPlugin) (A
 // NewApp returns a new Ambient app that supports plugins.
 func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storagePluginGroup StoragePluginGroup, plugins *PluginLoader) (*App, AppLogger, error) {
 	// Set up the logger first.
-	log, err := NewAppLogger(appName, appVersion, logPlugin)
+	log, err := NewAppLogger(appName, appVersion, logPlugin, LogLevelInfo)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -21,7 +21,7 @@ func filterAlreadyUsed(list []prompt.Suggest, args []string) []prompt.Suggest {
 	for _, typed := range args {
 		// Skip words if they don't start with a -- because they may be just a typed input.
 		// Not sure if we need this or not.
-		// if !strings.HasPrefix(typed, "--") {
+		// if !strings.HasPrefix(typed, "-") {
 		// 	continue
 		// }
 

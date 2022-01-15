@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	stdlog "log"
 	"os"
@@ -28,8 +29,20 @@ var (
 )
 
 func main() {
+	// Detect debug flag.
+	var debugEnable bool
+	flag.BoolVar(&debugEnable, "debug", false, "Enable debug output")
+
+	flag.Parse()
+
+	// Determine log level.
+	logLevel := ambient.LogLevelInfo
+	if debugEnable {
+		logLevel = ambient.LogLevelDebug
+	}
+
 	// Use an Ambient logger for consistency.
-	log, err := ambient.NewAppLogger(appName, appVersion, zaplogger.New())
+	log, err := ambient.NewAppLogger(appName, appVersion, zaplogger.New(), logLevel)
 	if err != nil {
 		if log != nil {
 			// Use the logger if it's available.

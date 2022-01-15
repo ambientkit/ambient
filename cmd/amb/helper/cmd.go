@@ -42,18 +42,3 @@ func (cl *CommandList) InitialCommandSuggestions() []prompt.Suggest {
 
 	return arr
 }
-
-// CmdBase is a base object for structs. This reduces creating methods that are
-// optional.
-type CmdBase struct{}
-
-// ArgumentSuggestions returns a smart suggestion group that includes validation.
-func (c *CmdBase) ArgumentSuggestions() SmartSuggestGroup {
-	return SmartSuggestGroup{}
-}
-
-// Completer returns a list of suggestions based on the user input.
-func (c *CmdBase) Completer(d prompt.Document, args []string) []prompt.Suggest {
-	// Return nothing.
-	return prompt.FilterHasPrefix([]prompt.Suggest{}, d.TextBeforeCursor(), true)
-}
