@@ -2,6 +2,7 @@ package helper
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -11,8 +12,10 @@ import (
 )
 
 const (
-	paramFolder   = "-folder"
-	paramTemplate = "-template"
+	paramFolder     = "-folder"
+	paramTemplate   = "-template"
+	defaultTemplate = "https://github.com/josephspurrier/ambient-template"
+	defaultFolder   = "myambapp"
 )
 
 // CmdCreateApp represents a command object.
@@ -33,8 +36,8 @@ func (c *CmdCreateApp) Suggestion() prompt.Suggest {
 // ArgumentSuggestions returns a smart suggestion group that includes validation.
 func (c *CmdCreateApp) ArgumentSuggestions() SmartSuggestGroup {
 	return SmartSuggestGroup{
-		{Suggest: prompt.Suggest{Text: paramFolder, Description: "Folder to create the project (default: myambapp)"}, Required: false},
-		{Suggest: prompt.Suggest{Text: paramTemplate, Description: "Template project to git clone (default: https://github.com/josephspurrier/ball)"}, Required: false},
+		{Suggest: prompt.Suggest{Text: paramFolder, Description: fmt.Sprintf("Folder to create the project (default: %v)", defaultFolder)}, Required: false},
+		{Suggest: prompt.Suggest{Text: paramTemplate, Description: fmt.Sprintf("Template project to git clone (default: %v)", defaultTemplate)}, Required: false},
 	}
 }
 
@@ -43,7 +46,7 @@ func (c *CmdCreateApp) Executer(args []string) {
 	// Get folder name.
 	folderName, err := c.Param(args, paramFolder)
 	if err != nil {
-		folderName = "myambapp"
+		folderName = defaultFolder
 	}
 
 	// Determine if folder already exists.
@@ -55,7 +58,7 @@ func (c *CmdCreateApp) Executer(args []string) {
 	// Get template name.
 	templateName, err := c.Param(args, paramTemplate)
 	if err != nil {
-		templateName = "https://github.com/josephspurrier/ball"
+		templateName = defaultTemplate
 	}
 
 	// Perform git clone on the template.
