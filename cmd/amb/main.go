@@ -8,7 +8,7 @@ import (
 
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/cmd/amb/helper"
+	"github.com/josephspurrier/ambient/cmd/amb/internal/helper"
 	"github.com/josephspurrier/ambient/lib/envdetect"
 	"github.com/josephspurrier/ambient/lib/requestclient"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
