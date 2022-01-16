@@ -7,6 +7,12 @@ import (
 	"strconv"
 )
 
+// LoadDotEnv returns true if the AMB_DOTENV environment variable is set.
+func LoadDotEnv() bool {
+	result, _ := strconv.ParseBool(os.Getenv("AMB_DOTENV"))
+	return result
+}
+
 // RunningLocalDev returns true if the AMB_LOCAL environment variable is set.
 func RunningLocalDev() bool {
 	result, _ := strconv.ParseBool(os.Getenv("AMB_LOCAL"))
