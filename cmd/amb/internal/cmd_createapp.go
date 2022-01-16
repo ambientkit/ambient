@@ -63,7 +63,7 @@ func (c *CmdCreateApp) Executer(args []string) {
 
 	// Perform git clone on the template.
 	log.Info("amb: creating new project from template: %v", templateName)
-	gitArgs := []string{"clone", "--depth=1", "--branch=master", templateName, folderName}
+	gitArgs := []string{"clone", "--depth=1", "--branch=main", templateName, folderName}
 	cmd := exec.Command("git", gitArgs...)
 	var stdErr bytes.Buffer
 	cmd.Stderr = &stdErr
@@ -81,7 +81,8 @@ func (c *CmdCreateApp) Executer(args []string) {
 	}
 
 	// Make bin folder.
-	err = os.Mkdir("bin", 0755)
+	binFolder := filepath.Join(folderName, "bin")
+	err = os.Mkdir(binFolder, 0755)
 	if err != nil {
 		log.Error("amb: couldn't create bin folder: %v", err.Error())
 	}
