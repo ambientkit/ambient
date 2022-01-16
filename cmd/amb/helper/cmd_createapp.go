@@ -77,6 +77,12 @@ func (c *CmdCreateApp) Executer(args []string) {
 		log.Error("amb: couldn't remove .git folder: %v", err.Error())
 	}
 
+	// Make bin folder.
+	err = os.Mkdir("bin", 0755)
+	if err != nil {
+		log.Error("amb: couldn't create bin folder: %v", err.Error())
+	}
+
 	log.Info("amb: removing folder: %v", gitFolder)
 	log.Info("amb: created project successfully in folder: %v", folderName)
 }
