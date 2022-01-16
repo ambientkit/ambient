@@ -1,6 +1,8 @@
-package helper
+package internal
 
-import "github.com/c-bata/go-prompt"
+import (
+	"github.com/c-bata/go-prompt"
+)
 
 // pluginNames returns a list of plugin names as suggestions.
 func pluginNames() []prompt.Suggest {

@@ -8,7 +8,7 @@ import (
 
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/cmd/amb/internal/helper"
+	"github.com/josephspurrier/ambient/cmd/amb/internal"
 	"github.com/josephspurrier/ambient/lib/envdetect"
 	"github.com/josephspurrier/ambient/lib/requestclient"
 	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
@@ -59,17 +59,17 @@ func main() {
 		"")
 
 	// TODO: Should make this a struct instead.
-	helper.SetGlobals(log, rc)
+	internal.SetGlobals(log, rc)
 
 	// Get the exit command.
-	exit := &helper.CmdExit{}
+	exit := &internal.CmdExit{}
 
-	cmds := helper.NewCommandList()
-	cmds.Add(&helper.CmdCreateApp{})
-	cmds.Add(&helper.CmdEnable{})
-	cmds.Add(&helper.CmdGrant{})
-	cmds.Add(&helper.CmdEncrypt{})
-	cmds.Add(&helper.CmdDecrypt{})
+	cmds := internal.NewCommandList()
+	cmds.Add(&internal.CmdCreateApp{})
+	cmds.Add(&internal.CmdEnable{})
+	cmds.Add(&internal.CmdGrant{})
+	cmds.Add(&internal.CmdEncrypt{})
+	cmds.Add(&internal.CmdDecrypt{})
 	cmds.Add(exit)
 
 	// Start the read–eval–print loop (REPL).

@@ -1,4 +1,4 @@
-package helper
+package internal
 
 import "github.com/c-bata/go-prompt"
 
