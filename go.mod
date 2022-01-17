@@ -26,4 +26,4 @@ require (
 	jaytaylor.com/html2text v0.0.0-20211105163654-bc68cce691ba
 )
 
-replace github.com/c-bata/go-prompt => github.com/josephspurrier/go-prompt v0.2.7-0.20220117021137-67747317bc02
+replace github.com/c-bata/go-prompt => github.com/josephspurrier/go-prompt v0.2.7-0.20220117033350-20d24d9784d3
