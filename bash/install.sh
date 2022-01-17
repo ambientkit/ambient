@@ -7,4 +7,5 @@ chmod -R +w ambient
 cd ambient
 go build -o ../amb cmd/amb/main.go
 cd ..
+chmod +x amb
 rm -r ambient
