@@ -18,7 +18,7 @@ func (c *CmdExit) Command() string {
 
 // Suggestion returns the suggestion for the initial command.
 func (c *CmdExit) Suggestion() prompt.Suggest {
-	return prompt.Suggest{Text: c.Command(), Description: "Exit the CLI (or press Ctrl+C)"}
+	return prompt.Suggest{Text: c.Command(), Description: "Exit the CLI (or press Ctrl+D)"}
 }
 
 // Executer executes the command.

@@ -25,3 +25,5 @@ require (
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
 	jaytaylor.com/html2text v0.0.0-20200412013138-3577fbdbcff7
 )
+
+replace github.com/c-bata/go-prompt => github.com/josephspurrier/go-prompt v0.2.7-0.20220117021137-67747317bc02

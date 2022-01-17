@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	stdlog "log"
-	"os"
 
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
@@ -18,14 +17,6 @@ var (
 	// App information.
 	appName    = "amb"
 	appVersion = "1.0"
-
-	// Key bindings.
-	quit = prompt.KeyBind{
-		Key: prompt.ControlC,
-		Fn: func(b *prompt.Buffer) {
-			os.Exit(0)
-		},
-	}
 )
 
 func main() {
@@ -79,8 +70,6 @@ func main() {
 		prompt.OptionTitle(fmt.Sprintf("%v: Ambient Interactive Client", appName)),
 		prompt.OptionPrefix(">>> "),
 		prompt.OptionInputTextColor(prompt.Yellow),
-		prompt.OptionSetExitCheckerOnInput(exit.Checker),
-		prompt.OptionAddKeyBind(quit),
 	)
 	p.Run()
 }
