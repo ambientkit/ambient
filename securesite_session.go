@@ -44,12 +44,13 @@ func (ss *SecureSite) UserLogout(r *http.Request) error {
 	return nil
 }
 
-// SetCSRF sets the session with a token and returns the token for use in a form.
+// SetCSRF sets the session with a token and returns the token for use in a form
+// or header.
 func (ss *SecureSite) SetCSRF(r *http.Request) string {
 	return ss.sess.SetCSRF(r)
 }
 
 // CSRF returns true if the CSRF token is valid.
-func (ss *SecureSite) CSRF(r *http.Request) bool {
-	return ss.sess.CSRF(r)
+func (ss *SecureSite) CSRF(r *http.Request, token string) bool {
+	return ss.sess.CSRF(r, token)
 }

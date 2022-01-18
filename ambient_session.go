@@ -11,5 +11,5 @@ type AppSession interface {
 	Logout(r *http.Request)
 	Persist(r *http.Request, persist bool)
 	SetCSRF(r *http.Request) string
-	CSRF(r *http.Request) bool
+	CSRF(r *http.Request, token string) bool
 }

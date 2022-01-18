@@ -42,7 +42,7 @@ func (p *Plugin) loginPost(w http.ResponseWriter, r *http.Request) (status int, 
 	r.ParseForm()
 
 	// CSRF protection.
-	success := p.Site.CSRF(r)
+	success := p.Site.CSRF(r, r.FormValue("token"))
 	if !success {
 		return http.StatusBadRequest, nil
 	}

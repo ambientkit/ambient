@@ -56,11 +56,11 @@ func TestNewSession(t *testing.T) {
 		assert.Equal(t, sessionManager.Cookie.Persist, true)
 
 		// Test CSRF
-		assert.False(t, sess.CSRF(r))
+		assert.False(t, sess.CSRF(r, r.FormValue("token")))
 		token := sess.SetCSRF(r)
 		r.Form = url.Values{}
 		r.Form.Set("token", token)
-		assert.True(t, sess.CSRF(r))
+		assert.True(t, sess.CSRF(r, r.FormValue("token")))
 	})
 
 	mw := sessionManager.LoadAndSave(mux)

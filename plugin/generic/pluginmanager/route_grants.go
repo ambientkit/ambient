@@ -57,7 +57,7 @@ func (p *Plugin) grantsUpdate(w http.ResponseWriter, r *http.Request) (status in
 	r.ParseForm()
 
 	// CSRF protection.
-	ok := p.Site.CSRF(r)
+	ok := p.Site.CSRF(r, r.FormValue("token"))
 	if !ok {
 		return http.StatusBadRequest, nil
 	}

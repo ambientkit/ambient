@@ -74,8 +74,7 @@ func (s *Session) SetCSRF(r *http.Request) string {
 }
 
 // CSRF -
-func (s *Session) CSRF(r *http.Request) bool {
-	token := r.FormValue("token")
+func (s *Session) CSRF(r *http.Request, token string) bool {
 	path := "csrf_" + r.URL.Path
 	v := s.String(r, path)
 

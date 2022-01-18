@@ -39,7 +39,7 @@ func (p *Plugin) postAdminStore(w http.ResponseWriter, r *http.Request) (status 
 	r.ParseForm()
 
 	// CSRF protection.
-	success := p.Site.CSRF(r)
+	success := p.Site.CSRF(r, r.FormValue("token"))
 	if !success {
 		return http.StatusBadRequest, nil
 	}
@@ -113,7 +113,7 @@ func (p *Plugin) postAdminUpdate(w http.ResponseWriter, r *http.Request) (status
 	r.ParseForm()
 
 	// CSRF protection.
-	success := p.Site.CSRF(r)
+	success := p.Site.CSRF(r, r.FormValue("token"))
 	if !success {
 		return http.StatusBadRequest, nil
 	}
