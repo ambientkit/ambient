@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 )
 
 //go:embed template/partial/*.tmpl template/content/*.tmpl

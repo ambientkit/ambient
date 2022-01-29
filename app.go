@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/josephspurrier/ambient/lib/envdetect"
+	"github.com/ambientkit/ambient/lib/envdetect"
 )
 
 const (

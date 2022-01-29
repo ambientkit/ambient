@@ -3,7 +3,7 @@ package ambient_test
 import (
 	"testing"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 	"github.com/stretchr/testify/assert"
 )
 

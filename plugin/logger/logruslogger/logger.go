@@ -1,7 +1,7 @@
 package logruslogger
 
 import (
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 	"github.com/sirupsen/logrus"
 )
 

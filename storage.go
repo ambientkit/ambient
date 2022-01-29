@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/josephspurrier/ambient/lib/envdetect"
+	"github.com/ambientkit/ambient/lib/envdetect"
 )
 
 // Storage represents a writable and readable object.

@@ -4,8 +4,8 @@ package extend
 import (
 	"fmt"
 
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/cmd/myapp/app/extend/plugin/hello"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/cmd/myapp/app/extend/plugin/hello"
 )
 
 // PluginLoaderExtended -

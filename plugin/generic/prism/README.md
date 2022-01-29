@@ -1,6 +1,6 @@
 # prism
 
-The prism plugin for [Ambient](https://github.com/josephspurrier/ambient) provides syntax highlighting using [Prism](https://prismjs.com/).
+The prism plugin for [Ambient](https://github.com/ambientkit/ambient) provides syntax highlighting using [Prism](https://prismjs.com/).
 
 **Current version:** 1.0.0
 
@@ -11,8 +11,8 @@ The prism plugin for [Ambient](https://github.com/josephspurrier/ambient) provid
 package app
 
 import (
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/prism"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/plugin/prism"
 )
 
 // Plugins defines the plugins to use in the app. The order does matter.

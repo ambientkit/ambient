@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/cmd/amb/internal"
+	"github.com/ambientkit/ambient/lib/envdetect"
+	"github.com/ambientkit/ambient/lib/requestclient"
+	"github.com/ambientkit/ambient/plugin/logger/zaplogger"
 	"github.com/c-bata/go-prompt"
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/cmd/amb/internal"
-	"github.com/josephspurrier/ambient/lib/envdetect"
-	"github.com/josephspurrier/ambient/lib/requestclient"
-	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
 )
 
 var (

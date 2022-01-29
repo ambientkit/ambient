@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/josephspurrier/ambient/lib/aesdata"
-	"github.com/josephspurrier/ambient/plugin/sessionmanager/scssession/websession"
-	"github.com/josephspurrier/ambient/plugin/storage/localstorage/store"
+	"github.com/ambientkit/ambient/lib/aesdata"
+	"github.com/ambientkit/ambient/plugin/sessionmanager/scssession/websession"
+	"github.com/ambientkit/ambient/plugin/storage/localstorage/store"
 	"github.com/stretchr/testify/assert"
 )
 

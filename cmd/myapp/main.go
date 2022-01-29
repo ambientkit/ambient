@@ -4,11 +4,11 @@ import (
 	stdlog "log"
 	"os"
 
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/cmd/myapp/app"
-	"github.com/josephspurrier/ambient/lib/aesdata"
-	"github.com/josephspurrier/ambient/lib/cloudstorage"
-	"github.com/josephspurrier/ambient/plugin/logger/zaplogger"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/cmd/myapp/app"
+	"github.com/ambientkit/ambient/lib/aesdata"
+	"github.com/ambientkit/ambient/lib/cloudstorage"
+	"github.com/ambientkit/ambient/plugin/logger/zaplogger"
 )
 
 var (

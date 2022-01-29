@@ -4,7 +4,7 @@ package router
 import (
 	"net/http"
 
-	"github.com/josephspurrier/ambient/plugin/router/awayrouter/away"
+	"github.com/ambientkit/ambient/plugin/router/awayrouter/away"
 )
 
 // Mux contains the router.

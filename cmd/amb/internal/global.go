@@ -1,8 +1,8 @@
 package internal
 
 import (
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/lib/requestclient"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/lib/requestclient"
 )
 
 var (

@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/josephspurrier/ambient/plugin/generic/bearblog/lib/passhash"
+	"github.com/ambientkit/ambient/plugin/generic/bearblog/lib/passhash"
 )
 
 func init() {

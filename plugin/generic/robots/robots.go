@@ -1,7 +1,7 @@
 // Package robots is an Ambient plugin that serves a robots.txt file.
 package robots
 
-import "github.com/josephspurrier/ambient"
+import "github.com/ambientkit/ambient"
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {

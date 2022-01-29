@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/josephspurrier/ambient/plugin/generic/bearblog/lib/passhash"
-	"github.com/josephspurrier/ambient/plugin/generic/bearblog/lib/totp"
+	"github.com/ambientkit/ambient/plugin/generic/bearblog/lib/passhash"
+	"github.com/ambientkit/ambient/plugin/generic/bearblog/lib/totp"
 )
 
 // login allows a user to login to the dashboard.

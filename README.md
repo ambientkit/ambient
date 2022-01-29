@@ -1,6 +1,6 @@
 # Ambient 🏖️  <!-- omit in toc -->
 
-[![GitHub Actions status](https://github.com/josephspurrier/ambient/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/josephspurrier/ambient/actions)
+[![GitHub Actions status](https://github.com/ambientkit/ambient/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/ambientkit/ambient/actions)
 
 - [Overview](#overview)
   - [What is it?](#what-is-it)
@@ -15,11 +15,11 @@
 
 Ambient is a framework in Go for building web apps using plugins. You can use the plugins already included to stand up a blog just like the [Bear Blog](https://bearblog.dev/) or create your own plugins to build your own web app. Plugins can be enabled/disabled while the app is running which means routes as well as middleware can also modified without restarting the app. Plugins must be granted permissions above being enabled which provides you with better control over your web app.
 
-Use the [Sample App Tutorial](https://github.com/josephspurrier/ambient-template/blob/main/README.md) to quickly get the sample app running locally.
+Use the [Sample App Tutorial](https://github.com/ambientkit/ambient-template/blob/main/README.md) to quickly get the sample app running locally.
 
-Use the [Deployment Guide](https://github.com/josephspurrier/ambient-template/blob/main/DEPLOYMENT.md) to deploy serverless on Google Cloud (Cloud Run), AWS (App Runner), or Azure (Functions).
+Use the [Deployment Guide](https://github.com/ambientkit/ambient-template/blob/main/DEPLOYMENT.md) to deploy serverless on Google Cloud (Cloud Run), AWS (App Runner), or Azure (Functions).
 
-Use the [Plugin Development Guide](https://github.com/josephspurrier/ambient-template/blob/main/PLUGIN.md) to build your own plugins.
+Use the [Plugin Development Guide](https://github.com/ambientkit/ambient-template/blob/main/PLUGIN.md) to build your own plugins.
 
 ### Why was this created?
 

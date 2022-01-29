@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/storage/awsbucketstorage/store"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/plugin/storage/awsbucketstorage/store"
 )
 
 // Plugin represents an Ambient plugin.

@@ -6,9 +6,9 @@ package robots_test
 // 	"net/http/httptest"
 // 	"testing"
 
-// 	"github.com/josephspurrier/ambient/app/core"
-// 	"github.com/josephspurrier/ambient/app/lib/router"
-// 	"github.com/josephspurrier/ambient/app/route"
+// 	"github.com/ambientkit/ambient/app/core"
+// 	"github.com/ambientkit/ambient/app/lib/router"
+// 	"github.com/ambientkit/ambient/app/route"
 // 	"github.com/stretchr/testify/assert"
 // )
 

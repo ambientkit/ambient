@@ -3,12 +3,12 @@
 package cloudstorage
 
 import (
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/lib/envdetect"
-	"github.com/josephspurrier/ambient/plugin/storage/awsbucketstorage"
-	"github.com/josephspurrier/ambient/plugin/storage/azureblobstorage"
-	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage"
-	"github.com/josephspurrier/ambient/plugin/storage/localstorage"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/lib/envdetect"
+	"github.com/ambientkit/ambient/plugin/storage/awsbucketstorage"
+	"github.com/ambientkit/ambient/plugin/storage/azureblobstorage"
+	"github.com/ambientkit/ambient/plugin/storage/gcpbucketstorage"
+	"github.com/ambientkit/ambient/plugin/storage/localstorage"
 )
 
 // StorageBasedOnCloud returns storage engine based on the environment it's

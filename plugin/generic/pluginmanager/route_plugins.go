@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 )
 
 type pluginWithSettings struct {

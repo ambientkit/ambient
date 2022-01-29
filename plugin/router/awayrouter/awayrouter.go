@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/router/awayrouter/router"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/plugin/router/awayrouter/router"
 )
 
 // Plugin represents an Ambient plugin.

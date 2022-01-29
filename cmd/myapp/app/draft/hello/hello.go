@@ -5,7 +5,7 @@ import (
 	"embed"
 	"time"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 )
 
 //go:embed template/*.tmpl

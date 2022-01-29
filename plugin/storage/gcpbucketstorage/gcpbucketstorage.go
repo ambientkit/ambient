@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/storage/gcpbucketstorage/store"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/plugin/storage/gcpbucketstorage/store"
 )
 
 // Plugin represents an Ambient plugin.

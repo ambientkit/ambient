@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 )
 
 type pluginGrant struct {

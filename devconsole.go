@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/josephspurrier/ambient/lib/envdetect"
-	"github.com/josephspurrier/ambient/plugin/router/awayrouter/router"
+	"github.com/ambientkit/ambient/lib/envdetect"
+	"github.com/ambientkit/ambient/plugin/router/awayrouter/router"
 )
 
 // DevConsole represents a web interface to receive commands from the amb tool.

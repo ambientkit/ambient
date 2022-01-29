@@ -2,8 +2,8 @@
 package localstorage
 
 import (
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/storage/localstorage/store"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/plugin/storage/localstorage/store"
 )
 
 // Plugin represents an Ambient plugin.

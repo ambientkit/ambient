@@ -1,7 +1,7 @@
 // Package sitemap is an Ambient plugin that provides a sitemap.
 package sitemap
 
-import "github.com/josephspurrier/ambient"
+import "github.com/ambientkit/ambient"
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {

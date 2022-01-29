@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/lib/aesdata"
-	"github.com/josephspurrier/ambient/plugin/sessionmanager/scssession/websession"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/lib/aesdata"
+	"github.com/ambientkit/ambient/plugin/sessionmanager/scssession/websession"
 )
 
 // Plugin represents an Ambient plugin.

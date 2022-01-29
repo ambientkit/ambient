@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 )
 
 //go:embed css/*.css

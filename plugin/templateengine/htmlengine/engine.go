@@ -9,8 +9,8 @@ import (
 	"path"
 	"runtime"
 
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/templateengine/htmlengine/lib/templatebuffer"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/plugin/templateengine/htmlengine/lib/templatebuffer"
 )
 
 // Engine represents a HTML template engine.

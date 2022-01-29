@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday/v2"
 	"jaytaylor.com/html2text"

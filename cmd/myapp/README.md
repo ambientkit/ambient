@@ -6,7 +6,7 @@ This folder contains a sample app to demonstrate how to use Ambient.
 
 To test out the sample web app from the `cmd/myapp` folder
 
-- Clone the repository: `git clone git@github.com:josephspurrier/ambient.git`
+- Clone the repository: `git clone git@github.com:ambientkit/ambient.git`
 - Create a new file called `.env` in the root of the repository with this content:
 
 ```bash

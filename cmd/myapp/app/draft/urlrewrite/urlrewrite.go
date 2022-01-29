@@ -7,7 +7,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 )
 
 // Plugin represents an Ambient plugin.

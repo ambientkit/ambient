@@ -4,7 +4,7 @@ package envinfo
 import (
 	"embed"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 )
 
 //go:embed template/*.tmpl

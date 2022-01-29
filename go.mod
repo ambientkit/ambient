@@ -1,4 +1,4 @@
-module github.com/josephspurrier/ambient
+module github.com/ambientkit/ambient
 
 go 1.16
 

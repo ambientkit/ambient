@@ -6,7 +6,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 )
 
 // funcMap returns a map of template functions that can be used in templates.

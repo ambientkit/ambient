@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/josephspurrier/ambient"
-	"github.com/josephspurrier/ambient/plugin/generic/bearblog/lib/uuid"
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/plugin/generic/bearblog/lib/uuid"
 )
 
 func (p *Plugin) postAdminIndex(w http.ResponseWriter, r *http.Request) (status int, err error) {

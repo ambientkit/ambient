@@ -14,7 +14,7 @@ import (
 const (
 	paramFolder     = "-folder"
 	paramTemplate   = "-template"
-	defaultTemplate = "https://github.com/josephspurrier/ambient-template"
+	defaultTemplate = "https://github.com/ambientkit/ambient-template"
 	defaultFolder   = "myambapp"
 )
 

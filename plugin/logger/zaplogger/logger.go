@@ -1,7 +1,7 @@
 package zaplogger
 
 import (
-	"github.com/josephspurrier/ambient"
+	"github.com/ambientkit/ambient"
 	"github.com/mattn/go-colorable"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
