@@ -37,8 +37,6 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-	logger2 := zaplogger.New().Logger(appName, appVersion)
-
 	// Set the URL for the Dev Console.
 	rc := requestclient.New(
 		fmt.Sprintf("%v:%v", envdetect.DevConsoleURL(), envdetect.DevConsolePort()),
