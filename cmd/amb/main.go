@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	stdlog "log"
+	"log"
 
 	"github.com/c-bata/go-prompt"
 	"github.com/josephspurrier/ambient"
@@ -23,7 +23,6 @@ func main() {
 	// Detect debug flag.
 	var debugEnable bool
 	flag.BoolVar(&debugEnable, "debug", false, "Enable debug output")
-
 	flag.Parse()
 
 	// Determine log level.
@@ -33,16 +32,12 @@ func main() {
 	}
 
 	// Use an Ambient logger for consistency.
-	log, err := ambient.NewAppLogger(appName, appVersion, zaplogger.New(), logLevel)
+	logger, err := ambient.NewAppLogger(appName, appVersion, zaplogger.New(), logLevel)
 	if err != nil {
-		if log != nil {
-			// Use the logger if it's available.
-			log.Fatal(err.Error())
-		} else {
-			// Else use the standard logger.
-			stdlog.Fatalln(err.Error())
-		}
+		log.Fatalln(err.Error())
 	}
+
+	logger2 := zaplogger.New().Logger(appName, appVersion)
 
 	// Set the URL for the Dev Console.
 	rc := requestclient.New(
@@ -50,7 +45,7 @@ func main() {
 		"")
 
 	// TODO: Should make this a struct instead.
-	internal.SetGlobals(log, rc)
+	internal.SetGlobals(logger, rc)
 
 	// Get the exit command.
 	exit := &internal.CmdExit{}
