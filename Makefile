@@ -15,3 +15,10 @@ default: amb
 .PHONY: amb
 amb:
 	go run cmd/amb/main.go
+
+# Update dependencies of other repos using Ambient.
+.PHONY: update-children
+update-children:
+	cd ../plugin && go get github.com/ambientkit/ambient@$(shell git rev-parse HEAD) && go mod tidy -compat=1.17
+	cd ../ambient-template && go get github.com/ambientkit/ambient@$(shell git rev-parse HEAD) && go mod tidy -compat=1.17
+	cd ../amb && go get github.com/ambientkit/ambient@$(shell git rev-parse HEAD) && go mod tidy -compat=1.17
