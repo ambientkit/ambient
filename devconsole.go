@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ambientkit/ambient/lib/envdetect"
+	"github.com/ambientkit/ambient/pkg/envdetect"
 	"github.com/ambientkit/away/router"
 )
 
