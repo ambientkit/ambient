@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-// swagger:route GET /healthcheck healthcheck healthcheckGET
+// swagger:route GET /api/healthcheck healthcheck healthcheckGET
 //
 // Returns an OK status message.
 //
@@ -17,7 +17,7 @@ import (
 //   500: errorResponse
 func (p *Plugin) healthcheck(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/healthcheck" {
+		if r.URL.Path == "/api/healthcheck" {
 			data := new(healthcheckResponse).Body
 			data.Message = "ok"
 			JSON(w, data)

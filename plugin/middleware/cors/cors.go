@@ -1,5 +1,5 @@
-// Package healthcheck is an Ambient plugin that responds back with 200.
-package healthcheck
+// Package cors is an Ambient plugin that enables CORS.
+package cors
 
 import (
 	"net/http"
@@ -22,7 +22,7 @@ func New() *Plugin {
 
 // PluginName returns the plugin name.
 func (p *Plugin) PluginName() string {
-	return "healthcheck"
+	return "cors"
 }
 
 // PluginVersion returns the plugin version.
@@ -39,6 +39,6 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 // Middleware returns router middleware.
 func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 	return []func(next http.Handler) http.Handler{
-		p.healthcheck,
+		CORS,
 	}
 }
