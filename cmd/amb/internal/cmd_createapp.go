@@ -15,7 +15,7 @@ const (
 	paramFolder     = "-folder"
 	paramTemplate   = "-template"
 	defaultTemplate = "https://github.com/ambientkit/ambient-template"
-	defaultFolder   = "myambapp"
+	defaultFolder   = "ambapp"
 )
 
 // CmdCreateApp represents a command object.
