@@ -1,11 +1,8 @@
-// Package urlrewrite removes trailing slash from requests for an Ambient app.
-package urlrewrite
+// Package healthcheck is an Ambient plugin that response back with 200.
+package healthcheck
 
 import (
 	"net/http"
-	"os"
-	"path"
-	"strings"
 
 	"github.com/ambientkit/ambient"
 )
@@ -16,7 +13,7 @@ type Plugin struct {
 	*ambient.Toolkit
 }
 
-// New returns a new urlrewrite plugin.
+// New an Ambient plugin that provides request logging middleware.
 func New() *Plugin {
 	return &Plugin{
 		PluginBase: &ambient.PluginBase{},
@@ -25,7 +22,7 @@ func New() *Plugin {
 
 // PluginName returns the plugin name.
 func (p *Plugin) PluginName() string {
-	return "urlrewrite"
+	return "healthcheck"
 }
 
 // PluginVersion returns the plugin version.
@@ -42,21 +39,6 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 // Middleware returns router middleware.
 func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 	return []func(next http.Handler) http.Handler{
-		p.HandlePrefix,
+		p.healthcheck,
 	}
-}
-
-// HandlePrefix will handle URLs behind a proxy.
-func (p *Plugin) HandlePrefix(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		urlprefix := os.Getenv("AMB_URL_PREFIX")
-
-		// If there is a prefix, then strip it out for all requests.
-		if len(urlprefix) > 0 {
-			r.URL.Path = path.Join("/", strings.TrimPrefix(r.URL.Path, urlprefix))
-			p.Log.Debug("Rewrote URL: %v", r.URL.Path)
-		}
-
-		next.ServeHTTP(w, r)
-	})
 }
