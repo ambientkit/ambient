@@ -44,45 +44,45 @@ Plugins:
   - page templates
   - content for HTML head, content, navigation, footer, etc.
 
-A [pluginmanager plugin](plugin/generic/pluginmanager/pluginmanager.go) is included that allows you to:
+A [pluginmanager plugin](https://github.com/ambientkit/plugin/tree/main/generic/pluginmanager/pluginmanager.go) is included that allows you to:
   - Enable/disable a plugin
   - Grant permissions to a plugin
   - Modify the settings for a plugin
 
-There is a [library of plugins](plugin) that you can use in your apps or use as a reference when creating your own plugins.
+There is a [library of plugins](https://github.com/ambientkit/plugin) that you can use in your apps or use as a reference when creating your own plugins.
 
 ## Screenshots
 
 Below are screenshots of the sample app with links to the plugins to help explain the architecture.
 
-The terminal shows the [logger plugin](plugin/logger/zaplogger/zaplogger.go) that outputs based on log level.
+The terminal shows the [logger plugin](https://github.com/ambientkit/plugin/tree/main/logger/zaplogger/zaplogger.go) that outputs based on log level.
 
 ![Terminal](doc/screenshot/terminal.png)
 
-The home screen is from the [simplelogin plugin](plugin/generic/simplelogin/simplelogin.go) and demonstrates the styling from the [bearcss plugin](plugin/generic/bearcss/bearcss.go). Routing is handled through the [awayrouter plugin](plugin/router/awayrouter/awayrouter.go).
+The home screen is from the [simplelogin plugin](https://github.com/ambientkit/plugin/tree/main/generic/simplelogin/simplelogin.go) and demonstrates the styling from the [bearcss plugin](https://github.com/ambientkit/plugin/tree/main/generic/bearcss/bearcss.go). Routing is handled through the [awayrouter plugin](https://github.com/ambientkit/plugin/tree/main/router/awayrouter/awayrouter.go).
 
 ![Home](doc/screenshot/home.png)
 
-The login page takes a username and password (handled by the [simplelogin plugin](plugin/generic/simplelogin/simplelogin.go)). The password hash is read from the environment variable: `AMB_PASSWORD_HASH`. The [scssession plugin](plugin/sessionmanager/scssession/scssession.go) handles the session creation and stores to the local filesystem, but supports any storage system via a plugin that satisfies the [`SessionStorer`](ambient_sessionstorer.go) interface.
+The login page takes a username and password (handled by the [simplelogin plugin](https://github.com/ambientkit/plugin/tree/main/generic/simplelogin/simplelogin.go)). The password hash is read from the environment variable: `AMB_PASSWORD_HASH`. The [scssession plugin](https://github.com/ambientkit/plugin/tree/main/sessionmanager/scssession/scssession.go) handles the session creation and stores to the local filesystem, but supports any storage system via a plugin that satisfies the [`SessionStorer`](ambient_sessionstorer.go) interface.
 
 ![Login](doc/screenshot/login.png)
 
-The [pluginmanager plugin](plugin/generic/pluginmanager/pluginmanager.go) provides an easy way to modify plugins.
+The [pluginmanager plugin](https://github.com/ambientkit/plugin/tree/main/generic/pluginmanager/pluginmanager.go) provides an easy way to modify plugins.
 
 ![Plugin Manager](doc/screenshot/pluginmanager.png)
 
-The settings page (part of the [pluginmanager plugin](plugin/generic/pluginmanager/pluginmanager.go)) allows you to customize the value that gets displayed in the meta tag that is set by the [author plugin](plugin/generic/author/author.go).
+The settings page (part of the [pluginmanager plugin](https://github.com/ambientkit/plugin/tree/main/generic/pluginmanager/pluginmanager.go)) allows you to customize the value that gets displayed in the meta tag that is set by the [author plugin](https://github.com/ambientkit/plugin/tree/main/generic/author/author.go).
 
 ![Settings](doc/screenshot/settings.png)
 
-The grants page (part of the [pluginmanager plugin](plugin/generic/pluginmanager/pluginmanager.go)) allows you to allow or deny modifications to the app by the [author plugin](plugin/generic/author/author.go).
+The grants page (part of the [pluginmanager plugin](https://github.com/ambientkit/plugin/tree/main/generic/pluginmanager/pluginmanager.go)) allows you to allow or deny modifications to the app by the [author plugin](https://github.com/ambientkit/plugin/tree/main/generic/author/author.go).
 
 ![Grants](doc/screenshot/grants.png)
 
-Once enabled, the [author plugin](plugin/generic/author/author.go) modifies the HTML header (through the [htmlengine plugin](plugin/templateengine/htmlengine/htmlengine.go)) to add in a meta tag with the value from the settings page.
+Once enabled, the [author plugin](https://github.com/ambientkit/plugin/tree/main/generic/author/author.go) modifies the HTML header (through the [htmlengine plugin](https://github.com/ambientkit/plugin/tree/main/templateengine/htmlengine/htmlengine.go)) to add in a meta tag with the value from the settings page.
 
 ![HTML](doc/screenshot/htmlauthor.png)
 
-The backend storage is provided by the [gcpbucketstorage plugin](plugin/storage/gcpbucketstorage/gcpbucketstorage.go) and is stored in a JSON file on the local filesystem, but supports any storage system via a plugin that satisfies the [`DataStorer`](ambient_datastorer.go) interface.
+The backend storage is provided by the [gcpbucketstorage plugin](https://github.com/ambientkit/plugin/tree/main/storage/gcpbucketstorage/gcpbucketstorage.go) and is stored in a JSON file on the local filesystem, but supports any storage system via a plugin that satisfies the [`DataStorer`](ambient_datastorer.go) interface.
 
 ![Storage](doc/screenshot/storage.png)
