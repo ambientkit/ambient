@@ -19,7 +19,7 @@ Use the [Sample App Tutorial](https://github.com/ambientkit/ambient-template/blo
 
 Use the [Deployment Guide](https://github.com/ambientkit/ambient-template/blob/main/DEPLOYMENT.md) to deploy serverless on Google Cloud (Cloud Run), AWS (App Runner), or Azure (Functions).
 
-Use the [Plugin Development Guide](https://github.com/ambientkit/ambient-template/blob/main/PLUGIN.md) to build your own plugins.
+Use the [Plugin Development Guide](https://github.com/ambientkit/plugin/blob/main/README.md) to build your own plugins.
 
 ### Why was this created?
 
