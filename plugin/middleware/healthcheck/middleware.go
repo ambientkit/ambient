@@ -18,25 +18,37 @@ import (
 func (p *Plugin) healthcheck(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/healthcheck" {
-			// swagger:response healthcheckResponse
-			type response struct {
-				// in: body
-				Body struct {
-					// Health check.
-					//
-					// required: true
-					// example: ok
-					Message string `json:"message"`
-				}
-			}
-
-			data := new(response).Body
+			data := new(healthcheckResponse).Body
 			data.Message = "ok"
 			JSON(w, data)
 			return
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+// swagger:response healthcheckResponse
+type healthcheckResponse struct {
+	// in: body
+	Body struct {
+		// Health check.
+		//
+		// required: true
+		// example: ok
+		Message string `json:"message"`
+	}
+}
+
+// swagger:response errorResponse
+type errorResponse struct {
+	// in: body
+	Body struct {
+		// Error message.
+		//
+		// required: true
+		// example: an error occurred
+		Message string `json:"message"`
+	}
 }
 
 // JSON sends a JSON response.
@@ -62,16 +74,4 @@ func ErrorJSON(w http.ResponseWriter, err error, status int) {
 
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	fmt.Fprint(w, string(out))
-}
-
-// swagger:response errorResponse
-type errorResponse struct {
-	// in: body
-	Body struct {
-		// Error message.
-		//
-		// required: true
-		// example: an error occurred
-		Message string `json:"message"`
-	}
 }
