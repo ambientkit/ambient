@@ -83,7 +83,7 @@ func (dc *DevConsole) EnableDevConsole() {
 		})
 
 		// Enable one plugin.
-		mux.Post("/plugins/:pluginName/enable", func(w http.ResponseWriter, r *http.Request) (int, error) {
+		mux.Post("/plugins/{pluginName}/enable", func(w http.ResponseWriter, r *http.Request) (int, error) {
 			pluginName := mux.Param(r, "pluginName")
 			dc.log.Debug("ambient: dev console - enable plugin: %v", pluginName)
 
@@ -113,7 +113,7 @@ func (dc *DevConsole) EnableDevConsole() {
 		})
 
 		// Enable all grants for one plugin.
-		mux.Post("/plugins/:pluginName/grant", func(w http.ResponseWriter, r *http.Request) (int, error) {
+		mux.Post("/plugins/{pluginName}/grant", func(w http.ResponseWriter, r *http.Request) (int, error) {
 			pluginName := mux.Param(r, "pluginName")
 			dc.log.Debug("ambient: dev console - enable plugin grants: %v", pluginName)
 
