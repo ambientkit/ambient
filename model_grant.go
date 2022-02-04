@@ -82,6 +82,8 @@ const (
 	GrantUserAuthenticatedWrite Grant = "user.authenticated:write"
 	// GrantUserPersistWrite allows write access to login or logout a user.
 	GrantUserPersistWrite Grant = "user.persist:write"
+	// GrantAllUserAuthenticatedWrite allows write access to login or logout any user.
+	GrantAllUserAuthenticatedWrite Grant = "alluser.authenticated:write"
 
 	// GrantSiteAssetWrite allows write access to site assets.
 	GrantSiteAssetWrite Grant = "site.asset:write"
