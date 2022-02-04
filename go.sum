@@ -1,5 +1,7 @@
 github.com/ambientkit/away v0.0.0-20220130143742-11941db4e189 h1:pJAXj8P9iGcHLNZmoOVWs+HlqiIpuKp4W8sAxrAIb08=
 github.com/ambientkit/away v0.0.0-20220130143742-11941db4e189/go.mod h1:LhGMsnt/Ea/PVq58wNzRo8c44jsGQljCxv9MtIidETk=
+github.com/ambientkit/away v0.0.0-20220204201214-109176be7537 h1:x+tXQwv9ZfBwbVW/n/LgKVec+8xOe8I2OCNwvF9YiU0=
+github.com/ambientkit/away v0.0.0-20220204201214-109176be7537/go.mod h1:Sk1OeLgFvcZDZMcFXEhGj4eX0AEWUIK9WyFz256aFKo=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

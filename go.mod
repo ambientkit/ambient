@@ -3,7 +3,7 @@ module github.com/ambientkit/ambient
 go 1.17
 
 require (
-	github.com/ambientkit/away v0.0.0-20220130143742-11941db4e189
+	github.com/ambientkit/away v0.0.0-20220204201214-109176be7537
 	github.com/stretchr/testify v1.7.0
 )
 
