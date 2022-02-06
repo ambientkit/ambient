@@ -10,7 +10,7 @@ func loadLogger(appName string, appVersion string, plugin LoggingPlugin) (AppLog
 	}
 
 	// Get the logger from the plugins.
-	log, err := plugin.Logger(appName, appVersion)
+	log, err := plugin.Logger(appName, appVersion, nil)
 	if err != nil {
 		return nil, err
 	} else if log == nil {

@@ -4,6 +4,7 @@ package ambient
 import (
 	"embed"
 	"html/template"
+	"io"
 	"net/http"
 )
 
@@ -34,7 +35,7 @@ type Plugin interface {
 type LoggingPlugin interface {
 	PluginCore
 
-	Logger(appName string, appVersion string) (AppLogger, error)
+	Logger(appName string, appVersion string, writer io.Writer) (AppLogger, error)
 }
 
 // StoragePluginGroup represents a storage plugin and an optional encryption
