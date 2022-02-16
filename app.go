@@ -159,7 +159,7 @@ func (app *App) handleExit() {
 }
 
 // cleanup runs the final steps to ensure the server shutdown doesn't leave
-// the application in a bad state.
+// the app in a bad state.
 func (app *App) cleanup() {
 	var err error
 	app.log.Info("ambient: shutdown started")
