@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/ambientkit/ambient/pkg/envdetect"
 )
 
 // Storage represents a writable and readable object.
@@ -58,12 +56,7 @@ func (s *Storage) save(forceEncryption bool) error {
 	// Save the updated timestamp.
 	s.site.Updated = time.Now()
 
-	if envdetect.RunningLocalDev() {
-		// Indent so the data is easy to read.
-		b, err = json.MarshalIndent(s.site, "", "    ")
-	} else {
-		b, err = json.Marshal(s.site)
-	}
+	b, err = json.Marshal(s.site)
 
 	if err != nil {
 		return err
