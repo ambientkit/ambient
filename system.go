@@ -261,12 +261,6 @@ func (p *PluginSystem) Authorized(pluginName string, grant Grant) bool {
 		return true
 	}
 
-	// Determine if plugin is in the trusted list.
-	if trusted := p.trusted[pluginName]; trusted {
-		p.log.Debug("pluginsystem: granted trusted plugin (%v) GrantAll access to the data item for grant: %v", pluginName, grant)
-		return true
-	}
-
 	// If has star, then allow all access.
 	if granted := p.Granted(pluginName, GrantAll); granted {
 		p.log.Debug("pluginsystem: granted plugin (%v) GrantAll access to the data item for grant: %v", pluginName, grant)
