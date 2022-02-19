@@ -7,7 +7,6 @@ import (
 
 // Handler loads the plugins and returns the handler.
 func (app *App) Handler() (http.Handler, error) {
-
 	// Get the session manager from the plugins.
 	if app.pluginsystem.sessionManager != nil {
 		sm, err := app.pluginsystem.sessionManager.SessionManager(app.log, app.sessionstorer)
