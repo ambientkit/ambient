@@ -285,6 +285,11 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin Middlewa
 
 				// If the plugin is enabled, then wrap with the middleware.
 				if safePluginSettings.Enabled {
+					if !ss.pluginsystem.Authorized(plugin.PluginName(), GrantRouterMiddlewareWrite) {
+						next.ServeHTTP(w, r)
+						return
+					}
+
 					ss.log.Debug("plugin middleware: running (enabled) middleware %v by plugin: %v", middlewareIndex, safePlugin.PluginName())
 					safePluginMiddleware(next).ServeHTTP(w, r)
 				} else {
