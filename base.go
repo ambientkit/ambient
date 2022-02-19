@@ -7,10 +7,13 @@ import (
 )
 
 // PluginBase represents a base plugin that works with Ambient.
-type PluginBase struct{}
+type PluginBase struct {
+	*Toolkit
+}
 
 // Enable is to enable the plugin. Toolkit should be saved.
-func (p *PluginBase) Enable(*Toolkit) error {
+func (p *PluginBase) Enable(toolkit *Toolkit) error {
+	p.Toolkit = toolkit
 	return nil
 }
 
