@@ -55,7 +55,7 @@ func (s Site) PublishedPosts() []Post {
 	return arr
 }
 
-// PublishedPages returns published posts and pages.
+// PublishedPages returns published pages (no posts).
 func (s Site) PublishedPages() []Post {
 	arr := make(PostList, 0)
 	for _, v := range s.Posts {
