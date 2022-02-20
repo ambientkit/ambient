@@ -20,6 +20,7 @@ type Site struct {
 // PluginData represents the plugin storage information.
 type PluginData struct {
 	Enabled  bool           `json:"enabled"`
+	Version  string         `json:"version"`
 	Grants   PluginGrants   `json:"grants"`
 	Settings PluginSettings `json:"settings"`
 }

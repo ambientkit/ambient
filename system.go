@@ -113,7 +113,7 @@ func loadPlugin(p Plugin, plugins map[string]Plugin, storage *Storage) (shouldSa
 
 	_, ok := storage.site.PluginStorage[p.PluginName()]
 	if !ok {
-		storage.site.PluginStorage[p.PluginName()] = newPluginData()
+		storage.site.PluginStorage[p.PluginName()] = newPluginData(p.PluginVersion())
 		return true, nil
 	}
 
@@ -121,9 +121,10 @@ func loadPlugin(p Plugin, plugins map[string]Plugin, storage *Storage) (shouldSa
 }
 
 // newPluginData returns new PluginData.
-func newPluginData() PluginData {
+func newPluginData(version string) PluginData {
 	return PluginData{
 		Enabled:  false,
+		Version:  version,
 		Grants:   make(PluginGrants),
 		Settings: make(PluginSettings),
 	}
@@ -141,10 +142,10 @@ func (p *PluginSystem) Save() error {
 
 // InitializePlugin will initialize the plugin in the storage and will return
 // an error if one occurs.
-func (p *PluginSystem) InitializePlugin(pluginName string) error {
+func (p *PluginSystem) InitializePlugin(pluginName string, pluginVersion string) error {
 	_, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
-		p.storage.site.PluginStorage[pluginName] = newPluginData()
+		p.storage.site.PluginStorage[pluginName] = newPluginData(pluginVersion)
 		return p.storage.Save()
 	}
 

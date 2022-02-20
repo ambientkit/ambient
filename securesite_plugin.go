@@ -39,7 +39,12 @@ func (ss *SecureSite) DeletePlugin(name string) error {
 		return err
 	}
 
-	return ss.pluginsystem.InitializePlugin(name)
+	p, found := ss.pluginsystem.plugins[name]
+	if !found {
+		return ErrPluginNotFound
+	}
+
+	return ss.pluginsystem.InitializePlugin(name, p.PluginVersion())
 }
 
 // EnablePlugin enables a plugin.
