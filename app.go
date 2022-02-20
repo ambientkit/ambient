@@ -50,7 +50,7 @@ func NewAppLogger(appName string, appVersion string, logPlugin LoggingPlugin, lo
 // NewApp returns a new Ambient app that supports plugins.
 func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storagePluginGroup StoragePluginGroup, plugins *PluginLoader) (*App, AppLogger, error) {
 	// Set up the logger first.
-	log, err := NewAppLogger(appName, appVersion, logPlugin, LogLevelInfo)
+	log, err := NewAppLogger(appName, appVersion, logPlugin, EnvLogLevel())
 	if err != nil {
 		return nil, nil, err
 	}

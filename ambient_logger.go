@@ -1,5 +1,10 @@
 package ambient
 
+import (
+	"os"
+	"strings"
+)
+
 // AppLogger represents the log service for the app.
 type AppLogger interface {
 	Logger
@@ -36,3 +41,21 @@ const (
 	// will halt.
 	LogLevelFatal
 )
+
+// EnvLogLevel returns the log level from the AMB_LOGLEVEL environment variable.
+func EnvLogLevel() LogLevel {
+	ll := os.Getenv("AMB_LOGLEVEL")
+	switch true {
+	case strings.EqualFold(ll, "FATAL") || strings.EqualFold(ll, "4"):
+		return LogLevelFatal
+	case strings.EqualFold(ll, "ERROR") || strings.EqualFold(ll, "3"):
+		return LogLevelError
+	case strings.EqualFold(ll, "WARN") || strings.EqualFold(ll, "2"):
+		return LogLevelWarn
+	case strings.EqualFold(ll, "INFO") || strings.EqualFold(ll, "1"):
+		return LogLevelInfo
+	case strings.EqualFold(ll, "DEBUG") || strings.EqualFold(ll, "0"):
+		return LogLevelDebug
+	}
+	return LogLevelInfo
+}
