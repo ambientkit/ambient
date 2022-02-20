@@ -49,7 +49,7 @@ func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*Plugi
 			return nil, fmt.Errorf("ambient: plugin name not allowed: %v", p.PluginName())
 		}
 
-		save, err := loadPlugin(p, plugins, storage)
+		save, err := loadPlugin(log, p, plugins, storage)
 		if err != nil {
 			return nil, err
 		} else if save {
@@ -67,7 +67,7 @@ func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*Plugi
 			return nil, fmt.Errorf("ambient: plugin name not allowed: %v", p.PluginName())
 		}
 
-		save, err := loadPlugin(p, plugins, storage)
+		save, err := loadPlugin(log, p, plugins, storage)
 		if err != nil {
 			return nil, err
 		} else if save {
@@ -100,7 +100,7 @@ func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*Plugi
 	}, nil
 }
 
-func loadPlugin(p Plugin, plugins map[string]Plugin, storage *Storage) (shouldSave bool, err error) {
+func loadPlugin(log AppLogger, p Plugin, plugins map[string]Plugin, storage *Storage) (shouldSave bool, err error) {
 	// TODO: Need to make sure the name matches a certain format. All lowercase. No symbols.
 
 	// Ensure a plugin can't be loaded twice or two plugins with the same
@@ -111,9 +111,17 @@ func loadPlugin(p Plugin, plugins map[string]Plugin, storage *Storage) (shouldSa
 
 	plugins[p.PluginName()] = p
 
-	_, ok := storage.site.PluginStorage[p.PluginName()]
+	pluginData, ok := storage.site.PluginStorage[p.PluginName()]
 	if !ok {
 		storage.site.PluginStorage[p.PluginName()] = newPluginData(p.PluginVersion())
+		return true, nil
+	}
+
+	// Update plugin version.
+	if pluginData.Version != p.PluginVersion() {
+		log.Info("ambient: detected plugin (%v) version change from (%v) to: %v", p.PluginName(), pluginData.Version, p.PluginVersion())
+		pluginData.Version = p.PluginVersion()
+		storage.site.PluginStorage[p.PluginName()] = pluginData
 		return true, nil
 	}
 
