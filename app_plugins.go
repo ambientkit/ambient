@@ -47,7 +47,7 @@ func (app *App) Handler() (http.Handler, error) {
 			return nil, err
 		} else if rm != nil {
 			// Only set the router once.
-			app.log.Info("ambient: using router (mux) from plugin: %v", app.pluginsystem.router.PluginName())
+			app.log.Info("ambient: using router from plugin: %v", app.pluginsystem.router.PluginName())
 			app.mux = rm
 		}
 	}
@@ -112,7 +112,7 @@ func (app *App) GrantAccess() {
 		for _, request := range p.GrantRequests() {
 			// If plugin is not granted permission, then grant.
 			if !securestorage.pluginsystem.Granted(pluginName, request.Grant) {
-				app.log.Info("ambient: for plugin %v, adding grant: %v", pluginName, request.Grant)
+				app.log.Info("ambient: for plugin (%v), adding grant: %v", pluginName, request.Grant)
 				err := securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
 				if err != nil {
 					app.log.Error("", err.Error())

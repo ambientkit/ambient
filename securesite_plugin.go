@@ -107,7 +107,7 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 
 	v, err := ss.pluginsystem.Plugin(name)
 	if err != nil {
-		ss.log.Error("plugin load: problem loading plugin %v: %v", name, err.Error())
+		ss.log.Error("plugin load: problem loading plugin (%v): %v", name, err.Error())
 		return
 	}
 
@@ -123,7 +123,7 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 	// Enable the plugin and pass in the toolkit.
 	err = v.Enable(toolkit)
 	if err != nil {
-		ss.log.Error("plugin load: problem enabling plugin %v: %v", name, err.Error())
+		ss.log.Error("plugin load: problem enabling plugin (%v): %v", name, err.Error())
 		return
 	}
 
@@ -136,7 +136,7 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 		// Handle embedded assets.
 		err = embeddedAssets(recorder, ss.sess, name, assets, files)
 		if err != nil {
-			ss.log.Error("plugin load: problem loading assets for plugin %v: %v", name, err.Error())
+			ss.log.Error("plugin load: problem loading assets for plugin (%v): %v", name, err.Error())
 		}
 	}
 
@@ -267,7 +267,7 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin Middlewa
 	// Loop through each piece of middleware.
 	arrHandlers := plugin.Middleware()
 	if len(arrHandlers) > 0 {
-		ss.log.Debug("plugin middleware: loading %v middleware for plugin: %v", len(plugin.Middleware()), plugin.PluginName())
+		ss.log.Debug("plugin middleware: loading (%v) middleware for plugin: %v", len(plugin.Middleware()), plugin.PluginName())
 	}
 
 	for i, pluginMiddleware := range arrHandlers {
@@ -283,7 +283,7 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin Middlewa
 				// If the plugin is not found in the storage, then skip it.
 				safePluginSettings, err := ss.pluginsystem.PluginData(safePlugin.PluginName())
 				if err != nil {
-					ss.log.Debug("plugin middleware: plugin %v not found", safePlugin.PluginName())
+					ss.log.Debug("plugin middleware: plugin (%v) not found", safePlugin.PluginName())
 					next.ServeHTTP(w, r)
 					return
 				}
@@ -295,10 +295,10 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin Middlewa
 						return
 					}
 
-					ss.log.Debug("plugin middleware: running (enabled) middleware %v by plugin: %v", middlewareIndex, safePlugin.PluginName())
+					ss.log.Debug("plugin middleware: running (enabled) middleware (%v) by plugin: %v", middlewareIndex, safePlugin.PluginName())
 					safePluginMiddleware(next).ServeHTTP(w, r)
 				} else {
-					ss.log.Debug("plugin middleware: skipping (disabled) middleware %v by plugin: %v", middlewareIndex, safePlugin.PluginName())
+					ss.log.Debug("plugin middleware: skipping (disabled) middleware (%v) by plugin: %v", middlewareIndex, safePlugin.PluginName())
 					next.ServeHTTP(w, r)
 				}
 			})

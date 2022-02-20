@@ -111,13 +111,14 @@ func loadPlugin(log AppLogger, p Plugin, plugins map[string]Plugin, storage *Sto
 
 	plugins[p.PluginName()] = p
 
+	// Determine if plugin if found in app config.
 	pluginData, ok := storage.site.PluginStorage[p.PluginName()]
 	if !ok {
 		storage.site.PluginStorage[p.PluginName()] = newPluginData(p.PluginVersion())
 		return true, nil
 	}
 
-	// Update plugin version.
+	// Detect plugin version change.
 	if pluginData.Version != p.PluginVersion() {
 		log.Info("ambient: detected plugin (%v) version change from (%v) to: %v", p.PluginName(), pluginData.Version, p.PluginVersion())
 		pluginData.Version = p.PluginVersion()
