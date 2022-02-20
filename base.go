@@ -44,8 +44,3 @@ func (p *PluginBase) Settings() []Setting {
 func (p *PluginBase) GrantRequests() []GrantRequest {
 	return nil
 }
-
-// SessionManager returns a session manager.
-func (p *PluginBase) SessionManager(logger Logger, ss SessionStorer) (AppSession, error) {
-	return nil, nil
-}
