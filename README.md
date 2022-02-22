@@ -2,7 +2,7 @@
 
 [![GitHub Actions status](https://github.com/ambientkit/ambient/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/ambientkit/ambient/actions)
 
-Thanks for visiting! All docs are available [here](https://ambientkit.github.io/docs/).
+Thanks for visiting! All docs are available [here](https://ambientkit.github.io/).
 
 This repository contains the code for the Ambient core which includes:
 
