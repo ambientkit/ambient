@@ -5,8 +5,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/ambientkit/ambient/pkg/envdetect"
 )
 
 const (
@@ -81,13 +79,6 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 
 	// Enable the trusted plugins.
 	ambientApp.GrantAccess()
-
-	// Start Dev Console if enabled via environment variable.
-	if envdetect.DevConsoleEnabled() {
-		// TODO: Should probably store in an object that can be edited by system.
-		dc := NewDevConsole(log, storage, pluginsystem)
-		dc.EnableDevConsole()
-	}
 
 	return ambientApp, log, nil
 }

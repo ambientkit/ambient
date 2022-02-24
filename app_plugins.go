@@ -3,6 +3,8 @@ package ambient
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/ambientkit/ambient/pkg/envdetect"
 )
 
 // Handler loads the plugins and returns the handler.
@@ -67,6 +69,13 @@ func (app *App) Handler() (http.Handler, error) {
 
 	// Enable the middleware from the plugins.
 	handler := securesite.LoadAllPluginMiddleware()
+
+	// Start Dev Console if enabled via environment variable.
+	if envdetect.DevConsoleEnabled() {
+		// TODO: Should probably store in an object that can be edited by system.
+		dc := NewDevConsole(app.log, app.pluginsystem.storage, app.pluginsystem)
+		dc.EnableDevConsole(securesite)
+	}
 
 	return handler, nil
 }

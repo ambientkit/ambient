@@ -40,12 +40,8 @@ func JSON(w http.ResponseWriter, data interface{}) (int, error) {
 }
 
 // EnableDevConsole turns on the dev console web listener.
-func (dc *DevConsole) EnableDevConsole() {
+func (dc *DevConsole) EnableDevConsole(securestorage *SecureSite) {
 	dc.log.Info("ambient: dev console started and available at: %v/%v", envdetect.DevConsoleURL(), envdetect.DevConsolePort())
-
-	// Create secure site for the core app and use "ambient" so it gets
-	// full permissions.
-	securestorage := NewSecureSite("ambient", dc.log, dc.pluginsystem, nil, nil, nil)
 
 	go func() {
 		mux := router.New()
