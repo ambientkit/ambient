@@ -94,12 +94,16 @@ func (app *App) GrantAccess() {
 
 	// Enable trusted plugins.
 	for _, pluginName := range pluginsystem.TrustedPluginNames() {
-		// If plugin is not enabled, then enable.
-		if !securestorage.pluginsystem.Enabled(pluginName) {
-			app.log.Info("ambient: enabling trusted plugin: %v", pluginName)
-			err := securestorage.EnablePlugin(pluginName, false)
-			if err != nil {
-				app.log.Error("", err.Error())
+		// If plugin is not initialized, then initialize. This is to prevent a
+		// plugin that is manually disabled from being re-enabled.
+		if !securestorage.pluginsystem.Initialized(pluginName) {
+			// If plugin is not enabled, then enable.
+			if !securestorage.pluginsystem.Enabled(pluginName) {
+				app.log.Info("ambient: enabling trusted plugin: %v", pluginName)
+				err := securestorage.EnablePlugin(pluginName, false)
+				if err != nil {
+					app.log.Error("", err.Error())
+				}
 			}
 		}
 
@@ -119,6 +123,5 @@ func (app *App) GrantAccess() {
 				}
 			}
 		}
-
 	}
 }
