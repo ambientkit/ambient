@@ -11,18 +11,20 @@ import (
 
 // DevConsole represents a web interface to receive commands from the amb tool.
 type DevConsole struct {
-	log          AppLogger
-	storage      *Storage
-	pluginsystem *PluginSystem
+	log           AppLogger
+	storage       *Storage
+	pluginsystem  *PluginSystem
+	securestorage *SecureSite
 }
 
 // NewDevConsole returns the dev console object to receive commands from the amb
 // tool.
-func NewDevConsole(log AppLogger, storage *Storage, pluginsystem *PluginSystem) *DevConsole {
+func NewDevConsole(site *SecureSite) *DevConsole {
 	return &DevConsole{
-		log:          log,
-		storage:      storage,
-		pluginsystem: pluginsystem,
+		log:           site.log,
+		storage:       site.pluginsystem.storage,
+		pluginsystem:  site.pluginsystem,
+		securestorage: site,
 	}
 }
 
@@ -40,7 +42,7 @@ func JSON(w http.ResponseWriter, data interface{}) (int, error) {
 }
 
 // EnableDevConsole turns on the dev console web listener.
-func (dc *DevConsole) EnableDevConsole(securestorage *SecureSite) {
+func (dc *DevConsole) EnableDevConsole() {
 	dc.log.Info("ambient: dev console started and available at: %v/%v", envdetect.DevConsoleURL(), envdetect.DevConsolePort())
 
 	go func() {
@@ -83,7 +85,7 @@ func (dc *DevConsole) EnableDevConsole(securestorage *SecureSite) {
 			pluginName := mux.Param(r, "pluginName")
 			dc.log.Debug("ambient: dev console - enable plugin: %v", pluginName)
 
-			err := securestorage.EnablePlugin(pluginName, true)
+			err := dc.securestorage.EnablePlugin(pluginName, true)
 			if err != nil {
 				return http.StatusBadRequest, err
 			}
@@ -97,7 +99,7 @@ func (dc *DevConsole) EnableDevConsole(securestorage *SecureSite) {
 
 			// Loop through all the trusted plugins.
 			for _, pluginName := range dc.pluginsystem.TrustedPluginNames() {
-				err := securestorage.EnablePlugin(pluginName, true)
+				err := dc.securestorage.EnablePlugin(pluginName, true)
 				if err != nil {
 					// TODO: Should return an error at the end if at least one fails.
 					dc.log.Error("ambient: dev console - failed to enable plugin (%v): %v", pluginName, err.Error())
@@ -120,7 +122,7 @@ func (dc *DevConsole) EnableDevConsole(securestorage *SecureSite) {
 
 			for _, request := range p.GrantRequests() {
 				dc.log.Debug("ambient: dev console - plugin (%v), add grant: %v", pluginName, request.Grant)
-				err := securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
+				err := dc.securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
 				if err != nil {
 					return http.StatusBadRequest, fmt.Errorf("failed to enable plugin (%v) for grant, %v: %v", pluginName, request.Grant, err.Error())
 				}
@@ -143,7 +145,7 @@ func (dc *DevConsole) EnableDevConsole(securestorage *SecureSite) {
 
 				for _, request := range p.GrantRequests() {
 					dc.log.Debug("ambient: dev console - plugin (%v), add grant: %v", pluginName, request.Grant)
-					err := securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
+					err := dc.securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
 					if err != nil {
 						return http.StatusBadRequest, fmt.Errorf("failed to enable plugin (%v) for grant, %v: %v", pluginName, request.Grant, err.Error())
 					}

@@ -73,8 +73,8 @@ func (app *App) Handler() (http.Handler, error) {
 	// Start Dev Console if enabled via environment variable.
 	if envdetect.DevConsoleEnabled() {
 		// TODO: Should probably store in an object that can be edited by system.
-		dc := NewDevConsole(app.log, app.pluginsystem.storage, app.pluginsystem)
-		dc.EnableDevConsole(securesite)
+		dc := NewDevConsole(securesite)
+		dc.EnableDevConsole()
 	}
 
 	return handler, nil
