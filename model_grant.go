@@ -77,6 +77,8 @@ const (
 	GrantPluginNeighborGrantWrite Grant = "plugin.neighborgrant:write"
 	// GrantPluginTrustedRead allows read access to whether a plugin is trusted or not.
 	GrantPluginTrustedRead Grant = "plugin.trusted:read"
+	// GrantPluginNeighborRouteRead allows read access to routes in another plugin.
+	GrantPluginNeighborRouteRead Grant = "plugin.neighborroute:read"
 
 	// GrantUserAuthenticatedRead allows read access whether the current user is logged in or not.
 	GrantUserAuthenticatedRead Grant = "user.authenticated:read"

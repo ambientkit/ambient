@@ -1,5 +1,19 @@
 package ambient
 
+// PluginNeighborRoutesList gets the routes for a neighbor plugin.
+func (ss *SecureSite) PluginNeighborRoutesList(pluginName string) ([]Route, error) {
+	if !ss.Authorized(GrantPluginNeighborRouteRead) {
+		return nil, ErrAccessDenied
+	}
+
+	routes, ok := ss.pluginsystem.routes[pluginName]
+	if !ok {
+		return nil, ErrNotFound
+	}
+
+	return routes, nil
+}
+
 // ClearRoute clears out an old route.
 func (ss *SecureSite) ClearRoute(method string, path string) error {
 	if !ss.Authorized(GrantRouterRouteClear) {
