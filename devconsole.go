@@ -87,7 +87,7 @@ func (dc *DevConsole) EnableDevConsole() {
 			pluginName := mux.Param(r, "pluginName")
 			dc.log.Debug("ambient: dev console - enable plugin: %v", pluginName)
 
-			err := securestorage.EnablePlugin(pluginName, false)
+			err := securestorage.EnablePlugin(pluginName, true)
 			if err != nil {
 				return http.StatusBadRequest, err
 			}
@@ -101,7 +101,7 @@ func (dc *DevConsole) EnableDevConsole() {
 
 			// Loop through all the trusted plugins.
 			for _, pluginName := range dc.pluginsystem.TrustedPluginNames() {
-				err := securestorage.EnablePlugin(pluginName, false)
+				err := securestorage.EnablePlugin(pluginName, true)
 				if err != nil {
 					// TODO: Should return an error at the end if at least one fails.
 					dc.log.Error("ambient: dev console - failed to enable plugin (%v): %v", pluginName, err.Error())
