@@ -227,18 +227,6 @@ func (p *PluginSystem) PluginData(name string) (PluginData, error) {
 	return plugin, nil
 }
 
-// Initialized returns if the plugin is initialized in storage or not. If it
-// cannot be found, it will return false.
-func (p *PluginSystem) Initialized(name string) bool {
-	_, ok := p.storage.site.PluginStorage[name]
-	if !ok {
-		p.log.Debug("pluginsystem.initialized: could not find plugin: %v", name)
-		return false
-	}
-
-	return true
-}
-
 // Enabled returns if the plugin is enabled or not. If it cannot be found, it
 // will still return false.
 func (p *PluginSystem) Enabled(name string) bool {
