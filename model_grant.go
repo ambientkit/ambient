@@ -13,8 +13,6 @@ type PluginGrants map[Grant]bool
 type Grant string
 
 const (
-	// GrantAll allows all access.
-	GrantAll Grant = "*"
 	// GrantSiteTitleRead allows read access to the site title.
 	GrantSiteTitleRead Grant = "site.title:read"
 	// GrantSiteTitleWrite allows write access to the site title.

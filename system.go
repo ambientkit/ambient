@@ -277,15 +277,9 @@ func (p *PluginSystem) GrantRequests(pluginName string, grant Grant) ([]GrantReq
 
 // Authorized returns whether a plugin is inherited granted for a plugin.
 func (p *PluginSystem) Authorized(pluginName string, grant Grant) bool {
-	// Always allow ambient plugin to get full access.
+	// Always allow ambient system to get full access.
 	if pluginName == "ambient" {
-		p.log.Debug("pluginsystem: granted plugin (%v) GrantAll access to the data item for grant: %v", "ambient", grant)
-		return true
-	}
-
-	// If has star, then allow all access.
-	if granted := p.Granted(pluginName, GrantAll); granted {
-		p.log.Debug("pluginsystem: granted plugin (%v) GrantAll access to the data item for grant: %v", pluginName, grant)
+		p.log.Debug("pluginsystem: granted system (%v) GrantAll access to the data item for grant: %v", "ambient", grant)
 		return true
 	}
 
