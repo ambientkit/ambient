@@ -30,7 +30,7 @@ func (p *PluginBase) Assets() ([]Asset, *embed.FS) {
 	return nil, nil
 }
 
-// FuncMap returns a callable function when passed in a request.
+// FuncMap returns a callable function that accepts a request.
 func (p *PluginBase) FuncMap() func(r *http.Request) template.FuncMap {
 	return nil
 }
