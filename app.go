@@ -135,7 +135,7 @@ func (app *App) ListenAndServe(h http.Handler) {
 	app.handleExit()
 
 	app.log.Info("ambient: web server listening on port: %v", port)
-	app.log.Fatal(http.ListenAndServe(":"+port, h))
+	app.log.Fatal("", http.ListenAndServe(":"+port, h))
 }
 
 // handleExit will handle app shutdown when Ctrl+c is pressed.
