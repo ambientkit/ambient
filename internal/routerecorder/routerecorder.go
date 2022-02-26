@@ -1,4 +1,4 @@
-package ambient
+package routerecorder
 
 import (
 	"fmt"
@@ -6,13 +6,15 @@ import (
 	"os"
 	"path"
 	"sync"
+
+	"github.com/ambientkit/ambient"
 )
 
 // RouteRecorder handles routing for plugins.
 type RouteRecorder struct {
-	log           AppLogger
-	pluginsystem  *PluginSystem
-	mux           AppRouter
+	log           ambient.AppLogger
+	pluginsystem  ambient.PluginSystem
+	mux           ambient.AppRouter
 	routeMap      map[string][]PluginFn
 	routeMapMutex sync.RWMutex
 }
@@ -24,7 +26,7 @@ type PluginFn struct {
 }
 
 // NewRouteRecorder returns a route recorder for use in plugins.
-func NewRouteRecorder(log AppLogger, pluginsystem *PluginSystem, mux AppRouter) *RouteRecorder {
+func NewRouteRecorder(log ambient.AppLogger, pluginsystem ambient.PluginSystem, mux ambient.AppRouter) *RouteRecorder {
 	return &RouteRecorder{
 		log:          log,
 		pluginsystem: pluginsystem,
@@ -37,20 +39,20 @@ func NewRouteRecorder(log AppLogger, pluginsystem *PluginSystem, mux AppRouter) 
 type PluginRouteRecorder struct {
 	rr         *RouteRecorder
 	pluginName string
-	routeList  []Route
+	routeList  []ambient.Route
 }
 
-// Get request handler.
-func (rec *RouteRecorder) withPlugin(pluginName string) *PluginRouteRecorder {
+// WithPlugin sets up recorder for a plugin.
+func (rec *RouteRecorder) WithPlugin(pluginName string) *PluginRouteRecorder {
 	return &PluginRouteRecorder{
 		rr:         rec,
 		pluginName: pluginName,
-		routeList:  make([]Route, 0),
+		routeList:  make([]ambient.Route, 0),
 	}
 }
 
 // Routes returns list of routes.
-func (rec *PluginRouteRecorder) routes() []Route {
+func (rec *PluginRouteRecorder) Routes() []ambient.Route {
 	return rec.routeList
 }
 
@@ -71,7 +73,7 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 	path := prefixedRoute(rawpath)
 
 	// Store the routes to they can be used later.
-	rec.routeList = append(rec.routeList, Route{
+	rec.routeList = append(rec.routeList, ambient.Route{
 		Method: method,
 		Path:   path,
 	})
@@ -138,7 +140,7 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 func (rec *PluginRouteRecorder) protect(h func(http.ResponseWriter, *http.Request) (status int, err error)) func(
 	http.ResponseWriter, *http.Request) (status int, err error) {
 	return func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-		if !rec.rr.pluginsystem.Authorized(rec.pluginName, GrantRouterRouteWrite) {
+		if !rec.rr.pluginsystem.Authorized(rec.pluginName, ambient.GrantRouterRouteWrite) {
 			return http.StatusForbidden, nil
 		}
 

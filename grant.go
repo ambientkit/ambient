@@ -1,14 +1,5 @@
 package ambient
 
-// GrantRequest represents a plugin grant request.
-type GrantRequest struct {
-	Grant       Grant
-	Description string
-}
-
-// PluginGrants represents an unordered map of grants.
-type PluginGrants map[Grant]bool
-
 // Grant is a type of permission.
 type Grant string
 

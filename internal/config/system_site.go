@@ -1,6 +1,10 @@
-package ambient
+package config
 
-import "time"
+import (
+	"time"
+
+	"github.com/ambientkit/ambient"
+)
 
 // SetTitle sets the title.
 func (p *PluginSystem) SetTitle(title string) error {
@@ -46,7 +50,7 @@ func (p *PluginSystem) Updated() time.Time {
 }
 
 // Tags returns the list of tags.
-func (p *PluginSystem) Tags(onlyPublished bool) TagList {
+func (p *PluginSystem) Tags(onlyPublished bool) ambient.TagList {
 	return p.storage.site.Tags(onlyPublished)
 }
 
@@ -62,36 +66,36 @@ func (p *PluginSystem) Content() string {
 }
 
 // SavePost saves a post.
-func (p *PluginSystem) SavePost(ID string, post Post) error {
+func (p *PluginSystem) SavePost(ID string, post ambient.Post) error {
 	p.storage.site.Posts[ID] = post
 	return p.storage.Save()
 }
 
 // PostsAndPages returns the list of posts and pages.
-func (p *PluginSystem) PostsAndPages(onlyPublished bool) PostWithIDList {
+func (p *PluginSystem) PostsAndPages(onlyPublished bool) ambient.PostWithIDList {
 	return p.storage.site.PostsAndPages(onlyPublished)
 }
 
 // PublishedPosts returns the list of published posts.
-func (p *PluginSystem) PublishedPosts() []Post {
+func (p *PluginSystem) PublishedPosts() []ambient.Post {
 	return p.storage.site.PublishedPosts()
 }
 
 // PublishedPages returns the list of published pages.
-func (p *PluginSystem) PublishedPages() []Post {
+func (p *PluginSystem) PublishedPages() []ambient.Post {
 	return p.storage.site.PublishedPages()
 }
 
 // PostBySlug returns the post by slug.
-func (p *PluginSystem) PostBySlug(slug string) PostWithID {
+func (p *PluginSystem) PostBySlug(slug string) ambient.PostWithID {
 	return p.storage.site.PostBySlug(slug)
 }
 
 // PostByID returns the post by ID.
-func (p *PluginSystem) PostByID(ID string) (Post, error) {
+func (p *PluginSystem) PostByID(ID string) (ambient.Post, error) {
 	post, ok := p.storage.site.Posts[ID]
 	if !ok {
-		return Post{}, ErrNotFound
+		return ambient.Post{}, ErrNotFound
 	}
 
 	return post, nil

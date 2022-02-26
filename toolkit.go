@@ -13,7 +13,7 @@ type Toolkit struct {
 	Log    Logger
 	Mux    Router
 	Render Renderer
-	Site   *SecureSite
+	Site   SecureSite
 }
 
 // Redirect to a page with the proper URL prefix.

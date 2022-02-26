@@ -1,4 +1,4 @@
-package ambient
+package secureconfig
 
 import (
 	"bytes"
@@ -8,12 +8,16 @@ import (
 	"path"
 	"strings"
 	"time"
+
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/internal/config"
+	"github.com/ambientkit/ambient/internal/routerecorder"
 )
 
 // Plugins returns the plugin list.
-func (ss *SecureSite) Plugins() (map[string]PluginData, error) {
-	if !ss.Authorized(GrantSitePluginRead) {
-		return nil, ErrAccessDenied
+func (ss *SecureSite) Plugins() (map[string]ambient.PluginData, error) {
+	if !ss.Authorized(ambient.GrantSitePluginRead) {
+		return nil, config.ErrAccessDenied
 	}
 
 	return ss.pluginsystem.Plugins(), nil
@@ -21,17 +25,16 @@ func (ss *SecureSite) Plugins() (map[string]PluginData, error) {
 
 // PluginNames returns the list of plugin name.
 func (ss *SecureSite) PluginNames() ([]string, error) {
-	if !ss.Authorized(GrantSitePluginRead) {
-		return nil, ErrAccessDenied
+	if !ss.Authorized(ambient.GrantSitePluginRead) {
+		return nil, config.ErrAccessDenied
 	}
-
-	return ss.pluginsystem.names, nil
+	return ss.pluginsystem.Names(), nil
 }
 
 // DeletePlugin deletes a plugin.
 func (ss *SecureSite) DeletePlugin(name string) error {
-	if !ss.Authorized(GrantSitePluginDelete) {
-		return ErrAccessDenied
+	if !ss.Authorized(ambient.GrantSitePluginDelete) {
+		return config.ErrAccessDenied
 	}
 
 	err := ss.pluginsystem.RemovePlugin(name)
@@ -39,9 +42,9 @@ func (ss *SecureSite) DeletePlugin(name string) error {
 		return err
 	}
 
-	p, found := ss.pluginsystem.plugins[name]
-	if !found {
-		return ErrPluginNotFound
+	p, err := ss.pluginsystem.Plugin(name)
+	if err != nil {
+		return err
 	}
 
 	return ss.pluginsystem.InitializePlugin(name, p.PluginVersion())
@@ -49,8 +52,8 @@ func (ss *SecureSite) DeletePlugin(name string) error {
 
 // EnablePlugin enables a plugin.
 func (ss *SecureSite) EnablePlugin(pluginName string, loadPlugin bool) error {
-	if !ss.Authorized(GrantSitePluginEnable) {
-		return ErrAccessDenied
+	if !ss.Authorized(ambient.GrantSitePluginEnable) {
+		return config.ErrAccessDenied
 	}
 
 	if loadPlugin {
@@ -66,11 +69,11 @@ func (ss *SecureSite) EnablePlugin(pluginName string, loadPlugin bool) error {
 
 // LoadAllPluginPages loads all of the pages from the plugins.
 func (ss *SecureSite) LoadAllPluginPages() error {
-	if !ss.Authorized(GrantSitePluginEnable) {
-		return ErrAccessDenied
+	if !ss.Authorized(ambient.GrantSitePluginEnable) {
+		return config.ErrAccessDenied
 	}
 
-	for _, name := range ss.pluginsystem.names {
+	for _, name := range ss.pluginsystem.Names() {
 		// Skip plugins that are not enabled.
 		if !ss.pluginsystem.Enabled(name) {
 			continue
@@ -101,13 +104,13 @@ func (ss *SecureSite) loadSinglePluginPages(name string) {
 		return
 	}
 
-	recorder := ss.recorder.withPlugin(name)
+	recorder := ss.recorder.WithPlugin(name)
 
-	toolkit := &Toolkit{
+	toolkit := &ambient.Toolkit{
 		Mux:    recorder,
-		Render: NewRenderer(ss.render),
+		Render: ambient.NewRenderer(ss.render),
 		Site:   NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render, ss.recorder),
-		Log:    NewPluginLogger(ss.log),
+		Log:    ambient.NewPluginLogger(ss.log),
 	}
 
 	// Enable the plugin and pass in the toolkit.
@@ -136,19 +139,19 @@ func (ss *SecureSite) loadSinglePluginPages(name string) {
 
 // DisablePlugin disables a plugin.
 func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error {
-	if !ss.Authorized(GrantSitePluginDisable) {
-		return ErrAccessDenied
+	if !ss.Authorized(ambient.GrantSitePluginDisable) {
+		return config.ErrAccessDenied
 	}
 
 	if unloadPlugin {
 		// Get the plugin.
-		plugin, ok := ss.pluginsystem.plugins[pluginName]
-		if !ok {
-			return ErrNotFound
+		plugin, err := ss.pluginsystem.Plugin(pluginName)
+		if err != nil {
+			return config.ErrNotFound
 		}
 
 		// Disable the plugin.
-		err := plugin.Disable()
+		err = plugin.Disable()
 		if err != nil {
 			return err
 		}
@@ -158,11 +161,11 @@ func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error 
 	return ss.pluginsystem.SetEnabled(pluginName, false)
 }
 
-func saveRoutesForPlugin(name string, recorder *PluginRouteRecorder, pluginsystem *PluginSystem) {
+func saveRoutesForPlugin(name string, recorder *routerecorder.PluginRouteRecorder, pluginsystem ambient.PluginSystem) {
 	// Save the routes.
-	arr := make([]Route, 0)
-	for _, route := range recorder.routes() {
-		arr = append(arr, Route{
+	arr := make([]ambient.Route, 0)
+	for _, route := range recorder.Routes() {
+		arr = append(arr, ambient.Route{
 			Method: route.Method,
 			Path:   route.Path,
 		})
@@ -170,7 +173,7 @@ func saveRoutesForPlugin(name string, recorder *PluginRouteRecorder, pluginsyste
 	pluginsystem.SetRoute(name, arr)
 }
 
-func embeddedAssets(mux Router, sess AppSession, pluginName string, files []Asset, assets *embed.FS) error {
+func embeddedAssets(mux ambient.Router, sess ambient.AppSession, pluginName string, files []ambient.Asset, assets *embed.FS) error {
 	for _, unsafeFile := range files {
 		// Recreate the variable when using closures:
 		// https://golang.org/doc/faq#closures_and_goroutines
@@ -200,7 +203,7 @@ func embeddedAssets(mux Router, sess AppSession, pluginName string, files []Asse
 
 			// Handle authentication on resources without changing resources.
 			_, err = sess.AuthenticatedUser(r)
-			if !authAssetAllowed(err == nil, file) {
+			if !ambient.AuthAssetAllowed(err == nil, file) {
 				return http.StatusNotFound, nil
 			}
 
@@ -230,13 +233,13 @@ func embeddedAssets(mux Router, sess AppSession, pluginName string, files []Asse
 // and should never be called again.
 func (ss *SecureSite) LoadAllPluginMiddleware() http.Handler {
 	var h http.Handler = ss.mux
-	for _, pluginName := range ss.pluginsystem.middlewareNames {
-		plugin, ok := ss.pluginsystem.plugins[pluginName]
-		if !ok {
+	for _, pluginName := range ss.pluginsystem.MiddlewareNames() {
+		plugin, err := ss.pluginsystem.Plugin(pluginName)
+		if err != nil {
 			continue
 		}
 
-		h = ss.loadSinglePluginMiddleware(h, plugin.(MiddlewarePlugin))
+		h = ss.loadSinglePluginMiddleware(h, plugin.(ambient.MiddlewarePlugin))
 	}
 
 	return h
@@ -244,7 +247,7 @@ func (ss *SecureSite) LoadAllPluginMiddleware() http.Handler {
 
 // LoadSinglePluginMiddleware returns a handler that is wrapped in conditional
 // middlware from the plugins.
-func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin MiddlewarePlugin) http.Handler {
+func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin ambient.MiddlewarePlugin) http.Handler {
 	// Loop through each piece of middleware.
 	arrHandlers := plugin.Middleware()
 	if len(arrHandlers) > 0 {
@@ -271,7 +274,7 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin Middlewa
 
 				// If the plugin is enabled, then wrap with the middleware.
 				if safePluginSettings.Enabled {
-					if !ss.pluginsystem.Authorized(plugin.PluginName(), GrantRouterMiddlewareWrite) {
+					if !ss.pluginsystem.Authorized(plugin.PluginName(), ambient.GrantRouterMiddlewareWrite) {
 						next.ServeHTTP(w, r)
 						return
 					}

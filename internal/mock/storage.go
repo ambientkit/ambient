@@ -1,29 +1,31 @@
-package ambient
+package mock
 
 import (
 	"sync"
+
+	"github.com/ambientkit/ambient"
 )
 
-// MockStoragePlugin represents an Ambient plugin.
-type MockStoragePlugin struct{}
+// StoragePlugin represents an Ambient plugin.
+type StoragePlugin struct{}
 
-// NewMockStoragePlugin returns an Ambient plugin that provides memory storage.
-func NewMockStoragePlugin() *MockStoragePlugin {
-	return &MockStoragePlugin{}
+// NewStoragePlugin returns an Ambient plugin that provides memory storage.
+func NewStoragePlugin() *StoragePlugin {
+	return &StoragePlugin{}
 }
 
 // PluginName returns the plugin name.
-func (p *MockStoragePlugin) PluginName() string {
+func (p *StoragePlugin) PluginName() string {
 	return "mockstorage"
 }
 
 // PluginVersion returns the plugin version.
-func (p *MockStoragePlugin) PluginVersion() string {
+func (p *StoragePlugin) PluginVersion() string {
 	return "1.0.0"
 }
 
 // Storage returns data and session storage.
-func (p *MockStoragePlugin) Storage(logger Logger) (DataStorer, SessionStorer, error) {
+func (p *StoragePlugin) Storage(logger ambient.Logger) (ambient.DataStorer, ambient.SessionStorer, error) {
 	// Use local filesytem for site and session information.
 	ds := NewMemoryStore()
 	ss := NewMemoryStore()

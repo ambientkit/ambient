@@ -1,33 +1,36 @@
-package ambient
+package routerecorder_test
 
 import (
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/internal/mock"
+	"github.com/ambientkit/ambient/internal/routerecorder"
+	"github.com/ambientkit/ambient/pkg/ambientapp"
 	"github.com/ambientkit/away/router"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRouteRecorder(t *testing.T) {
-	mp1 := NewMockPlugin("mp1", "1.0.0")
-	mp1.MockGrants = []GrantRequest{
-		{Grant: GrantRouterRouteWrite, Description: "Access to create default route."},
+	mp1 := mock.NewPlugin("mp1", "1.0.0")
+	mp1.MockGrants = []ambient.GrantRequest{
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create default route."},
 	}
 
-	mp2 := NewMockPlugin("mp2", "1.0.0")
-	mp2.MockGrants = []GrantRequest{
-		{Grant: GrantRouterRouteWrite, Description: "Access to create default route."},
+	mp2 := mock.NewPlugin("mp2", "1.0.0")
+	mp2.MockGrants = []ambient.GrantRequest{
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create default route."},
 	}
 
 	// Set up the lighweight app.
-	app, _, err := NewApp("myapp", "1.0",
-		NewMockLoggerPlugin(io.Discard),
-		StoragePluginGroup{
-			Storage: NewMockStoragePlugin(),
+	app, logger, err := ambientapp.NewApp("myapp", "1.0",
+		mock.NewLoggerPlugin(nil),
+		ambient.StoragePluginGroup{
+			Storage: mock.NewStoragePlugin(),
 		},
-		&PluginLoader{
+		&ambient.PluginLoader{
 			Router:         nil,
 			TemplateEngine: nil,
 			SessionManager: nil,
@@ -35,25 +38,27 @@ func TestRouteRecorder(t *testing.T) {
 				"mp1": true,
 				"mp2": true,
 			},
-			Plugins: []Plugin{
+			Plugins: []ambient.Plugin{
 				mp1,
 				mp2,
 			},
-			Middleware: []MiddlewarePlugin{},
+			Middleware: []ambient.MiddlewarePlugin{},
 		})
 	assert.NoError(t, err)
 
-	mux := router.New()
-	rr := NewRouteRecorder(app.log, app.pluginsystem, mux)
+	ps := app.PluginSystem()
 
-	pr1 := rr.withPlugin("mp1")
+	mux := router.New()
+	rr := routerecorder.NewRouteRecorder(logger, ps, mux)
+
+	pr1 := rr.WithPlugin("mp1")
 	called1 := false
 	pr1.Get("/", func(http.ResponseWriter, *http.Request) (status int, err error) {
 		called1 = true
 		return
 	})
 
-	pr2 := rr.withPlugin("mp2")
+	pr2 := rr.WithPlugin("mp2")
 	called2 := false
 	pr2.Get("/", func(http.ResponseWriter, *http.Request) (status int, err error) {
 		called2 = true
@@ -68,7 +73,7 @@ func TestRouteRecorder(t *testing.T) {
 	assert.True(t, called1)
 	assert.False(t, called2)
 
-	err = app.pluginsystem.SetEnabled("mp1", false)
+	err = ps.SetEnabled("mp1", false)
 	assert.NoError(t, err)
 
 	called1 = false

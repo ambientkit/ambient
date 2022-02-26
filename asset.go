@@ -256,3 +256,20 @@ func (file *Asset) Contents(assets fs.FS) (ff []byte, status int, err error) {
 
 	return ff, http.StatusOK, nil
 }
+
+// AuthAssetAllowed return true if the user has access to the asset.
+func AuthAssetAllowed(loggedIn bool, f Asset) bool {
+	switch true {
+	case f.Auth == AuthOnly && !loggedIn:
+		return false
+	case f.Auth == AuthOnly && loggedIn:
+		return true
+	case f.Auth == AuthAnonymousOnly && !loggedIn:
+		return true
+	case f.Auth == AuthAnonymousOnly && loggedIn:
+		return false
+	}
+
+	//f.Auth == All:
+	return true
+}

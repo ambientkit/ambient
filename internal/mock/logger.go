@@ -1,51 +1,53 @@
-package ambient
+package mock
 
 import (
 	"io"
 	"log"
+
+	"github.com/ambientkit/ambient"
 )
 
-// MockLoggerPlugin represents an Ambient plugin.
-type MockLoggerPlugin struct {
-	log    *MockLogger
+// LoggerPlugin represents an Ambient plugin.
+type LoggerPlugin struct {
+	log    *Logger
 	output io.Writer
 }
 
-// NewMockLoggerPlugin returns an Ambient plugin that provides logging using the standard logger.
-func NewMockLoggerPlugin(optionalWriter io.Writer) *MockLoggerPlugin {
-	return &MockLoggerPlugin{
+// NewLoggerPlugin returns an Ambient plugin that provides logging using the standard logger.
+func NewLoggerPlugin(optionalWriter io.Writer) *LoggerPlugin {
+	return &LoggerPlugin{
 		output: optionalWriter,
 	}
 }
 
 // PluginName returns the plugin name.
-func (p *MockLoggerPlugin) PluginName() string {
+func (p *LoggerPlugin) PluginName() string {
 	return "mocklogger"
 }
 
 // PluginVersion returns the plugin version.
-func (p *MockLoggerPlugin) PluginVersion() string {
+func (p *LoggerPlugin) PluginVersion() string {
 	return "1.0.0"
 }
 
 // Logger returns a logger.
-func (p *MockLoggerPlugin) Logger(appName string, appVersion string, optionalWriter io.Writer) (AppLogger, error) {
+func (p *LoggerPlugin) Logger(appName string, appVersion string, optionalWriter io.Writer) (ambient.AppLogger, error) {
 	// Create the logger.
-	p.log = p.NewMockLogger(appName, appVersion, optionalWriter)
+	p.log = p.NewLogger(appName, appVersion, optionalWriter)
 
 	return p.log, nil
 }
 
-// MockLogger represents a logger.
-type MockLogger struct {
+// Logger represents a logger.
+type Logger struct {
 	log *log.Logger
 
 	appName    string
 	appVersion string
 }
 
-// NewMockLogger returns a new logger with a default log level of error.
-func (p *MockLoggerPlugin) NewMockLogger(appName string, appVersion string, optionalWriter io.Writer) *MockLogger {
+// NewLogger returns a new logger with a default log level of error.
+func (p *LoggerPlugin) NewLogger(appName string, appVersion string, optionalWriter io.Writer) *Logger {
 	l := log.Default()
 	if optionalWriter != nil {
 		l.SetOutput(optionalWriter)
@@ -53,7 +55,7 @@ func (p *MockLoggerPlugin) NewMockLogger(appName string, appVersion string, opti
 		l.SetOutput(p.output)
 	}
 
-	return &MockLogger{
+	return &Logger{
 		log: l,
 
 		appName:    appName,
@@ -62,9 +64,9 @@ func (p *MockLoggerPlugin) NewMockLogger(appName string, appVersion string, opti
 }
 
 // SetLogLevel will set the logger output level.
-func (l *MockLogger) SetLogLevel(level LogLevel) {}
+func (l *Logger) SetLogLevel(level ambient.LogLevel) {}
 
-func (l *MockLogger) output(format string, v ...interface{}) {
+func (l *Logger) output(format string, v ...interface{}) {
 	if len(format) == 0 {
 		l.log.Println(v...)
 	} else {
@@ -74,31 +76,31 @@ func (l *MockLogger) output(format string, v ...interface{}) {
 
 // Debug is equivalent to log.Printf() + "\n" if format is not empty.
 // It's equivalent to Println() if format is empty.
-func (l *MockLogger) Debug(format string, v ...interface{}) {
+func (l *Logger) Debug(format string, v ...interface{}) {
 	l.output(format, v...)
 }
 
 // Info is equivalent to log.Printf() + "\n" if format is not empty.
 // It's equivalent to Println() if format is empty.
-func (l *MockLogger) Info(format string, v ...interface{}) {
+func (l *Logger) Info(format string, v ...interface{}) {
 	l.output(format, v...)
 }
 
 // Warn is equivalent to log.Printf() + "\n" if format is not empty.
 // It's equivalent to Println() if format is empty.
-func (l *MockLogger) Warn(format string, v ...interface{}) {
+func (l *Logger) Warn(format string, v ...interface{}) {
 	l.output(format, v...)
 }
 
 // Error is equivalent to log.Printf() + "\n" if format is not empty.
 // It's equivalent to Println() if format is empty.
-func (l *MockLogger) Error(format string, v ...interface{}) {
+func (l *Logger) Error(format string, v ...interface{}) {
 	l.output(format, v...)
 }
 
 // Fatal is equivalent to log.Printf() + "\n" if format is not empty.
 // It's equivalent to Println() if format is empty. It's followed by a call
 // to os.Exit(1).
-func (l *MockLogger) Fatal(format string, v ...interface{}) {
+func (l *Logger) Fatal(format string, v ...interface{}) {
 	l.output(format, v...)
 }
