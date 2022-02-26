@@ -16,6 +16,7 @@ type AppRouter interface {
 
 // Router represents a router.
 type Router interface {
+	Handle(method string, path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
 	Patch(path string, fn func(http.ResponseWriter, *http.Request) (int, error))

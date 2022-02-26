@@ -28,6 +28,7 @@ type SecureSite struct {
 	sess         AppSession
 	mux          AppRouter
 	render       Renderer
+	recorder     *RouteRecorder
 }
 
 // NewSecureSite returns a new secure site.
@@ -40,6 +41,7 @@ func NewSecureSite(pluginName string, log AppLogger, ps *PluginSystem, session A
 		mux:          mux,
 		pluginsystem: ps,
 		render:       render,
+		recorder:     NewRouteRecorder(log, ps, mux),
 	}
 }
 

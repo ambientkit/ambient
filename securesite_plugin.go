@@ -70,11 +70,6 @@ func (ss *SecureSite) LoadAllPluginPages() error {
 		return ErrAccessDenied
 	}
 
-	plugins, err := ss.Plugins()
-	if err != nil {
-		return err
-	}
-
 	for _, name := range ss.pluginsystem.names {
 		// Skip plugins that are not enabled.
 		if !ss.pluginsystem.Enabled(name) {
@@ -82,24 +77,19 @@ func (ss *SecureSite) LoadAllPluginPages() error {
 		}
 
 		// Load plugin.
-		ss.loadSinglePluginPages(name, plugins)
+		ss.loadSinglePluginPages(name)
 	}
 
 	return nil
 }
 
 func (ss *SecureSite) loadSinglePlugin(name string) error {
-	plugins, err := ss.Plugins()
-	if err != nil {
-		return err
-	}
-
-	ss.loadSinglePluginPages(name, plugins)
+	ss.loadSinglePluginPages(name)
 
 	return nil
 }
 
-func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]PluginData) {
+func (ss *SecureSite) loadSinglePluginPages(name string) {
 	if name == "ambient" {
 		ss.log.Error("plugin load: preventing loading plugin with reserved name: %v", name)
 		return
@@ -112,6 +102,7 @@ func (ss *SecureSite) loadSinglePluginPages(name string, pluginsData map[string]
 	}
 
 	recorder := NewRecorder(name, ss.log, ss.pluginsystem, ss.mux)
+	//recorder := ss.recorder.withPlugin(name)
 
 	toolkit := &Toolkit{
 		Mux:    recorder,

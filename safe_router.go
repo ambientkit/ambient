@@ -94,6 +94,15 @@ func (rec *Recorder) Put(path string, fn func(http.ResponseWriter, *http.Request
 	rec.handleRoute(path, fn, http.MethodPut, rec.mux.Put)
 }
 
+// Handle -
+func (rec *Recorder) Handle(method string, path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+	if rec.mux == nil {
+		return
+	}
+
+	rec.handleRoute(path, fn, method, rec.mux.Head)
+}
+
 // Head -
 func (rec *Recorder) Head(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
 	if rec.mux == nil {
