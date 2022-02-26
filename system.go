@@ -34,6 +34,12 @@ type PluginSystem struct {
 	routes map[string][]Route
 }
 
+// Route is a route for a router.
+type Route struct {
+	Method string
+	Path   string
+}
+
 // NewPluginSystem returns a plugin system.
 func NewPluginSystem(log AppLogger, storage *Storage, arr *PluginLoader) (*PluginSystem, error) {
 	// Get a list of plugin names to maintain order.
