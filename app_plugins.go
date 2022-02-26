@@ -13,7 +13,7 @@ func (app *App) Handler() (http.Handler, error) {
 	if app.pluginsystem.sessionManager != nil {
 		sm, err := app.pluginsystem.sessionManager.SessionManager(app.log, app.sessionstorer)
 		if err != nil {
-			app.log.Error("", err.Error())
+			app.log.Error(err.Error())
 		} else if sm != nil {
 			// Only set the session manager once.
 			app.log.Info("ambient: using session manager from plugin: %v", app.pluginsystem.sessionManager.PluginName())
@@ -108,7 +108,7 @@ func (app *App) GrantAccess() {
 			app.log.Info("ambient: enabling trusted plugin: %v", pluginName)
 			err := securestorage.EnablePlugin(pluginName, false)
 			if err != nil {
-				app.log.Error("", err.Error())
+				app.log.Error(err.Error())
 			}
 		}
 
@@ -124,7 +124,7 @@ func (app *App) GrantAccess() {
 				app.log.Info("ambient: for plugin (%v), adding grant: %v", pluginName, request.Grant)
 				err := securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
 				if err != nil {
-					app.log.Error("", err.Error())
+					app.log.Error(err.Error())
 				}
 			}
 		}

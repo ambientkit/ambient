@@ -43,7 +43,7 @@ func loadStorage(log AppLogger, pluginGroup StoragePluginGroup) (*Storage, Sessi
 	// Get the storage manager from the plugins.
 	pds, pss, err := plugin.Storage(log)
 	if err != nil {
-		log.Error("", err.Error())
+		log.Error(err.Error())
 	} else if pds != nil && pss != nil {
 		log.Info("ambient: using storage from first plugin: %v", plugin.PluginName())
 		ds = pds
