@@ -99,7 +99,7 @@ func (s *Storage) load(allowDecrypted bool) error {
 	}
 
 	if string(b) == "" {
-		s.log.Debug("ambient: found new storage data file")
+		s.log.Info("ambient: found new storage data file")
 		b = []byte("{}") // Set as an empty JSON file.
 	} else if s.secure != nil {
 		// Decrypt if set.
