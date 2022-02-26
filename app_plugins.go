@@ -82,18 +82,6 @@ func (app *App) Handler() (http.Handler, error) {
 	return handler, nil
 }
 
-// Toolkit returns a toolkit for use with plugins externally.
-func (app *App) Toolkit(pluginName string) *Toolkit {
-	toolkit := &Toolkit{
-		Mux:    NewRecorder(pluginName, app.log, app.pluginsystem, app.mux),
-		Render: NewRenderer(app.renderer),
-		Site:   NewSecureSite(pluginName, app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder),
-		Log:    NewPluginLogger(app.log),
-	}
-
-	return toolkit
-}
-
 // GrantAccess grants access to all trusted plugins.
 func (app *App) GrantAccess() {
 	// Get the plugin system.

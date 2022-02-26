@@ -1,6 +1,7 @@
 package ambient
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,9 +16,14 @@ func TestRouteRecorder(t *testing.T) {
 		{Grant: GrantRouterRouteWrite, Description: "Access to create default route."},
 	}
 
+	mp2 := NewMockPlugin("mp2", "1.0.0")
+	mp2.MockGrants = []GrantRequest{
+		{Grant: GrantRouterRouteWrite, Description: "Access to create default route."},
+	}
+
 	// Set up the lighweight app.
 	app, _, err := NewApp("myapp", "1.0",
-		NewMockLoggerPlugin(),
+		NewMockLoggerPlugin(io.Discard),
 		StoragePluginGroup{
 			Storage: NewMockStoragePlugin(),
 		},
@@ -27,9 +33,11 @@ func TestRouteRecorder(t *testing.T) {
 			SessionManager: nil,
 			TrustedPlugins: map[string]bool{
 				"mp1": true,
+				"mp2": true,
 			},
 			Plugins: []Plugin{
 				mp1,
+				mp2,
 			},
 			Middleware: []MiddlewarePlugin{},
 		})
@@ -59,4 +67,18 @@ func TestRouteRecorder(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.True(t, called1)
 	assert.False(t, called2)
+
+	err = app.pluginsystem.SetEnabled("mp1", false)
+	assert.NoError(t, err)
+
+	called1 = false
+	called2 = false
+
+	r = httptest.NewRequest("GET", "/", nil)
+	w = httptest.NewRecorder()
+	mux.ServeHTTP(w, r)
+	resp = w.Result()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.False(t, called1)
+	assert.True(t, called2)
 }

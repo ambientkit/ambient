@@ -7,12 +7,15 @@ import (
 
 // MockLoggerPlugin represents an Ambient plugin.
 type MockLoggerPlugin struct {
-	log *MockLogger
+	log    *MockLogger
+	output io.Writer
 }
 
 // NewMockLoggerPlugin returns an Ambient plugin that provides logging using the standard logger.
-func NewMockLoggerPlugin() *MockLoggerPlugin {
-	return &MockLoggerPlugin{}
+func NewMockLoggerPlugin(optionalWriter io.Writer) *MockLoggerPlugin {
+	return &MockLoggerPlugin{
+		output: optionalWriter,
+	}
 }
 
 // PluginName returns the plugin name.
@@ -28,7 +31,7 @@ func (p *MockLoggerPlugin) PluginVersion() string {
 // Logger returns a logger.
 func (p *MockLoggerPlugin) Logger(appName string, appVersion string, optionalWriter io.Writer) (AppLogger, error) {
 	// Create the logger.
-	p.log = NewMockLogger(appName, appVersion, optionalWriter)
+	p.log = p.NewMockLogger(appName, appVersion, optionalWriter)
 
 	return p.log, nil
 }
@@ -42,10 +45,12 @@ type MockLogger struct {
 }
 
 // NewMockLogger returns a new logger with a default log level of error.
-func NewMockLogger(appName string, appVersion string, optionalWriter io.Writer) *MockLogger {
+func (p *MockLoggerPlugin) NewMockLogger(appName string, appVersion string, optionalWriter io.Writer) *MockLogger {
 	l := log.Default()
 	if optionalWriter != nil {
 		l.SetOutput(optionalWriter)
+	} else if p.output != nil {
+		l.SetOutput(p.output)
 	}
 
 	return &MockLogger{
