@@ -20,6 +20,7 @@ type App struct {
 	mux           AppRouter
 	renderer      Renderer
 	sess          AppSession
+	recorder      *RouteRecorder
 
 	debugTemplates  bool
 	escapeTemplates bool

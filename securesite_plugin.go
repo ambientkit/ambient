@@ -101,13 +101,12 @@ func (ss *SecureSite) loadSinglePluginPages(name string) {
 		return
 	}
 
-	recorder := NewRecorder(name, ss.log, ss.pluginsystem, ss.mux)
-	//recorder := ss.recorder.withPlugin(name)
+	recorder := ss.recorder.withPlugin(name)
 
 	toolkit := &Toolkit{
 		Mux:    recorder,
 		Render: NewRenderer(ss.render),
-		Site:   NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render),
+		Site:   NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render, ss.recorder),
 		Log:    NewPluginLogger(ss.log),
 	}
 
@@ -153,22 +152,13 @@ func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error 
 		if err != nil {
 			return err
 		}
-
-		// Get the routes for the plugin, not all plugins have routes so don't
-		// check if it's ok for not.
-		routes := ss.pluginsystem.routes[pluginName]
-
-		// Clear each route.
-		for _, v := range routes {
-			ss.mux.Clear(v.Method, v.Path)
-		}
 	}
 
 	// Disable plugin.
 	return ss.pluginsystem.SetEnabled(pluginName, false)
 }
 
-func saveRoutesForPlugin(name string, recorder *Recorder, pluginsystem *PluginSystem) {
+func saveRoutesForPlugin(name string, recorder *PluginRouteRecorder, pluginsystem *PluginSystem) {
 	// Save the routes.
 	arr := make([]Route, 0)
 	for _, route := range recorder.routes() {

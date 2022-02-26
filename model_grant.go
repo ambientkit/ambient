@@ -56,10 +56,6 @@ const (
 	GrantRouterRouteWrite Grant = "router.route:write"
 	// GrantRouterMiddlewareWrite allows adding middleware to routes.
 	GrantRouterMiddlewareWrite Grant = "router.middleware:write"
-	// GrantRouterRouteClear allows clear access to routes.
-	GrantRouterRouteClear Grant = "router.route:clear"
-	// GrantRouterNeighborRouteClear allows clear access to routes in another plugin.
-	GrantRouterNeighborRouteClear Grant = "router.neighborroute:clear"
 
 	// GrantPluginSettingRead allows read access to the plugin setting.
 	GrantPluginSettingRead Grant = "plugin.setting:read"

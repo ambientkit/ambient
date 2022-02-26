@@ -57,9 +57,11 @@ func (app *App) Handler() (http.Handler, error) {
 		return nil, fmt.Errorf("ambient: no router found")
 	}
 
+	app.recorder = NewRouteRecorder(app.log, app.pluginsystem, app.mux)
+
 	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
-	securesite := NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer)
+	securesite := NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder)
 
 	// Load the plugin pages.
 	err := securesite.LoadAllPluginPages()
@@ -85,7 +87,7 @@ func (app *App) Toolkit(pluginName string) *Toolkit {
 	toolkit := &Toolkit{
 		Mux:    NewRecorder(pluginName, app.log, app.pluginsystem, app.mux),
 		Render: NewRenderer(app.renderer),
-		Site:   NewSecureSite(pluginName, app.log, app.pluginsystem, app.sess, app.mux, app.renderer),
+		Site:   NewSecureSite(pluginName, app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder),
 		Log:    NewPluginLogger(app.log),
 	}
 
@@ -99,7 +101,7 @@ func (app *App) GrantAccess() {
 
 	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
-	securestorage := NewSecureSite("ambient", app.log, pluginsystem, nil, nil, nil)
+	securestorage := NewSecureSite("ambient", app.log, pluginsystem, nil, nil, nil, nil)
 
 	// Enable trusted plugins.
 	for _, pluginName := range pluginsystem.TrustedPluginNames() {

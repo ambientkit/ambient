@@ -32,7 +32,7 @@ type SecureSite struct {
 }
 
 // NewSecureSite returns a new secure site.
-func NewSecureSite(pluginName string, log AppLogger, ps *PluginSystem, session AppSession, mux AppRouter, render Renderer) *SecureSite {
+func NewSecureSite(pluginName string, log AppLogger, ps *PluginSystem, session AppSession, mux AppRouter, render Renderer, recorder *RouteRecorder) *SecureSite {
 	return &SecureSite{
 		pluginName: pluginName,
 
@@ -41,7 +41,7 @@ func NewSecureSite(pluginName string, log AppLogger, ps *PluginSystem, session A
 		mux:          mux,
 		pluginsystem: ps,
 		render:       render,
-		recorder:     NewRouteRecorder(log, ps, mux),
+		recorder:     recorder,
 	}
 }
 

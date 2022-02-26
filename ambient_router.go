@@ -9,7 +9,6 @@ type AppRouter interface {
 	Router
 
 	ServeHTTP(w http.ResponseWriter, r *http.Request)
-	Clear(method string, path string)
 	SetNotFound(notFound http.Handler)
 	SetServeHTTP(h func(w http.ResponseWriter, r *http.Request, status int, err error))
 }

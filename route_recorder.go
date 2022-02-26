@@ -1,20 +1,18 @@
 package ambient
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
+	"sync"
 )
 
 // RouteRecorder handles routing for plugins.
 type RouteRecorder struct {
-	log          AppLogger
-	pluginsystem *PluginSystem
-	mux          AppRouter
-	plugins      []*PluginRouteRecorder
-
-	routeMap map[string][]PluginFn
-	// TODO: Add a mutex.
+	log           AppLogger
+	pluginsystem  *PluginSystem
+	mux           AppRouter
+	routeMap      map[string][]PluginFn
+	routeMapMutex sync.RWMutex
 }
 
 // PluginFn maps a plugin to a function.
@@ -35,29 +33,27 @@ func NewRouteRecorder(log AppLogger, pluginsystem *PluginSystem, mux AppRouter) 
 
 // PluginRouteRecorder is a route recorder for a plugin.
 type PluginRouteRecorder struct {
-	rr *RouteRecorder
-
+	rr         *RouteRecorder
 	pluginName string
-	routeList  []RouteDef
-}
-
-// RouteDef is a route for a router.
-type RouteDef struct {
-	Method string
-	Path   string
-	Fn     func(http.ResponseWriter, *http.Request) (int, error)
+	routeList  []Route
 }
 
 // Get request handler.
 func (rec *RouteRecorder) withPlugin(pluginName string) *PluginRouteRecorder {
-	pr := &PluginRouteRecorder{
+	return &PluginRouteRecorder{
 		rr:         rec,
 		pluginName: pluginName,
+		routeList:  make([]Route, 0),
 	}
+}
 
-	rec.plugins = append(rec.plugins, pr)
+// Routes returns list of routes.
+func (rec *PluginRouteRecorder) routes() []Route {
+	return rec.routeList
+}
 
-	return pr
+func pathKey(method string, path string) string {
+	return fmt.Sprintf("%v %v", method, path)
 }
 
 func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
@@ -67,34 +63,45 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 
 	// Add the URL prefix to each route.
 	path := prefixedRoute(rawpath)
-	rec.routeList = append(rec.routeList, RouteDef{
+
+	// Store the routes to they can be used later.
+	rec.routeList = append(rec.routeList, Route{
 		Method: method,
 		Path:   path,
-		Fn:     rec.protect(fn),
 	})
 
-	rs := fmt.Sprintf("%v %v", method, path)
+	rs := pathKey(method, path)
 
+	rec.rr.routeMapMutex.Lock()
 	_, ok := rec.rr.routeMap[rs]
 	if !ok {
 		// If the route does not exist, then initialize the map entry.
 		rec.rr.routeMap[rs] = make([]PluginFn, 0)
 		rec.rr.routeMap[rs] = append(rec.rr.routeMap[rs], PluginFn{
 			PluginName: rec.pluginName,
-			Fn:         fn,
+			Fn:         rec.protect(fn),
 		})
+		rec.rr.routeMapMutex.Unlock()
 
 		rec.rr.mux.Handle(method, path, func(w http.ResponseWriter, r *http.Request) (status int, err error) {
-			routes, ok := rec.rr.routeMap[rs]
+			pathKey := pathKey(method, path)
+
+			// Determine if there are any plugins with routes.
+			// This protects against if the route list if modified.
+			rec.rr.routeMapMutex.RLock()
+			routes, ok := rec.rr.routeMap[pathKey]
+			rec.rr.routeMapMutex.RUnlock()
 			if !ok {
 				return http.StatusNotFound, nil
 			}
+
 			for _, plugin := range routes {
 				// Skip plugins that aren't enabled.
 				if !rec.rr.pluginsystem.Enabled(plugin.PluginName) {
 					continue
 				}
 
+				// Render the first enable plugin.
 				return plugin.Fn(w, r)
 			}
 
@@ -103,14 +110,24 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 		return
 	}
 
+	// Ensure the plugin is not already added.
+	for _, v := range rec.rr.routeMap[rs] {
+		if v.PluginName == rec.pluginName {
+			rec.rr.log.Debug("ambient: plugin (%v) route already registered: ", v.PluginName, rs)
+			rec.rr.routeMapMutex.Unlock()
+			return
+		}
+	}
+
+	rec.rr.log.Debug("ambient: plugin (%v) route added: ", rec.pluginName, rs)
+
 	// Add the function to the map.
 	rec.rr.routeMap[rs] = append(rec.rr.routeMap[rs], PluginFn{
 		PluginName: rec.pluginName,
-		Fn:         fn,
+		Fn:         rec.protect(fn),
 	})
+	rec.rr.routeMapMutex.Unlock()
 }
-
-var errPluginNotEnabled = errors.New("plugin not enabled")
 
 func (rec *PluginRouteRecorder) protect(h func(http.ResponseWriter, *http.Request) (status int, err error)) func(
 	http.ResponseWriter, *http.Request) (status int, err error) {
