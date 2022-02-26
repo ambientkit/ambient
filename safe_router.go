@@ -32,7 +32,8 @@ func (rec *Recorder) routes() []Route {
 	return rec.routeList
 }
 
-func (rec *Recorder) handleRoute(rawpath string, fn func(http.ResponseWriter, *http.Request) (status int, err error), method string, callable func(path string, fn func(http.ResponseWriter, *http.Request) (int, error))) {
+func (rec *Recorder) handleRoute(rawpath string, fn func(http.ResponseWriter, *http.Request) (status int, err error),
+	method string, callable func(path string, fn func(http.ResponseWriter, *http.Request) (int, error))) {
 	// Add the URL prefix to each route.
 	path := prefixedRoute(rawpath)
 	rec.routeList = append(rec.routeList, Route{
@@ -42,7 +43,8 @@ func (rec *Recorder) handleRoute(rawpath string, fn func(http.ResponseWriter, *h
 	callable(path, rec.protect(fn))
 }
 
-func (rec *Recorder) protect(h func(http.ResponseWriter, *http.Request) (status int, err error)) func(http.ResponseWriter, *http.Request) (status int, err error) {
+func (rec *Recorder) protect(h func(http.ResponseWriter, *http.Request) (status int, err error)) func(
+	http.ResponseWriter, *http.Request) (status int, err error) {
 	return func(w http.ResponseWriter, r *http.Request) (status int, err error) {
 		if !rec.pluginsystem.Authorized(rec.pluginName, GrantRouterRouteWrite) {
 			return http.StatusForbidden, nil
