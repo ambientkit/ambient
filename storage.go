@@ -98,25 +98,24 @@ func (s *Storage) load(allowDecrypted bool) error {
 		return err
 	}
 
-	// Decrypt if set.
-	if s.secure != nil {
-		if string(b) == "{}" {
-			s.log.Debug("ambient: found new storage data file, will encrypt on save")
-		} else {
-			decrypted, err := s.secure.Decrypt(b)
-			if err != nil {
-				// Could be a new file so don't fail, but it will force encryption.
-				if string(b) == "{}" {
-					s.log.Info("ambient: found new storage data file, will encrypt on save")
-				} else {
-					if !allowDecrypted {
-						return fmt.Errorf("ambient: could not decrypt storage data: %v", err.Error())
-					}
-					decrypted = b
+	if string(b) == "" {
+		s.log.Debug("ambient: found new storage data file")
+		b = []byte("{}") // Set as an empty JSON file.
+	} else if s.secure != nil {
+		// Decrypt if set.
+		decrypted, err := s.secure.Decrypt(b)
+		if err != nil {
+			// Could be a new file so don't fail, but it will force encryption.
+			if string(b) == "{}" {
+				s.log.Info("ambient: found new storage data file, will encrypt on save")
+			} else {
+				if !allowDecrypted {
+					return fmt.Errorf("ambient: could not decrypt storage data: %v", err.Error())
 				}
+				decrypted = b
 			}
-			b = decrypted
 		}
+		b = decrypted
 	}
 
 	err = json.Unmarshal(b, s.site)
