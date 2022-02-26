@@ -25,6 +25,12 @@ type PluginData struct {
 	Settings PluginSettings `json:"settings"`
 }
 
+// PluginGrants represents an unordered map of grants.
+type PluginGrants map[Grant]bool
+
+// PluginSettings represents an unordered map of settings.
+type PluginSettings map[string]interface{}
+
 // Correct will fill in the missing defaults.
 func (s *Site) Correct() {
 	// Set the defaults for the site object.

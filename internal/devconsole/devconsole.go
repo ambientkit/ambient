@@ -1,29 +1,31 @@
-package ambient
+package devconsole
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/internal/secureconfig"
 	"github.com/ambientkit/ambient/pkg/envdetect"
 	"github.com/ambientkit/away/router"
 )
 
 // DevConsole represents a web interface to receive commands from the amb tool.
 type DevConsole struct {
-	log           AppLogger
-	storage       *Storage
-	pluginsystem  *PluginSystem
-	securestorage *SecureSite
+	log           ambient.AppLogger
+	storage       ambient.Storage
+	pluginsystem  ambient.PluginSystem
+	securestorage *secureconfig.SecureSite
 }
 
 // NewDevConsole returns the dev console object to receive commands from the amb
 // tool.
-func NewDevConsole(site *SecureSite) *DevConsole {
+func NewDevConsole(logger ambient.AppLogger, ps ambient.PluginSystem, storage ambient.Storage, site *secureconfig.SecureSite) *DevConsole {
 	return &DevConsole{
-		log:           site.log,
-		storage:       site.pluginsystem.storage,
-		pluginsystem:  site.pluginsystem,
+		log:           logger,
+		storage:       storage,
+		pluginsystem:  ps,
 		securestorage: site,
 	}
 }

@@ -26,14 +26,14 @@ type LayoutInjector interface {
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
 	log             AppLogger
-	pluginsystem    *PluginSystem
+	pluginsystem    PluginSystem
 	sess            AppSession
 	debugTemplates  bool
 	escapeTemplates bool
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger AppLogger, plugins *PluginSystem, sess AppSession, debugTemplates bool, escapeTemplates bool) *PluginInjector {
+func NewPlugininjector(logger AppLogger, plugins PluginSystem, sess AppSession, debugTemplates bool, escapeTemplates bool) *PluginInjector {
 	return &PluginInjector{
 		log:             logger,
 		pluginsystem:    plugins,
@@ -65,7 +65,7 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 
 	// Loop through each of the plugins.
 	// Use the plugin names because it's ordered.
-	for _, name := range c.pluginsystem.names {
+	for _, name := range c.pluginsystem.Names() {
 		plugin, err := c.pluginsystem.PluginData(name)
 		if err != nil || !plugin.Enabled {
 			continue
@@ -102,7 +102,7 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 
 				for _, file := range files {
 					// Handle authentication on resources without changing resources.
-					if !authAssetAllowed(err == nil, file) {
+					if !AuthAssetAllowed(err == nil, file) {
 						continue
 					}
 

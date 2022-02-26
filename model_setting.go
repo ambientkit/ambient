@@ -1,8 +1,5 @@
 package ambient
 
-// PluginSettings represents an unordered map of settings.
-type PluginSettings map[string]interface{}
-
 // Setting is a plugin settable field.
 type Setting struct {
 	Name        string             `json:"name"`

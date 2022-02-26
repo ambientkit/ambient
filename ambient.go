@@ -22,7 +22,7 @@ type Plugin interface {
 	PluginCore
 
 	// These should all have access to the toolkit.
-	Enable(toolkit *Toolkit) error                   // optional, called during enable
+	Enable(*Toolkit) error                           // optional, called during enable
 	Disable() error                                  // optional, called during disable
 	Routes()                                         // optional, called during enable
 	Assets() ([]Asset, *embed.FS)                    // optional, called during enable

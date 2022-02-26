@@ -1,4 +1,4 @@
-package ambient
+package ambientapp
 
 import (
 	"fmt"
@@ -7,30 +7,30 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/internal/config"
+	"github.com/ambientkit/ambient/internal/devconsole"
+	"github.com/ambientkit/ambient/internal/routerecorder"
+	"github.com/ambientkit/ambient/internal/secureconfig"
 	"github.com/ambientkit/ambient/pkg/envdetect"
-)
-
-const (
-	// Version is the Ambient version.
-	Version = "1.0"
 )
 
 // App represents an Ambient app that supports plugins.
 type App struct {
-	log           AppLogger
-	pluginsystem  *PluginSystem
-	sessionstorer SessionStorer
-	mux           AppRouter
-	renderer      Renderer
-	sess          AppSession
-	recorder      *RouteRecorder
+	log           ambient.AppLogger
+	pluginsystem  ambient.PluginSystem
+	sessionstorer ambient.SessionStorer
+	mux           ambient.AppRouter
+	renderer      ambient.Renderer
+	sess          ambient.AppSession
+	recorder      *routerecorder.RouteRecorder
 
 	debugTemplates  bool
 	escapeTemplates bool
 }
 
 // NewAppLogger returns a logger from Ambient without all the other dependencies.
-func NewAppLogger(appName string, appVersion string, logPlugin LoggingPlugin, logLevel LogLevel) (AppLogger, error) {
+func NewAppLogger(appName string, appVersion string, logPlugin ambient.LoggingPlugin, logLevel ambient.LogLevel) (ambient.AppLogger, error) {
 	// Set the time zone. Required for plugins that rely on timzone like MFA.
 	tz := os.Getenv("AMB_TIMEZONE")
 	if len(tz) > 0 {
@@ -50,9 +50,9 @@ func NewAppLogger(appName string, appVersion string, logPlugin LoggingPlugin, lo
 }
 
 // LoadLogger returns the logger.
-func loadLogger(appName string, appVersion string, plugin LoggingPlugin) (AppLogger, error) {
+func loadLogger(appName string, appVersion string, plugin ambient.LoggingPlugin) (ambient.AppLogger, error) {
 	// Don't allow certain plugin names.
-	if allowed, ok := disallowedPluginNames[plugin.PluginName()]; ok && !allowed {
+	if allowed, ok := ambient.DisallowedPluginNames[plugin.PluginName()]; ok && !allowed {
 		return nil, fmt.Errorf("ambient: plugin name not allowed: %v", plugin.PluginName())
 	}
 
@@ -70,9 +70,10 @@ func loadLogger(appName string, appVersion string, plugin LoggingPlugin) (AppLog
 }
 
 // NewApp returns a new Ambient app that supports plugins.
-func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storagePluginGroup StoragePluginGroup, plugins *PluginLoader) (*App, AppLogger, error) {
+func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
+	storagePluginGroup ambient.StoragePluginGroup, plugins *ambient.PluginLoader) (*App, ambient.AppLogger, error) {
 	// Set up the logger first.
-	log, err := NewAppLogger(appName, appVersion, logPlugin, EnvLogLevel())
+	log, err := NewAppLogger(appName, appVersion, logPlugin, ambient.EnvLogLevel())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -89,7 +90,7 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 	}
 
 	// Initialize the plugin system.
-	pluginsystem, err := NewPluginSystem(log, storage, plugins)
+	pluginsystem, err := config.NewPluginSystem(log, storage, plugins)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -107,8 +108,13 @@ func NewApp(appName string, appVersion string, logPlugin LoggingPlugin, storageP
 	return ambientApp, log, nil
 }
 
+// PluginSystem returns the plugin system.
+func (app *App) PluginSystem() ambient.PluginSystem {
+	return app.pluginsystem
+}
+
 // LoadStorage returns the storage.
-func loadStorage(log AppLogger, pluginGroup StoragePluginGroup) (*Storage, SessionStorer, error) {
+func loadStorage(log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) (*config.Storage, ambient.SessionStorer, error) {
 	// Detect if storage plugin is missing.
 	if pluginGroup.Storage == nil {
 		return nil, nil, fmt.Errorf("ambient: storage plugin is missing")
@@ -117,13 +123,13 @@ func loadStorage(log AppLogger, pluginGroup StoragePluginGroup) (*Storage, Sessi
 	plugin := pluginGroup.Storage
 
 	// Don't allow certain plugin names.
-	if allowed, ok := disallowedPluginNames[plugin.PluginName()]; ok && !allowed {
+	if allowed, ok := ambient.DisallowedPluginNames[plugin.PluginName()]; ok && !allowed {
 		return nil, nil, fmt.Errorf("ambient: plugin name not allowed: %v", plugin.PluginName())
 	}
 
 	// Define the storage managers.
-	var ds DataStorer
-	var ss SessionStorer
+	var ds ambient.DataStorer
+	var ss ambient.SessionStorer
 
 	// Get the storage manager from the plugins.
 	pds, pss, err := plugin.Storage(log)
@@ -139,7 +145,7 @@ func loadStorage(log AppLogger, pluginGroup StoragePluginGroup) (*Storage, Sessi
 	}
 
 	// Set up the data storage provider.
-	storage, err := NewStorage(log, ds, pluginGroup.Encryption)
+	storage, err := config.NewStorage(log, ds, pluginGroup.Encryption)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -150,13 +156,13 @@ func loadStorage(log AppLogger, pluginGroup StoragePluginGroup) (*Storage, Sessi
 // Handler loads the plugins and returns the handler.
 func (app *App) Handler() (http.Handler, error) {
 	// Get the session manager from the plugins.
-	if app.pluginsystem.sessionManager != nil {
-		sm, err := app.pluginsystem.sessionManager.SessionManager(app.log, app.sessionstorer)
+	if app.pluginsystem.SessionManager() != nil {
+		sm, err := app.pluginsystem.SessionManager().SessionManager(app.log, app.sessionstorer)
 		if err != nil {
 			app.log.Error(err.Error())
 		} else if sm != nil {
 			// Only set the session manager once.
-			app.log.Info("ambient: using session manager from plugin: %v", app.pluginsystem.sessionManager.PluginName())
+			app.log.Info("ambient: using session manager from plugin: %v", app.pluginsystem.SessionManager().PluginName())
 			app.sess = sm
 		}
 	}
@@ -165,16 +171,16 @@ func (app *App) Handler() (http.Handler, error) {
 	}
 
 	// Set up the template injector.
-	pi := NewPlugininjector(app.log, app.pluginsystem, app.sess, app.debugTemplates, app.escapeTemplates)
+	pi := ambient.NewPlugininjector(app.log, app.pluginsystem, app.sess, app.debugTemplates, app.escapeTemplates)
 
 	// Get the template engine.
-	if app.pluginsystem.templateEngine != nil {
-		tt, err := app.pluginsystem.templateEngine.TemplateEngine(app.log, pi)
+	if app.pluginsystem.TemplateEngine() != nil {
+		tt, err := app.pluginsystem.TemplateEngine().TemplateEngine(app.log, pi)
 		if err != nil {
 			return nil, err
 		} else if tt != nil {
 			// Only set the router once.
-			app.log.Info("ambient: using template engine from plugin: %v", app.pluginsystem.templateEngine.PluginName())
+			app.log.Info("ambient: using template engine from plugin: %v", app.pluginsystem.TemplateEngine().PluginName())
 			app.renderer = tt
 		}
 	}
@@ -183,13 +189,13 @@ func (app *App) Handler() (http.Handler, error) {
 	}
 
 	// Get the router.
-	if app.pluginsystem.router != nil {
-		rm, err := app.pluginsystem.router.Router(app.log, app.renderer)
+	if app.pluginsystem.Router() != nil {
+		rm, err := app.pluginsystem.Router().Router(app.log, app.renderer)
 		if err != nil {
 			return nil, err
 		} else if rm != nil {
 			// Only set the router once.
-			app.log.Info("ambient: using router from plugin: %v", app.pluginsystem.router.PluginName())
+			app.log.Info("ambient: using router from plugin: %v", app.pluginsystem.Router().PluginName())
 			app.mux = rm
 		}
 	}
@@ -197,11 +203,11 @@ func (app *App) Handler() (http.Handler, error) {
 		return nil, fmt.Errorf("ambient: no router found")
 	}
 
-	app.recorder = NewRouteRecorder(app.log, app.pluginsystem, app.mux)
+	app.recorder = routerecorder.NewRouteRecorder(app.log, app.pluginsystem, app.mux)
 
 	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
-	securesite := NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder)
+	securesite := secureconfig.NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder)
 
 	// Load the plugin pages.
 	err := securesite.LoadAllPluginPages()
@@ -215,7 +221,7 @@ func (app *App) Handler() (http.Handler, error) {
 	// Start Dev Console if enabled via environment variable.
 	if envdetect.DevConsoleEnabled() {
 		// TODO: Should probably store in an object that can be edited by system.
-		dc := NewDevConsole(securesite)
+		dc := devconsole.NewDevConsole(app.log, app.pluginsystem, app.pluginsystem.StorageManager(), securesite)
 		dc.EnableDevConsole()
 	}
 
@@ -224,16 +230,19 @@ func (app *App) Handler() (http.Handler, error) {
 
 // GrantAccess grants access to all trusted plugins.
 func (app *App) grantAccess() {
-	// Create secure site for the core app and use "ambient" so it gets
-	// full permissions.
-	securestorage := NewSecureSite("ambient", app.log, app.pluginsystem, nil, nil, nil, nil)
+	plugins := app.pluginsystem.Plugins()
 
 	// Enable trusted plugins.
 	for _, pluginName := range app.pluginsystem.TrustedPluginNames() {
 		// If plugin is not enabled, then enable.
-		if !securestorage.pluginsystem.Enabled(pluginName) {
+		pluginInfo, found := plugins[pluginName]
+		if !found {
+			continue
+		}
+
+		if !pluginInfo.Enabled {
 			app.log.Info("ambient: enabling trusted plugin: %v", pluginName)
-			err := securestorage.EnablePlugin(pluginName, false)
+			err := app.pluginsystem.SetEnabled(pluginName, true)
 			if err != nil {
 				app.log.Error(err.Error())
 			}
@@ -247,9 +256,9 @@ func (app *App) grantAccess() {
 
 		for _, request := range p.GrantRequests() {
 			// If plugin is not granted permission, then grant.
-			if !securestorage.pluginsystem.Granted(pluginName, request.Grant) {
+			if !app.pluginsystem.Granted(pluginName, request.Grant) {
 				app.log.Info("ambient: for plugin (%v), adding grant: %v", pluginName, request.Grant)
-				err := securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
+				err = app.pluginsystem.SetGrant(pluginName, request.Grant)
 				if err != nil {
 					app.log.Error(err.Error())
 				}
@@ -265,7 +274,7 @@ func (app *App) SetDebugTemplates(enable bool) {
 }
 
 // SetLogLevel sets the log level.
-func (app *App) SetLogLevel(level LogLevel) {
+func (app *App) SetLogLevel(level ambient.LogLevel) {
 	app.log.SetLogLevel(level)
 }
 
@@ -317,21 +326,21 @@ func (app *App) handleExit() {
 // cleanup runs the final steps to ensure the server shutdown doesn't leave
 // the app in a bad state.
 func (app *App) cleanup() {
-	var err error
+	//	var err error
 	app.log.Info("ambient: shutdown started")
 
 	// Load decrypted just in case the storage was decrypted by AMB.
-	app.log.Info("ambient: loading storage")
-	err = app.pluginsystem.storage.LoadDecrypted()
-	if err != nil {
-		app.log.Error("ambient: could not load storage: %v", err.Error())
-	}
+	// app.log.Info("ambient: loading storage")
+	// err = app.pluginsystem.storage.LoadDecrypted()
+	// if err != nil {
+	// 	app.log.Error("ambient: could not load storage: %v", err.Error())
+	// }
 
-	app.log.Info("ambient: saving storage")
-	err = app.pluginsystem.storage.Save()
-	if err != nil {
-		app.log.Error("ambient: could not save storage: %v", err.Error())
-	}
+	// app.log.Info("ambient: saving storage")
+	// err = app.pluginsystem.storage.Save()
+	// if err != nil {
+	// 	app.log.Error("ambient: could not save storage: %v", err.Error())
+	// }
 
 	app.log.Info("ambient: shutdown done")
 }
