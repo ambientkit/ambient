@@ -1,39 +1,26 @@
-package ambient
+package injector
 
 import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 	"strings"
+
+	"github.com/ambientkit/ambient"
 )
-
-// AssetInjector represents code that can inject files into a template.
-type AssetInjector interface {
-	Inject(injector LayoutInjector, t *template.Template, r *http.Request, layoutType LayoutType, vars map[string]interface{}) (*template.Template, error)
-	DebugTemplates() bool
-	EscapeTemplates() bool
-}
-
-// LayoutInjector represents an injector that the AssetInjector will call to inject assets in the correct place.
-type LayoutInjector interface {
-	Head(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
-	Header(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
-	Main(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
-	Footer(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
-	Body(t *template.Template, content string, fm template.FuncMap, data map[string]interface{}) (*template.Template, error)
-}
 
 // PluginInjector represents a plugin injector.
 type PluginInjector struct {
-	log             AppLogger
-	pluginsystem    PluginSystem
-	sess            AppSession
+	log             ambient.AppLogger
+	pluginsystem    ambient.PluginSystem
+	sess            ambient.AppSession
 	debugTemplates  bool
 	escapeTemplates bool
 }
 
 // NewPlugininjector returns a PluginInjector.
-func NewPlugininjector(logger AppLogger, plugins PluginSystem, sess AppSession, debugTemplates bool, escapeTemplates bool) *PluginInjector {
+func NewPlugininjector(logger ambient.AppLogger, plugins ambient.PluginSystem, sess ambient.AppSession, debugTemplates bool, escapeTemplates bool) *PluginInjector {
 	return &PluginInjector{
 		log:             logger,
 		pluginsystem:    plugins,
@@ -54,7 +41,8 @@ func (c *PluginInjector) EscapeTemplates() bool {
 }
 
 // Inject will return a template and an error.
-func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *http.Request, layoutType LayoutType, vars map[string]interface{}) (*template.Template, error) {
+func (c *PluginInjector) Inject(inject ambient.LayoutInjector, t *template.Template,
+	r *http.Request, layoutType ambient.LayoutType, vars map[string]interface{}) (*template.Template, error) {
 	pluginHead := ""
 	pluginHeader := ""
 	pluginMain := ""
@@ -81,7 +69,7 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 		funcMap := v.FuncMap()
 		if funcMap != nil {
 			// Ensure the plugin has access to write to FuncMap.
-			if c.pluginsystem.Authorized(name, GrantSiteFuncMapWrite) {
+			if c.pluginsystem.Authorized(name, ambient.GrantSiteFuncMapWrite) {
 				afm := funcMap(r)
 				for fName, fValue := range afm {
 					// Ensure each of the FuncMaps are namespaced.
@@ -97,12 +85,12 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 		// Ensure the plugin has access to write to assets.
 		files, assets := v.Assets()
 		if len(files) > 0 {
-			if c.pluginsystem.Authorized(name, GrantSiteAssetWrite) {
+			if c.pluginsystem.Authorized(name, ambient.GrantSiteAssetWrite) {
 				_, err := c.sess.AuthenticatedUser(r)
 
 				for _, file := range files {
 					// Handle authentication on resources without changing resources.
-					if !AuthAssetAllowed(err == nil, file) {
+					if !ambient.AuthAssetAllowed(err == nil, file) {
 						continue
 					}
 
@@ -124,7 +112,7 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 					txt := file.Element(c.log, v, assets, c.debugTemplates)
 
 					switch file.Location {
-					case LocationHead:
+					case ambient.LocationHead:
 						if strings.Contains(txt, "charset") {
 							// Move charset to the top of the location head.
 							// https://webhint.io/docs/user-guide/hints/hint-meta-charset-utf-8/?source=devtools
@@ -133,13 +121,13 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 							// The rest can go after.
 							pluginHead += txt + "\n    "
 						}
-					case LocationHeader:
+					case ambient.LocationHeader:
 						pluginHeader += txt + "\n    "
-					case LocationMain:
+					case ambient.LocationMain:
 						pluginMain += txt + "\n    "
-					case LocationFooter:
+					case ambient.LocationFooter:
 						pluginFooter += txt + "\n    "
-					case LocationBody:
+					case ambient.LocationBody:
 						pluginBody += txt + "\n    "
 					default:
 						c.log.Error("plugin injector: unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
@@ -183,4 +171,17 @@ func (c *PluginInjector) Inject(inject LayoutInjector, t *template.Template, r *
 	}
 
 	return t, nil
+}
+
+// globalFuncMap adds the URL prefix to the FuncMap.
+func globalFuncMap(fm template.FuncMap) template.FuncMap {
+	if fm == nil {
+		fm = template.FuncMap{}
+	}
+
+	fm["URLPrefix"] = func() string {
+		return os.Getenv("AMB_URL_PREFIX")
+	}
+
+	return fm
 }

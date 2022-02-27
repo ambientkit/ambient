@@ -1,19 +1,21 @@
-package ambient
+package pluginsafe
 
 import (
 	"embed"
 	"html/template"
 	"net/http"
 	"os"
+
+	"github.com/ambientkit/ambient"
 )
 
 // TemplateRenderer represents a plugin template enginer.
 type TemplateRenderer struct {
-	render Renderer
+	render ambient.Renderer
 }
 
 // NewRenderer returns a new template engine for plugins.
-func NewRenderer(render Renderer) *TemplateRenderer {
+func NewRenderer(render ambient.Renderer) *TemplateRenderer {
 	return &TemplateRenderer{
 		render: render,
 	}

@@ -27,3 +27,9 @@ type Router interface {
 	Param(r *http.Request, name string) string
 	Wrap(handler http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) (status int, err error)
 }
+
+// Route is a route for a router.
+type Route struct {
+	Method string
+	Path   string
+}

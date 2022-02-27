@@ -1,4 +1,4 @@
-package routerecorder
+package pluginsafe
 
 import (
 	"fmt"

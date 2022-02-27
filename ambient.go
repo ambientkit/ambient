@@ -8,6 +8,15 @@ import (
 	"net/http"
 )
 
+// DisallowedPluginNames is a list of disallowed plugin names.
+var DisallowedPluginNames = map[string]bool{
+	"":        false,
+	"plugin":  false,
+	"plugins": false,
+	"ambient": false,
+	"amb":     false,
+}
+
 // PluginCore represents the core of any plugin.
 type PluginCore interface {
 	// PluginName should be globally unique. Only lowercase letters, numbers,

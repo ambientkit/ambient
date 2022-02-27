@@ -15,6 +15,8 @@ var (
 	ErrAccessDenied = errors.New("access denied to the data item")
 	// ErrNotFound is when an item is not found.
 	ErrNotFound = errors.New("item was not found")
+	// ErrPluginNotFound returns a plugin that is not found.
+	ErrPluginNotFound = errors.New("plugin name not found")
 	// ErrGrantNotRequested is when a grant is attempted to be enabled on a
 	// plugin, but the plugin didn't explicitly request the grant so don't allow
 	// it.
@@ -252,7 +254,7 @@ func (p *PluginSystem) Plugins() map[string]ambient.PluginData {
 func (p *PluginSystem) Plugin(name string) (ambient.Plugin, error) {
 	plugin, ok := p.plugins[name]
 	if !ok {
-		return nil, ambient.ErrPluginNotFound
+		return nil, ErrPluginNotFound
 	}
 
 	return plugin, nil
@@ -262,7 +264,7 @@ func (p *PluginSystem) Plugin(name string) (ambient.Plugin, error) {
 func (p *PluginSystem) PluginData(name string) (ambient.PluginData, error) {
 	plugin, ok := p.storage.site.PluginStorage[name]
 	if !ok {
-		return ambient.PluginData{}, ambient.ErrPluginNotFound
+		return ambient.PluginData{}, ErrPluginNotFound
 	}
 
 	return plugin, nil

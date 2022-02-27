@@ -11,7 +11,7 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/config"
-	"github.com/ambientkit/ambient/internal/routerecorder"
+	"github.com/ambientkit/ambient/internal/pluginsafe"
 )
 
 // Plugins returns the plugin list.
@@ -108,9 +108,9 @@ func (ss *SecureSite) loadSinglePluginPages(name string) {
 
 	toolkit := &ambient.Toolkit{
 		Mux:    recorder,
-		Render: ambient.NewRenderer(ss.render),
+		Render: pluginsafe.NewRenderer(ss.render),
 		Site:   NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render, ss.recorder),
-		Log:    ambient.NewPluginLogger(ss.log),
+		Log:    pluginsafe.NewPluginLogger(ss.log),
 	}
 
 	// Enable the plugin and pass in the toolkit.
@@ -161,7 +161,7 @@ func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error 
 	return ss.pluginsystem.SetEnabled(pluginName, false)
 }
 
-func saveRoutesForPlugin(name string, recorder *routerecorder.PluginRouteRecorder, pluginsystem ambient.PluginSystem) {
+func saveRoutesForPlugin(name string, recorder *pluginsafe.PluginRouteRecorder, pluginsystem ambient.PluginSystem) {
 	// Save the routes.
 	arr := make([]ambient.Route, 0)
 	for _, route := range recorder.Routes() {

@@ -1,4 +1,4 @@
-package routerecorder_test
+package pluginsafe_test
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/mock"
-	"github.com/ambientkit/ambient/internal/routerecorder"
+	"github.com/ambientkit/ambient/internal/pluginsafe"
 	"github.com/ambientkit/ambient/pkg/ambientapp"
 	"github.com/ambientkit/away/router"
 	"github.com/stretchr/testify/assert"
@@ -49,7 +49,7 @@ func TestRouteRecorder(t *testing.T) {
 	ps := app.PluginSystem()
 
 	mux := router.New()
-	rr := routerecorder.NewRouteRecorder(logger, ps, mux)
+	rr := pluginsafe.NewRouteRecorder(logger, ps, mux)
 
 	pr1 := rr.WithPlugin("mp1")
 	called1 := false

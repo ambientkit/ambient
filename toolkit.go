@@ -26,9 +26,6 @@ func (t *Toolkit) Path(url string) string {
 	return path.Join(os.Getenv("AMB_URL_PREFIX"), url)
 }
 
-// Could also provide these responses:
-// https://echo.labstack.com/guide/response/
-
 // JSON sends a JSON response that is marshalable.
 func (t *Toolkit) JSON(w http.ResponseWriter, status int, response interface{}) (int, error) {
 	// Convert to JSON bytes.

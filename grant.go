@@ -79,3 +79,9 @@ const (
 	// GrantSiteFuncMapWrite allows write access to site FuncMap for templates.
 	GrantSiteFuncMapWrite Grant = "site.funcmap:write"
 )
+
+// GrantRequest represents a plugin grant request.
+type GrantRequest struct {
+	Grant       Grant
+	Description string
+}

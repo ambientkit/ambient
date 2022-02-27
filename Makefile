@@ -25,6 +25,7 @@ amb:
 # Run go mod tidy.
 .PHONY: tidy
 tidy:
+	go generate ./...
 	go mod tidy -compat=1.17
 
 # Update dependencies of other repos using Ambient.

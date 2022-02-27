@@ -10,7 +10,8 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/config"
 	"github.com/ambientkit/ambient/internal/devconsole"
-	"github.com/ambientkit/ambient/internal/routerecorder"
+	"github.com/ambientkit/ambient/internal/injector"
+	"github.com/ambientkit/ambient/internal/pluginsafe"
 	"github.com/ambientkit/ambient/internal/secureconfig"
 	"github.com/ambientkit/ambient/pkg/envdetect"
 )
@@ -23,7 +24,7 @@ type App struct {
 	mux           ambient.AppRouter
 	renderer      ambient.Renderer
 	sess          ambient.AppSession
-	recorder      *routerecorder.RouteRecorder
+	recorder      *pluginsafe.RouteRecorder
 
 	debugTemplates  bool
 	escapeTemplates bool
@@ -171,7 +172,7 @@ func (app *App) Handler() (http.Handler, error) {
 	}
 
 	// Set up the template injector.
-	pi := ambient.NewPlugininjector(app.log, app.pluginsystem, app.sess, app.debugTemplates, app.escapeTemplates)
+	pi := injector.NewPlugininjector(app.log, app.pluginsystem, app.sess, app.debugTemplates, app.escapeTemplates)
 
 	// Get the template engine.
 	if app.pluginsystem.TemplateEngine() != nil {
@@ -203,7 +204,7 @@ func (app *App) Handler() (http.Handler, error) {
 		return nil, fmt.Errorf("ambient: no router found")
 	}
 
-	app.recorder = routerecorder.NewRouteRecorder(app.log, app.pluginsystem, app.mux)
+	app.recorder = pluginsafe.NewRouteRecorder(app.log, app.pluginsystem, app.mux)
 
 	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
