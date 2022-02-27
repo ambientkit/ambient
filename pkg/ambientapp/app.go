@@ -327,21 +327,21 @@ func (app *App) handleExit() {
 // cleanup runs the final steps to ensure the server shutdown doesn't leave
 // the app in a bad state.
 func (app *App) cleanup() {
-	//	var err error
+	var err error
 	app.log.Info("ambient: shutdown started")
 
 	// Load decrypted just in case the storage was decrypted by AMB.
-	// app.log.Info("ambient: loading storage")
-	// err = app.pluginsystem.storage.LoadDecrypted()
-	// if err != nil {
-	// 	app.log.Error("ambient: could not load storage: %v", err.Error())
-	// }
+	app.log.Info("ambient: loading storage")
+	err = app.pluginsystem.StorageManager().LoadDecrypted()
+	if err != nil {
+		app.log.Error("ambient: could not load storage: %v", err.Error())
+	}
 
-	// app.log.Info("ambient: saving storage")
-	// err = app.pluginsystem.storage.Save()
-	// if err != nil {
-	// 	app.log.Error("ambient: could not save storage: %v", err.Error())
-	// }
+	app.log.Info("ambient: saving storage")
+	err = app.pluginsystem.StorageManager().Save()
+	if err != nil {
+		app.log.Error("ambient: could not save storage: %v", err.Error())
+	}
 
 	app.log.Info("ambient: shutdown done")
 }
