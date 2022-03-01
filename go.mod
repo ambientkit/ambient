@@ -13,6 +13,7 @@ require (
 	github.com/jessevdk/go-flags v1.4.1-0.20181029123624-5de817a9aa20 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/tools v0.0.0-20181201035826-d0ca3933b724 // indirect
+	golang.org/x/mod v0.5.1 // indirect
+	golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

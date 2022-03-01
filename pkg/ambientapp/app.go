@@ -52,9 +52,10 @@ func NewAppLogger(appName string, appVersion string, logPlugin ambient.LoggingPl
 
 // LoadLogger returns the logger.
 func loadLogger(appName string, appVersion string, plugin ambient.LoggingPlugin) (ambient.AppLogger, error) {
-	// Don't allow certain plugin names.
-	if allowed, ok := ambient.DisallowedPluginNames[plugin.PluginName()]; ok && !allowed {
-		return nil, fmt.Errorf("ambient: plugin name not allowed: %v", plugin.PluginName())
+	// Validate plugin name and version.
+	err := ambient.Validate(plugin)
+	if err != nil {
+		return nil, err
 	}
 
 	// Get the logger from the plugins.
@@ -123,9 +124,10 @@ func loadStorage(log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) 
 
 	plugin := pluginGroup.Storage
 
-	// Don't allow certain plugin names.
-	if allowed, ok := ambient.DisallowedPluginNames[plugin.PluginName()]; ok && !allowed {
-		return nil, nil, fmt.Errorf("ambient: plugin name not allowed: %v", plugin.PluginName())
+	// Validate plugin name and version.
+	err := ambient.Validate(plugin)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	// Define the storage managers.

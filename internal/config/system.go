@@ -52,11 +52,6 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 
 	// Load the middleware.
 	for _, p := range arr.Middleware {
-		// Don't allow certain plugin names.
-		if allowed, ok := ambient.DisallowedPluginNames[p.PluginName()]; ok && !allowed {
-			return nil, fmt.Errorf("ambient: plugin name not allowed: %v", p.PluginName())
-		}
-
 		save, err := loadPlugin(log, p, plugins, storage)
 		if err != nil {
 			return nil, err
@@ -70,11 +65,6 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 
 	// Load the plugins.
 	for _, p := range arr.Plugins {
-		// Don't allow certain plugin names.
-		if allowed, ok := ambient.DisallowedPluginNames[p.PluginName()]; ok && !allowed {
-			return nil, fmt.Errorf("ambient: plugin name not allowed: %v", p.PluginName())
-		}
-
 		save, err := loadPlugin(log, p, plugins, storage)
 		if err != nil {
 			return nil, err
@@ -129,7 +119,11 @@ func (p *PluginSystem) StorageManager() ambient.Storage {
 }
 
 func loadPlugin(log ambient.AppLogger, p ambient.Plugin, plugins map[string]ambient.Plugin, storage *Storage) (shouldSave bool, err error) {
-	// TODO: Need to make sure the name matches a certain format. All lowercase. No symbols.
+	// Validate plugin name and version.
+	err = ambient.Validate(p)
+	if err != nil {
+		return false, err
+	}
 
 	// Ensure a plugin can't be loaded twice or two plugins with the same
 	// names can't both be loaded.
