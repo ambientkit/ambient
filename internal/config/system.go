@@ -197,12 +197,18 @@ func (p *PluginSystem) RemovePlugin(pluginName string) error {
 
 // Names returns a list of plugin names.
 func (p *PluginSystem) Names() []string {
-	return p.names
+	// Make a copy to prevent order changing via sorting.
+	out := make([]string, len(p.names))
+	copy(out, p.names)
+	return out
 }
 
 // MiddlewareNames returns a list of middleware plugin names.
 func (p *PluginSystem) MiddlewareNames() []string {
-	return p.middlewareNames
+	// Make a copy to prevent order changing via sorting.
+	out := make([]string, len(p.middlewareNames))
+	copy(out, p.middlewareNames)
+	return out
 }
 
 // TrustedPluginNames returns a list of sorted trusted names.
