@@ -33,3 +33,32 @@ type Route struct {
 	Method string
 	Path   string
 }
+
+// CustomServeHTTP allows customization of error handling by the router.
+type CustomServeHTTP func(log Logger, renderer Renderer,
+	w http.ResponseWriter, r *http.Request, status int, err error)
+
+// SetupRouter sets the router with the NotFound handler and the default handler.
+func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP CustomServeHTTP) {
+	// Set the default handler.
+	defaultServeHTTP := func(w http.ResponseWriter, r *http.Request, status int, err error) {
+		w.WriteHeader(status)
+	}
+
+	// Use the custom handler if it's set.
+	serveHTTP := defaultServeHTTP
+	if customServeHTTP != nil {
+		serveHTTP = func(w http.ResponseWriter, r *http.Request, status int, err error) {
+			customServeHTTP(logger, te, w, r, status, err)
+		}
+	}
+
+	// Send all 404 to the handler.
+	notFound := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mux.Error(http.StatusNotFound, w, r)
+	})
+
+	// Set up the router.
+	mux.SetServeHTTP(serveHTTP)
+	mux.SetNotFound(notFound)
+}
