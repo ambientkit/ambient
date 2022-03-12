@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+option go_package = "./;protodef";
+
+package protodef;
+
+import "google/protobuf/struct.proto";
+
+service GenericPlugin {
+    rpc PluginName(Empty) returns (PluginNameResponse) {}
+    rpc PluginVersion(Empty) returns (PluginVersionResponse) {}
+    // rpc GrantRequests(Empty) returns (GrantRequestsResponse) {}
+    rpc Enable(Toolkit) returns (EnableResponse) {}
+    rpc Disable(Empty) returns (Empty) {}
+    rpc Routes(Empty) returns (Empty) {}
+}
+
+message Empty {}
+
+message PluginNameResponse {
+    string name = 1;
+}
+
+message PluginVersionResponse {
+    string version = 1;
+}
+
+message GrantRequestsResponse {
+    repeated GrantRequest GrantRequest = 1;
+}
+
+message GrantRequest {
+    string grant = 1;
+    string description = 2;
+}
+
+message Toolkit {
+    uint32 uid = 1;
+}
+
+message EnableResponse {
+    uint32 uid = 1;
+}
+
+service Logger {
+    rpc Debug(LogFormat) returns (Empty) {}
+    rpc Info(LogFormat) returns (Empty) {}
+    rpc Warn(LogFormat) returns (Empty) {}
+    rpc Error(LogFormat) returns (Empty) {}
+}
+
+message LogFormat {
+    string format = 1;
+}
+
+service Router {
+    rpc Handle(RouterRequest) returns (Empty) {}
+    rpc Get(RouterRequest) returns (Empty) {}
+    rpc Post(RouterRequest) returns (Empty) {}
+    rpc Patch(RouterRequest) returns (Empty) {}
+    rpc Put(RouterRequest) returns (Empty) {}
+    rpc Delete(RouterRequest) returns (Empty) {}
+    rpc Head(RouterRequest) returns (Empty) {}
+    rpc Options(RouterRequest) returns (Empty) {}
+    //rpc StatusError(RouterStatusErrorRequest) returns (Empty) {}
+    rpc Error(RouterErrorRequest) returns (Empty) {}
+    rpc Param(RouterParamRequest) returns (RouterParamResponse) {}
+    // rpc Wrap(RouterRequest) returns (Empty) {}
+
+	// Handle(method string, path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Patch(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Put(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Delete(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Head(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Options(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Error(status int, w http.ResponseWriter, r *http.Request)
+	// Param(r *http.Request, name string) string
+	// Wrap(handler http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) (err error)
+
+}
+
+message RouterRequest {
+    uint32 uid = 1;
+    string method = 2;
+    string path = 3;
+}
+
+message RouterParamRequest {
+    string name = 1;
+    string requestid = 2;
+}
+
+message RouterParamResponse {
+    string value = 1;
+}
+
+message RouterErrorRequest {
+    uint32 status = 1;
+    string requestid = 2;
+}
+
+service Site {
+    rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
+    rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
+}
+
+message SiteUserLoginRequest {
+    string requestid = 1;
+    string username = 2;
+}
+
+message SiteAuthenticatedUserRequest {
+    string requestid = 1;
+}
+
+message SiteAuthenticatedUserResponse {
+    string username = 1;
+}
+
+// Handler sends the request information from the server to the plugin.
+service Handler {
+    rpc Handle(HandleRequest) returns (HandleResponse) {}
+}
+
+message HandleRequest {
+    string requestid = 1;
+    string method = 2;
+    string path = 3;
+    google.protobuf.Struct headers = 4;
+    bytes body = 5;
+}
+
+message HandleResponse {
+    uint32 status = 1;
+    string error = 2;
+    string response = 3;
+}

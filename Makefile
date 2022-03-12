@@ -8,15 +8,7 @@
 include .env
 
 .PHONY: default
-default: amb
-
-################################################################################
-# Setup app
-################################################################################
-
-.PHONY: amb
-amb:
-	go run cmd/amb/main.go
+default: start
 
 ################################################################################
 # Update dependencies
@@ -39,3 +31,27 @@ update-children:
 .PHONY: update-all
 update-all:
 	 ./bash/update-dependencies.sh
+
+
+################################################################################
+# gRPC
+################################################################################
+
+# Install protoc to project bin folder to allow generating a Go file from proto file.
+.PHONY: protoc-install
+protoc-install:
+	mkdir ./bin
+	curl -s -o protoc.zip -L https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protoc-3.19.4-osx-x86_64.zip
+	unzip -q protoc.zip -d tempdir
+	rm protoc.zip
+	cp tempdir/bin/protoc ./bin/
+	cp -r tempdir/include ./bin/
+	rm -r tempdir
+	GOBIN=$(shell pwd)/bin go install github.com/golang/protobuf/protoc-gen-go@latest
+
+# Start the build and run process.
+.PHONY: start
+start:
+	@PATH="${PATH}:$(shell pwd)/bin" && protoc -I pkg/grpcp/protodef/ pkg/grpcp/protodef/plugin.proto --go_out=plugins=grpc:pkg/grpcp/protodef/
+	@cd cmd/plugin/hello/cmd/plugin && go build -o hello
+	go run cmd/server/main.go
