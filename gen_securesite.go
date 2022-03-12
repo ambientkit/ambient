@@ -10,7 +10,7 @@ import (
 // SecureSite provides plugin functions.
 type SecureSite interface {
 	// Error handles returning the proper error.
-	Error(siteError error) (status int, err error)
+	Error(siteError error) (err error)
 	// Load forces a reload of the data.
 	Load() error
 	// Authorized determines if the current context has access.

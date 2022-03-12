@@ -39,14 +39,14 @@ func NewSecureSite(pluginName string, log ambient.AppLogger, ps ambient.PluginSy
 }
 
 // Error handles returning the proper error.
-func (ss *SecureSite) Error(siteError error) (status int, err error) {
+func (ss *SecureSite) Error(siteError error) (err error) {
 	switch siteError {
 	case config.ErrAccessDenied, config.ErrGrantNotRequested, config.ErrSettingNotSpecified:
-		return http.StatusForbidden, siteError
+		return ambient.StatusError{Code: http.StatusForbidden, Err: siteError}
 	case config.ErrNotFound:
-		return http.StatusNotFound, siteError
+		return ambient.StatusError{Code: http.StatusNotFound, Err: siteError}
 	default:
-		return http.StatusInternalServerError, siteError
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: siteError}
 	}
 }
 

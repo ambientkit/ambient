@@ -53,14 +53,14 @@ func TestRouteRecorder(t *testing.T) {
 
 	pr1 := rr.WithPlugin("mp1")
 	called1 := false
-	pr1.Get("/", func(http.ResponseWriter, *http.Request) (status int, err error) {
+	pr1.Get("/", func(http.ResponseWriter, *http.Request) (err error) {
 		called1 = true
 		return
 	})
 
 	pr2 := rr.WithPlugin("mp2")
 	called2 := false
-	pr2.Get("/", func(http.ResponseWriter, *http.Request) (status int, err error) {
+	pr2.Get("/", func(http.ResponseWriter, *http.Request) (err error) {
 		called2 = true
 		return
 	})

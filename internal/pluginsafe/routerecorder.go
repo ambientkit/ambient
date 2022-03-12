@@ -22,7 +22,7 @@ type RouteRecorder struct {
 // PluginFn maps a plugin to a function.
 type PluginFn struct {
 	PluginName string
-	Fn         func(http.ResponseWriter, *http.Request) (int, error)
+	Fn         func(http.ResponseWriter, *http.Request) error
 }
 
 // NewRouteRecorder returns a route recorder for use in plugins.
@@ -64,7 +64,7 @@ func prefixedRoute(urlpath string) string {
 	return path.Join(os.Getenv("AMB_URL_PREFIX"), urlpath)
 }
 
-func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	if rec.rr.mux == nil {
 		return
 	}
@@ -91,7 +91,7 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 		})
 		rec.rr.routeMapMutex.Unlock()
 
-		rec.rr.mux.Handle(method, path, func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+		rec.rr.mux.Handle(method, path, func(w http.ResponseWriter, r *http.Request) (err error) {
 			pathKey := pathKey(method, path)
 
 			// Determine if there are any plugins with routes.
@@ -100,7 +100,7 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 			routes, ok := rec.rr.routeMap[pathKey]
 			rec.rr.routeMapMutex.RUnlock()
 			if !ok {
-				return http.StatusNotFound, nil
+				return rec.StatusError(http.StatusNotFound, nil)
 			}
 
 			for _, plugin := range routes {
@@ -113,7 +113,7 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 				return plugin.Fn(w, r)
 			}
 
-			return http.StatusNotFound, nil
+			return rec.StatusError(http.StatusNotFound, nil)
 		})
 		return
 	}
@@ -137,11 +137,11 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 	rec.rr.routeMapMutex.Unlock()
 }
 
-func (rec *PluginRouteRecorder) protect(h func(http.ResponseWriter, *http.Request) (status int, err error)) func(
-	http.ResponseWriter, *http.Request) (status int, err error) {
-	return func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+func (rec *PluginRouteRecorder) protect(h func(http.ResponseWriter, *http.Request) (err error)) func(
+	http.ResponseWriter, *http.Request) (err error) {
+	return func(w http.ResponseWriter, r *http.Request) (err error) {
 		if !rec.rr.pluginsystem.Authorized(rec.pluginName, ambient.GrantRouterRouteWrite) {
-			return http.StatusForbidden, nil
+			return rec.StatusError(http.StatusForbidden, nil)
 		}
 
 		return h(w, r)
@@ -149,42 +149,42 @@ func (rec *PluginRouteRecorder) protect(h func(http.ResponseWriter, *http.Reques
 }
 
 // Get request handler.
-func (rec *PluginRouteRecorder) Get(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+func (rec *PluginRouteRecorder) Get(path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	rec.handleRoute(http.MethodGet, path, fn)
 }
 
 // Post request handler.
-func (rec *PluginRouteRecorder) Post(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+func (rec *PluginRouteRecorder) Post(path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	rec.handleRoute(http.MethodPost, path, fn)
 }
 
 // Patch request handler.
-func (rec *PluginRouteRecorder) Patch(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+func (rec *PluginRouteRecorder) Patch(path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	rec.handleRoute(http.MethodPatch, path, fn)
 }
 
 // Put request handler.
-func (rec *PluginRouteRecorder) Put(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+func (rec *PluginRouteRecorder) Put(path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	rec.handleRoute(http.MethodPut, path, fn)
 }
 
 // Handle request handler.
-func (rec *PluginRouteRecorder) Handle(method string, path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+func (rec *PluginRouteRecorder) Handle(method string, path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	rec.handleRoute(method, path, fn)
 }
 
 // Head request handler.
-func (rec *PluginRouteRecorder) Head(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+func (rec *PluginRouteRecorder) Head(path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	rec.handleRoute(http.MethodHead, path, fn)
 }
 
 // Options request handler.
-func (rec *PluginRouteRecorder) Options(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+func (rec *PluginRouteRecorder) Options(path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	rec.handleRoute(http.MethodOptions, path, fn)
 }
 
 // Delete request handler.
-func (rec *PluginRouteRecorder) Delete(path string, fn func(http.ResponseWriter, *http.Request) (status int, err error)) {
+func (rec *PluginRouteRecorder) Delete(path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	rec.handleRoute(http.MethodDelete, path, fn)
 }
 
@@ -197,12 +197,17 @@ func (rec *PluginRouteRecorder) Param(r *http.Request, name string) string {
 	return rec.rr.mux.Param(r, name)
 }
 
+// StatusError handler.
+func (rec *PluginRouteRecorder) StatusError(status int, err error) error {
+	return rec.rr.mux.StatusError(status, err)
+}
+
 // Error handler.
 func (rec *PluginRouteRecorder) Error(status int, w http.ResponseWriter, r *http.Request) {
 	rec.rr.mux.Error(status, w, r)
 }
 
 // Wrap for http.HandlerFunc.
-func (rec *PluginRouteRecorder) Wrap(handler http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) (status int, err error) {
+func (rec *PluginRouteRecorder) Wrap(handler http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) (err error) {
 	return rec.rr.mux.Wrap(handler)
 }

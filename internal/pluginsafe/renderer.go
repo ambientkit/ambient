@@ -48,34 +48,34 @@ func globalFuncMapCallable(r *http.Request, fm func(r *http.Request) template.Fu
 // Page renders a page.
 func (rr *TemplateRenderer) Page(w http.ResponseWriter, r *http.Request,
 	assets embed.FS, templateName string, fm func(r *http.Request) template.FuncMap,
-	vars map[string]interface{}) (status int, err error) {
+	vars map[string]interface{}) (err error) {
 	return rr.render.Page(w, r, assets, templateName, globalFuncMapCallable(r, fm), vars)
 }
 
 // PageContent renders page content.
 func (rr *TemplateRenderer) PageContent(w http.ResponseWriter, r *http.Request,
 	content string, fm func(r *http.Request) template.FuncMap,
-	vars map[string]interface{}) (status int, err error) {
+	vars map[string]interface{}) (err error) {
 	return rr.render.PageContent(w, r, content, globalFuncMapCallable(r, fm), vars)
 }
 
 // Post renders a post.
 func (rr *TemplateRenderer) Post(w http.ResponseWriter, r *http.Request,
 	assets embed.FS, templateName string, fm func(r *http.Request) template.FuncMap,
-	vars map[string]interface{}) (status int, err error) {
+	vars map[string]interface{}) (err error) {
 	return rr.render.Post(w, r, assets, templateName, globalFuncMapCallable(r, fm), vars)
 }
 
 // PostContent renders post content.
 func (rr *TemplateRenderer) PostContent(w http.ResponseWriter, r *http.Request,
 	content string, fm func(r *http.Request) template.FuncMap,
-	vars map[string]interface{}) (status int, err error) {
+	vars map[string]interface{}) (err error) {
 	return rr.render.PostContent(w, r, content, globalFuncMapCallable(r, fm), vars)
 }
 
 // Error renders an error.
 func (rr *TemplateRenderer) Error(w http.ResponseWriter, r *http.Request,
 	content string, statusCode int, fm func(r *http.Request) template.FuncMap,
-	vars map[string]interface{}) (status int, err error) {
+	vars map[string]interface{}) (err error) {
 	return rr.render.Error(w, r, content, statusCode, globalFuncMapCallable(r, fm), vars)
 }

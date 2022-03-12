@@ -195,16 +195,16 @@ func embeddedAssets(mux ambient.Router, sess ambient.AppSession, pluginName stri
 			}
 		}
 
-		mux.Get(fileurl, func(w http.ResponseWriter, r *http.Request) (statusCode int, err error) {
+		mux.Get(fileurl, func(w http.ResponseWriter, r *http.Request) (err error) {
 			// Don't allow folder browsing.
 			if strings.HasSuffix(r.URL.Path, "/") {
-				return http.StatusNotFound, nil
+				return mux.StatusError(http.StatusNotFound, nil)
 			}
 
 			// Handle authentication on resources without changing resources.
 			_, err = sess.AuthenticatedUser(r)
 			if !ambient.AuthAssetAllowed(err == nil, file) {
-				return http.StatusNotFound, nil
+				return mux.StatusError(http.StatusNotFound, nil)
 			}
 
 			// Get the requested file name.
@@ -213,7 +213,7 @@ func embeddedAssets(mux ambient.Router, sess ambient.AppSession, pluginName stri
 			// Get the file contents.
 			ff, status, err := file.Contents(assets)
 			if status != http.StatusOK {
-				return status, err
+				return mux.StatusError(status, err)
 			}
 
 			// Assets all have the same time so it's pointless to use the FS
