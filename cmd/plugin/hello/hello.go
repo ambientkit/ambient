@@ -23,13 +23,13 @@ func New() *Plugin {
 }
 
 // PluginName returns the plugin name.
-func (p *Plugin) PluginName() string {
-	return "hello"
+func (p *Plugin) PluginName() (string, error) {
+	return "hello", nil
 }
 
 // PluginVersion returns the plugin version.
-func (p *Plugin) PluginVersion() string {
-	return "1.0.0"
+func (p *Plugin) PluginVersion() (string, error) {
+	return "1.0.0", nil
 }
 
 // Enable accepts the toolkit.
@@ -45,7 +45,7 @@ func (p *Plugin) Enable(toolkit *grpcp.Toolkit) error {
 }
 
 // Routes sets routes for the plugin.
-func (p *Plugin) Routes() {
+func (p *Plugin) Routes() error {
 	p.Log.Error("plugin: routes called")
 	p.Mux.Get("/", p.index)
 	p.Mux.Get("/another", p.another)
@@ -56,4 +56,5 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/headers", p.headers)
 	p.Mux.Post("/headers", p.headersPOST)
 	p.Mux.Get("/login", p.login)
+	return nil
 }

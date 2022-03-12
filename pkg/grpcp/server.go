@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-// GRPCServer is the server side implementation that interacts with a plugin.
+// GRPCServer is the server side implementation.
 type GRPCServer struct {
 	broker  *plugin.GRPCBroker
 	client  protodef.GenericPluginClient

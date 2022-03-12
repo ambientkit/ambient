@@ -10,20 +10,6 @@ import (
 type PluginCore interface {
 	// PluginName should be globally unique. It must start with a lowercase
 	// letter and then contain only lowercase letters and numbers.
-	PluginName() string
-	// PluginVersion must follow https://semver.org/.
-	PluginVersion() string
-	//	GrantRequests() []GrantRequest
-	Enable(*Toolkit) error
-	Disable() error
-	Routes()
-}
-
-// PluginGRPCCore represents the core of a GRPC plugin where errors are required
-// on every function.
-type PluginGRPCCore interface {
-	// PluginName should be globally unique. It must start with a lowercase
-	// letter and then contain only lowercase letters and numbers.
 	PluginName() (string, error)
 	// PluginVersion must follow https://semver.org/.
 	PluginVersion() (string, error)

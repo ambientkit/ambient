@@ -100,7 +100,7 @@ func connectPlugin(logger ambient.AppLogger, router ambient.AppRouter, site grpc
 		return fmt.Errorf("server: could not get connect to plugin (%v): %v", pluginName, err.Error())
 	}
 
-	p := raw.(grpcp.PluginGRPCCore)
+	p := raw.(grpcp.PluginCore)
 	// if !ok {
 	// 	fmt.Println("The plugin is not the right format.")
 	// 	return

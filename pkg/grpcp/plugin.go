@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-// GRPCPlugin is the gRPC server that GRPCClient talks to.
+// GRPCPlugin is the plugin side implementation.
 type GRPCPlugin struct {
 	Impl    PluginCore
 	broker  *plugin.GRPCBroker
@@ -18,14 +18,16 @@ type GRPCPlugin struct {
 	server  *grpc.Server
 }
 
-// PluginName .
+// PluginName returns the plugin name.
 func (m *GRPCPlugin) PluginName(ctx context.Context, req *protodef.Empty) (*protodef.PluginNameResponse, error) {
-	return &protodef.PluginNameResponse{Name: m.Impl.PluginName()}, nil
+	name, err := m.Impl.PluginName()
+	return &protodef.PluginNameResponse{Name: name}, err
 }
 
-// PluginVersion .
+// PluginVersion returns the plugin version.
 func (m *GRPCPlugin) PluginVersion(ctx context.Context, req *protodef.Empty) (*protodef.PluginVersionResponse, error) {
-	return &protodef.PluginVersionResponse{Version: m.Impl.PluginVersion()}, nil
+	version, err := m.Impl.PluginVersion()
+	return &protodef.PluginVersionResponse{Version: version}, err
 }
 
 // GrantRequests .
@@ -70,6 +72,8 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		},
 	}
 
+	m.toolkit.Log.Debug("grpc-plugin: Enabled() called")
+
 	err = m.Impl.Enable(m.toolkit)
 
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
@@ -93,16 +97,15 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 	}, err
 }
 
-// Disable .
+// Disable will disable the plugin and close connections.
 func (m *GRPCPlugin) Disable(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
+	m.toolkit.Log.Debug("grpc-plugin: Disable() called")
 	defer m.conn.Close()
-	err := m.Impl.Disable()
-	return &protodef.Empty{}, err
+	return &protodef.Empty{}, m.Impl.Disable()
 }
 
 // Routes .
 func (m *GRPCPlugin) Routes(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
-	m.toolkit.Log.Warn("grpc-plugin: routes called")
-	m.Impl.Routes()
-	return &protodef.Empty{}, nil
+	m.toolkit.Log.Debug("grpc-plugin: Routes() called")
+	return &protodef.Empty{}, m.Impl.Routes()
 }
