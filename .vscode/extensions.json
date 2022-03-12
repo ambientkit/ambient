@@ -4,6 +4,7 @@
         "casualjim.gotemplate",
         "aeschli.vscode-css-formatter",
         "be5invis.toml",
-        "irongeek.vscode-env"
+        "irongeek.vscode-env",
+        "zxh404.vscode-proto3"
     ],
 }
