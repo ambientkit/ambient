@@ -136,31 +136,3 @@ type SecureSite interface {
 	// // Content returns the site home page content.
 	// Content() (string, error)
 }
-
-// TestSecureSite is a secure site implementation.
-type TestSecureSite struct {
-	sess ambient.AppSession
-}
-
-// NewTestSecureSite returns a secure site.
-func NewTestSecureSite(sess ambient.AppSession) *TestSecureSite {
-	return &TestSecureSite{
-		sess: sess,
-	}
-}
-
-// UserLogin sets the current user as authenticated.
-func (ss *TestSecureSite) UserLogin(r *http.Request, username string) error {
-	// if !ss.Authorized(ambient.GrantUserAuthenticatedWrite) {
-	// 	return config.ErrAccessDenied
-	// }
-
-	ss.sess.Login(r, username)
-
-	return nil
-}
-
-// AuthenticatedUser .
-func (ss *TestSecureSite) AuthenticatedUser(r *http.Request) (string, error) {
-	return ss.sess.AuthenticatedUser(r)
-}

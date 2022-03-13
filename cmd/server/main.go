@@ -8,11 +8,16 @@ import (
 	"os/exec"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/internal/config"
+	"github.com/ambientkit/ambient/internal/injector"
+	"github.com/ambientkit/ambient/internal/pluginsafe"
+	"github.com/ambientkit/ambient/internal/secureconfig"
 	"github.com/ambientkit/ambient/pkg/grpcp"
 	"github.com/ambientkit/plugin/logger/zaplogger"
 	"github.com/ambientkit/plugin/router/awayrouter"
 	"github.com/ambientkit/plugin/sessionmanager/scssession"
 	"github.com/ambientkit/plugin/storage/memorystorage"
+	"github.com/ambientkit/plugin/templateengine/htmlengine"
 	hclog "github.com/hashicorp/go-hclog"
 	plugin "github.com/hashicorp/go-plugin"
 )
@@ -47,7 +52,7 @@ func main() {
 	}
 
 	ms := memorystorage.New()
-	_, ss, err := ms.Storage(logger)
+	ds, ss, err := ms.Storage(logger)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
@@ -59,11 +64,48 @@ func main() {
 	}
 
 	// FIXME: Need to add in real secure site.
-	site := grpcp.NewTestSecureSite(sess)
+	// site := grpcp.NewTestSecureSite(sess)
+
+	tePlugin := htmlengine.New()
+
+	pl := &ambient.PluginLoader{
+		Router:         r,
+		TemplateEngine: tePlugin,
+		SessionManager: sessPlugin,
+		Plugins:        []ambient.Plugin{},
+		Middleware: []ambient.MiddlewarePlugin{
+			sessPlugin,
+		},
+	}
+
+	storage, err := config.NewStorage(logger, ds, nil)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	// Initialize the plugin system.
+	pluginsystem, err := config.NewPluginSystem(logger, storage, pl)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	// Set up the template injector.
+	pi := injector.NewPlugininjector(logger, pluginsystem, sess, false, true)
+
+	te, err := tePlugin.TemplateEngine(logger, pi)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	recorder := pluginsafe.NewRouteRecorder(logger, pluginsystem, router)
+
+	// Create secure site for the core app and use "ambient" so it gets
+	// full permissions.
+	securesite := secureconfig.NewSecureSite("ambient", logger, pluginsystem, sess, router, te, recorder)
 
 	mw := sessPlugin.Middleware()[0]
 
-	err = connectPlugin(logger, router, site, mw, "hello", "./cmd/plugin/hello/cmd/plugin/hello")
+	err = connectPlugin(logger, router, securesite, mw, "hello", "./cmd/plugin/hello/cmd/plugin/hello")
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
