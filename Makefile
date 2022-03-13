@@ -49,9 +49,13 @@ protoc-install:
 	rm -r tempdir
 	GOBIN=$(shell pwd)/bin go install github.com/golang/protobuf/protoc-gen-go@latest
 
+# Generate the grpc code.
+.PHONY: protoc
+protoc:
+	@PATH="${PATH}:$(shell pwd)/bin" && protoc -I pkg/grpcp/protobuf/ pkg/grpcp/protobuf/*.proto --go_out=plugins=grpc:pkg/grpcp/protodef/
+
 # Start the build and run process.
 .PHONY: start
-start:
-	@PATH="${PATH}:$(shell pwd)/bin" && protoc -I pkg/grpcp/protodef/ pkg/grpcp/protodef/plugin.proto --go_out=plugins=grpc:pkg/grpcp/protodef/
+start: protoc
 	@cd cmd/plugin/hello/cmd/plugin && go build -o hello
 	go run cmd/server/main.go

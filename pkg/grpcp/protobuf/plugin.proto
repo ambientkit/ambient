@@ -1,0 +1,39 @@
+syntax = "proto3";
+option go_package = "./;protodef";
+package ambient.protodef;
+
+import "empty.proto";
+
+service GenericPlugin {
+    rpc PluginName(Empty) returns (PluginNameResponse) {}
+    rpc PluginVersion(Empty) returns (PluginVersionResponse) {}
+    // rpc GrantRequests(Empty) returns (GrantRequestsResponse) {}
+    rpc Enable(Toolkit) returns (EnableResponse) {}
+    rpc Disable(Empty) returns (Empty) {}
+    rpc Routes(Empty) returns (Empty) {}
+}
+
+message PluginNameResponse {
+    string name = 1;
+}
+
+message PluginVersionResponse {
+    string version = 1;
+}
+
+message GrantRequestsResponse {
+    repeated GrantRequest GrantRequest = 1;
+}
+
+message GrantRequest {
+    string grant = 1;
+    string description = 2;
+}
+
+message Toolkit {
+    uint32 uid = 1;
+}
+
+message EnableResponse {
+    uint32 uid = 1;
+}

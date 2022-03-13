@@ -1,0 +1,23 @@
+syntax = "proto3";
+option go_package = "./;protodef";
+package ambient.protodef;
+
+import "empty.proto";
+
+service Site {
+    rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
+    rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
+}
+
+message SiteUserLoginRequest {
+    string requestid = 1;
+    string username = 2;
+}
+
+message SiteAuthenticatedUserRequest {
+    string requestid = 1;
+}
+
+message SiteAuthenticatedUserResponse {
+    string username = 1;
+}
