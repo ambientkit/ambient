@@ -23,6 +23,20 @@ import (
 )
 
 func main() {
+	_, pluginClient, h, err := setup()
+	if pluginClient != nil {
+		defer pluginClient.Kill()
+	}
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	go http.ListenAndServe(":8080", h)
+
+	select {}
+}
+
+func setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 	z := zaplogger.New()
 	logger, err := z.Logger("grpcplugin", "1.0.0", nil)
 	if err != nil {
@@ -102,14 +116,56 @@ func main() {
 
 	mw := sessPlugin.Middleware()[0]
 
-	err = connectPlugin(logger, router, securesite, mw, "hello", "./cmd/plugin/hello/cmd/plugin/hello")
+	toolkit := &grpcp.Toolkit{
+		Log:  logger,
+		Mux:  router,
+		Site: securesite,
+	}
+
+	p, pluginClient, err := connectPlugin("hello", "./cmd/plugin/hello/cmd/plugin/hello")
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
+
+	name, err := p.PluginName()
+	if err != nil {
+		return nil, pluginClient, nil, fmt.Errorf("server: could not get plugin name: %v", err.Error())
+	}
+	logger.Info("Plugin name: %v", name)
+
+	version, err := p.PluginVersion()
+	if err != nil {
+		return nil, pluginClient, nil, fmt.Errorf("server: could not get plugin version: %v", err.Error())
+	}
+	logger.Info("Plugin version: %v", version)
+
+	err = p.Enable(toolkit)
+	if err != nil {
+		return nil, pluginClient, nil, fmt.Errorf("server: could not enable: %v", err.Error())
+	}
+
+	err = p.Routes()
+	if err != nil {
+		return nil, pluginClient, nil, fmt.Errorf("server: could not get routes: %v", err.Error())
+	}
+
+	// for {
+	// 	<-time.After(5 * time.Second)
+	// 	err = p.Routes()
+	// 	if err != nil {
+	// 		return fmt.Errorf("server: could not get routes: %v", err.Error())
+	// 	}
+
+	// 	err = p.Disable()
+	// 	if err != nil {
+	// 		return fmt.Errorf("server: could not disable plugin: %v", err.Error())
+	// 	}
+	// }
+
+	return p, pluginClient, mw(router), err
 }
 
-func connectPlugin(logger ambient.AppLogger, router ambient.AppRouter, site grpcp.SecureSite, mw func(next http.Handler) http.Handler,
-	pluginName string, pluginPath string) error {
+func connectPlugin(pluginName string, pluginPath string) (grpcp.PluginCore, *plugin.Client, error) {
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig: grpcp.Handshake,
 		Plugins: map[string]plugin.Plugin{
@@ -125,18 +181,17 @@ func connectPlugin(logger ambient.AppLogger, router ambient.AppRouter, site grpc
 			plugin.ProtocolNetRPC, plugin.ProtocolGRPC,
 		},
 	})
-	defer client.Kill()
 
 	// Connect via RPC.
 	rpcClient, err := client.Client()
 	if err != nil {
-		return fmt.Errorf("server: could not get gRPC client: %v", err.Error())
+		return nil, client, fmt.Errorf("server: could not get gRPC client: %v", err.Error())
 	}
 
 	// Request the plugin.
 	raw, err := rpcClient.Dispense(pluginName)
 	if err != nil {
-		return fmt.Errorf("server: could not get connect to plugin (%v): %v", pluginName, err.Error())
+		return nil, client, fmt.Errorf("server: could not get connect to plugin (%v): %v", pluginName, err.Error())
 	}
 
 	p := raw.(grpcp.PluginCore)
@@ -145,46 +200,5 @@ func connectPlugin(logger ambient.AppLogger, router ambient.AppRouter, site grpc
 	// 	return
 	// }
 
-	toolkit := &grpcp.Toolkit{
-		Log:  logger,
-		Mux:  router,
-		Site: site,
-	}
-
-	name, err := p.PluginName()
-	if err != nil {
-		return fmt.Errorf("server: could not get plugin name: %v", err.Error())
-	}
-	logger.Info("Plugin name: %v", name)
-
-	version, err := p.PluginVersion()
-	if err != nil {
-		return fmt.Errorf("server: could not get plugin version: %v", err.Error())
-	}
-	logger.Info("Plugin version: %v", version)
-
-	err = p.Enable(toolkit)
-	if err != nil {
-		return fmt.Errorf("server: could not enable: %v", err.Error())
-	}
-
-	err = p.Routes()
-	if err != nil {
-		return fmt.Errorf("server: could not get routes: %v", err.Error())
-	}
-
-	return http.ListenAndServe(":8080", mw(router))
-
-	// for {
-	// 	<-time.After(5 * time.Second)
-	// 	err = p.Routes()
-	// 	if err != nil {
-	// 		return fmt.Errorf("server: could not get routes: %v", err.Error())
-	// 	}
-
-	// 	err = p.Disable()
-	// 	if err != nil {
-	// 		return fmt.Errorf("server: could not disable plugin: %v", err.Error())
-	// 	}
-	// }
+	return p, client, nil
 }

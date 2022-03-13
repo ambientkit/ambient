@@ -59,3 +59,9 @@ protoc:
 start: protoc
 	@cd cmd/plugin/hello/cmd/plugin && go build -o hello
 	go run cmd/server/main.go
+
+# Start the test process.
+.PHONY: test
+test: protoc
+	@cd cmd/plugin/hello/cmd/plugin && go build -o hello
+	go test cmd/server/*
