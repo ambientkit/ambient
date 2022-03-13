@@ -6,14 +6,14 @@ import (
 	"golang.org/x/net/context"
 )
 
-// GRPCSiteServer is the gRPC server that GRPCClient talks to.
+// GRPCSiteServer is the server side implementation of secure site.
 type GRPCSiteServer struct {
 	Impl   SecureSite
 	Log    ambient.Logger
 	reqmap *RequestMap
 }
 
-// UserLogin .
+// UserLogin handler.
 func (m *GRPCSiteServer) UserLogin(ctx context.Context, req *protodef.SiteUserLoginRequest) (resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
@@ -23,7 +23,7 @@ func (m *GRPCSiteServer) UserLogin(ctx context.Context, req *protodef.SiteUserLo
 	return &protodef.Empty{}, err
 }
 
-// AuthenticatedUser .
+// AuthenticatedUser handler.
 func (m *GRPCSiteServer) AuthenticatedUser(ctx context.Context, req *protodef.SiteAuthenticatedUserRequest) (resp *protodef.SiteAuthenticatedUserResponse, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
@@ -33,4 +33,10 @@ func (m *GRPCSiteServer) AuthenticatedUser(ctx context.Context, req *protodef.Si
 	return &protodef.SiteAuthenticatedUserResponse{
 		Username: username,
 	}, err
+}
+
+// Load handler.
+func (m *GRPCSiteServer) Load(ctx context.Context, req *protodef.Empty) (resp *protodef.Empty, err error) {
+	err = m.Impl.Load()
+	return &protodef.Empty{}, err
 }

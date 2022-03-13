@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/internal/secureconfig"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 )
 
@@ -29,4 +30,15 @@ func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
 		Requestid: requestID(r),
 	})
 	return out.Username, err
+}
+
+// Error handler.
+func (c *GRPCSitePlugin) Error(siteError error) error {
+	return secureconfig.Error(siteError)
+}
+
+// Load handler.
+func (c *GRPCSitePlugin) Load() error {
+	_, err := c.client.Load(context.Background(), &protodef.Empty{})
+	return err
 }

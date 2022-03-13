@@ -5,6 +5,8 @@ package ambient.protodef;
 import "empty.proto";
 
 service Site {
+	// rpc Error(SiteErrorRequest) returns (SiteErrorResponse) {}
+	rpc Load(Empty) returns (Empty) {}
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
 }

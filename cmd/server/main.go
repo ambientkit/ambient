@@ -63,9 +63,6 @@ func main() {
 		logger.Fatal(err.Error())
 	}
 
-	// FIXME: Need to add in real secure site.
-	// site := grpcp.NewTestSecureSite(sess)
-
 	tePlugin := htmlengine.New()
 
 	pl := &ambient.PluginLoader{

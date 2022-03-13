@@ -28,10 +28,10 @@ type Toolkit struct {
 
 // SecureSite provides plugin functions.
 type SecureSite interface {
-	// // Error handles returning the proper error.
-	// Error(siteError error) (err error)
-	// // Load forces a reload of the data.
-	// Load() error
+	// Error handles returning the proper error.
+	Error(siteError error) (err error)
+	// Load forces a reload of the data.
+	Load() error
 	// // Authorized determines if the current context has access.
 	// Authorized(grant Grant) bool
 	// // NeighborPluginGrantList gets the grants requests for a neighbor plugin.

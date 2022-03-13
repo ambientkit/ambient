@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/ambientkit/ambient/internal/config"
 )
 
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) error {
@@ -79,5 +81,31 @@ func (p *Plugin) login(w http.ResponseWriter, r *http.Request) error {
 	err := p.Site.UserLogin(r, "username")
 	s, err2 := p.Site.AuthenticatedUser(r)
 	fmt.Fprintf(w, "login: (%v) (%v) (%v)", err, s, err2)
+	return nil
+}
+
+func (p *Plugin) errorsFunc(w http.ResponseWriter, r *http.Request) error {
+	/*
+	   // Error handles returning the proper error.
+	   func (ss *SecureSite) Error(siteError error) (err error) {
+	   	switch siteError {
+	   	case config.ErrAccessDenied, config.ErrGrantNotRequested, config.ErrSettingNotSpecified:
+	   		return ambient.StatusError{Code: http.StatusForbidden, Err: siteError}
+	   	case config.ErrNotFound:
+	   		return ambient.StatusError{Code: http.StatusNotFound, Err: siteError}
+	   	default:
+	   		return ambient.StatusError{Code: http.StatusInternalServerError, Err: siteError}
+	   	}
+	   }
+	*/
+
+	errTest := config.ErrGrantNotRequested
+
+	err := p.Site.Error(errTest)
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintf(w, "errors: (%v)", "done")
 	return nil
 }

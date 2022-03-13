@@ -38,8 +38,8 @@ func NewSecureSite(pluginName string, log ambient.AppLogger, ps ambient.PluginSy
 	}
 }
 
-// Error handles returning the proper error.
-func (ss *SecureSite) Error(siteError error) (err error) {
+// Error returns the proper error. Separated to allow reuse for gRPC.
+func Error(siteError error) (err error) {
 	switch siteError {
 	case config.ErrAccessDenied, config.ErrGrantNotRequested, config.ErrSettingNotSpecified:
 		return ambient.StatusError{Code: http.StatusForbidden, Err: siteError}
@@ -48,6 +48,11 @@ func (ss *SecureSite) Error(siteError error) (err error) {
 	default:
 		return ambient.StatusError{Code: http.StatusInternalServerError, Err: siteError}
 	}
+}
+
+// Error handles returning the proper error.
+func (ss *SecureSite) Error(siteError error) (err error) {
+	return Error(siteError)
 }
 
 // Load forces a reload of the data.
