@@ -2,6 +2,7 @@
 package grpcp
 
 import (
+	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	plugin "github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
@@ -20,7 +21,7 @@ var Handshake = plugin.HandshakeConfig{
 // gRPC.
 type GenericPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
-	Impl PluginCore
+	Impl ambient.Plugin
 }
 
 // GRPCServer .

@@ -8,13 +8,13 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/testutil"
-	"github.com/ambientkit/ambient/pkg/grpcp"
 	plugin "github.com/hashicorp/go-plugin"
 	"github.com/stretchr/testify/assert"
 )
 
-func grpcSetup(t *testing.T) (grpcp.PluginCore, *plugin.Client, http.Handler) {
+func grpcSetup(t *testing.T) (ambient.Plugin, *plugin.Client, http.Handler) {
 	// Set the test relative to the project directory since the plugin path
 	// is relative to that.
 	path, _ := os.Getwd()

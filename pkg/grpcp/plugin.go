@@ -3,6 +3,7 @@ package grpcp
 import (
 	"net/http"
 
+	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	plugin "github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
@@ -11,23 +12,23 @@ import (
 
 // GRPCPlugin is the plugin side implementation.
 type GRPCPlugin struct {
-	Impl    PluginCore
+	Impl    ambient.Plugin
 	broker  *plugin.GRPCBroker
-	toolkit *Toolkit
+	toolkit *ambient.Toolkit
 	conn    *grpc.ClientConn
 	server  *grpc.Server
 }
 
 // PluginName returns the plugin name.
 func (m *GRPCPlugin) PluginName(ctx context.Context, req *protodef.Empty) (*protodef.PluginNameResponse, error) {
-	name, err := m.Impl.PluginName()
-	return &protodef.PluginNameResponse{Name: name}, err
+	name := m.Impl.PluginName()
+	return &protodef.PluginNameResponse{Name: name}, nil
 }
 
 // PluginVersion returns the plugin version.
 func (m *GRPCPlugin) PluginVersion(ctx context.Context, req *protodef.Empty) (*protodef.PluginVersionResponse, error) {
-	version, err := m.Impl.PluginVersion()
-	return &protodef.PluginVersionResponse{Version: version}, err
+	version := m.Impl.PluginVersion()
+	return &protodef.PluginVersionResponse{Version: version}, nil
 }
 
 // GrantRequests .
@@ -59,7 +60,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 
 	fnMap := make(map[string]func(http.ResponseWriter, *http.Request) error)
 
-	m.toolkit = &Toolkit{
+	m.toolkit = &ambient.Toolkit{
 		Log: logger,
 		Mux: &GRPCRouterPlugin{
 			client: protodef.NewRouterClient(m.conn),
@@ -107,5 +108,6 @@ func (m *GRPCPlugin) Disable(ctx context.Context, req *protodef.Empty) (*protode
 // Routes .
 func (m *GRPCPlugin) Routes(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
 	m.toolkit.Log.Debug("grpc-plugin: Routes() called")
-	return &protodef.Empty{}, m.Impl.Routes()
+	m.Impl.Routes()
+	return &protodef.Empty{}, nil
 }

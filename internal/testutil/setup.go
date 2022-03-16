@@ -24,7 +24,7 @@ import (
 )
 
 // Setup sets up a test gRPC server.
-func Setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
+func Setup() (ambient.Plugin, *plugin.Client, http.Handler, error) {
 	z := zaplogger.New()
 	logger, err := z.Logger("grpcplugin", "1.0.0", nil)
 	if err != nil {
@@ -104,7 +104,7 @@ func Setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 	securesite := secureconfig.NewSecureSite("hello", logger, pluginsystem, sess, router, te, recorder)
 	rr := recorder.WithPlugin("hello")
 
-	toolkit := &grpcp.Toolkit{
+	toolkit := &ambient.Toolkit{
 		Log:  logger,
 		Mux:  rr,
 		Site: securesite,
@@ -118,16 +118,16 @@ func Setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 		logger.Fatal(err.Error())
 	}
 
-	name, err := p.PluginName()
-	if err != nil {
-		return nil, pluginClient, nil, fmt.Errorf("server: could not get plugin name: %v", err.Error())
-	}
+	name := p.PluginName()
+	// if err != nil {
+	// 	return nil, pluginClient, nil, fmt.Errorf("server: could not get plugin name: %v", err.Error())
+	// }
 	logger.Info("Plugin name: %v", name)
 
-	version, err := p.PluginVersion()
-	if err != nil {
-		return nil, pluginClient, nil, fmt.Errorf("server: could not get plugin version: %v", err.Error())
-	}
+	version := p.PluginVersion()
+	// if err != nil {
+	// 	return nil, pluginClient, nil, fmt.Errorf("server: could not get plugin version: %v", err.Error())
+	// }
 	logger.Info("Plugin version: %v", version)
 
 	err = p.Enable(toolkit)
@@ -135,10 +135,10 @@ func Setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 		return nil, pluginClient, nil, fmt.Errorf("server: could not enable: %v", err.Error())
 	}
 
-	err = p.Routes()
-	if err != nil {
-		return nil, pluginClient, nil, fmt.Errorf("server: could not get routes: %v", err.Error())
-	}
+	p.Routes()
+	// if err != nil {
+	// 	return nil, pluginClient, nil, fmt.Errorf("server: could not get routes: %v", err.Error())
+	// }
 
 	// 	err = p.Disable()
 	// 	if err != nil {
@@ -149,7 +149,7 @@ func Setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 	return p, pluginClient, mw(router), err
 }
 
-func connectPlugin(pluginName string, pluginPath string) (grpcp.PluginCore, *plugin.Client, error) {
+func connectPlugin(pluginName string, pluginPath string) (ambient.Plugin, *plugin.Client, error) {
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig: grpcp.Handshake,
 		Plugins: map[string]plugin.Plugin{
@@ -178,7 +178,7 @@ func connectPlugin(pluginName string, pluginPath string) (grpcp.PluginCore, *plu
 		return nil, client, fmt.Errorf("server: could not get connect to plugin (%v): %v", pluginName, err.Error())
 	}
 
-	p := raw.(grpcp.PluginCore)
+	p := raw.(ambient.Plugin)
 	// if !ok {
 	// 	fmt.Println("The plugin is not the right format.")
 	// 	return

@@ -5,7 +5,6 @@ import (
 	"embed"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/pkg/grpcp"
 )
 
 //go:embed template/*.tmpl
@@ -13,28 +12,28 @@ var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
-	*grpcp.PluginBase
+	*ambient.PluginBase
 }
 
 // New returns a new hello plugin.
 func New() *Plugin {
 	return &Plugin{
-		PluginBase: &grpcp.PluginBase{},
+		PluginBase: &ambient.PluginBase{},
 	}
 }
 
 // PluginName returns the plugin name.
-func (p *Plugin) PluginName() (string, error) {
-	return "hello", nil
+func (p *Plugin) PluginName() string {
+	return "hello"
 }
 
 // PluginVersion returns the plugin version.
-func (p *Plugin) PluginVersion() (string, error) {
-	return "1.0.0", nil
+func (p *Plugin) PluginVersion() string {
+	return "1.0.0"
 }
 
 // Enable accepts the toolkit.
-func (p *Plugin) Enable(toolkit *grpcp.Toolkit) error {
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 	err := p.PluginBase.Enable(toolkit)
 	if err != nil {
 		return err
@@ -70,7 +69,7 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 }
 
 // Routes sets routes for the plugin.
-func (p *Plugin) Routes() error {
+func (p *Plugin) Routes() {
 	p.Log.Error("plugin: routes called")
 	p.Mux.Get("/", p.index)
 	p.Mux.Get("/another", p.another)
@@ -91,5 +90,4 @@ func (p *Plugin) Routes() error {
 	p.Mux.Get("/neighborPluginGrantedBad", p.neighborPluginGrantedBad)
 	p.Mux.Get("/setNeighborPluginGrant", p.setNeighborPluginGrant)
 	p.Mux.Get("/setNeighborPluginGrantBad", p.setNeighborPluginGrantBad)
-	return nil
 }

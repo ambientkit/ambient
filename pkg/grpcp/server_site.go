@@ -9,7 +9,7 @@ import (
 
 // GRPCSiteServer is the server side implementation of secure site.
 type GRPCSiteServer struct {
-	Impl   SecureSite
+	Impl   ambient.SecureSite
 	Log    ambient.Logger
 	reqmap *RequestMap
 }

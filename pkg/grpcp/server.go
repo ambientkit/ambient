@@ -1,8 +1,11 @@
 package grpcp
 
 import (
-	"fmt"
+	"embed"
+	"html/template"
+	"net/http"
 
+	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	plugin "github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
@@ -13,34 +16,34 @@ import (
 type GRPCServer struct {
 	broker  *plugin.GRPCBroker
 	client  protodef.GenericPluginClient
-	toolkit *Toolkit
+	toolkit *ambient.Toolkit
 	conn    *grpc.ClientConn
 	server  *grpc.Server
 	reqmap  *RequestMap
 }
 
-// PluginName .
-func (m *GRPCServer) PluginName() (string, error) {
+// PluginName handler.
+func (m *GRPCServer) PluginName() string {
 	resp, err := m.client.PluginName(context.Background(), &protodef.Empty{})
 	if err != nil {
-		return "", err
+		return ""
 	}
 
-	return resp.Name, nil
+	return resp.Name
 }
 
-// PluginVersion .
-func (m *GRPCServer) PluginVersion() (string, error) {
+// PluginVersion handler.
+func (m *GRPCServer) PluginVersion() string {
 	resp, err := m.client.PluginVersion(context.Background(), &protodef.Empty{})
 	if err != nil {
-		return "", err
+		return ""
 	}
 
-	return resp.Version, nil
+	return resp.Version
 }
 
-// Enable .
-func (m *GRPCServer) Enable(toolkit *Toolkit) error {
+// Enable handler.
+func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 	toolkit.Log.Debug("grpc-server: enabled called")
 
 	m.reqmap = NewRequestMap()
@@ -84,7 +87,7 @@ func (m *GRPCServer) Enable(toolkit *Toolkit) error {
 	return nil
 }
 
-// Disable .
+// Disable handler.
 func (m *GRPCServer) Disable() error {
 	if m.server != nil {
 		_, _ = m.client.Disable(context.Background(), &protodef.Empty{})
@@ -94,10 +97,10 @@ func (m *GRPCServer) Disable() error {
 	return nil
 }
 
-// Routes .
-func (m *GRPCServer) Routes() error {
+// Routes handler.
+func (m *GRPCServer) Routes() {
 	if m.server == nil || m.toolkit == nil || m.toolkit.Log == nil {
-		return fmt.Errorf("grpc-server: plugin is disabled")
+		return //fmt.Errorf("grpc-server: plugin is disabled")
 	}
 
 	m.toolkit.Log.Warn("grpc-server: routes called")
@@ -109,5 +112,29 @@ func (m *GRPCServer) Routes() error {
 
 	m.toolkit.Log.Warn("grpc-server: routes called END")
 
-	return err
+	//return err
+}
+
+// Assets handler.
+func (m *GRPCServer) Assets() ([]ambient.Asset, *embed.FS) {
+	// TODO: Implement
+	return nil, nil
+}
+
+// Settings handler.
+func (m *GRPCServer) Settings() []ambient.Setting {
+	// TODO: Implement
+	return nil
+}
+
+// GrantRequests handler.
+func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
+	// TODO: Implement
+	return nil
+}
+
+// FuncMap handler.
+func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
+	// TODO: Implement
+	return nil
 }
