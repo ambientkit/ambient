@@ -156,6 +156,11 @@ func loadStorage(log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) 
 	return storage, ss, err
 }
 
+// StopGRPCClients stops the gRPC plugins.
+func (app *App) StopGRPCClients() {
+	app.pluginsystem.StopGRPCClients()
+}
+
 // Handler loads the plugins and returns the handler.
 func (app *App) Handler() (http.Handler, error) {
 	// Get the session manager from the plugins.

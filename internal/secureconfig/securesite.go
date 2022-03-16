@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/config"
+	"github.com/ambientkit/ambient/internal/amberror"
 	"github.com/ambientkit/ambient/internal/pluginsafe"
 )
 
@@ -41,9 +41,9 @@ func NewSecureSite(pluginName string, log ambient.AppLogger, ps ambient.PluginSy
 // Error returns the proper error. Separated to allow reuse for gRPC.
 func Error(siteError error) (err error) {
 	switch siteError {
-	case config.ErrAccessDenied, config.ErrGrantNotRequested, config.ErrSettingNotSpecified:
+	case amberror.ErrAccessDenied, amberror.ErrGrantNotRequested, amberror.ErrSettingNotSpecified:
 		return ambient.StatusError{Code: http.StatusForbidden, Err: siteError}
-	case config.ErrNotFound:
+	case amberror.ErrNotFound:
 		return ambient.StatusError{Code: http.StatusNotFound, Err: siteError}
 	default:
 		return ambient.StatusError{Code: http.StatusInternalServerError, Err: siteError}
@@ -58,7 +58,7 @@ func (ss *SecureSite) Error(siteError error) (err error) {
 // Load forces a reload of the data.
 func (ss *SecureSite) Load() error {
 	if !ss.Authorized(ambient.GrantSiteLoadTrigger) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	return ss.pluginsystem.Load()

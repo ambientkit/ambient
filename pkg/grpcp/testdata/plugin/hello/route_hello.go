@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/config"
+	"github.com/ambientkit/ambient/internal/amberror"
 )
 
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) error {
@@ -84,7 +84,7 @@ func (p *Plugin) loggedin(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (p *Plugin) errorsFunc(w http.ResponseWriter, r *http.Request) error {
-	errTest := config.ErrGrantNotRequested
+	errTest := amberror.ErrGrantNotRequested
 	err := p.Site.Error(errTest)
 	if err != nil {
 		return err
@@ -139,7 +139,7 @@ func (p *Plugin) neighborPluginGrantedBad(w http.ResponseWriter, r *http.Request
 	return nil
 }
 
-func (p *Plugin) setNeighborPluginGrant(w http.ResponseWriter, r *http.Request) error {
+func (p *Plugin) setNeighborPluginGrantFalse(w http.ResponseWriter, r *http.Request) error {
 	err := p.Site.SetNeighborPluginGrant("neighbor", ambient.GrantRouterRouteWrite, false)
 	if err != nil {
 		return err
@@ -153,10 +153,15 @@ func (p *Plugin) setNeighborPluginGrant(w http.ResponseWriter, r *http.Request) 
 	return nil
 }
 
-func (p *Plugin) setNeighborPluginGrantBad(w http.ResponseWriter, r *http.Request) error {
-	err := p.Site.SetNeighborPluginGrant("neighbor", ambient.GrantPluginNeighborGrantRead, true)
+func (p *Plugin) setNeighborPluginGrantTrue(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.SetNeighborPluginGrant("neighbor", ambient.GrantRouterRouteWrite, true)
 	if err != nil {
 		return err
 	}
+	s, err := p.Site.NeighborPluginGranted("neighbor", ambient.GrantRouterRouteWrite)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Granted: %v", s)
 	return nil
 }

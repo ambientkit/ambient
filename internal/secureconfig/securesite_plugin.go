@@ -10,14 +10,14 @@ import (
 	"time"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/config"
+	"github.com/ambientkit/ambient/internal/amberror"
 	"github.com/ambientkit/ambient/internal/pluginsafe"
 )
 
 // Plugins returns the plugin list.
 func (ss *SecureSite) Plugins() (map[string]ambient.PluginData, error) {
 	if !ss.Authorized(ambient.GrantSitePluginRead) {
-		return nil, config.ErrAccessDenied
+		return nil, amberror.ErrAccessDenied
 	}
 
 	return ss.pluginsystem.Plugins(), nil
@@ -26,7 +26,7 @@ func (ss *SecureSite) Plugins() (map[string]ambient.PluginData, error) {
 // PluginNames returns the list of plugin name.
 func (ss *SecureSite) PluginNames() ([]string, error) {
 	if !ss.Authorized(ambient.GrantSitePluginRead) {
-		return nil, config.ErrAccessDenied
+		return nil, amberror.ErrAccessDenied
 	}
 	return ss.pluginsystem.Names(), nil
 }
@@ -34,7 +34,7 @@ func (ss *SecureSite) PluginNames() ([]string, error) {
 // DeletePlugin deletes a plugin.
 func (ss *SecureSite) DeletePlugin(name string) error {
 	if !ss.Authorized(ambient.GrantSitePluginDelete) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	err := ss.pluginsystem.RemovePlugin(name)
@@ -53,7 +53,7 @@ func (ss *SecureSite) DeletePlugin(name string) error {
 // EnablePlugin enables a plugin.
 func (ss *SecureSite) EnablePlugin(pluginName string, loadPlugin bool) error {
 	if !ss.Authorized(ambient.GrantSitePluginEnable) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	if loadPlugin {
@@ -70,7 +70,7 @@ func (ss *SecureSite) EnablePlugin(pluginName string, loadPlugin bool) error {
 // LoadAllPluginPages loads all of the pages from the plugins.
 func (ss *SecureSite) LoadAllPluginPages() error {
 	if !ss.Authorized(ambient.GrantSitePluginEnable) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	for _, name := range ss.pluginsystem.Names() {
@@ -140,14 +140,14 @@ func (ss *SecureSite) loadSinglePluginPages(name string) {
 // DisablePlugin disables a plugin.
 func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error {
 	if !ss.Authorized(ambient.GrantSitePluginDisable) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	if unloadPlugin {
 		// Get the plugin.
 		plugin, err := ss.pluginsystem.Plugin(pluginName)
 		if err != nil {
-			return config.ErrNotFound
+			return amberror.ErrNotFound
 		}
 
 		// Disable the plugin.
