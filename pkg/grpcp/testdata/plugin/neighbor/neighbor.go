@@ -1,0 +1,64 @@
+// Package neighbor provides a neighbor plugin for testing.
+package neighbor
+
+import (
+	"github.com/ambientkit/ambient"
+)
+
+// Plugin represents an Ambient plugin.
+type Plugin struct {
+	*ambient.PluginBase
+}
+
+// New returns a new neighbor plugin.
+func New() *Plugin {
+	return &Plugin{
+		PluginBase: &ambient.PluginBase{},
+	}
+}
+
+// PluginName returns the plugin name.
+func (p *Plugin) PluginName() string {
+	return "neighbor"
+}
+
+// PluginVersion returns the plugin version.
+func (p *Plugin) PluginVersion() string {
+	return "1.0.0"
+}
+
+// Enable accepts the toolkit.
+func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
+	err := p.PluginBase.Enable(toolkit)
+	if err != nil {
+		return err
+	}
+
+	p.Log.Info("plugin: enabled called")
+
+	return nil
+}
+
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantUserAuthenticatedRead, Description: "Show different menus to authenticated vs unauthenticated users."},
+		{Grant: ambient.GrantUserAuthenticatedWrite, Description: "Access to login and logout the user."},
+		{Grant: ambient.GrantUserPersistWrite, Description: "Access to set session as persistent."},
+		{Grant: ambient.GrantPluginSettingRead, Description: "Read own plugin settings."},
+		{Grant: ambient.GrantPluginSettingWrite, Description: "Write own plugin settings."},
+		{Grant: ambient.GrantSitePostRead, Description: "Read all site posts."},
+		{Grant: ambient.GrantSitePostWrite, Description: "Create and edit site posts."},
+		{Grant: ambient.GrantSiteSchemeRead, Description: "Read site scheme."},
+		{Grant: ambient.GrantSiteSchemeWrite, Description: "Update the site scheme."},
+		{Grant: ambient.GrantSiteURLRead, Description: "Read the site URL."},
+		{Grant: ambient.GrantSiteURLWrite, Description: "Update the site URL."},
+		{Grant: ambient.GrantSiteTitleRead, Description: "Read the site title."},
+		{Grant: ambient.GrantSiteTitleWrite, Description: "Update the site title."},
+		{Grant: ambient.GrantSiteContentRead, Description: "Read home page content."},
+		{Grant: ambient.GrantSiteContentWrite, Description: "Update home page content."},
+		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to write blog meta tags to the header and add a nav and footer."},
+		{Grant: ambient.GrantSiteFuncMapWrite, Description: "Access to create global FuncMaps for templates."},
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for editing the blog posts."},
+	}
+}

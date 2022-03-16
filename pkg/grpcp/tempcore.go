@@ -34,8 +34,8 @@ type SecureSite interface {
 	Load() error
 	// Authorized determines if the current context has access.
 	Authorized(grant ambient.Grant) bool
-	// // NeighborPluginGrantList gets the grants requests for a neighbor plugin.
-	// NeighborPluginGrantList(pluginName string) ([]GrantRequest, error)
+	// NeighborPluginGrantList gets the grants requests for a neighbor plugin.
+	NeighborPluginGrantList(pluginName string) ([]ambient.GrantRequest, error)
 	// // NeighborPluginGrants gets the map of granted permissions.
 	// NeighborPluginGrants(pluginName string) (map[Grant]bool, error)
 	// // NeighborPluginGranted returns true if the plugin has the grant.

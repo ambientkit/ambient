@@ -13,6 +13,44 @@ type GRPCSiteServer struct {
 	reqmap *RequestMap
 }
 
+// Load handler.
+func (m *GRPCSiteServer) Load(ctx context.Context, req *protodef.Empty) (resp *protodef.Empty, err error) {
+	err = m.Impl.Load()
+	return &protodef.Empty{}, err
+}
+
+// Authorized handler.
+func (m *GRPCSiteServer) Authorized(ctx context.Context, req *protodef.SiteAuthorizedRequest) (resp *protodef.SiteAuthorizedResponse, err error) {
+	authorized := m.Impl.Authorized(ambient.Grant(req.Grant))
+	return &protodef.SiteAuthorizedResponse{
+		Authorized: authorized,
+	}, err
+}
+
+// NeighborPluginGrantList handler.
+func (m *GRPCSiteServer) NeighborPluginGrantList(ctx context.Context, req *protodef.SiteNeighborPluginGrantListRequest) (resp *protodef.SiteNeighborPluginGrantListResponse, err error) {
+	gr, err := m.Impl.NeighborPluginGrantList(req.Pluginame)
+	if err != nil {
+		return &protodef.SiteNeighborPluginGrantListResponse{
+			Grants: []*protodef.GrantRequest{},
+		}, err
+	}
+
+	arr := make([]*protodef.GrantRequest, 0)
+	for _, v := range gr {
+		arr = append(arr, &protodef.GrantRequest{
+			Grant:       string(v.Grant),
+			Description: v.Description,
+		})
+	}
+
+	return &protodef.SiteNeighborPluginGrantListResponse{
+		Grants: arr,
+	}, err
+}
+
+/////////////////////////////////////////////////////
+
 // UserLogin handler.
 func (m *GRPCSiteServer) UserLogin(ctx context.Context, req *protodef.SiteUserLoginRequest) (resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
@@ -32,19 +70,5 @@ func (m *GRPCSiteServer) AuthenticatedUser(ctx context.Context, req *protodef.Si
 	username, err := m.Impl.AuthenticatedUser(c.Request)
 	return &protodef.SiteAuthenticatedUserResponse{
 		Username: username,
-	}, err
-}
-
-// Load handler.
-func (m *GRPCSiteServer) Load(ctx context.Context, req *protodef.Empty) (resp *protodef.Empty, err error) {
-	err = m.Impl.Load()
-	return &protodef.Empty{}, err
-}
-
-// Authorized handler.
-func (m *GRPCSiteServer) Authorized(ctx context.Context, req *protodef.SiteAuthorizedRequest) (resp *protodef.SiteAuthorizedResponse, err error) {
-	authorized := m.Impl.Authorized(ambient.Grant(req.Grant))
-	return &protodef.SiteAuthorizedResponse{
-		Authorized: authorized,
 	}, err
 }

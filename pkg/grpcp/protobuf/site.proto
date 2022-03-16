@@ -3,11 +3,13 @@ option go_package = "./;protodef";
 package ambient.protodef;
 
 import "empty.proto";
+import "plugin.proto";
 
 service Site {
 	// rpc Error(SiteErrorRequest) returns (SiteErrorResponse) {}
 	rpc Load(Empty) returns (Empty) {}
     rpc Authorized(SiteAuthorizedRequest) returns (SiteAuthorizedResponse) {}
+    rpc NeighborPluginGrantList(SiteNeighborPluginGrantListRequest) returns (SiteNeighborPluginGrantListResponse) {}
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
 }
@@ -18,6 +20,14 @@ message SiteAuthorizedRequest {
 
 message SiteAuthorizedResponse {
     bool authorized = 1;
+}
+
+message SiteNeighborPluginGrantListRequest {
+    string pluginame = 1;
+}
+
+message SiteNeighborPluginGrantListResponse {
+    repeated GrantRequest grants = 1;
 }
 
 message SiteUserLoginRequest {

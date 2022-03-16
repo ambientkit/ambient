@@ -59,5 +59,7 @@ func (p *Plugin) Routes() error {
 	p.Mux.Get("/login", p.login)
 	p.Mux.Get("/loggedin", p.loggedin)
 	p.Mux.Get("/errors", p.errorsFunc)
+	p.Mux.Get("/neighborPluginGrantList", p.neighborPluginGrantList)
+	p.Mux.Get("/neighborPluginGrantListBad", p.neighborPluginGrantListBad)
 	return nil
 }

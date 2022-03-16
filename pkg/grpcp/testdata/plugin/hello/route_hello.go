@@ -92,3 +92,20 @@ func (p *Plugin) errorsFunc(w http.ResponseWriter, r *http.Request) error {
 	fmt.Fprintf(w, "errors: (%v)", "done")
 	return nil
 }
+
+func (p *Plugin) neighborPluginGrantList(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.NeighborPluginGrantList("neighbor")
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Grants: %v", len(s))
+	return nil
+}
+func (p *Plugin) neighborPluginGrantListBad(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.NeighborPluginGrantList("neighborbad")
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Grants: %v", len(s))
+	return nil
+}

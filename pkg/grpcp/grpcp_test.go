@@ -117,4 +117,13 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/errors", nil))
 	assert.Equal(t, http.StatusForbidden, resp.StatusCode)
 	assert.Equal(t, "request does not exist for the grant\n", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/neighborPluginGrantList", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Grants: 18", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/neighborPluginGrantListBad", nil))
+	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
+	assert.Equal(t, "item was not found\n", string(body))
+
 }

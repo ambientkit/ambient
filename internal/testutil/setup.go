@@ -13,6 +13,7 @@ import (
 	"github.com/ambientkit/ambient/internal/pluginsafe"
 	"github.com/ambientkit/ambient/internal/secureconfig"
 	"github.com/ambientkit/ambient/pkg/grpcp"
+	"github.com/ambientkit/ambient/pkg/grpcp/testdata/plugin/neighbor"
 	"github.com/ambientkit/plugin/logger/zaplogger"
 	"github.com/ambientkit/plugin/router/awayrouter"
 	"github.com/ambientkit/plugin/sessionmanager/scssession"
@@ -70,7 +71,9 @@ func Setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 		Router:         r,
 		TemplateEngine: tePlugin,
 		SessionManager: sessPlugin,
-		Plugins:        []ambient.Plugin{},
+		Plugins: []ambient.Plugin{
+			neighbor.New(),
+		},
 		Middleware: []ambient.MiddlewarePlugin{
 			sessPlugin,
 		},

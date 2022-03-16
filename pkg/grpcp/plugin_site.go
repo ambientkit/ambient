@@ -15,27 +15,6 @@ type GRPCSitePlugin struct {
 	Log    ambient.Logger
 }
 
-// UserLogin handler.
-func (c *GRPCSitePlugin) UserLogin(r *http.Request, username string) error {
-	_, err := c.client.UserLogin(context.Background(), &protodef.SiteUserLoginRequest{
-		Username:  username,
-		Requestid: requestID(r),
-	})
-	return err
-}
-
-// AuthenticatedUser handler.
-func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
-	out, err := c.client.AuthenticatedUser(context.Background(), &protodef.SiteAuthenticatedUserRequest{
-		Requestid: requestID(r),
-	})
-	if err != nil {
-		return "", ErrorHandler(err)
-	}
-
-	return out.Username, err
-}
-
 // Error handler.
 func (c *GRPCSitePlugin) Error(siteError error) error {
 	return secureconfig.Error(siteError)
@@ -56,4 +35,47 @@ func (c *GRPCSitePlugin) Authorized(grant ambient.Grant) bool {
 		c.Log.Error("grpc-plugin: site.Authorized error: %v", err.Error())
 	}
 	return resp.Authorized
+}
+
+// NeighborPluginGrantList handler.
+func (c *GRPCSitePlugin) NeighborPluginGrantList(pluginName string) ([]ambient.GrantRequest, error) {
+	resp, err := c.client.NeighborPluginGrantList(context.Background(), &protodef.SiteNeighborPluginGrantListRequest{
+		Pluginame: pluginName,
+	})
+	if err != nil {
+		return []ambient.GrantRequest{}, ErrorHandler(err)
+	}
+
+	arr := make([]ambient.GrantRequest, 0)
+	for _, v := range resp.Grants {
+		arr = append(arr, ambient.GrantRequest{
+			Grant:       ambient.Grant(v.Grant),
+			Description: v.Description,
+		})
+	}
+
+	return arr, nil
+}
+
+/////////////////////////////////////////////////////
+
+// UserLogin handler.
+func (c *GRPCSitePlugin) UserLogin(r *http.Request, username string) error {
+	_, err := c.client.UserLogin(context.Background(), &protodef.SiteUserLoginRequest{
+		Username:  username,
+		Requestid: requestID(r),
+	})
+	return err
+}
+
+// AuthenticatedUser handler.
+func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
+	out, err := c.client.AuthenticatedUser(context.Background(), &protodef.SiteAuthenticatedUserRequest{
+		Requestid: requestID(r),
+	})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	return out.Username, err
 }
