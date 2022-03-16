@@ -7,8 +7,17 @@ import "empty.proto";
 service Site {
 	// rpc Error(SiteErrorRequest) returns (SiteErrorResponse) {}
 	rpc Load(Empty) returns (Empty) {}
+    rpc Authorized(SiteAuthorizedRequest) returns (SiteAuthorizedResponse) {}
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
+}
+
+message SiteAuthorizedRequest {
+    string grant = 1;
+}
+
+message SiteAuthorizedResponse {
+    bool authorized = 1;
 }
 
 message SiteUserLoginRequest {

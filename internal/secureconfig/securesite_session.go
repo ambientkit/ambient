@@ -10,7 +10,7 @@ import (
 // AuthenticatedUser returns if the current user is authenticated.
 func (ss *SecureSite) AuthenticatedUser(r *http.Request) (string, error) {
 	if !ss.Authorized(ambient.GrantUserAuthenticatedRead) {
-		return "false", config.ErrAccessDenied
+		return "", config.ErrAccessDenied
 	}
 
 	return ss.sess.AuthenticatedUser(r)

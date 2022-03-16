@@ -29,6 +29,10 @@ func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
 	out, err := c.client.AuthenticatedUser(context.Background(), &protodef.SiteAuthenticatedUserRequest{
 		Requestid: requestID(r),
 	})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
 	return out.Username, err
 }
 
@@ -40,5 +44,16 @@ func (c *GRPCSitePlugin) Error(siteError error) error {
 // Load handler.
 func (c *GRPCSitePlugin) Load() error {
 	_, err := c.client.Load(context.Background(), &protodef.Empty{})
-	return err
+	return ErrorHandler(err)
+}
+
+// Authorized handler.
+func (c *GRPCSitePlugin) Authorized(grant ambient.Grant) bool {
+	resp, err := c.client.Authorized(context.Background(), &protodef.SiteAuthorizedRequest{
+		Grant: string(grant),
+	})
+	if err != nil {
+		c.Log.Error("grpc-plugin: site.Authorized error: %v", err.Error())
+	}
+	return resp.Authorized
 }

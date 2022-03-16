@@ -32,6 +32,9 @@ func (d *HandlerImpl) Handle(requestID string, method string, path string, heade
 	err := fn(w, req)
 
 	statusCode := 200
+	if w.statusCode != 200 {
+		statusCode = w.statusCode
+	}
 	errText := ""
 	if err != nil {
 		switch e := err.(type) {

@@ -54,7 +54,7 @@ func (p *Plugin) headersPOST(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (p *Plugin) headers(w http.ResponseWriter, r *http.Request) error {
-	//fmt.Fprintf(w, "headers: %#v", r.Header)
+	// fmt.Fprintf(w, "headers: %#v", r.Header)
 	// body, _ := io.ReadAll(r.Body)
 	// fmt.Fprintf(w, "body: %#v", body)
 	fmt.Fprint(w, html)
@@ -81,6 +81,12 @@ func (p *Plugin) login(w http.ResponseWriter, r *http.Request) error {
 	err := p.Site.UserLogin(r, "username")
 	s, err2 := p.Site.AuthenticatedUser(r)
 	fmt.Fprintf(w, "login: (%v) (%v) (%v)", err, s, err2)
+	return nil
+}
+
+func (p *Plugin) loggedin(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.AuthenticatedUser(r)
+	fmt.Fprintf(w, "login: (%v) (%v)", s, err)
 	return nil
 }
 

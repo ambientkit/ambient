@@ -56,6 +56,7 @@ func (p *Plugin) Routes() error {
 	p.Mux.Get("/headers", p.headers)
 	p.Mux.Post("/headers", p.headersPOST)
 	p.Mux.Get("/login", p.login)
+	p.Mux.Get("/loggedin", p.loggedin)
 	p.Mux.Get("/errors", p.errorsFunc)
 	return nil
 }

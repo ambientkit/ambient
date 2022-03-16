@@ -40,3 +40,11 @@ func (m *GRPCSiteServer) Load(ctx context.Context, req *protodef.Empty) (resp *p
 	err = m.Impl.Load()
 	return &protodef.Empty{}, err
 }
+
+// Authorized handler.
+func (m *GRPCSiteServer) Authorized(ctx context.Context, req *protodef.SiteAuthorizedRequest) (resp *protodef.SiteAuthorizedResponse, err error) {
+	authorized := m.Impl.Authorized(ambient.Grant(req.Grant))
+	return &protodef.SiteAuthorizedResponse{
+		Authorized: authorized,
+	}, err
+}
