@@ -4,6 +4,7 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"golang.org/x/net/context"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // GRPCSiteServer is the server side implementation of secure site.
@@ -28,8 +29,9 @@ func (m *GRPCSiteServer) Authorized(ctx context.Context, req *protodef.SiteAutho
 }
 
 // NeighborPluginGrantList handler.
-func (m *GRPCSiteServer) NeighborPluginGrantList(ctx context.Context, req *protodef.SiteNeighborPluginGrantListRequest) (resp *protodef.SiteNeighborPluginGrantListResponse, err error) {
-	gr, err := m.Impl.NeighborPluginGrantList(req.Pluginame)
+func (m *GRPCSiteServer) NeighborPluginGrantList(ctx context.Context, req *protodef.SiteNeighborPluginGrantListRequest) (
+	resp *protodef.SiteNeighborPluginGrantListResponse, err error) {
+	gr, err := m.Impl.NeighborPluginGrantList(req.Pluginname)
 	if err != nil {
 		return &protodef.SiteNeighborPluginGrantListResponse{
 			Grants: []*protodef.GrantRequest{},
@@ -45,6 +47,22 @@ func (m *GRPCSiteServer) NeighborPluginGrantList(ctx context.Context, req *proto
 	}
 
 	return &protodef.SiteNeighborPluginGrantListResponse{
+		Grants: arr,
+	}, err
+}
+
+// NeighborPluginGrants handler.
+func (m *GRPCSiteServer) NeighborPluginGrants(ctx context.Context, req *protodef.SiteNeighborPluginGrantsRequest) (
+	resp *protodef.SiteNeighborPluginGrantsResponse, err error) {
+	gr, err := m.Impl.NeighborPluginGrants(req.Pluginname)
+	if err != nil {
+		return &protodef.SiteNeighborPluginGrantsResponse{
+			Grants: &structpb.Struct{},
+		}, err
+	}
+
+	arr, err := GrantBoolMapToProtobufStruct(gr)
+	return &protodef.SiteNeighborPluginGrantsResponse{
 		Grants: arr,
 	}, err
 }

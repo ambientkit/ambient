@@ -40,7 +40,7 @@ func (c *GRPCSitePlugin) Authorized(grant ambient.Grant) bool {
 // NeighborPluginGrantList handler.
 func (c *GRPCSitePlugin) NeighborPluginGrantList(pluginName string) ([]ambient.GrantRequest, error) {
 	resp, err := c.client.NeighborPluginGrantList(context.Background(), &protodef.SiteNeighborPluginGrantListRequest{
-		Pluginame: pluginName,
+		Pluginname: pluginName,
 	})
 	if err != nil {
 		return []ambient.GrantRequest{}, ErrorHandler(err)
@@ -55,6 +55,23 @@ func (c *GRPCSitePlugin) NeighborPluginGrantList(pluginName string) ([]ambient.G
 	}
 
 	return arr, nil
+}
+
+// NeighborPluginGrants handler.
+func (c *GRPCSitePlugin) NeighborPluginGrants(pluginName string) (map[ambient.Grant]bool, error) {
+	resp, err := c.client.NeighborPluginGrants(context.Background(), &protodef.SiteNeighborPluginGrantsRequest{
+		Pluginname: pluginName,
+	})
+	if err != nil {
+		return make(map[ambient.Grant]bool), err
+	}
+
+	sm, err := ProtobufStructToGrantBoolMap(resp.Grants)
+	if err != nil {
+		return make(map[ambient.Grant]bool), err
+	}
+
+	return sm, nil
 }
 
 /////////////////////////////////////////////////////

@@ -101,8 +101,18 @@ func (p *Plugin) neighborPluginGrantList(w http.ResponseWriter, r *http.Request)
 	fmt.Fprintf(w, "Grants: %v", len(s))
 	return nil
 }
+
 func (p *Plugin) neighborPluginGrantListBad(w http.ResponseWriter, r *http.Request) error {
 	s, err := p.Site.NeighborPluginGrantList("neighborbad")
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Grants: %v", len(s))
+	return nil
+}
+
+func (p *Plugin) neighborPluginGrants(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.NeighborPluginGrants("neighbor")
 	if err != nil {
 		return err
 	}

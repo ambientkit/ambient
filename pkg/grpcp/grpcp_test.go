@@ -126,4 +126,8 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
 	assert.Equal(t, "item was not found\n", string(body))
 
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/neighborPluginGrants", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Grants: 18", string(body))
+
 }

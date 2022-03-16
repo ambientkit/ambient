@@ -4,12 +4,14 @@ package ambient.protodef;
 
 import "empty.proto";
 import "plugin.proto";
+import "google/protobuf/struct.proto";
 
 service Site {
 	// rpc Error(SiteErrorRequest) returns (SiteErrorResponse) {}
 	rpc Load(Empty) returns (Empty) {}
     rpc Authorized(SiteAuthorizedRequest) returns (SiteAuthorizedResponse) {}
     rpc NeighborPluginGrantList(SiteNeighborPluginGrantListRequest) returns (SiteNeighborPluginGrantListResponse) {}
+    rpc NeighborPluginGrants(SiteNeighborPluginGrantsRequest) returns (SiteNeighborPluginGrantsResponse) {}
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
 }
@@ -23,11 +25,19 @@ message SiteAuthorizedResponse {
 }
 
 message SiteNeighborPluginGrantListRequest {
-    string pluginame = 1;
+    string pluginname = 1;
 }
 
 message SiteNeighborPluginGrantListResponse {
     repeated GrantRequest grants = 1;
+}
+
+message SiteNeighborPluginGrantsRequest {
+    string pluginname = 1;
+}
+
+message SiteNeighborPluginGrantsResponse {
+    google.protobuf.Struct grants = 1;
 }
 
 message SiteUserLoginRequest {
