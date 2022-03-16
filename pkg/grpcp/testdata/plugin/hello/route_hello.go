@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/config"
 )
 
@@ -117,5 +118,23 @@ func (p *Plugin) neighborPluginGrants(w http.ResponseWriter, r *http.Request) er
 		return err
 	}
 	fmt.Fprintf(w, "Grants: %v", len(s))
+	return nil
+}
+
+func (p *Plugin) neighborPluginGranted(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.NeighborPluginGranted("neighbor", ambient.GrantRouterRouteWrite)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Granted: %v", s)
+	return nil
+}
+
+func (p *Plugin) neighborPluginGrantedBad(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.NeighborPluginGranted("neighbor", ambient.GrantPluginNeighborGrantRead)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Granted: %v", s)
 	return nil
 }

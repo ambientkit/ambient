@@ -130,4 +130,11 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Grants: 18", string(body))
 
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/neighborPluginGranted", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Granted: true", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/neighborPluginGrantedBad", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Granted: false", string(body))
 }

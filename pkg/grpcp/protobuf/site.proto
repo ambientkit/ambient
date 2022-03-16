@@ -12,6 +12,7 @@ service Site {
     rpc Authorized(SiteAuthorizedRequest) returns (SiteAuthorizedResponse) {}
     rpc NeighborPluginGrantList(SiteNeighborPluginGrantListRequest) returns (SiteNeighborPluginGrantListResponse) {}
     rpc NeighborPluginGrants(SiteNeighborPluginGrantsRequest) returns (SiteNeighborPluginGrantsResponse) {}
+    rpc NeighborPluginGranted(SiteNeighborPluginGrantedRequest) returns (SiteNeighborPluginGrantedResponse) {}
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
 }
@@ -38,6 +39,15 @@ message SiteNeighborPluginGrantsRequest {
 
 message SiteNeighborPluginGrantsResponse {
     google.protobuf.Struct grants = 1;
+}
+
+message SiteNeighborPluginGrantedRequest {
+    string pluginname = 1;
+    string grant = 2;
+}
+
+message SiteNeighborPluginGrantedResponse {
+    bool granted = 1;
 }
 
 message SiteUserLoginRequest {

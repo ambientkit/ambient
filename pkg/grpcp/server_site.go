@@ -67,6 +67,19 @@ func (m *GRPCSiteServer) NeighborPluginGrants(ctx context.Context, req *protodef
 	}, err
 }
 
+// NeighborPluginGranted handler.
+func (m *GRPCSiteServer) NeighborPluginGranted(ctx context.Context, req *protodef.SiteNeighborPluginGrantedRequest) (
+	resp *protodef.SiteNeighborPluginGrantedResponse, err error) {
+	granted, err := m.Impl.NeighborPluginGranted(req.Pluginname, ambient.Grant(req.Grant))
+	if err != nil {
+		return &protodef.SiteNeighborPluginGrantedResponse{}, err
+	}
+
+	return &protodef.SiteNeighborPluginGrantedResponse{
+		Granted: granted,
+	}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

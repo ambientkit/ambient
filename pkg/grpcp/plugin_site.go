@@ -63,15 +63,28 @@ func (c *GRPCSitePlugin) NeighborPluginGrants(pluginName string) (map[ambient.Gr
 		Pluginname: pluginName,
 	})
 	if err != nil {
-		return make(map[ambient.Grant]bool), err
+		return make(map[ambient.Grant]bool), ErrorHandler(err)
 	}
 
 	sm, err := ProtobufStructToGrantBoolMap(resp.Grants)
 	if err != nil {
-		return make(map[ambient.Grant]bool), err
+		return make(map[ambient.Grant]bool), ErrorHandler(err)
 	}
 
 	return sm, nil
+}
+
+// NeighborPluginGranted handler.
+func (c *GRPCSitePlugin) NeighborPluginGranted(pluginName string, grantName ambient.Grant) (bool, error) {
+	resp, err := c.client.NeighborPluginGranted(context.Background(), &protodef.SiteNeighborPluginGrantedRequest{
+		Pluginname: pluginName,
+		Grant:      string(grantName),
+	})
+	if err != nil {
+		return false, ErrorHandler(err)
+	}
+
+	return resp.Granted, nil
 }
 
 /////////////////////////////////////////////////////
