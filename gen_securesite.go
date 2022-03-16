@@ -20,9 +20,9 @@ type SecureSite interface {
 	NeighborPluginGrants(pluginName string) (map[Grant]bool, error)
 	// NeighborPluginGranted returns true if the plugin has the grant.
 	NeighborPluginGranted(pluginName string, grantName Grant) (bool, error)
-	// // NeighborPluginRequestedGrant returns true if the plugin requests the grant.
-	// // This shouldn't be used to determine if a plugin has been approved the grant.
-	// NeighborPluginRequestedGrant(pluginName string, grantName Grant) (bool, error)
+	// NeighborPluginRequestedGrant returns true if the plugin requests the grant.
+	// This shouldn't be used to determine if a plugin has been approved the grant.
+	NeighborPluginRequestedGrant(pluginName string, grantName Grant) (bool, error)
 	// SetNeighborPluginGrant sets a grant for a neighbor plugin.
 	SetNeighborPluginGrant(pluginName string, grantName Grant, granted bool) error
 	// // Plugins returns the plugin list.

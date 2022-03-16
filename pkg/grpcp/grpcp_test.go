@@ -166,6 +166,14 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/neighborPluginGranted", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Granted: true", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/neighborPluginRequestedGrant", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Requested: true", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/neighborPluginRequestedGrantBad", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Requested: false", string(body))
 }
 
 // Setup sets up a test gRPC server.

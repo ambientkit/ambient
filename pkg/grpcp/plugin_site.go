@@ -87,6 +87,19 @@ func (c *GRPCSitePlugin) NeighborPluginGranted(pluginName string, grantName ambi
 	return resp.Granted, nil
 }
 
+// NeighborPluginRequestedGrant handler.
+func (c *GRPCSitePlugin) NeighborPluginRequestedGrant(pluginName string, grantName ambient.Grant) (bool, error) {
+	resp, err := c.client.NeighborPluginRequestedGrant(context.Background(), &protodef.SiteNeighborPluginRequestedGrantRequest{
+		Pluginname: pluginName,
+		Grant:      string(grantName),
+	})
+	if err != nil {
+		return false, ErrorHandler(err)
+	}
+
+	return resp.Granted, nil
+}
+
 // SetNeighborPluginGrant handler.
 func (c *GRPCSitePlugin) SetNeighborPluginGrant(pluginName string, grantName ambient.Grant, granted bool) error {
 	_, err := c.client.SetNeighborPluginGrant(context.Background(), &protodef.SiteSetNeighborPluginGrantRequest{

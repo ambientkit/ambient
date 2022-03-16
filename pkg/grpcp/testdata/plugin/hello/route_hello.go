@@ -165,3 +165,21 @@ func (p *Plugin) setNeighborPluginGrantTrue(w http.ResponseWriter, r *http.Reque
 	fmt.Fprintf(w, "Granted: %v", s)
 	return nil
 }
+
+func (p *Plugin) neighborPluginRequestedGrant(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.NeighborPluginRequestedGrant("neighbor", ambient.GrantRouterRouteWrite)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Requested: %v", s)
+	return nil
+}
+
+func (p *Plugin) neighborPluginRequestedGrantBad(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.NeighborPluginRequestedGrant("neighbor", ambient.GrantPluginNeighborGrantRead)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Requested: %v", s)
+	return nil
+}

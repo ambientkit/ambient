@@ -90,4 +90,7 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/neighborPluginGrantedBad", p.neighborPluginGrantedBad)
 	p.Mux.Get("/setNeighborPluginGrantFalse", p.setNeighborPluginGrantFalse)
 	p.Mux.Get("/setNeighborPluginGrantTrue", p.setNeighborPluginGrantTrue)
+	p.Mux.Get("/neighborPluginRequestedGrant", p.neighborPluginRequestedGrant)
+	p.Mux.Get("/neighborPluginRequestedGrantBad", p.neighborPluginRequestedGrantBad)
+
 }
