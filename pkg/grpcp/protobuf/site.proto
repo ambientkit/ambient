@@ -13,6 +13,7 @@ service Site {
     rpc NeighborPluginGrantList(SiteNeighborPluginGrantListRequest) returns (SiteNeighborPluginGrantListResponse) {}
     rpc NeighborPluginGrants(SiteNeighborPluginGrantsRequest) returns (SiteNeighborPluginGrantsResponse) {}
     rpc NeighborPluginGranted(SiteNeighborPluginGrantedRequest) returns (SiteNeighborPluginGrantedResponse) {}
+    rpc SetNeighborPluginGrant(SiteSetNeighborPluginGrantRequest) returns (Empty) {}
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
 }
@@ -48,6 +49,12 @@ message SiteNeighborPluginGrantedRequest {
 
 message SiteNeighborPluginGrantedResponse {
     bool granted = 1;
+}
+
+message SiteSetNeighborPluginGrantRequest {
+    string pluginname = 1;
+    string grant = 2;
+    bool granted = 3;
 }
 
 message SiteUserLoginRequest {

@@ -134,7 +134,7 @@ func (ss *SecureSite) loadSinglePluginPages(name string) {
 	}
 
 	// Save the plugin routes so they can be removed if disabled.
-	saveRoutesForPlugin(name, recorder, ss.pluginsystem)
+	SaveRoutesForPlugin(name, recorder, ss.pluginsystem)
 }
 
 // DisablePlugin disables a plugin.
@@ -161,7 +161,8 @@ func (ss *SecureSite) DisablePlugin(pluginName string, unloadPlugin bool) error 
 	return ss.pluginsystem.SetEnabled(pluginName, false)
 }
 
-func saveRoutesForPlugin(name string, recorder *pluginsafe.PluginRouteRecorder, pluginsystem ambient.PluginSystem) {
+// SaveRoutesForPlugin will save the routes in the plugin system.
+func SaveRoutesForPlugin(name string, recorder *pluginsafe.PluginRouteRecorder, pluginsystem ambient.PluginSystem) {
 	// Save the routes.
 	arr := make([]ambient.Route, 0)
 	for _, route := range recorder.Routes() {

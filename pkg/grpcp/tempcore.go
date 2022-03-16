@@ -40,8 +40,8 @@ type SecureSite interface {
 	NeighborPluginGrants(pluginName string) (map[ambient.Grant]bool, error)
 	// NeighborPluginGranted returns true if the plugin has the grant.
 	NeighborPluginGranted(pluginName string, grantName ambient.Grant) (bool, error)
-	// // SetNeighborPluginGrant sets a grant for a neighbor plugin.
-	// SetNeighborPluginGrant(pluginName string, grantName Grant, granted bool) error
+	// SetNeighborPluginGrant sets a grant for a neighbor plugin.
+	SetNeighborPluginGrant(pluginName string, grantName ambient.Grant, granted bool) error
 	// // Plugins returns the plugin list.
 	// Plugins() (map[string]PluginData, error)
 	// // PluginNames returns the list of plugin name.

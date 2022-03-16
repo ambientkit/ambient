@@ -4,6 +4,7 @@ package hello
 import (
 	"embed"
 
+	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp"
 )
 
@@ -44,6 +45,30 @@ func (p *Plugin) Enable(toolkit *grpcp.Toolkit) error {
 	return nil
 }
 
+// GrantRequests returns a list of grants requested by the plugin.
+func (p *Plugin) GrantRequests() []ambient.GrantRequest {
+	return []ambient.GrantRequest{
+		{Grant: ambient.GrantUserAuthenticatedRead, Description: "Show different menus to authenticated vs unauthenticated users."},
+		{Grant: ambient.GrantUserAuthenticatedWrite, Description: "Access to login and logout the user."},
+		{Grant: ambient.GrantUserPersistWrite, Description: "Access to set session as persistent."},
+		{Grant: ambient.GrantPluginSettingRead, Description: "Read own plugin settings."},
+		{Grant: ambient.GrantPluginSettingWrite, Description: "Write own plugin settings."},
+		{Grant: ambient.GrantSitePostRead, Description: "Read all site posts."},
+		{Grant: ambient.GrantSitePostWrite, Description: "Create and edit site posts."},
+		{Grant: ambient.GrantSiteSchemeRead, Description: "Read site scheme."},
+		{Grant: ambient.GrantSiteSchemeWrite, Description: "Update the site scheme."},
+		{Grant: ambient.GrantSiteURLRead, Description: "Read the site URL."},
+		{Grant: ambient.GrantSiteURLWrite, Description: "Update the site URL."},
+		{Grant: ambient.GrantSiteTitleRead, Description: "Read the site title."},
+		{Grant: ambient.GrantSiteTitleWrite, Description: "Update the site title."},
+		{Grant: ambient.GrantSiteContentRead, Description: "Read home page content."},
+		{Grant: ambient.GrantSiteContentWrite, Description: "Update home page content."},
+		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to write blog meta tags to the header and add a nav and footer."},
+		{Grant: ambient.GrantSiteFuncMapWrite, Description: "Access to create global FuncMaps for templates."},
+		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for editing the blog posts."},
+	}
+}
+
 // Routes sets routes for the plugin.
 func (p *Plugin) Routes() error {
 	p.Log.Error("plugin: routes called")
@@ -64,5 +89,7 @@ func (p *Plugin) Routes() error {
 	p.Mux.Get("/neighborPluginGrants", p.neighborPluginGrants)
 	p.Mux.Get("/neighborPluginGranted", p.neighborPluginGranted)
 	p.Mux.Get("/neighborPluginGrantedBad", p.neighborPluginGrantedBad)
+	p.Mux.Get("/setNeighborPluginGrant", p.setNeighborPluginGrant)
+	p.Mux.Get("/setNeighborPluginGrantBad", p.setNeighborPluginGrantBad)
 	return nil
 }

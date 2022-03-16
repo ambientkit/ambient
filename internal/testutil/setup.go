@@ -100,17 +100,18 @@ func Setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 
 	recorder := pluginsafe.NewRouteRecorder(logger, pluginsystem, router)
 
-	// Create secure site for the core app and use "ambient" so it gets
-	// full permissions.
-	securesite := secureconfig.NewSecureSite("ambient", logger, pluginsystem, sess, router, te, recorder)
-
-	mw := sessPlugin.Middleware()[0]
+	// Create secure site for the core app.
+	securesite := secureconfig.NewSecureSite("hello", logger, pluginsystem, sess, router, te, recorder)
+	rr := recorder.WithPlugin("hello")
 
 	toolkit := &grpcp.Toolkit{
 		Log:  logger,
-		Mux:  router,
+		Mux:  rr,
 		Site: securesite,
 	}
+	secureconfig.SaveRoutesForPlugin("hello", rr, pluginsystem)
+
+	mw := sessPlugin.Middleware()[0]
 
 	p, pluginClient, err := connectPlugin("hello", "./pkg/grpcp/testdata/plugin/hello/cmd/plugin/hello")
 	if err != nil {
@@ -138,13 +139,6 @@ func Setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 	if err != nil {
 		return nil, pluginClient, nil, fmt.Errorf("server: could not get routes: %v", err.Error())
 	}
-
-	// for {
-	// 	<-time.After(5 * time.Second)
-	// 	err = p.Routes()
-	// 	if err != nil {
-	// 		return fmt.Errorf("server: could not get routes: %v", err.Error())
-	// 	}
 
 	// 	err = p.Disable()
 	// 	if err != nil {
