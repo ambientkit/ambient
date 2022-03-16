@@ -75,6 +75,23 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 		names = append(names, p.PluginName())
 	}
 
+	// Load the gRPC plugins.
+	// for _, gp := range arr.GRPCPlugins {
+	// 	// FIXME: Client needs to be handle on shutdown.
+	// 	p, _, err := grpcp.ConnectPlugin(gp.PluginName, "./pkg/grpcp/testdata/plugin/hello/cmd/plugin/hello")
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	save, err := loadPlugin(log, p, plugins, storage)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	} else if save {
+	// 		shouldSave = true
+	// 	}
+
+	// 	names = append(names, p.PluginName())
+	// }
+
 	if shouldSave {
 		err := storage.Save()
 		if err != nil {
