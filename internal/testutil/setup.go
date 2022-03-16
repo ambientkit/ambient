@@ -1,4 +1,4 @@
-package main
+package testutil
 
 import (
 	"fmt"
@@ -18,25 +18,12 @@ import (
 	"github.com/ambientkit/plugin/sessionmanager/scssession"
 	"github.com/ambientkit/plugin/storage/memorystorage"
 	"github.com/ambientkit/plugin/templateengine/htmlengine"
-	hclog "github.com/hashicorp/go-hclog"
-	plugin "github.com/hashicorp/go-plugin"
+	"github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/go-plugin"
 )
 
-func main() {
-	_, pluginClient, h, err := setup()
-	if pluginClient != nil {
-		defer pluginClient.Kill()
-	}
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-
-	go http.ListenAndServe(":8080", h)
-
-	select {}
-}
-
-func setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
+// Setup sets up a test gRPC server.
+func Setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 	z := zaplogger.New()
 	logger, err := z.Logger("grpcplugin", "1.0.0", nil)
 	if err != nil {
@@ -122,7 +109,7 @@ func setup() (grpcp.PluginCore, *plugin.Client, http.Handler, error) {
 		Site: securesite,
 	}
 
-	p, pluginClient, err := connectPlugin("hello", "./cmd/plugin/hello/cmd/plugin/hello")
+	p, pluginClient, err := connectPlugin("hello", "./pkg/grpcp/testdata/plugin/hello/cmd/plugin/hello")
 	if err != nil {
 		logger.Fatal(err.Error())
 	}

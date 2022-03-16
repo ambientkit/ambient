@@ -9,11 +9,8 @@ import (
 )
 
 func (p *Plugin) index(w http.ResponseWriter, r *http.Request) error {
-	vars := make(map[string]interface{})
-	vars["title"] = "Plugins"
 	fmt.Fprint(w, "hello world")
 	return nil
-	//return p.Render.Page(w, r, assets, "template/hello", nil, vars)
 }
 
 func (p *Plugin) another(w http.ResponseWriter, r *http.Request) error {
@@ -31,32 +28,27 @@ func (p *Plugin) nameOld(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Plugin) errorFunc(w http.ResponseWriter, r *http.Request) error {
-	//fmt.Fprint(w, "hello error page")
-	//p.Mux.Error(http.StatusForbidden, w, r)
-	//return nil
 	return p.Mux.StatusError(http.StatusForbidden, nil)
 }
 
 func (p *Plugin) created(w http.ResponseWriter, r *http.Request) error {
-	vars := make(map[string]interface{})
-	vars["title"] = "Plugins"
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, "created: %v", p.Mux.Param(r, "name"))
 	return nil
-	//return p.Render.Page(w, r, assets, "template/hello", nil, vars)
 }
 
-func (p *Plugin) headersPOST(w http.ResponseWriter, r *http.Request) error {
-	//fmt.Fprintf(w, "headers: %#v", r.Header)
+func (p *Plugin) headers(w http.ResponseWriter, r *http.Request) error {
+	fmt.Fprintf(w, "headers: %#v", len(r.Header))
+	return nil
+}
+
+func (p *Plugin) formPOST(w http.ResponseWriter, r *http.Request) error {
 	body, _ := io.ReadAll(r.Body)
 	fmt.Fprintf(w, "body: %#v", string(body))
 	return nil
 }
 
-func (p *Plugin) headers(w http.ResponseWriter, r *http.Request) error {
-	// fmt.Fprintf(w, "headers: %#v", r.Header)
-	// body, _ := io.ReadAll(r.Body)
-	// fmt.Fprintf(w, "body: %#v", body)
+func (p *Plugin) formGet(w http.ResponseWriter, r *http.Request) error {
 	fmt.Fprint(w, html)
 	return nil
 }
@@ -91,22 +83,7 @@ func (p *Plugin) loggedin(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (p *Plugin) errorsFunc(w http.ResponseWriter, r *http.Request) error {
-	/*
-	   // Error handles returning the proper error.
-	   func (ss *SecureSite) Error(siteError error) (err error) {
-	   	switch siteError {
-	   	case config.ErrAccessDenied, config.ErrGrantNotRequested, config.ErrSettingNotSpecified:
-	   		return ambient.StatusError{Code: http.StatusForbidden, Err: siteError}
-	   	case config.ErrNotFound:
-	   		return ambient.StatusError{Code: http.StatusNotFound, Err: siteError}
-	   	default:
-	   		return ambient.StatusError{Code: http.StatusInternalServerError, Err: siteError}
-	   	}
-	   }
-	*/
-
 	errTest := config.ErrGrantNotRequested
-
 	err := p.Site.Error(errTest)
 	if err != nil {
 		return err

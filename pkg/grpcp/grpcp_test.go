@@ -1,4 +1,4 @@
-package main
+package grpcp_test
 
 import (
 	"io"
@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ambientkit/ambient/internal/testutil"
 	"github.com/ambientkit/ambient/pkg/grpcp"
 	plugin "github.com/hashicorp/go-plugin"
 	"github.com/stretchr/testify/assert"
@@ -18,13 +19,13 @@ func grpcSetup(t *testing.T) (grpcp.PluginCore, *plugin.Client, http.Handler) {
 	// Set the test relative to the project directory since the plugin path
 	// is relative to that.
 	path, _ := os.Getwd()
-	basePath := strings.TrimSuffix(path, "/cmd/server")
+	basePath := strings.TrimSuffix(path, "/pkg/grpcp")
 	if err := os.Chdir(basePath); err != nil {
 		assert.FailNow(t, err.Error())
 	}
 
 	// Set up the application.
-	core, pluginClient, mux, err := setup()
+	core, pluginClient, mux, err := testutil.Setup()
 	if err != nil {
 		assert.FailNow(t, err.Error())
 	}
@@ -76,14 +77,21 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 	assert.Equal(t, "created: ", string(body))
 
-	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/headers", nil))
+	r := httptest.NewRequest("GET", "/headers", nil)
+	r.Header.Set("foo", "123")
+	r.Header.Set("bar", "who")
+	resp, body = doRequest(t, mux, r)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "headers: 2", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/form", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "\n<!DOCTYPE html>\n<html lang=\"en\">\n<head></head>\n<body>\n\t<form method=\"post\">\n\t<label for=\"fname\">First name:</label>\n\t<input type=\"text\" id=\"fname\" name=\"fname\" value=\"a\"><br><br>\n\t<label for=\"lname\">Last name:</label>\n\t<input type=\"text\" id=\"lname\" name=\"lname\" value=\"b\"><br><br>\n\t<input type=\"submit\" value=\"Submit\">\n\t</form>\n</body>\n</html>\n", string(body))
 
 	form := url.Values{}
 	form.Add("a", "foo")
 	form.Add("b", "bar")
-	r := httptest.NewRequest("POST", "/headers", strings.NewReader(form.Encode()))
+	r = httptest.NewRequest("POST", "/form", strings.NewReader(form.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, body = doRequest(t, mux, r)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)

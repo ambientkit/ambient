@@ -54,14 +54,14 @@ protoc-install:
 protoc:
 	@PATH="${PATH}:$(shell pwd)/bin" && protoc -I pkg/grpcp/protobuf/ pkg/grpcp/protobuf/*.proto --go_out=plugins=grpc:pkg/grpcp/protodef/
 
-# Start the build and run process.
+# Start the build and run process for grpc.
 .PHONY: start
 start: protoc
-	@cd cmd/plugin/hello/cmd/plugin && go build -o hello
-	go run cmd/server/main.go
+	@cd pkg/grpcp/testdata/plugin/hello/cmd/plugin && go build -o hello
+	go run pkg/grpcp/testdata/cmd/server/main.go
 
-# Start the test process.
+# Start the test process for grpc.
 .PHONY: test
 test: protoc
-	@cd cmd/plugin/hello/cmd/plugin && go build -o hello
-	go test cmd/server/*
+	@cd pkg/grpcp/testdata/plugin/hello/cmd/plugin && go build -o hello
+	go test pkg/grpcp/*.go
