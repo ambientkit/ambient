@@ -68,7 +68,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 
 	// Load the gRPC plugins.
 	for _, gp := range arr.GRPCPlugins {
-		p, pc, err := grpcp.ConnectPlugin(gp.PluginName, "./pkg/grpcp/testdata/plugin/hello/cmd/plugin/hello")
+		p, pc, err := grpcp.ConnectPlugin(gp.Name, gp.Path)
 		if err != nil {
 			return nil, err
 		}

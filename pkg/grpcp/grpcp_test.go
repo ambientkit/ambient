@@ -196,11 +196,10 @@ func Setup() (*ambientapp.App, error) {
 		// will be enabled and given full access.
 		TrustedPlugins: map[string]bool{},
 		Plugins: []ambient.Plugin{
-			//hello.New(),
 			neighbor.New(),
 		},
 		GRPCPlugins: []ambient.GRPCPlugin{
-			{PluginName: "hello", PluginPath: "./pkg/grpcp/testdata/plugin/hello/cmd/plugin/hello"},
+			{Name: "hello", Path: "./pkg/grpcp/testdata/plugin/hello/cmd/plugin/hello"},
 		},
 		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.

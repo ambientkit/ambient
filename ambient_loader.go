@@ -13,6 +13,6 @@ type PluginLoader struct {
 
 // GRPCPlugin is a plugin over gRPC.
 type GRPCPlugin struct {
-	PluginName string
-	PluginPath string
+	Name string
+	Path string
 }
