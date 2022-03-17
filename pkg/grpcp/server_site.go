@@ -159,6 +159,17 @@ func (m *GRPCSiteServer) DisablePlugin(ctx context.Context, req *protodef.SiteDi
 	return &protodef.Empty{}, err
 }
 
+// SavePost handler.
+func (m *GRPCSiteServer) SavePost(ctx context.Context, req *protodef.SiteSavePostRequest) (
+	resp *protodef.Empty, err error) {
+	post, err := ProtobufStructToPost(req.Post)
+	if err != nil {
+		return &protodef.Empty{}, err
+	}
+	err = m.Impl.SavePost(req.Id, post)
+	return &protodef.Empty{}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

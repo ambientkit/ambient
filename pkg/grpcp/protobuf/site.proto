@@ -21,6 +21,7 @@ service Site {
     rpc EnablePlugin(SiteEnablePluginRequest) returns (Empty) {}
     rpc LoadAllPluginPages(Empty) returns (Empty) {}
     rpc DisablePlugin(SiteDisablePluginRequest) returns (Empty) {}
+    rpc SavePost(SiteSavePostRequest) returns (Empty) {}
 
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
@@ -94,6 +95,11 @@ message SiteEnablePluginRequest {
 message SiteDisablePluginRequest {
     string name = 1;
     bool unload = 2;
+}
+
+message SiteSavePostRequest {
+    string id = 1;
+    google.protobuf.Struct post = 2;
 }
 
 

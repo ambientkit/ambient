@@ -64,6 +64,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePluginDelete))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePluginEnable))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePluginDisable))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePostWrite))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -214,6 +215,10 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/disablePluginBad", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Disable plugin: item was not found", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("POST", "/savePost", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Save post: <nil>", string(body))
 }
 
 // Setup sets up a test gRPC server.

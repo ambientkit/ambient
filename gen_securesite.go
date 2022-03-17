@@ -37,12 +37,14 @@ type SecureSite interface {
 	LoadAllPluginPages() error
 	// DisablePlugin disables a plugin.
 	DisablePlugin(pluginName string, unloadPlugin bool) error
+	// FIXME: Need to change LoadAllPluginMiddleware to be a return instead of a
+	// plugin accessible function.
 	// // LoadAllPluginMiddleware returns a handler that is wrapped in conditional
-	// // middlware from the plugins. This only needs to be run once at start up
+	// // middleware from the plugins. This only needs to be run once at start up
 	// // and should never be called again.
 	// LoadAllPluginMiddleware() http.Handler
-	// // SavePost saves a post.
-	// SavePost(ID string, post Post) error
+	// SavePost saves a post.
+	SavePost(ID string, post Post) error
 	// // PostsAndPages returns the list of posts and pages.
 	// PostsAndPages(onlyPublished bool) (PostWithIDList, error)
 	// // PublishedPosts returns the list of published posts.

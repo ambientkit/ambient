@@ -92,3 +92,31 @@ func ProtobufStructToPluginDataMap(s *structpb.Struct) (map[string]ambient.Plugi
 	}
 	return m, nil
 }
+
+// PostToProtobufStruct converts a PluginData map to a protobuf struct.
+func PostToProtobufStruct(m ambient.Post) (*structpb.Struct, error) {
+	b, err := json.Marshal(m)
+	if err != nil {
+		return nil, err
+	}
+	s := &structpb.Struct{}
+	err = protojson.Unmarshal(b, s)
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+// ProtobufStructToPost converts a protobuf struct to a PluginData map.
+func ProtobufStructToPost(s *structpb.Struct) (ambient.Post, error) {
+	b, err := protojson.Marshal(s)
+	m := ambient.Post{}
+	if err != nil {
+		return m, err
+	}
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return m, err
+	}
+	return m, nil
+}

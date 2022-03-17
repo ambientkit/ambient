@@ -230,7 +230,7 @@ func embeddedAssets(mux ambient.Router, sess ambient.AppSession, pluginName stri
 }
 
 // LoadAllPluginMiddleware returns a handler that is wrapped in conditional
-// middlware from the plugins. This only needs to be run once at start up
+// middleware from the plugins. This only needs to be run once at start up
 // and should never be called again.
 func (ss *SecureSite) LoadAllPluginMiddleware() http.Handler {
 	var h http.Handler = ss.mux
@@ -247,7 +247,7 @@ func (ss *SecureSite) LoadAllPluginMiddleware() http.Handler {
 }
 
 // LoadSinglePluginMiddleware returns a handler that is wrapped in conditional
-// middlware from the plugins.
+// middleware from the plugins.
 func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin ambient.MiddlewarePlugin) http.Handler {
 	// Loop through each piece of middleware.
 	arrHandlers := plugin.Middleware()

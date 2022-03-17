@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/amberror"
@@ -241,5 +242,24 @@ func (p *Plugin) disablePlugin(w http.ResponseWriter, r *http.Request) error {
 func (p *Plugin) disablePluginBad(w http.ResponseWriter, r *http.Request) error {
 	err := p.Site.DisablePlugin("neighborBad", true)
 	fmt.Fprintf(w, "Disable plugin: %v", err)
+	return nil
+}
+
+func (p *Plugin) savePost(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.SavePost("abc", ambient.Post{
+		Title:     "title",
+		URL:       "url",
+		Canonical: "canonical",
+		Created:   time.Now(),
+		Updated:   time.Now(),
+		Timestamp: time.Now(),
+		Content:   "content",
+		Published: true,
+		Page:      true,
+		Tags: ambient.TagList{
+			{Name: "tag1", Timestamp: time.Now()},
+		},
+	})
+	fmt.Fprintf(w, "Save post: %v", err)
 	return nil
 }

@@ -187,6 +187,24 @@ func (c *GRPCSitePlugin) DisablePlugin(pluginName string, unloadPlugin bool) err
 	return nil
 }
 
+// SavePost handler.
+func (c *GRPCSitePlugin) SavePost(ID string, post ambient.Post) error {
+	ps, err := PostToProtobufStruct(post)
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	_, err = c.client.SavePost(context.Background(), &protodef.SiteSavePostRequest{
+		Id:   ID,
+		Post: ps,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.
