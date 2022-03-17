@@ -225,3 +225,9 @@ func (p *Plugin) enablePluginBad(w http.ResponseWriter, r *http.Request) error {
 	fmt.Fprintf(w, "Enable plugin: %v", err)
 	return nil
 }
+
+func (p *Plugin) loadAllPluginPages(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.LoadAllPluginPages()
+	fmt.Fprintf(w, "Load pages: %v", err)
+	return nil
+}

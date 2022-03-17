@@ -19,6 +19,7 @@ service Site {
     rpc PluginNames(Empty) returns (SitePluginNamesResponse) {}
     rpc DeletePlugin(SiteDeletePluginRequest) returns (Empty) {}
     rpc EnablePlugin(SiteEnablePluginRequest) returns (Empty) {}
+    rpc LoadAllPluginPages(Empty) returns (Empty) {}
 
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}

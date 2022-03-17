@@ -164,6 +164,16 @@ func (c *GRPCSitePlugin) EnablePlugin(pluginName string, loadPlugin bool) error 
 	return nil
 }
 
+// LoadAllPluginPages handler.
+func (c *GRPCSitePlugin) LoadAllPluginPages() error {
+	_, err := c.client.LoadAllPluginPages(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

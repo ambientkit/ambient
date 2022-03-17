@@ -201,6 +201,10 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/enablePluginBad", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Enable plugin: item was not found", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/loadAllPluginPages", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Load pages: <nil>", string(body))
 }
 
 // Setup sets up a test gRPC server.

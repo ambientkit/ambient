@@ -33,8 +33,8 @@ type SecureSite interface {
 	DeletePlugin(name string) error
 	// EnablePlugin enables a plugin.
 	EnablePlugin(pluginName string, loadPlugin bool) error
-	// // LoadAllPluginPages loads all of the pages from the plugins.
-	// LoadAllPluginPages() error
+	// LoadAllPluginPages loads all of the pages from the plugins.
+	LoadAllPluginPages() error
 	// // DisablePlugin disables a plugin.
 	// DisablePlugin(pluginName string, unloadPlugin bool) error
 	// // LoadAllPluginMiddleware returns a handler that is wrapped in conditional
