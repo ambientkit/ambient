@@ -151,6 +151,19 @@ func (c *GRPCSitePlugin) DeletePlugin(pluginName string) error {
 	return nil
 }
 
+// EnablePlugin handler.
+func (c *GRPCSitePlugin) EnablePlugin(pluginName string, loadPlugin bool) error {
+	_, err := c.client.EnablePlugin(context.Background(), &protodef.SiteEnablePluginRequest{
+		Name: pluginName,
+		Load: loadPlugin,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

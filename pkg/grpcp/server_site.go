@@ -138,6 +138,13 @@ func (m *GRPCSiteServer) DeletePlugin(ctx context.Context, req *protodef.SiteDel
 	return &protodef.Empty{}, err
 }
 
+// EnablePlugin handler.
+func (m *GRPCSiteServer) EnablePlugin(ctx context.Context, req *protodef.SiteEnablePluginRequest) (
+	resp *protodef.Empty, err error) {
+	err = m.Impl.EnablePlugin(req.Name, req.Load)
+	return &protodef.Empty{}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

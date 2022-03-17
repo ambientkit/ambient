@@ -213,3 +213,15 @@ func (p *Plugin) deletePluginBad(w http.ResponseWriter, r *http.Request) error {
 	fmt.Fprintf(w, "Delete plugin: %v", err)
 	return nil
 }
+
+func (p *Plugin) enablePlugin(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.EnablePlugin("neighbor", true)
+	fmt.Fprintf(w, "Enable plugin: %v", err)
+	return nil
+}
+
+func (p *Plugin) enablePluginBad(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.EnablePlugin("neighborBad", true)
+	fmt.Fprintf(w, "Enable plugin: %v", err)
+	return nil
+}

@@ -31,8 +31,8 @@ type SecureSite interface {
 	PluginNames() ([]string, error)
 	// DeletePlugin deletes a plugin.
 	DeletePlugin(name string) error
-	// // EnablePlugin enables a plugin.
-	// EnablePlugin(pluginName string, loadPlugin bool) error
+	// EnablePlugin enables a plugin.
+	EnablePlugin(pluginName string, loadPlugin bool) error
 	// // LoadAllPluginPages loads all of the pages from the plugins.
 	// LoadAllPluginPages() error
 	// // DisablePlugin disables a plugin.

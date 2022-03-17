@@ -18,6 +18,7 @@ service Site {
     rpc Plugins(Empty) returns (SitePluginsResponse) {}
     rpc PluginNames(Empty) returns (SitePluginNamesResponse) {}
     rpc DeletePlugin(SiteDeletePluginRequest) returns (Empty) {}
+    rpc EnablePlugin(SiteEnablePluginRequest) returns (Empty) {}
 
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
@@ -81,6 +82,11 @@ message SitePluginNamesResponse {
 
 message SiteDeletePluginRequest {
     string name = 1;
+}
+
+message SiteEnablePluginRequest {
+    string name = 1;
+    bool load = 2;
 }
 
 
