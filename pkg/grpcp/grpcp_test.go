@@ -61,6 +61,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborGrantRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborGrantWrite))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePluginRead))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePluginDelete))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -183,6 +184,14 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pluginNames", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Plugin names: 3", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("DELETE", "/deletePlugin", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Delete plugin: <nil>", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("DELETE", "/deletePluginBad", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Delete plugin: plugin name not found", string(body))
 }
 
 // Setup sets up a test gRPC server.

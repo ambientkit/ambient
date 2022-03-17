@@ -131,6 +131,13 @@ func (m *GRPCSiteServer) PluginNames(ctx context.Context, req *protodef.Empty) (
 	}, err
 }
 
+// DeletePlugin handler.
+func (m *GRPCSiteServer) DeletePlugin(ctx context.Context, req *protodef.SiteDeletePluginRequest) (
+	resp *protodef.Empty, err error) {
+	err = m.Impl.DeletePlugin(req.Name)
+	return &protodef.Empty{}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

@@ -139,6 +139,18 @@ func (c *GRPCSitePlugin) PluginNames() ([]string, error) {
 	return resp.Names, nil
 }
 
+// DeletePlugin handler.
+func (c *GRPCSitePlugin) DeletePlugin(pluginName string) error {
+	_, err := c.client.DeletePlugin(context.Background(), &protodef.SiteDeletePluginRequest{
+		Name: pluginName,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

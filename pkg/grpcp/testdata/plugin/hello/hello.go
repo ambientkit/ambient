@@ -94,4 +94,6 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/neighborPluginRequestedGrantBad", p.neighborPluginRequestedGrantBad)
 	p.Mux.Get("/plugins", p.plugins)
 	p.Mux.Get("/pluginNames", p.pluginNames)
+	p.Mux.Delete("/deletePlugin", p.deletePlugin)
+	p.Mux.Delete("/deletePluginBad", p.deletePluginBad)
 }

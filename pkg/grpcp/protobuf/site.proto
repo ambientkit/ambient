@@ -17,6 +17,7 @@ service Site {
     rpc SetNeighborPluginGrant(SiteSetNeighborPluginGrantRequest) returns (Empty) {}
     rpc Plugins(Empty) returns (SitePluginsResponse) {}
     rpc PluginNames(Empty) returns (SitePluginNamesResponse) {}
+    rpc DeletePlugin(SiteDeletePluginRequest) returns (Empty) {}
 
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
@@ -76,6 +77,10 @@ message SitePluginsResponse {
 
 message SitePluginNamesResponse {
     repeated string names = 1;
+}
+
+message SiteDeletePluginRequest {
+    string name = 1;
 }
 
 

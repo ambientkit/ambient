@@ -29,8 +29,8 @@ type SecureSite interface {
 	Plugins() (map[string]PluginData, error)
 	// PluginNames returns the list of plugin name.
 	PluginNames() ([]string, error)
-	// // DeletePlugin deletes a plugin.
-	// DeletePlugin(name string) error
+	// DeletePlugin deletes a plugin.
+	DeletePlugin(name string) error
 	// // EnablePlugin enables a plugin.
 	// EnablePlugin(pluginName string, loadPlugin bool) error
 	// // LoadAllPluginPages loads all of the pages from the plugins.

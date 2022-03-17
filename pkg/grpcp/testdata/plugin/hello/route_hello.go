@@ -201,3 +201,15 @@ func (p *Plugin) pluginNames(w http.ResponseWriter, r *http.Request) error {
 	fmt.Fprintf(w, "Plugin names: %v", len(s))
 	return nil
 }
+
+func (p *Plugin) deletePlugin(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.DeletePlugin("neighbor")
+	fmt.Fprintf(w, "Delete plugin: %v", err)
+	return nil
+}
+
+func (p *Plugin) deletePluginBad(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.DeletePlugin("neighborBad")
+	fmt.Fprintf(w, "Delete plugin: %v", err)
+	return nil
+}
