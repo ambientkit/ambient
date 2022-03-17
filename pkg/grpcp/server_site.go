@@ -116,6 +116,21 @@ func (m *GRPCSiteServer) Plugins(ctx context.Context, req *protodef.Empty) (
 	}, err
 }
 
+// PluginNames handler.
+func (m *GRPCSiteServer) PluginNames(ctx context.Context, req *protodef.Empty) (
+	resp *protodef.SitePluginNamesResponse, err error) {
+	names, err := m.Impl.PluginNames()
+	if err != nil {
+		return &protodef.SitePluginNamesResponse{
+			Names: make([]string, 0),
+		}, err
+	}
+
+	return &protodef.SitePluginNamesResponse{
+		Names: names,
+	}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

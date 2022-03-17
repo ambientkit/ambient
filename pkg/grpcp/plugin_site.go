@@ -129,6 +129,16 @@ func (c *GRPCSitePlugin) Plugins() (map[string]ambient.PluginData, error) {
 	return sm, nil
 }
 
+// PluginNames handler.
+func (c *GRPCSitePlugin) PluginNames() ([]string, error) {
+	resp, err := c.client.PluginNames(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return make([]string, 0), ErrorHandler(err)
+	}
+
+	return resp.Names, nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

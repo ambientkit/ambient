@@ -16,6 +16,7 @@ service Site {
     rpc NeighborPluginRequestedGrant(SiteNeighborPluginRequestedGrantRequest) returns (SiteNeighborPluginRequestedGrantResponse) {}
     rpc SetNeighborPluginGrant(SiteSetNeighborPluginGrantRequest) returns (Empty) {}
     rpc Plugins(Empty) returns (SitePluginsResponse) {}
+    rpc PluginNames(Empty) returns (SitePluginNamesResponse) {}
 
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
@@ -72,6 +73,13 @@ message SiteSetNeighborPluginGrantRequest {
 message SitePluginsResponse {
     google.protobuf.Struct plugindata = 1;
 }
+
+message SitePluginNamesResponse {
+    repeated string names = 1;
+}
+
+
+
 
 message SiteUserLoginRequest {
     string requestid = 1;

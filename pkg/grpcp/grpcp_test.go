@@ -179,6 +179,10 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/plugins", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Plugins: 3", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pluginNames", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Plugin names: 3", string(body))
 }
 
 // Setup sets up a test gRPC server.

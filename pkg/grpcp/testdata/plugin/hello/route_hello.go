@@ -192,3 +192,12 @@ func (p *Plugin) plugins(w http.ResponseWriter, r *http.Request) error {
 	fmt.Fprintf(w, "Plugins: %v", len(s))
 	return nil
 }
+
+func (p *Plugin) pluginNames(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.PluginNames()
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Plugin names: %v", len(s))
+	return nil
+}
