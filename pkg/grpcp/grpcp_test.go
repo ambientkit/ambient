@@ -60,6 +60,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantUserAuthenticatedWrite))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborGrantRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborGrantWrite))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePluginRead))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -174,6 +175,10 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/neighborPluginRequestedGrantBad", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Requested: false", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/plugins", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Plugins: 3", string(body))
 }
 
 // Setup sets up a test gRPC server.

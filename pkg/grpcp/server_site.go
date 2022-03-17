@@ -100,6 +100,22 @@ func (m *GRPCSiteServer) SetNeighborPluginGrant(ctx context.Context, req *protod
 	return &protodef.Empty{}, err
 }
 
+// Plugins handler.
+func (m *GRPCSiteServer) Plugins(ctx context.Context, req *protodef.Empty) (
+	resp *protodef.SitePluginsResponse, err error) {
+	pd, err := m.Impl.Plugins()
+	if err != nil {
+		return &protodef.SitePluginsResponse{
+			Plugindata: &structpb.Struct{},
+		}, err
+	}
+
+	arr, err := PluginDataMapToProtobufStruct(pd)
+	return &protodef.SitePluginsResponse{
+		Plugindata: arr,
+	}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

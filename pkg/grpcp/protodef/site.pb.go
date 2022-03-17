@@ -574,6 +574,53 @@ func (x *SiteSetNeighborPluginGrantRequest) GetGranted() bool {
 	return false
 }
 
+type SitePluginsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Plugindata *structpb.Struct `protobuf:"bytes,1,opt,name=plugindata,proto3" json:"plugindata,omitempty"`
+}
+
+func (x *SitePluginsResponse) Reset() {
+	*x = SitePluginsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_site_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SitePluginsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SitePluginsResponse) ProtoMessage() {}
+
+func (x *SitePluginsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_site_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SitePluginsResponse.ProtoReflect.Descriptor instead.
+func (*SitePluginsResponse) Descriptor() ([]byte, []int) {
+	return file_site_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *SitePluginsResponse) GetPlugindata() *structpb.Struct {
+	if x != nil {
+		return x.Plugindata
+	}
+	return nil
+}
+
 type SiteUserLoginRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -586,7 +633,7 @@ type SiteUserLoginRequest struct {
 func (x *SiteUserLoginRequest) Reset() {
 	*x = SiteUserLoginRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_site_proto_msgTypes[11]
+		mi := &file_site_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -599,7 +646,7 @@ func (x *SiteUserLoginRequest) String() string {
 func (*SiteUserLoginRequest) ProtoMessage() {}
 
 func (x *SiteUserLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_site_proto_msgTypes[11]
+	mi := &file_site_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -612,7 +659,7 @@ func (x *SiteUserLoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SiteUserLoginRequest.ProtoReflect.Descriptor instead.
 func (*SiteUserLoginRequest) Descriptor() ([]byte, []int) {
-	return file_site_proto_rawDescGZIP(), []int{11}
+	return file_site_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *SiteUserLoginRequest) GetRequestid() string {
@@ -640,7 +687,7 @@ type SiteAuthenticatedUserRequest struct {
 func (x *SiteAuthenticatedUserRequest) Reset() {
 	*x = SiteAuthenticatedUserRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_site_proto_msgTypes[12]
+		mi := &file_site_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -653,7 +700,7 @@ func (x *SiteAuthenticatedUserRequest) String() string {
 func (*SiteAuthenticatedUserRequest) ProtoMessage() {}
 
 func (x *SiteAuthenticatedUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_site_proto_msgTypes[12]
+	mi := &file_site_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -666,7 +713,7 @@ func (x *SiteAuthenticatedUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SiteAuthenticatedUserRequest.ProtoReflect.Descriptor instead.
 func (*SiteAuthenticatedUserRequest) Descriptor() ([]byte, []int) {
-	return file_site_proto_rawDescGZIP(), []int{12}
+	return file_site_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *SiteAuthenticatedUserRequest) GetRequestid() string {
@@ -687,7 +734,7 @@ type SiteAuthenticatedUserResponse struct {
 func (x *SiteAuthenticatedUserResponse) Reset() {
 	*x = SiteAuthenticatedUserResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_site_proto_msgTypes[13]
+		mi := &file_site_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -700,7 +747,7 @@ func (x *SiteAuthenticatedUserResponse) String() string {
 func (*SiteAuthenticatedUserResponse) ProtoMessage() {}
 
 func (x *SiteAuthenticatedUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_site_proto_msgTypes[13]
+	mi := &file_site_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -713,7 +760,7 @@ func (x *SiteAuthenticatedUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SiteAuthenticatedUserResponse.ProtoReflect.Descriptor instead.
 func (*SiteAuthenticatedUserResponse) Descriptor() ([]byte, []int) {
-	return file_site_proto_rawDescGZIP(), []int{13}
+	return file_site_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *SiteAuthenticatedUserResponse) GetUsername() string {
@@ -785,7 +832,12 @@ var file_site_proto_rawDesc = []byte{
 	0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x05, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x67, 0x72, 0x61, 0x6e,
 	0x74, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x67, 0x72, 0x61, 0x6e, 0x74,
-	0x65, 0x64, 0x22, 0x50, 0x0a, 0x14, 0x53, 0x69, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x4c, 0x6f,
+	0x65, 0x64, 0x22, 0x4e, 0x0a, 0x13, 0x53, 0x69, 0x74, 0x65, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x37, 0x0a, 0x0a, 0x70, 0x6c, 0x75,
+	0x67, 0x69, 0x6e, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e,
+	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
+	0x53, 0x74, 0x72, 0x75, 0x63, 0x74, 0x52, 0x0a, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x64, 0x61,
+	0x74, 0x61, 0x22, 0x50, 0x0a, 0x14, 0x53, 0x69, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x4c, 0x6f,
 	0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x72, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x72,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x69, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72,
@@ -798,7 +850,7 @@ var file_site_proto_rawDesc = []byte{
 	0x74, 0x69, 0x63, 0x61, 0x74, 0x65, 0x64, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f,
 	0x6e, 0x73, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x32,
-	0x82, 0x08, 0x0a, 0x04, 0x53, 0x69, 0x74, 0x65, 0x12, 0x3a, 0x0a, 0x04, 0x4c, 0x6f, 0x61, 0x64,
+	0xcf, 0x08, 0x0a, 0x04, 0x53, 0x69, 0x74, 0x65, 0x12, 0x3a, 0x0a, 0x04, 0x4c, 0x6f, 0x61, 0x64,
 	0x12, 0x17, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x17, 0x2e, 0x61, 0x6d, 0x62, 0x69,
 	0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x70,
@@ -849,21 +901,26 @@ var file_site_proto_rawDesc = []byte{
 	0x53, 0x69, 0x74, 0x65, 0x53, 0x65, 0x74, 0x4e, 0x65, 0x69, 0x67, 0x68, 0x62, 0x6f, 0x72, 0x50,
 	0x6c, 0x75, 0x67, 0x69, 0x6e, 0x47, 0x72, 0x61, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
 	0x74, 0x1a, 0x17, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x4e, 0x0a, 0x09,
-	0x55, 0x73, 0x65, 0x72, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x26, 0x2e, 0x61, 0x6d, 0x62, 0x69,
-	0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e, 0x53, 0x69, 0x74,
-	0x65, 0x55, 0x73, 0x65, 0x72, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x17, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x76, 0x0a, 0x11,
-	0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69, 0x63, 0x61, 0x74, 0x65, 0x64, 0x55, 0x73, 0x65,
-	0x72, 0x12, 0x2e, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x64, 0x65, 0x66, 0x2e, 0x53, 0x69, 0x74, 0x65, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74,
-	0x69, 0x63, 0x61, 0x74, 0x65, 0x64, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x2f, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x64, 0x65, 0x66, 0x2e, 0x53, 0x69, 0x74, 0x65, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74,
-	0x69, 0x63, 0x61, 0x74, 0x65, 0x64, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x42, 0x0d, 0x5a, 0x0b, 0x2e, 0x2f, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x64, 0x65, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x4b, 0x0a, 0x07,
+	0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x73, 0x12, 0x17, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e,
+	0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
+	0x1a, 0x25, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x64, 0x65, 0x66, 0x2e, 0x53, 0x69, 0x74, 0x65, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4e, 0x0a, 0x09, 0x55, 0x73, 0x65,
+	0x72, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x26, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e, 0x53, 0x69, 0x74, 0x65, 0x55, 0x73,
+	0x65, 0x72, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17,
+	0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65,
+	0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x76, 0x0a, 0x11, 0x41, 0x75, 0x74,
+	0x68, 0x65, 0x6e, 0x74, 0x69, 0x63, 0x61, 0x74, 0x65, 0x64, 0x55, 0x73, 0x65, 0x72, 0x12, 0x2e,
+	0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65,
+	0x66, 0x2e, 0x53, 0x69, 0x74, 0x65, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69, 0x63, 0x61,
+	0x74, 0x65, 0x64, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2f,
+	0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65,
+	0x66, 0x2e, 0x53, 0x69, 0x74, 0x65, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69, 0x63, 0x61,
+	0x74, 0x65, 0x64, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x42, 0x0d, 0x5a, 0x0b, 0x2e, 0x2f, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -878,7 +935,7 @@ func file_site_proto_rawDescGZIP() []byte {
 	return file_site_proto_rawDescData
 }
 
-var file_site_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_site_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_site_proto_goTypes = []interface{}{
 	(*SiteAuthorizedRequest)(nil),                    // 0: ambient.protodef.SiteAuthorizedRequest
 	(*SiteAuthorizedResponse)(nil),                   // 1: ambient.protodef.SiteAuthorizedResponse
@@ -891,39 +948,43 @@ var file_site_proto_goTypes = []interface{}{
 	(*SiteNeighborPluginRequestedGrantRequest)(nil),  // 8: ambient.protodef.SiteNeighborPluginRequestedGrantRequest
 	(*SiteNeighborPluginRequestedGrantResponse)(nil), // 9: ambient.protodef.SiteNeighborPluginRequestedGrantResponse
 	(*SiteSetNeighborPluginGrantRequest)(nil),        // 10: ambient.protodef.SiteSetNeighborPluginGrantRequest
-	(*SiteUserLoginRequest)(nil),                     // 11: ambient.protodef.SiteUserLoginRequest
-	(*SiteAuthenticatedUserRequest)(nil),             // 12: ambient.protodef.SiteAuthenticatedUserRequest
-	(*SiteAuthenticatedUserResponse)(nil),            // 13: ambient.protodef.SiteAuthenticatedUserResponse
-	(*GrantRequest)(nil),                             // 14: ambient.protodef.GrantRequest
-	(*structpb.Struct)(nil),                          // 15: google.protobuf.Struct
-	(*Empty)(nil),                                    // 16: ambient.protodef.Empty
+	(*SitePluginsResponse)(nil),                      // 11: ambient.protodef.SitePluginsResponse
+	(*SiteUserLoginRequest)(nil),                     // 12: ambient.protodef.SiteUserLoginRequest
+	(*SiteAuthenticatedUserRequest)(nil),             // 13: ambient.protodef.SiteAuthenticatedUserRequest
+	(*SiteAuthenticatedUserResponse)(nil),            // 14: ambient.protodef.SiteAuthenticatedUserResponse
+	(*GrantRequest)(nil),                             // 15: ambient.protodef.GrantRequest
+	(*structpb.Struct)(nil),                          // 16: google.protobuf.Struct
+	(*Empty)(nil),                                    // 17: ambient.protodef.Empty
 }
 var file_site_proto_depIdxs = []int32{
-	14, // 0: ambient.protodef.SiteNeighborPluginGrantListResponse.grants:type_name -> ambient.protodef.GrantRequest
-	15, // 1: ambient.protodef.SiteNeighborPluginGrantsResponse.grants:type_name -> google.protobuf.Struct
-	16, // 2: ambient.protodef.Site.Load:input_type -> ambient.protodef.Empty
-	0,  // 3: ambient.protodef.Site.Authorized:input_type -> ambient.protodef.SiteAuthorizedRequest
-	2,  // 4: ambient.protodef.Site.NeighborPluginGrantList:input_type -> ambient.protodef.SiteNeighborPluginGrantListRequest
-	4,  // 5: ambient.protodef.Site.NeighborPluginGrants:input_type -> ambient.protodef.SiteNeighborPluginGrantsRequest
-	6,  // 6: ambient.protodef.Site.NeighborPluginGranted:input_type -> ambient.protodef.SiteNeighborPluginGrantedRequest
-	8,  // 7: ambient.protodef.Site.NeighborPluginRequestedGrant:input_type -> ambient.protodef.SiteNeighborPluginRequestedGrantRequest
-	10, // 8: ambient.protodef.Site.SetNeighborPluginGrant:input_type -> ambient.protodef.SiteSetNeighborPluginGrantRequest
-	11, // 9: ambient.protodef.Site.UserLogin:input_type -> ambient.protodef.SiteUserLoginRequest
-	12, // 10: ambient.protodef.Site.AuthenticatedUser:input_type -> ambient.protodef.SiteAuthenticatedUserRequest
-	16, // 11: ambient.protodef.Site.Load:output_type -> ambient.protodef.Empty
-	1,  // 12: ambient.protodef.Site.Authorized:output_type -> ambient.protodef.SiteAuthorizedResponse
-	3,  // 13: ambient.protodef.Site.NeighborPluginGrantList:output_type -> ambient.protodef.SiteNeighborPluginGrantListResponse
-	5,  // 14: ambient.protodef.Site.NeighborPluginGrants:output_type -> ambient.protodef.SiteNeighborPluginGrantsResponse
-	7,  // 15: ambient.protodef.Site.NeighborPluginGranted:output_type -> ambient.protodef.SiteNeighborPluginGrantedResponse
-	9,  // 16: ambient.protodef.Site.NeighborPluginRequestedGrant:output_type -> ambient.protodef.SiteNeighborPluginRequestedGrantResponse
-	16, // 17: ambient.protodef.Site.SetNeighborPluginGrant:output_type -> ambient.protodef.Empty
-	16, // 18: ambient.protodef.Site.UserLogin:output_type -> ambient.protodef.Empty
-	13, // 19: ambient.protodef.Site.AuthenticatedUser:output_type -> ambient.protodef.SiteAuthenticatedUserResponse
-	11, // [11:20] is the sub-list for method output_type
-	2,  // [2:11] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+	15, // 0: ambient.protodef.SiteNeighborPluginGrantListResponse.grants:type_name -> ambient.protodef.GrantRequest
+	16, // 1: ambient.protodef.SiteNeighborPluginGrantsResponse.grants:type_name -> google.protobuf.Struct
+	16, // 2: ambient.protodef.SitePluginsResponse.plugindata:type_name -> google.protobuf.Struct
+	17, // 3: ambient.protodef.Site.Load:input_type -> ambient.protodef.Empty
+	0,  // 4: ambient.protodef.Site.Authorized:input_type -> ambient.protodef.SiteAuthorizedRequest
+	2,  // 5: ambient.protodef.Site.NeighborPluginGrantList:input_type -> ambient.protodef.SiteNeighborPluginGrantListRequest
+	4,  // 6: ambient.protodef.Site.NeighborPluginGrants:input_type -> ambient.protodef.SiteNeighborPluginGrantsRequest
+	6,  // 7: ambient.protodef.Site.NeighborPluginGranted:input_type -> ambient.protodef.SiteNeighborPluginGrantedRequest
+	8,  // 8: ambient.protodef.Site.NeighborPluginRequestedGrant:input_type -> ambient.protodef.SiteNeighborPluginRequestedGrantRequest
+	10, // 9: ambient.protodef.Site.SetNeighborPluginGrant:input_type -> ambient.protodef.SiteSetNeighborPluginGrantRequest
+	17, // 10: ambient.protodef.Site.Plugins:input_type -> ambient.protodef.Empty
+	12, // 11: ambient.protodef.Site.UserLogin:input_type -> ambient.protodef.SiteUserLoginRequest
+	13, // 12: ambient.protodef.Site.AuthenticatedUser:input_type -> ambient.protodef.SiteAuthenticatedUserRequest
+	17, // 13: ambient.protodef.Site.Load:output_type -> ambient.protodef.Empty
+	1,  // 14: ambient.protodef.Site.Authorized:output_type -> ambient.protodef.SiteAuthorizedResponse
+	3,  // 15: ambient.protodef.Site.NeighborPluginGrantList:output_type -> ambient.protodef.SiteNeighborPluginGrantListResponse
+	5,  // 16: ambient.protodef.Site.NeighborPluginGrants:output_type -> ambient.protodef.SiteNeighborPluginGrantsResponse
+	7,  // 17: ambient.protodef.Site.NeighborPluginGranted:output_type -> ambient.protodef.SiteNeighborPluginGrantedResponse
+	9,  // 18: ambient.protodef.Site.NeighborPluginRequestedGrant:output_type -> ambient.protodef.SiteNeighborPluginRequestedGrantResponse
+	17, // 19: ambient.protodef.Site.SetNeighborPluginGrant:output_type -> ambient.protodef.Empty
+	11, // 20: ambient.protodef.Site.Plugins:output_type -> ambient.protodef.SitePluginsResponse
+	17, // 21: ambient.protodef.Site.UserLogin:output_type -> ambient.protodef.Empty
+	14, // 22: ambient.protodef.Site.AuthenticatedUser:output_type -> ambient.protodef.SiteAuthenticatedUserResponse
+	13, // [13:23] is the sub-list for method output_type
+	3,  // [3:13] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_site_proto_init() }
@@ -1067,7 +1128,7 @@ func file_site_proto_init() {
 			}
 		}
 		file_site_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SiteUserLoginRequest); i {
+			switch v := v.(*SitePluginsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1079,7 +1140,7 @@ func file_site_proto_init() {
 			}
 		}
 		file_site_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SiteAuthenticatedUserRequest); i {
+			switch v := v.(*SiteUserLoginRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1091,6 +1152,18 @@ func file_site_proto_init() {
 			}
 		}
 		file_site_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SiteAuthenticatedUserRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_site_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SiteAuthenticatedUserResponse); i {
 			case 0:
 				return &v.state
@@ -1109,7 +1182,7 @@ func file_site_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_site_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -1143,6 +1216,7 @@ type SiteClient interface {
 	NeighborPluginGranted(ctx context.Context, in *SiteNeighborPluginGrantedRequest, opts ...grpc.CallOption) (*SiteNeighborPluginGrantedResponse, error)
 	NeighborPluginRequestedGrant(ctx context.Context, in *SiteNeighborPluginRequestedGrantRequest, opts ...grpc.CallOption) (*SiteNeighborPluginRequestedGrantResponse, error)
 	SetNeighborPluginGrant(ctx context.Context, in *SiteSetNeighborPluginGrantRequest, opts ...grpc.CallOption) (*Empty, error)
+	Plugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SitePluginsResponse, error)
 	UserLogin(ctx context.Context, in *SiteUserLoginRequest, opts ...grpc.CallOption) (*Empty, error)
 	AuthenticatedUser(ctx context.Context, in *SiteAuthenticatedUserRequest, opts ...grpc.CallOption) (*SiteAuthenticatedUserResponse, error)
 }
@@ -1218,6 +1292,15 @@ func (c *siteClient) SetNeighborPluginGrant(ctx context.Context, in *SiteSetNeig
 	return out, nil
 }
 
+func (c *siteClient) Plugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SitePluginsResponse, error) {
+	out := new(SitePluginsResponse)
+	err := c.cc.Invoke(ctx, "/ambient.protodef.Site/Plugins", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *siteClient) UserLogin(ctx context.Context, in *SiteUserLoginRequest, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/ambient.protodef.Site/UserLogin", in, out, opts...)
@@ -1246,6 +1329,7 @@ type SiteServer interface {
 	NeighborPluginGranted(context.Context, *SiteNeighborPluginGrantedRequest) (*SiteNeighborPluginGrantedResponse, error)
 	NeighborPluginRequestedGrant(context.Context, *SiteNeighborPluginRequestedGrantRequest) (*SiteNeighborPluginRequestedGrantResponse, error)
 	SetNeighborPluginGrant(context.Context, *SiteSetNeighborPluginGrantRequest) (*Empty, error)
+	Plugins(context.Context, *Empty) (*SitePluginsResponse, error)
 	UserLogin(context.Context, *SiteUserLoginRequest) (*Empty, error)
 	AuthenticatedUser(context.Context, *SiteAuthenticatedUserRequest) (*SiteAuthenticatedUserResponse, error)
 }
@@ -1274,6 +1358,9 @@ func (*UnimplementedSiteServer) NeighborPluginRequestedGrant(context.Context, *S
 }
 func (*UnimplementedSiteServer) SetNeighborPluginGrant(context.Context, *SiteSetNeighborPluginGrantRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetNeighborPluginGrant not implemented")
+}
+func (*UnimplementedSiteServer) Plugins(context.Context, *Empty) (*SitePluginsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Plugins not implemented")
 }
 func (*UnimplementedSiteServer) UserLogin(context.Context, *SiteUserLoginRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserLogin not implemented")
@@ -1412,6 +1499,24 @@ func _Site_SetNeighborPluginGrant_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Site_Plugins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SiteServer).Plugins(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ambient.protodef.Site/Plugins",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SiteServer).Plugins(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Site_UserLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SiteUserLoginRequest)
 	if err := dec(in); err != nil {
@@ -1479,6 +1584,10 @@ var _Site_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetNeighborPluginGrant",
 			Handler:    _Site_SetNeighborPluginGrant_Handler,
+		},
+		{
+			MethodName: "Plugins",
+			Handler:    _Site_Plugins_Handler,
 		},
 		{
 			MethodName: "UserLogin",

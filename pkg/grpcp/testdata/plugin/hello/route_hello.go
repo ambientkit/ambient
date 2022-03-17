@@ -183,3 +183,12 @@ func (p *Plugin) neighborPluginRequestedGrantBad(w http.ResponseWriter, r *http.
 	fmt.Fprintf(w, "Requested: %v", s)
 	return nil
 }
+
+func (p *Plugin) plugins(w http.ResponseWriter, r *http.Request) error {
+	s, err := p.Site.Plugins()
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(w, "Plugins: %v", len(s))
+	return nil
+}

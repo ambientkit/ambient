@@ -114,6 +114,21 @@ func (c *GRPCSitePlugin) SetNeighborPluginGrant(pluginName string, grantName amb
 	return nil
 }
 
+// Plugins handler.
+func (c *GRPCSitePlugin) Plugins() (map[string]ambient.PluginData, error) {
+	resp, err := c.client.Plugins(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return make(map[string]ambient.PluginData), ErrorHandler(err)
+	}
+
+	sm, err := ProtobufStructToPluginDataMap(resp.Plugindata)
+	if err != nil {
+		return make(map[string]ambient.PluginData), ErrorHandler(err)
+	}
+
+	return sm, nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.
