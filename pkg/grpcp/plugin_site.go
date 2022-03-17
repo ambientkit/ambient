@@ -174,6 +174,19 @@ func (c *GRPCSitePlugin) LoadAllPluginPages() error {
 	return nil
 }
 
+// DisablePlugin handler.
+func (c *GRPCSitePlugin) DisablePlugin(pluginName string, unloadPlugin bool) error {
+	_, err := c.client.DisablePlugin(context.Background(), &protodef.SiteDisablePluginRequest{
+		Name:   pluginName,
+		Unload: unloadPlugin,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

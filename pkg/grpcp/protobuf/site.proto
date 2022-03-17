@@ -20,6 +20,7 @@ service Site {
     rpc DeletePlugin(SiteDeletePluginRequest) returns (Empty) {}
     rpc EnablePlugin(SiteEnablePluginRequest) returns (Empty) {}
     rpc LoadAllPluginPages(Empty) returns (Empty) {}
+    rpc DisablePlugin(SiteDisablePluginRequest) returns (Empty) {}
 
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
@@ -90,7 +91,10 @@ message SiteEnablePluginRequest {
     bool load = 2;
 }
 
-
+message SiteDisablePluginRequest {
+    string name = 1;
+    bool unload = 2;
+}
 
 
 message SiteUserLoginRequest {

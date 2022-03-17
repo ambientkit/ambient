@@ -152,6 +152,13 @@ func (m *GRPCSiteServer) LoadAllPluginPages(ctx context.Context, req *protodef.E
 	return &protodef.Empty{}, err
 }
 
+// DisablePlugin handler.
+func (m *GRPCSiteServer) DisablePlugin(ctx context.Context, req *protodef.SiteDisablePluginRequest) (
+	resp *protodef.Empty, err error) {
+	err = m.Impl.DisablePlugin(req.Name, req.Unload)
+	return &protodef.Empty{}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

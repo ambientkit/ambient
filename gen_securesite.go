@@ -35,8 +35,8 @@ type SecureSite interface {
 	EnablePlugin(pluginName string, loadPlugin bool) error
 	// LoadAllPluginPages loads all of the pages from the plugins.
 	LoadAllPluginPages() error
-	// // DisablePlugin disables a plugin.
-	// DisablePlugin(pluginName string, unloadPlugin bool) error
+	// DisablePlugin disables a plugin.
+	DisablePlugin(pluginName string, unloadPlugin bool) error
 	// // LoadAllPluginMiddleware returns a handler that is wrapped in conditional
 	// // middlware from the plugins. This only needs to be run once at start up
 	// // and should never be called again.
