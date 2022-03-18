@@ -66,7 +66,8 @@ func (c *GRPCSitePlugin) NeighborPluginGrants(pluginName string) (map[ambient.Gr
 		return make(map[ambient.Grant]bool), ErrorHandler(err)
 	}
 
-	sm, err := ProtobufStructToGrantBoolMap(resp.Grants)
+	sm := make(map[ambient.Grant]bool)
+	err = ProtobufStructToObject(resp.Grants, &sm)
 	if err != nil {
 		return make(map[ambient.Grant]bool), ErrorHandler(err)
 	}
@@ -121,7 +122,8 @@ func (c *GRPCSitePlugin) Plugins() (map[string]ambient.PluginData, error) {
 		return make(map[string]ambient.PluginData), ErrorHandler(err)
 	}
 
-	sm, err := ProtobufStructToPluginDataMap(resp.Plugindata)
+	sm := make(map[string]ambient.PluginData)
+	err = ProtobufStructToObject(resp.Plugindata, &sm)
 	if err != nil {
 		return make(map[string]ambient.PluginData), ErrorHandler(err)
 	}
@@ -189,7 +191,7 @@ func (c *GRPCSitePlugin) DisablePlugin(pluginName string, unloadPlugin bool) err
 
 // SavePost handler.
 func (c *GRPCSitePlugin) SavePost(ID string, post ambient.Post) error {
-	ps, err := PostToProtobufStruct(post)
+	ps, err := ObjectToProtobufStruct(post)
 	if err != nil {
 		return ErrorHandler(err)
 	}
@@ -204,6 +206,18 @@ func (c *GRPCSitePlugin) SavePost(ID string, post ambient.Post) error {
 
 	return nil
 }
+
+// PostsAndPages handler.
+// func (c *GRPCSitePlugin) PostsAndPages(onlyPublished bool) (ambient.PostWithIDList, error) {
+// 	resp, err := c.client.PostsAndPages(context.Background(), &protodef.SitePostsAndPagesRequest{
+// 		Onlypublished: onlyPublished,
+// 	})
+// 	if err != nil {
+// 		return ambient.PostWithIDList{}, ErrorHandler(err)
+// 	}
+
+// 	return resp.Postwithidlist
+// }
 
 /////////////////////////////////////////////////////
 

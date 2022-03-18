@@ -61,7 +61,7 @@ func (m *GRPCSiteServer) NeighborPluginGrants(ctx context.Context, req *protodef
 		}, err
 	}
 
-	arr, err := GrantBoolMapToProtobufStruct(gr)
+	arr, err := ObjectToProtobufStruct(gr)
 	return &protodef.SiteNeighborPluginGrantsResponse{
 		Grants: arr,
 	}, err
@@ -110,7 +110,7 @@ func (m *GRPCSiteServer) Plugins(ctx context.Context, req *protodef.Empty) (
 		}, err
 	}
 
-	arr, err := PluginDataMapToProtobufStruct(pd)
+	arr, err := ObjectToProtobufStruct(pd)
 	return &protodef.SitePluginsResponse{
 		Plugindata: arr,
 	}, err
@@ -162,7 +162,8 @@ func (m *GRPCSiteServer) DisablePlugin(ctx context.Context, req *protodef.SiteDi
 // SavePost handler.
 func (m *GRPCSiteServer) SavePost(ctx context.Context, req *protodef.SiteSavePostRequest) (
 	resp *protodef.Empty, err error) {
-	post, err := ProtobufStructToPost(req.Post)
+	post := ambient.Post{}
+	err = ProtobufStructToObject(req.Post, &post)
 	if err != nil {
 		return &protodef.Empty{}, err
 	}

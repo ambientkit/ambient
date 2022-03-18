@@ -21,7 +21,8 @@ type GRPCHandlerPlugin struct {
 
 // Handle .
 func (m *GRPCHandlerPlugin) Handle(ctx context.Context, req *protodef.HandleRequest) (resp *protodef.HandleResponse, err error) {
-	headers, err := ProtobufStructToHeader(req.Headers)
+	headers := http.Header{}
+	err = ProtobufStructToObject(req.Headers, &headers)
 	if err != nil {
 		m.Log.Error("grpc-plugin: error getting headers: %v", err.Error())
 	}

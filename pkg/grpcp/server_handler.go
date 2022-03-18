@@ -18,7 +18,7 @@ func (l *GRPCHandlerServer) Handle(method string, path string, r *http.Request, 
 	status int, errText string, response string, err error) {
 	ctx := context.Background()
 
-	sm, err := HeaderToProtobufStruct(r.Header)
+	sm, err := ObjectToProtobufStruct(r.Header)
 	if err != nil {
 		return http.StatusInternalServerError, err.Error(), "", err
 	}

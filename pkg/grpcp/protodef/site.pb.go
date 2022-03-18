@@ -880,6 +880,100 @@ func (x *SiteSavePostRequest) GetPost() *structpb.Struct {
 	return nil
 }
 
+type SitePostsAndPagesRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Onlypublished bool `protobuf:"varint,1,opt,name=onlypublished,proto3" json:"onlypublished,omitempty"`
+}
+
+func (x *SitePostsAndPagesRequest) Reset() {
+	*x = SitePostsAndPagesRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_site_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SitePostsAndPagesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SitePostsAndPagesRequest) ProtoMessage() {}
+
+func (x *SitePostsAndPagesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_site_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SitePostsAndPagesRequest.ProtoReflect.Descriptor instead.
+func (*SitePostsAndPagesRequest) Descriptor() ([]byte, []int) {
+	return file_site_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *SitePostsAndPagesRequest) GetOnlypublished() bool {
+	if x != nil {
+		return x.Onlypublished
+	}
+	return false
+}
+
+type SitePostsAndPagesResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Postwithidlist *structpb.Struct `protobuf:"bytes,2,opt,name=postwithidlist,proto3" json:"postwithidlist,omitempty"`
+}
+
+func (x *SitePostsAndPagesResponse) Reset() {
+	*x = SitePostsAndPagesResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_site_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SitePostsAndPagesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SitePostsAndPagesResponse) ProtoMessage() {}
+
+func (x *SitePostsAndPagesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_site_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SitePostsAndPagesResponse.ProtoReflect.Descriptor instead.
+func (*SitePostsAndPagesResponse) Descriptor() ([]byte, []int) {
+	return file_site_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *SitePostsAndPagesResponse) GetPostwithidlist() *structpb.Struct {
+	if x != nil {
+		return x.Postwithidlist
+	}
+	return nil
+}
+
 type SiteUserLoginRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -892,7 +986,7 @@ type SiteUserLoginRequest struct {
 func (x *SiteUserLoginRequest) Reset() {
 	*x = SiteUserLoginRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_site_proto_msgTypes[17]
+		mi := &file_site_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -905,7 +999,7 @@ func (x *SiteUserLoginRequest) String() string {
 func (*SiteUserLoginRequest) ProtoMessage() {}
 
 func (x *SiteUserLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_site_proto_msgTypes[17]
+	mi := &file_site_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -918,7 +1012,7 @@ func (x *SiteUserLoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SiteUserLoginRequest.ProtoReflect.Descriptor instead.
 func (*SiteUserLoginRequest) Descriptor() ([]byte, []int) {
-	return file_site_proto_rawDescGZIP(), []int{17}
+	return file_site_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *SiteUserLoginRequest) GetRequestid() string {
@@ -946,7 +1040,7 @@ type SiteAuthenticatedUserRequest struct {
 func (x *SiteAuthenticatedUserRequest) Reset() {
 	*x = SiteAuthenticatedUserRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_site_proto_msgTypes[18]
+		mi := &file_site_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -959,7 +1053,7 @@ func (x *SiteAuthenticatedUserRequest) String() string {
 func (*SiteAuthenticatedUserRequest) ProtoMessage() {}
 
 func (x *SiteAuthenticatedUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_site_proto_msgTypes[18]
+	mi := &file_site_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -972,7 +1066,7 @@ func (x *SiteAuthenticatedUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SiteAuthenticatedUserRequest.ProtoReflect.Descriptor instead.
 func (*SiteAuthenticatedUserRequest) Descriptor() ([]byte, []int) {
-	return file_site_proto_rawDescGZIP(), []int{18}
+	return file_site_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *SiteAuthenticatedUserRequest) GetRequestid() string {
@@ -993,7 +1087,7 @@ type SiteAuthenticatedUserResponse struct {
 func (x *SiteAuthenticatedUserResponse) Reset() {
 	*x = SiteAuthenticatedUserResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_site_proto_msgTypes[19]
+		mi := &file_site_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1006,7 +1100,7 @@ func (x *SiteAuthenticatedUserResponse) String() string {
 func (*SiteAuthenticatedUserResponse) ProtoMessage() {}
 
 func (x *SiteAuthenticatedUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_site_proto_msgTypes[19]
+	mi := &file_site_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1019,7 +1113,7 @@ func (x *SiteAuthenticatedUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SiteAuthenticatedUserResponse.ProtoReflect.Descriptor instead.
 func (*SiteAuthenticatedUserResponse) Descriptor() ([]byte, []int) {
-	return file_site_proto_rawDescGZIP(), []int{19}
+	return file_site_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *SiteAuthenticatedUserResponse) GetUsername() string {
@@ -1116,6 +1210,16 @@ var file_site_proto_rawDesc = []byte{
 	0x52, 0x02, 0x69, 0x64, 0x12, 0x2b, 0x0a, 0x04, 0x70, 0x6f, 0x73, 0x74, 0x18, 0x02, 0x20, 0x01,
 	0x28, 0x0b, 0x32, 0x17, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53, 0x74, 0x72, 0x75, 0x63, 0x74, 0x52, 0x04, 0x70, 0x6f, 0x73,
+	0x74, 0x22, 0x40, 0x0a, 0x18, 0x53, 0x69, 0x74, 0x65, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x41, 0x6e,
+	0x64, 0x50, 0x61, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x24, 0x0a,
+	0x0d, 0x6f, 0x6e, 0x6c, 0x79, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x73, 0x68, 0x65, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x08, 0x52, 0x0d, 0x6f, 0x6e, 0x6c, 0x79, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x73,
+	0x68, 0x65, 0x64, 0x22, 0x5c, 0x0a, 0x19, 0x53, 0x69, 0x74, 0x65, 0x50, 0x6f, 0x73, 0x74, 0x73,
+	0x41, 0x6e, 0x64, 0x50, 0x61, 0x67, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x3f, 0x0a, 0x0e, 0x70, 0x6f, 0x73, 0x74, 0x77, 0x69, 0x74, 0x68, 0x69, 0x64, 0x6c, 0x69,
+	0x73, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53, 0x74, 0x72, 0x75, 0x63,
+	0x74, 0x52, 0x0e, 0x70, 0x6f, 0x73, 0x74, 0x77, 0x69, 0x74, 0x68, 0x69, 0x64, 0x6c, 0x69, 0x73,
 	0x74, 0x22, 0x50, 0x0a, 0x14, 0x53, 0x69, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x4c, 0x6f, 0x67,
 	0x69, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x72, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x72, 0x65,
@@ -1245,7 +1349,7 @@ func file_site_proto_rawDescGZIP() []byte {
 	return file_site_proto_rawDescData
 }
 
-var file_site_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_site_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_site_proto_goTypes = []interface{}{
 	(*SiteAuthorizedRequest)(nil),                    // 0: ambient.protodef.SiteAuthorizedRequest
 	(*SiteAuthorizedResponse)(nil),                   // 1: ambient.protodef.SiteAuthorizedResponse
@@ -1264,55 +1368,58 @@ var file_site_proto_goTypes = []interface{}{
 	(*SiteEnablePluginRequest)(nil),                  // 14: ambient.protodef.SiteEnablePluginRequest
 	(*SiteDisablePluginRequest)(nil),                 // 15: ambient.protodef.SiteDisablePluginRequest
 	(*SiteSavePostRequest)(nil),                      // 16: ambient.protodef.SiteSavePostRequest
-	(*SiteUserLoginRequest)(nil),                     // 17: ambient.protodef.SiteUserLoginRequest
-	(*SiteAuthenticatedUserRequest)(nil),             // 18: ambient.protodef.SiteAuthenticatedUserRequest
-	(*SiteAuthenticatedUserResponse)(nil),            // 19: ambient.protodef.SiteAuthenticatedUserResponse
-	(*GrantRequest)(nil),                             // 20: ambient.protodef.GrantRequest
-	(*structpb.Struct)(nil),                          // 21: google.protobuf.Struct
-	(*Empty)(nil),                                    // 22: ambient.protodef.Empty
+	(*SitePostsAndPagesRequest)(nil),                 // 17: ambient.protodef.SitePostsAndPagesRequest
+	(*SitePostsAndPagesResponse)(nil),                // 18: ambient.protodef.SitePostsAndPagesResponse
+	(*SiteUserLoginRequest)(nil),                     // 19: ambient.protodef.SiteUserLoginRequest
+	(*SiteAuthenticatedUserRequest)(nil),             // 20: ambient.protodef.SiteAuthenticatedUserRequest
+	(*SiteAuthenticatedUserResponse)(nil),            // 21: ambient.protodef.SiteAuthenticatedUserResponse
+	(*GrantRequest)(nil),                             // 22: ambient.protodef.GrantRequest
+	(*structpb.Struct)(nil),                          // 23: google.protobuf.Struct
+	(*Empty)(nil),                                    // 24: ambient.protodef.Empty
 }
 var file_site_proto_depIdxs = []int32{
-	20, // 0: ambient.protodef.SiteNeighborPluginGrantListResponse.grants:type_name -> ambient.protodef.GrantRequest
-	21, // 1: ambient.protodef.SiteNeighborPluginGrantsResponse.grants:type_name -> google.protobuf.Struct
-	21, // 2: ambient.protodef.SitePluginsResponse.plugindata:type_name -> google.protobuf.Struct
-	21, // 3: ambient.protodef.SiteSavePostRequest.post:type_name -> google.protobuf.Struct
-	22, // 4: ambient.protodef.Site.Load:input_type -> ambient.protodef.Empty
-	0,  // 5: ambient.protodef.Site.Authorized:input_type -> ambient.protodef.SiteAuthorizedRequest
-	2,  // 6: ambient.protodef.Site.NeighborPluginGrantList:input_type -> ambient.protodef.SiteNeighborPluginGrantListRequest
-	4,  // 7: ambient.protodef.Site.NeighborPluginGrants:input_type -> ambient.protodef.SiteNeighborPluginGrantsRequest
-	6,  // 8: ambient.protodef.Site.NeighborPluginGranted:input_type -> ambient.protodef.SiteNeighborPluginGrantedRequest
-	8,  // 9: ambient.protodef.Site.NeighborPluginRequestedGrant:input_type -> ambient.protodef.SiteNeighborPluginRequestedGrantRequest
-	10, // 10: ambient.protodef.Site.SetNeighborPluginGrant:input_type -> ambient.protodef.SiteSetNeighborPluginGrantRequest
-	22, // 11: ambient.protodef.Site.Plugins:input_type -> ambient.protodef.Empty
-	22, // 12: ambient.protodef.Site.PluginNames:input_type -> ambient.protodef.Empty
-	13, // 13: ambient.protodef.Site.DeletePlugin:input_type -> ambient.protodef.SiteDeletePluginRequest
-	14, // 14: ambient.protodef.Site.EnablePlugin:input_type -> ambient.protodef.SiteEnablePluginRequest
-	22, // 15: ambient.protodef.Site.LoadAllPluginPages:input_type -> ambient.protodef.Empty
-	15, // 16: ambient.protodef.Site.DisablePlugin:input_type -> ambient.protodef.SiteDisablePluginRequest
-	16, // 17: ambient.protodef.Site.SavePost:input_type -> ambient.protodef.SiteSavePostRequest
-	17, // 18: ambient.protodef.Site.UserLogin:input_type -> ambient.protodef.SiteUserLoginRequest
-	18, // 19: ambient.protodef.Site.AuthenticatedUser:input_type -> ambient.protodef.SiteAuthenticatedUserRequest
-	22, // 20: ambient.protodef.Site.Load:output_type -> ambient.protodef.Empty
-	1,  // 21: ambient.protodef.Site.Authorized:output_type -> ambient.protodef.SiteAuthorizedResponse
-	3,  // 22: ambient.protodef.Site.NeighborPluginGrantList:output_type -> ambient.protodef.SiteNeighborPluginGrantListResponse
-	5,  // 23: ambient.protodef.Site.NeighborPluginGrants:output_type -> ambient.protodef.SiteNeighborPluginGrantsResponse
-	7,  // 24: ambient.protodef.Site.NeighborPluginGranted:output_type -> ambient.protodef.SiteNeighborPluginGrantedResponse
-	9,  // 25: ambient.protodef.Site.NeighborPluginRequestedGrant:output_type -> ambient.protodef.SiteNeighborPluginRequestedGrantResponse
-	22, // 26: ambient.protodef.Site.SetNeighborPluginGrant:output_type -> ambient.protodef.Empty
-	11, // 27: ambient.protodef.Site.Plugins:output_type -> ambient.protodef.SitePluginsResponse
-	12, // 28: ambient.protodef.Site.PluginNames:output_type -> ambient.protodef.SitePluginNamesResponse
-	22, // 29: ambient.protodef.Site.DeletePlugin:output_type -> ambient.protodef.Empty
-	22, // 30: ambient.protodef.Site.EnablePlugin:output_type -> ambient.protodef.Empty
-	22, // 31: ambient.protodef.Site.LoadAllPluginPages:output_type -> ambient.protodef.Empty
-	22, // 32: ambient.protodef.Site.DisablePlugin:output_type -> ambient.protodef.Empty
-	22, // 33: ambient.protodef.Site.SavePost:output_type -> ambient.protodef.Empty
-	22, // 34: ambient.protodef.Site.UserLogin:output_type -> ambient.protodef.Empty
-	19, // 35: ambient.protodef.Site.AuthenticatedUser:output_type -> ambient.protodef.SiteAuthenticatedUserResponse
-	20, // [20:36] is the sub-list for method output_type
-	4,  // [4:20] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+	22, // 0: ambient.protodef.SiteNeighborPluginGrantListResponse.grants:type_name -> ambient.protodef.GrantRequest
+	23, // 1: ambient.protodef.SiteNeighborPluginGrantsResponse.grants:type_name -> google.protobuf.Struct
+	23, // 2: ambient.protodef.SitePluginsResponse.plugindata:type_name -> google.protobuf.Struct
+	23, // 3: ambient.protodef.SiteSavePostRequest.post:type_name -> google.protobuf.Struct
+	23, // 4: ambient.protodef.SitePostsAndPagesResponse.postwithidlist:type_name -> google.protobuf.Struct
+	24, // 5: ambient.protodef.Site.Load:input_type -> ambient.protodef.Empty
+	0,  // 6: ambient.protodef.Site.Authorized:input_type -> ambient.protodef.SiteAuthorizedRequest
+	2,  // 7: ambient.protodef.Site.NeighborPluginGrantList:input_type -> ambient.protodef.SiteNeighborPluginGrantListRequest
+	4,  // 8: ambient.protodef.Site.NeighborPluginGrants:input_type -> ambient.protodef.SiteNeighborPluginGrantsRequest
+	6,  // 9: ambient.protodef.Site.NeighborPluginGranted:input_type -> ambient.protodef.SiteNeighborPluginGrantedRequest
+	8,  // 10: ambient.protodef.Site.NeighborPluginRequestedGrant:input_type -> ambient.protodef.SiteNeighborPluginRequestedGrantRequest
+	10, // 11: ambient.protodef.Site.SetNeighborPluginGrant:input_type -> ambient.protodef.SiteSetNeighborPluginGrantRequest
+	24, // 12: ambient.protodef.Site.Plugins:input_type -> ambient.protodef.Empty
+	24, // 13: ambient.protodef.Site.PluginNames:input_type -> ambient.protodef.Empty
+	13, // 14: ambient.protodef.Site.DeletePlugin:input_type -> ambient.protodef.SiteDeletePluginRequest
+	14, // 15: ambient.protodef.Site.EnablePlugin:input_type -> ambient.protodef.SiteEnablePluginRequest
+	24, // 16: ambient.protodef.Site.LoadAllPluginPages:input_type -> ambient.protodef.Empty
+	15, // 17: ambient.protodef.Site.DisablePlugin:input_type -> ambient.protodef.SiteDisablePluginRequest
+	16, // 18: ambient.protodef.Site.SavePost:input_type -> ambient.protodef.SiteSavePostRequest
+	19, // 19: ambient.protodef.Site.UserLogin:input_type -> ambient.protodef.SiteUserLoginRequest
+	20, // 20: ambient.protodef.Site.AuthenticatedUser:input_type -> ambient.protodef.SiteAuthenticatedUserRequest
+	24, // 21: ambient.protodef.Site.Load:output_type -> ambient.protodef.Empty
+	1,  // 22: ambient.protodef.Site.Authorized:output_type -> ambient.protodef.SiteAuthorizedResponse
+	3,  // 23: ambient.protodef.Site.NeighborPluginGrantList:output_type -> ambient.protodef.SiteNeighborPluginGrantListResponse
+	5,  // 24: ambient.protodef.Site.NeighborPluginGrants:output_type -> ambient.protodef.SiteNeighborPluginGrantsResponse
+	7,  // 25: ambient.protodef.Site.NeighborPluginGranted:output_type -> ambient.protodef.SiteNeighborPluginGrantedResponse
+	9,  // 26: ambient.protodef.Site.NeighborPluginRequestedGrant:output_type -> ambient.protodef.SiteNeighborPluginRequestedGrantResponse
+	24, // 27: ambient.protodef.Site.SetNeighborPluginGrant:output_type -> ambient.protodef.Empty
+	11, // 28: ambient.protodef.Site.Plugins:output_type -> ambient.protodef.SitePluginsResponse
+	12, // 29: ambient.protodef.Site.PluginNames:output_type -> ambient.protodef.SitePluginNamesResponse
+	24, // 30: ambient.protodef.Site.DeletePlugin:output_type -> ambient.protodef.Empty
+	24, // 31: ambient.protodef.Site.EnablePlugin:output_type -> ambient.protodef.Empty
+	24, // 32: ambient.protodef.Site.LoadAllPluginPages:output_type -> ambient.protodef.Empty
+	24, // 33: ambient.protodef.Site.DisablePlugin:output_type -> ambient.protodef.Empty
+	24, // 34: ambient.protodef.Site.SavePost:output_type -> ambient.protodef.Empty
+	24, // 35: ambient.protodef.Site.UserLogin:output_type -> ambient.protodef.Empty
+	21, // 36: ambient.protodef.Site.AuthenticatedUser:output_type -> ambient.protodef.SiteAuthenticatedUserResponse
+	21, // [21:37] is the sub-list for method output_type
+	5,  // [5:21] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_site_proto_init() }
@@ -1528,7 +1635,7 @@ func file_site_proto_init() {
 			}
 		}
 		file_site_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SiteUserLoginRequest); i {
+			switch v := v.(*SitePostsAndPagesRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1540,7 +1647,7 @@ func file_site_proto_init() {
 			}
 		}
 		file_site_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SiteAuthenticatedUserRequest); i {
+			switch v := v.(*SitePostsAndPagesResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1552,6 +1659,30 @@ func file_site_proto_init() {
 			}
 		}
 		file_site_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SiteUserLoginRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_site_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SiteAuthenticatedUserRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_site_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SiteAuthenticatedUserResponse); i {
 			case 0:
 				return &v.state
@@ -1570,7 +1701,7 @@ func file_site_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_site_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   20,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
