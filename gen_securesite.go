@@ -45,8 +45,8 @@ type SecureSite interface {
 	// LoadAllPluginMiddleware() http.Handler
 	// SavePost saves a post.
 	SavePost(ID string, post Post) error
-	// // PostsAndPages returns the list of posts and pages.
-	// PostsAndPages(onlyPublished bool) (PostWithIDList, error)
+	// PostsAndPages returns the list of posts and pages.
+	PostsAndPages(onlyPublished bool) (PostWithIDList, error)
 	// // PublishedPosts returns the list of published posts.
 	// PublishedPosts() ([]Post, error)
 	// // PublishedPages returns the list of published pages.

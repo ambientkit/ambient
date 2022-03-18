@@ -208,16 +208,18 @@ func (c *GRPCSitePlugin) SavePost(ID string, post ambient.Post) error {
 }
 
 // PostsAndPages handler.
-// func (c *GRPCSitePlugin) PostsAndPages(onlyPublished bool) (ambient.PostWithIDList, error) {
-// 	resp, err := c.client.PostsAndPages(context.Background(), &protodef.SitePostsAndPagesRequest{
-// 		Onlypublished: onlyPublished,
-// 	})
-// 	if err != nil {
-// 		return ambient.PostWithIDList{}, ErrorHandler(err)
-// 	}
+func (c *GRPCSitePlugin) PostsAndPages(onlyPublished bool) (ambient.PostWithIDList, error) {
+	resp, err := c.client.PostsAndPages(context.Background(), &protodef.SitePostsAndPagesRequest{
+		Onlypublished: onlyPublished,
+	})
+	if err != nil {
+		return ambient.PostWithIDList{}, ErrorHandler(err)
+	}
 
-// 	return resp.Postwithidlist
-// }
+	post := make(ambient.PostWithIDList, 0)
+	err = ProtobufStructToArray(resp.Postwithidlist, &post)
+	return post, err
+}
 
 /////////////////////////////////////////////////////
 

@@ -65,6 +65,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePluginEnable))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePluginDisable))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePostWrite))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePostRead))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -218,7 +219,7 @@ func TestMain(t *testing.T) {
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("POST", "/savePost", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "Save post: <nil>", string(body))
+	assert.Equal(t, "Posts are the same.", string(body))
 }
 
 // Setup sets up a test gRPC server.

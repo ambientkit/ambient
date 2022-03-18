@@ -171,6 +171,20 @@ func (m *GRPCSiteServer) SavePost(ctx context.Context, req *protodef.SiteSavePos
 	return &protodef.Empty{}, err
 }
 
+// PostsAndPages handler.
+func (m *GRPCSiteServer) PostsAndPages(ctx context.Context, req *protodef.SitePostsAndPagesRequest) (
+	resp *protodef.SitePostsAndPagesResponse, err error) {
+	post, err := m.Impl.PostsAndPages(req.Onlypublished)
+	if err != nil {
+		return &protodef.SitePostsAndPagesResponse{}, err
+	}
+
+	p, err := ArrayToProtobufStruct(post)
+	return &protodef.SitePostsAndPagesResponse{
+		Postwithidlist: p,
+	}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

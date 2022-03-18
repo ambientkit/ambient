@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 	"time"
 
 	"github.com/ambientkit/ambient"
@@ -246,20 +247,36 @@ func (p *Plugin) disablePluginBad(w http.ResponseWriter, r *http.Request) error 
 }
 
 func (p *Plugin) savePost(w http.ResponseWriter, r *http.Request) error {
-	err := p.Site.SavePost("abc", ambient.Post{
+	post := ambient.Post{
 		Title:     "title",
 		URL:       "url",
 		Canonical: "canonical",
-		Created:   time.Now(),
-		Updated:   time.Now(),
-		Timestamp: time.Now(),
+		Created:   time.Now().Truncate(0),
+		Updated:   time.Now().Truncate(0),
+		Timestamp: time.Now().Truncate(0),
 		Content:   "content",
 		Published: true,
 		Page:      true,
 		Tags: ambient.TagList{
-			{Name: "tag1", Timestamp: time.Now()},
+			{Name: "tag1", Timestamp: time.Now().Truncate(0)},
 		},
-	})
-	fmt.Fprintf(w, "Save post: %v", err)
+	}
+
+	err := p.Site.SavePost("abc", post)
+	if err != nil {
+		return err
+	}
+
+	arr, err := p.Site.PostsAndPages(true)
+	if err != nil {
+		return err
+	}
+
+	if reflect.DeepEqual(post, arr[0].Post) {
+		fmt.Fprint(w, "Posts are the same.")
+	} else {
+		fmt.Fprintf(w, "Posts are different (Len: %v): Sent:\n%v\n|\nReceived:\n%v\n", len(arr), post, arr[0].Post)
+	}
+
 	return nil
 }
