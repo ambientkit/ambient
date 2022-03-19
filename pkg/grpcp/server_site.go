@@ -335,3 +335,17 @@ func (m *GRPCSiteServer) SetCSRF(ctx context.Context, req *protodef.SiteSetCSRFR
 		Token: token,
 	}, err
 }
+
+// CSRF handler.
+func (m *GRPCSiteServer) CSRF(ctx context.Context, req *protodef.SiteCSRFRequest) (resp *protodef.SiteCSRFResponse, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.SiteCSRFResponse{
+			Valid: false,
+		}, err
+	}
+	valid := m.Impl.CSRF(c.Request, req.Token)
+	return &protodef.SiteCSRFResponse{
+		Valid: valid,
+	}, err
+}

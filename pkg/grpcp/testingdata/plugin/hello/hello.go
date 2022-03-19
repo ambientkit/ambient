@@ -116,5 +116,6 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/grantRequests", p.grantRequests)
 	p.Mux.Get("/userLogout", p.userLogout)
 	p.Mux.Get("/logoutAllUsers", p.logoutAllUsers)
-	p.Mux.Get("/setCSRF", p.setCSRF)
+	p.Mux.Get("/csrf", p.setCSRF)
+	p.Mux.Post("/csrf", p.cSRF)
 }

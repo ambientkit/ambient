@@ -72,8 +72,8 @@ type SecureSite interface {
 	// SetCSRF sets the session with a token and returns the token for use in a form
 	// or header.
 	SetCSRF(r *http.Request) string
-	// // CSRF returns true if the CSRF token is valid.
-	// CSRF(r *http.Request, token string) bool
+	// CSRF returns true if the CSRF token is valid.
+	CSRF(r *http.Request, token string) bool
 	// // SessionValue returns session value by name.
 	// SessionValue(r *http.Request, name string) string
 	// // SetSessionValue sets a value on the current session.

@@ -306,7 +306,28 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "login: () (user not found)", string(body))
 
-	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/setCSRF", nil))
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/csrf", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "Token len: 32", string(body))
+	assert.Equal(t, 32, len(body))
+
+	form = url.Values{}
+	form.Add("token", body)
+	r = httptest.NewRequest("POST", "/csrf", strings.NewReader(form.Encode()))
+	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	for _, v := range resp.Cookies() {
+		r.AddCookie(v)
+	}
+	resp, body = doRequest(t, mux, r)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Token is valid.", string(body))
+
+	// Try same request again and should fail.
+	r = httptest.NewRequest("POST", "/csrf", strings.NewReader(form.Encode()))
+	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	for _, v := range resp.Cookies() {
+		r.AddCookie(v)
+	}
+	resp, body = doRequest(t, mux, r)
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	assert.Equal(t, "token is not valid\n", string(body))
 }

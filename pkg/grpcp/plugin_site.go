@@ -365,9 +365,23 @@ func (c *GRPCSitePlugin) SetCSRF(r *http.Request) string {
 		Requestid: requestID(r),
 	})
 	if err != nil {
-		c.Log.Error("grpc-plugin: site.Authorized error: %v", err.Error())
+		c.Log.Error("grpc-plugin: site.SetCSRF error: %v", err.Error())
 		return ""
 	}
 
 	return resp.Token
+}
+
+// CSRF handler.
+func (c *GRPCSitePlugin) CSRF(r *http.Request, token string) bool {
+	resp, err := c.client.CSRF(context.Background(), &protodef.SiteCSRFRequest{
+		Requestid: requestID(r),
+		Token:     token,
+	})
+	if err != nil {
+		c.Log.Error("grpc-plugin: site.CSRF error: %v", err.Error())
+		return false
+	}
+
+	return resp.Valid
 }

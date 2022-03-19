@@ -555,7 +555,19 @@ func (p *Plugin) setCSRF(w http.ResponseWriter, r *http.Request) error {
 		return p.Mux.StatusError(http.StatusInternalServerError, errors.New("token is missing"))
 	}
 
-	fmt.Fprintf(w, "Token len: %v", len(token))
+	fmt.Fprint(w, token)
+
+	return nil
+}
+
+func (p *Plugin) cSRF(w http.ResponseWriter, r *http.Request) error {
+	token := r.FormValue("token")
+	valid := p.Site.CSRF(r, token)
+	if !valid {
+		return p.Mux.StatusError(http.StatusBadRequest, errors.New("token is not valid"))
+	}
+
+	fmt.Fprintf(w, "Token is valid.")
 
 	return nil
 }

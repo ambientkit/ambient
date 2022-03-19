@@ -35,6 +35,7 @@ service Site {
     rpc UserLogout(SiteUserLogoutRequest) returns (Empty) {}
     rpc LogoutAllUsers(SiteLogoutAllUsersRequest) returns (Empty) {}
     rpc SetCSRF(SiteSetCSRFRequest) returns (SiteSetCSRFResponse) {}
+    rpc CSRF(SiteCSRFRequest) returns (SiteCSRFResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -188,4 +189,13 @@ message SiteSetCSRFRequest {
 
 message SiteSetCSRFResponse {
     string token = 1;
+}
+
+message SiteCSRFRequest {
+    string requestid = 1;
+    string token = 2;
+}
+
+message SiteCSRFResponse {
+    bool valid = 1;
 }
