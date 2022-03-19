@@ -590,7 +590,18 @@ func (p *Plugin) sessionValue(w http.ResponseWriter, r *http.Request) error {
 		return p.Mux.StatusError(http.StatusBadRequest, errors.New("could not delete session value"))
 	}
 
-	fmt.Fprintf(w, "Session value works.")
+	fmt.Fprint(w, "Session value works.")
+
+	return nil
+}
+
+func (p *Plugin) pluginNeighborSettingsList(w http.ResponseWriter, r *http.Request) error {
+	settings, err := p.Site.PluginNeighborSettingsList("neighbor")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	fmt.Fprintf(w, "Neighbor settings: %v", len(settings))
 
 	return nil
 }

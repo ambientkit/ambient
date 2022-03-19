@@ -119,4 +119,5 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/csrf", p.setCSRF)
 	p.Mux.Post("/csrf", p.cSRF)
 	p.Mux.Get("/sessionValue", p.sessionValue)
+	p.Mux.Get("/PluginNeighborSettingsList", p.pluginNeighborSettingsList)
 }

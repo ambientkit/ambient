@@ -39,6 +39,7 @@ service Site {
     rpc SessionValue(SiteSessionValueRequest) returns (SiteSessionValueResponse) {}
     rpc SetSessionValue(SiteSetSessionValueRequest) returns (Empty) {}
     rpc DeleteSessionValue(SiteDeleteSessionValueRequest) returns (Empty) {}
+    rpc PluginNeighborSettingsList(SitePluginNeighborSettingsListRequest) returns (SitePluginNeighborSettingsListResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -221,4 +222,12 @@ message SiteSetSessionValueRequest {
 message SiteDeleteSessionValueRequest {
     string requestid = 1;
     string name = 2;
+}
+
+message SitePluginNeighborSettingsListRequest {
+    string pluginname = 1;
+}
+
+message SitePluginNeighborSettingsListResponse {
+    repeated google.protobuf.Struct settings = 1;
 }

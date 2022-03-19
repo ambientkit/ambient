@@ -424,3 +424,17 @@ func (c *GRPCSitePlugin) DeleteSessionValue(r *http.Request, name string) {
 		ErrorHandler(err)
 	}
 }
+
+// PluginNeighborSettingsList handler.
+func (c *GRPCSitePlugin) PluginNeighborSettingsList(pluginName string) ([]ambient.Setting, error) {
+	resp, err := c.client.PluginNeighborSettingsList(context.Background(), &protodef.SitePluginNeighborSettingsListRequest{
+		Pluginname: pluginName,
+	})
+	if err != nil {
+		ErrorHandler(err)
+	}
+
+	settings := make([]ambient.Setting, 0)
+	err = ProtobufStructToArray(resp.Settings, &settings)
+	return settings, err
+}

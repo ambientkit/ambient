@@ -65,6 +65,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborRouteRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantUserPersistWrite))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantAllUserAuthenticatedWrite))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborSettingRead))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -334,4 +335,9 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/sessionValue", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Session value works.", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/PluginNeighborSettingsList", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Neighbor settings: 9", string(body))
+
 }

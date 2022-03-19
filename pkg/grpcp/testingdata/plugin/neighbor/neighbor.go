@@ -73,3 +73,74 @@ func (p *Plugin) Routes() {
 		return nil
 	})
 }
+
+const (
+	// LoginURL allows user to set the login URL.
+	LoginURL = "Login URL"
+	// Author allows user to set the author.
+	Author = "Author"
+	// Subtitle allows user to set the Subtitle.
+	Subtitle = "Subtitle"
+	// Description allows user to set the description.
+	Description = "Description"
+	// Footer allows user to set the footer.
+	Footer = "Footer"
+	// AllowHTMLinMarkdown allows user to set if they allow HTML in markdown.
+	AllowHTMLinMarkdown = "Allow HTML in Markdown"
+
+	// Username allows user to set the login username.
+	Username = "Username"
+	// Password allows user to set the login password.
+	Password = "Password"
+	// MFAKey allows user to set the MFA key.
+	MFAKey = "MFA Key"
+)
+
+// Settings returns a list of user settable fields.
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
+		{
+			Name:    Username,
+			Default: "admin",
+		},
+		{
+			Name:    Password,
+			Default: "abc123",
+			Type:    ambient.InputPassword,
+			Hide:    true,
+		},
+		{
+			Name: MFAKey,
+			Type: ambient.InputPassword,
+			Description: ambient.SettingDescription{
+				Text: "Generate an MFA key. Plugin must be enabled first.",
+				URL:  "/dashboard/mfa",
+			},
+		},
+		{
+			Name:    LoginURL,
+			Default: "admin",
+			Hide:    true,
+		},
+		{
+			Name: Author,
+		},
+		{
+			Name: Subtitle,
+			Hide: true,
+		},
+		{
+			Name: Description,
+			Type: ambient.Textarea,
+		},
+		{
+			Name: Footer,
+			Type: ambient.Textarea,
+			Hide: true,
+		},
+		{
+			Name: AllowHTMLinMarkdown,
+			Type: ambient.Checkbox,
+		},
+	}
+}

@@ -392,3 +392,16 @@ func (m *GRPCSiteServer) DeleteSessionValue(ctx context.Context, req *protodef.S
 	m.Impl.DeleteSessionValue(c.Request, req.Name)
 	return &protodef.Empty{}, nil
 }
+
+// PluginNeighborSettingsList handler.
+func (m *GRPCSiteServer) PluginNeighborSettingsList(ctx context.Context, req *protodef.SitePluginNeighborSettingsListRequest) (resp *protodef.SitePluginNeighborSettingsListResponse, err error) {
+	settings, err := m.Impl.PluginNeighborSettingsList(req.Pluginname)
+	if err != nil {
+		return &protodef.SitePluginNeighborSettingsListResponse{}, err
+	}
+
+	arr, err := ArrayToProtobufStruct(settings)
+	return &protodef.SitePluginNeighborSettingsListResponse{
+		Settings: arr,
+	}, err
+}
