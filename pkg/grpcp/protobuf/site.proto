@@ -38,6 +38,7 @@ service Site {
     rpc CSRF(SiteCSRFRequest) returns (SiteCSRFResponse) {}
     rpc SessionValue(SiteSessionValueRequest) returns (SiteSessionValueResponse) {}
     rpc SetSessionValue(SiteSetSessionValueRequest) returns (Empty) {}
+    rpc DeleteSessionValue(SiteDeleteSessionValueRequest) returns (Empty) {}
 }
 
 message SiteAuthorizedRequest {
@@ -215,4 +216,9 @@ message SiteSetSessionValueRequest {
     string requestid = 1;
     string name = 2;
     string value = 3;
+}
+
+message SiteDeleteSessionValueRequest {
+    string requestid = 1;
+    string name = 2;
 }

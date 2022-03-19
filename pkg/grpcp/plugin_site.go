@@ -408,8 +408,19 @@ func (c *GRPCSitePlugin) SetSessionValue(r *http.Request, name string, value str
 		Value:     value,
 	})
 	if err != nil {
-		ErrorHandler(err)
+		return ErrorHandler(err)
 	}
 
 	return nil
+}
+
+// DeleteSessionValue handler.
+func (c *GRPCSitePlugin) DeleteSessionValue(r *http.Request, name string) {
+	_, err := c.client.DeleteSessionValue(context.Background(), &protodef.SiteDeleteSessionValueRequest{
+		Requestid: requestID(r),
+		Name:      name,
+	})
+	if err != nil {
+		ErrorHandler(err)
+	}
 }

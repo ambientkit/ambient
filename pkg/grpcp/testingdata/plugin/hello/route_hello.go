@@ -583,6 +583,13 @@ func (p *Plugin) sessionValue(w http.ResponseWriter, r *http.Request) error {
 		return p.Mux.StatusError(http.StatusBadRequest, errors.New("could not get session value"))
 	}
 
+	p.Site.DeleteSessionValue(r, "foo")
+
+	val = p.Site.SessionValue(r, "foo")
+	if val == "bar" {
+		return p.Mux.StatusError(http.StatusBadRequest, errors.New("could not delete session value"))
+	}
+
 	fmt.Fprintf(w, "Session value works.")
 
 	return nil

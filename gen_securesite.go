@@ -79,7 +79,7 @@ type SecureSite interface {
 	// SetSessionValue sets a value on the current session.
 	SetSessionValue(r *http.Request, name string, value string) error
 	// DeleteSessionValue deletes a session value on the current session.
-	// DeleteSessionValue(r *http.Request, name string)
+	DeleteSessionValue(r *http.Request, name string)
 	// // PluginNeighborSettingsList gets the grants requests for a neighbor plugin.
 	// PluginNeighborSettingsList(pluginName string) ([]Setting, error)
 	// // SetPluginSetting sets a variable for the plugin.

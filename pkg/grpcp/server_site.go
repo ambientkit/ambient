@@ -381,3 +381,14 @@ func (m *GRPCSiteServer) SetSessionValue(ctx context.Context, req *protodef.Site
 	err = m.Impl.SetSessionValue(c.Request, req.Name, req.Value)
 	return &protodef.Empty{}, err
 }
+
+// DeleteSessionValue handler.
+func (m *GRPCSiteServer) DeleteSessionValue(ctx context.Context, req *protodef.SiteDeleteSessionValueRequest) (resp *protodef.Empty, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.Empty{}, err
+	}
+
+	m.Impl.DeleteSessionValue(c.Request, req.Name)
+	return &protodef.Empty{}, nil
+}
