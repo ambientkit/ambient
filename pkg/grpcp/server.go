@@ -129,8 +129,20 @@ func (m *GRPCServer) Settings() []ambient.Setting {
 
 // GrantRequests handler.
 func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
-	// TODO: Implement
-	return nil
+	resp, err := m.client.GrantRequests(context.Background(), &protodef.Empty{})
+	if err != nil {
+		m.toolkit.Log.Error("grpc-server: error calling routes: %v", err)
+	}
+
+	arr := make([]ambient.GrantRequest, 0)
+	for _, v := range resp.GrantRequest {
+		arr = append(arr, ambient.GrantRequest{
+			Grant:       ambient.Grant(v.Grant),
+			Description: v.Description,
+		})
+	}
+
+	return arr
 }
 
 // FuncMap handler.

@@ -113,4 +113,5 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/pluginNeighborRoutesListBad", p.pluginNeighborRoutesListBad)
 	p.Mux.Get("/userPersist", p.userPersist)
 	p.Mux.Get("/userPersistFalse", p.userPersistFalse)
+	p.Mux.Get("/grantRequests", p.grantRequests)
 }

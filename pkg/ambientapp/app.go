@@ -295,7 +295,7 @@ func (app *App) SetEscapeTemplates(enable bool) {
 // ListenAndServe will start the web listener on port 8080 or will pull the
 // environment variable from:
 // PORT (GCP), _LAMBDA_SERVER_PORT (AWS), or FUNCTIONS_CUSTOMHANDLER_PORT (Azure).
-func (app *App) ListenAndServe(h http.Handler) {
+func (app *App) ListenAndServe(h http.Handler) error {
 	// Start the web server. Google Cloud uses standardized PORT env variable.
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -317,7 +317,7 @@ func (app *App) ListenAndServe(h http.Handler) {
 	app.handleExit()
 
 	app.log.Info("ambient: web server listening on port: %v", port)
-	app.log.Fatal("", http.ListenAndServe(":"+port, h))
+	return http.ListenAndServe(":"+port, h)
 }
 
 // handleExit will handle app shutdown when Ctrl+c is pressed.
@@ -326,16 +326,19 @@ func (app *App) handleExit() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		app.cleanup()
+		app.CleanUp()
 		os.Exit(0)
 	}()
 }
 
-// cleanup runs the final steps to ensure the server shutdown doesn't leave
+// CleanUp runs the final steps to ensure the server shutdown doesn't leave
 // the app in a bad state.
-func (app *App) cleanup() {
+func (app *App) CleanUp() {
 	var err error
 	app.log.Info("ambient: shutdown started")
+
+	app.log.Info("ambient: stopping gRPC plugins")
+	app.StopGRPCClients()
 
 	// Load decrypted just in case the storage was decrypted by AMB.
 	app.log.Info("ambient: loading storage")

@@ -31,20 +31,20 @@ func (m *GRPCPlugin) PluginVersion(ctx context.Context, req *protodef.Empty) (*p
 	return &protodef.PluginVersionResponse{Version: version}, nil
 }
 
-// GrantRequests .
-// func (m *GRPCPlugin) GrantRequests(ctx context.Context, req *protodef.Empty) (*protodef.GrantRequestsResponse, error) {
-// 	requests := m.Impl.GrantRequests()
-// 	arr := make([]*proto.GrantRequest, 0)
+// GrantRequests returns the grants requested by the plugin
+func (m *GRPCPlugin) GrantRequests(ctx context.Context, req *protodef.Empty) (*protodef.GrantRequestsResponse, error) {
+	requests := m.Impl.GrantRequests()
+	arr := make([]*protodef.GrantRequest, 0)
 
-// 	for _, v := range requests {
-// 		arr = append(arr, &proto.GrantRequest{
-// 			Description: v.Description,
-// 			Grant:       string(v.Grant),
-// 		})
-// 	}
+	for _, v := range requests {
+		arr = append(arr, &protodef.GrantRequest{
+			Description: v.Description,
+			Grant:       string(v.Grant),
+		})
+	}
 
-// 	return &proto.GrantRequestsResponse{GrantRequest: arr}, nil
-// }
+	return &protodef.GrantRequestsResponse{GrantRequest: arr}, nil
+}
 
 // Enable .
 func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protodef.EnableResponse, error) {

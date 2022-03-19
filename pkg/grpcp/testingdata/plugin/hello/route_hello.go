@@ -509,3 +509,9 @@ func (p *Plugin) userPersistFalse(w http.ResponseWriter, r *http.Request) error 
 
 	return nil
 }
+
+func (p *Plugin) grantRequests(w http.ResponseWriter, r *http.Request) error {
+	requests := p.GrantRequests()
+	fmt.Fprintf(w, "Grant requests: %v", len(requests))
+	return nil
+}

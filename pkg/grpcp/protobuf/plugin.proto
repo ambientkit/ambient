@@ -7,7 +7,7 @@ import "empty.proto";
 service GenericPlugin {
     rpc PluginName(Empty) returns (PluginNameResponse) {}
     rpc PluginVersion(Empty) returns (PluginVersionResponse) {}
-    // rpc GrantRequests(Empty) returns (GrantRequestsResponse) {}
+    rpc GrantRequests(Empty) returns (GrantRequestsResponse) {}
     rpc Enable(Toolkit) returns (EnableResponse) {}
     rpc Disable(Empty) returns (Empty) {}
     rpc Routes(Empty) returns (Empty) {}

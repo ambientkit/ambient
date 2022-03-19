@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	"github.com/ambientkit/ambient/pkg/grpcp/testutil"
 )
@@ -20,5 +19,5 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-	http.ListenAndServe(":8080", h)
+	log.Fatalln(app.ListenAndServe(h))
 }
