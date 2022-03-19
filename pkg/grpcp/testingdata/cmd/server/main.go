@@ -4,19 +4,21 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ambientkit/ambient/internal/testutil"
+	"github.com/ambientkit/ambient/pkg/grpcp/testutil"
 )
 
 func main() {
-	_, pluginClient, h, err := testutil.Setup()
-	if pluginClient != nil {
-		defer pluginClient.Kill()
+	app, err := testutil.Setup(true)
+	if err != nil {
+		log.Fatalln(err.Error())
 	}
+	// Stop plugins when done.
+	defer app.StopGRPCClients()
+
+	h, err := app.Handler()
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
-	go http.ListenAndServe(":8080", h)
-
-	select {}
+	http.ListenAndServe(":8080", h)
 }
