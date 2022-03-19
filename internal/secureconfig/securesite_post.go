@@ -47,7 +47,12 @@ func (ss *SecureSite) PostBySlug(slug string) (ambient.PostWithID, error) {
 		return ambient.PostWithID{}, amberror.ErrAccessDenied
 	}
 
-	return ss.pluginsystem.PostBySlug(slug), nil
+	post := ss.pluginsystem.PostBySlug(slug)
+	if post.ID == "" {
+		return ambient.PostWithID{}, amberror.ErrNotFound
+	}
+
+	return post, nil
 }
 
 // PostByID returns the post by ID.

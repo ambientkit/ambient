@@ -353,3 +353,44 @@ func (p *Plugin) publishedPages(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) postBySlug(w http.ResponseWriter, r *http.Request) error {
+	post := ambient.Post{
+		Title:     "title",
+		URL:       "url",
+		Canonical: "canonical",
+		Created:   time.Now().Truncate(0),
+		Updated:   time.Now().Truncate(0),
+		Timestamp: time.Now().Truncate(0),
+		Content:   "content",
+		Published: true,
+		Page:      false,
+		Tags: ambient.TagList{
+			{Name: "tag1", Timestamp: time.Now().Truncate(0)},
+		},
+	}
+
+	returnedPost, err := p.Site.PostBySlug("url")
+	if err != nil {
+		return err
+	}
+
+	if post.Canonical == returnedPost.Canonical &&
+		post.Content == returnedPost.Content &&
+		post.Title == post.Title {
+		fmt.Fprint(w, "Pages are the same.")
+	} else {
+		fmt.Fprintf(w, "Pages are different: Sent:\n%v\n|\nReceived:\n%v\n", post, returnedPost)
+	}
+
+	return nil
+}
+
+func (p *Plugin) postBySlugBad(w http.ResponseWriter, r *http.Request) error {
+	_, err := p.Site.PostBySlug("urlBad")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusNotFound, err)
+	}
+
+	return nil
+}

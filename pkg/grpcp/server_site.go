@@ -213,6 +213,20 @@ func (m *GRPCSiteServer) PublishedPages(ctx context.Context, req *protodef.Empty
 	}, err
 }
 
+// PostBySlug handler.
+func (m *GRPCSiteServer) PostBySlug(ctx context.Context, req *protodef.SitePostBySlugRequest) (
+	resp *protodef.SitePostBySlugResponse, err error) {
+	post, err := m.Impl.PostBySlug(req.Slug)
+	if err != nil {
+		return &protodef.SitePostBySlugResponse{}, err
+	}
+
+	p, err := ObjectToProtobufStruct(post)
+	return &protodef.SitePostBySlugResponse{
+		Post: p,
+	}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

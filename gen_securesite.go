@@ -51,8 +51,8 @@ type SecureSite interface {
 	PublishedPosts() ([]Post, error)
 	// PublishedPages returns the list of published pages.
 	PublishedPages() ([]Post, error)
-	// // PostBySlug returns the post by slug.
-	// PostBySlug(slug string) (PostWithID, error)
+	// PostBySlug returns the post by slug.
+	PostBySlug(slug string) (PostWithID, error)
 	// // PostByID returns the post by ID.
 	// PostByID(ID string) (Post, error)
 	// // DeletePostByID deletes a post.
