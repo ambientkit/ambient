@@ -259,6 +259,20 @@ func (c *GRPCSitePlugin) PostBySlug(slug string) (ambient.PostWithID, error) {
 	return post, err
 }
 
+// PostByID handler.
+func (c *GRPCSitePlugin) PostByID(ID string) (ambient.Post, error) {
+	resp, err := c.client.PostByID(context.Background(), &protodef.SitePostByIDRequest{
+		Id: ID,
+	})
+	if err != nil {
+		return ambient.Post{}, ErrorHandler(err)
+	}
+
+	post := ambient.Post{}
+	err = ProtobufStructToObject(resp.Post, &post)
+	return post, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

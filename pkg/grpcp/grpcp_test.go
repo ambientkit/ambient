@@ -236,6 +236,14 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/postBySlugBad", nil))
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 	assert.Equal(t, "item was not found\n", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/postByID", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Pages are the same.", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/postByIDBad", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Pages are the same.", string(body))
 }
 
 // Setup sets up a test gRPC server.

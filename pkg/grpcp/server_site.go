@@ -227,6 +227,20 @@ func (m *GRPCSiteServer) PostBySlug(ctx context.Context, req *protodef.SitePostB
 	}, err
 }
 
+// PostByID handler.
+func (m *GRPCSiteServer) PostByID(ctx context.Context, req *protodef.SitePostByIDRequest) (
+	resp *protodef.SitePostByIDResponse, err error) {
+	post, err := m.Impl.PostByID(req.Id)
+	if err != nil {
+		return &protodef.SitePostByIDResponse{}, err
+	}
+
+	p, err := ObjectToProtobufStruct(post)
+	return &protodef.SitePostByIDResponse{
+		Post: p,
+	}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

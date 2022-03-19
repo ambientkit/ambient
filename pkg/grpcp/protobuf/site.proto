@@ -26,6 +26,7 @@ service Site {
     rpc PublishedPosts(Empty) returns (SitePublishedPostsResponse) {}
     rpc PublishedPages(Empty) returns (SitePublishedPagesResponse) {}
     rpc PostBySlug(SitePostBySlugRequest) returns (SitePostBySlugResponse) {}
+    rpc PostByID(SitePostByIDRequest) returns (SitePostByIDResponse) {}
 
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
@@ -127,6 +128,14 @@ message SitePostBySlugRequest {
 }
 
 message SitePostBySlugResponse {
+    google.protobuf.Struct post = 1;
+}
+
+message SitePostByIDRequest {
+    string id = 1;
+}
+
+message SitePostByIDResponse {
     google.protobuf.Struct post = 1;
 }
 

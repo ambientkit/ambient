@@ -106,4 +106,6 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/publishedPages", p.publishedPages)
 	p.Mux.Get("/postBySlug", p.postBySlug)
 	p.Mux.Get("/postBySlugBad", p.postBySlugBad)
+	p.Mux.Get("/postByID", p.postByID)
+	p.Mux.Get("/postByIDBad", p.postByID)
 }
