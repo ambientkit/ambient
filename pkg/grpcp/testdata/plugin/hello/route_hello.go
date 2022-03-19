@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"reflect"
 	"time"
 
 	"github.com/ambientkit/ambient"
@@ -272,10 +271,13 @@ func (p *Plugin) savePost(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	if reflect.DeepEqual(post, arr[0].Post) {
+	returnedPost := arr[0].Post
+	if post.Canonical == returnedPost.Canonical &&
+		post.Content == returnedPost.Content &&
+		post.Title == post.Title {
 		fmt.Fprint(w, "Posts are the same.")
 	} else {
-		fmt.Fprintf(w, "Posts are different (Len: %v): Sent:\n%v\n|\nReceived:\n%v\n", len(arr), post, arr[0].Post)
+		fmt.Fprintf(w, "Posts are different (Len: %v): Sent:\n%v\n|\nReceived:\n%v\n", len(arr), post, returnedPost)
 	}
 
 	return nil
