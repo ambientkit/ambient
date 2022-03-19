@@ -11,8 +11,6 @@ func main() {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
-	// Stop plugins when done.
-	defer app.StopGRPCClients()
 
 	h, err := app.Handler()
 	if err != nil {
