@@ -571,3 +571,19 @@ func (p *Plugin) cSRF(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) sessionValue(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.SetSessionValue(r, "foo", "bar")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, errors.New("could not set session value"))
+	}
+
+	val := p.Site.SessionValue(r, "foo")
+	if val != "bar" {
+		return p.Mux.StatusError(http.StatusBadRequest, errors.New("could not get session value"))
+	}
+
+	fmt.Fprintf(w, "Session value works.")
+
+	return nil
+}

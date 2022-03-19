@@ -36,6 +36,8 @@ service Site {
     rpc LogoutAllUsers(SiteLogoutAllUsersRequest) returns (Empty) {}
     rpc SetCSRF(SiteSetCSRFRequest) returns (SiteSetCSRFResponse) {}
     rpc CSRF(SiteCSRFRequest) returns (SiteCSRFResponse) {}
+    rpc SessionValue(SiteSessionValueRequest) returns (SiteSessionValueResponse) {}
+    rpc SetSessionValue(SiteSetSessionValueRequest) returns (Empty) {}
 }
 
 message SiteAuthorizedRequest {
@@ -198,4 +200,19 @@ message SiteCSRFRequest {
 
 message SiteCSRFResponse {
     bool valid = 1;
+}
+
+message SiteSessionValueRequest {
+    string requestid = 1;
+    string name = 2;
+}
+
+message SiteSessionValueResponse {
+    string value = 1;
+}
+
+message SiteSetSessionValueRequest {
+    string requestid = 1;
+    string name = 2;
+    string value = 3;
 }

@@ -330,4 +330,8 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, r)
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 	assert.Equal(t, "token is not valid\n", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/sessionValue", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Session value works.", string(body))
 }

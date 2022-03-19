@@ -385,3 +385,31 @@ func (c *GRPCSitePlugin) CSRF(r *http.Request, token string) bool {
 
 	return resp.Valid
 }
+
+// SessionValue handler.
+func (c *GRPCSitePlugin) SessionValue(r *http.Request, name string) string {
+	resp, err := c.client.SessionValue(context.Background(), &protodef.SiteSessionValueRequest{
+		Requestid: requestID(r),
+		Name:      name,
+	})
+	if err != nil {
+		c.Log.Error("grpc-plugin: site.SessionValue error: %v", err.Error())
+		return ""
+	}
+
+	return resp.Value
+}
+
+// SetSessionValue handler.
+func (c *GRPCSitePlugin) SetSessionValue(r *http.Request, name string, value string) error {
+	_, err := c.client.SetSessionValue(context.Background(), &protodef.SiteSetSessionValueRequest{
+		Requestid: requestID(r),
+		Name:      name,
+		Value:     value,
+	})
+	if err != nil {
+		ErrorHandler(err)
+	}
+
+	return nil
+}

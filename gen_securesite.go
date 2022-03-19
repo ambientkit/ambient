@@ -74,11 +74,11 @@ type SecureSite interface {
 	SetCSRF(r *http.Request) string
 	// CSRF returns true if the CSRF token is valid.
 	CSRF(r *http.Request, token string) bool
-	// // SessionValue returns session value by name.
-	// SessionValue(r *http.Request, name string) string
-	// // SetSessionValue sets a value on the current session.
-	// SetSessionValue(r *http.Request, name string, value string) error
-	// // DeleteSessionValue deletes a session value on the current session.
+	// SessionValue returns session value by name.
+	SessionValue(r *http.Request, name string) string
+	// SetSessionValue sets a value on the current session.
+	SetSessionValue(r *http.Request, name string, value string) error
+	// DeleteSessionValue deletes a session value on the current session.
 	// DeleteSessionValue(r *http.Request, name string)
 	// // PluginNeighborSettingsList gets the grants requests for a neighbor plugin.
 	// PluginNeighborSettingsList(pluginName string) ([]Setting, error)

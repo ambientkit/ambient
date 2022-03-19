@@ -288,6 +288,7 @@ func (m *GRPCSiteServer) UserLogin(ctx context.Context, req *protodef.SiteUserLo
 	if c == nil {
 		return &protodef.Empty{}, err
 	}
+
 	err = m.Impl.UserLogin(c.Request, req.Username)
 	return &protodef.Empty{}, err
 }
@@ -298,6 +299,7 @@ func (m *GRPCSiteServer) AuthenticatedUser(ctx context.Context, req *protodef.Si
 	if c == nil {
 		return &protodef.SiteAuthenticatedUserResponse{}, err
 	}
+
 	username, err := m.Impl.AuthenticatedUser(c.Request)
 	return &protodef.SiteAuthenticatedUserResponse{
 		Username: username,
@@ -310,6 +312,7 @@ func (m *GRPCSiteServer) UserLogout(ctx context.Context, req *protodef.SiteUserL
 	if c == nil {
 		return &protodef.Empty{}, err
 	}
+
 	err = m.Impl.UserLogout(c.Request)
 	return &protodef.Empty{}, err
 }
@@ -320,6 +323,7 @@ func (m *GRPCSiteServer) LogoutAllUsers(ctx context.Context, req *protodef.SiteL
 	if c == nil {
 		return &protodef.Empty{}, err
 	}
+
 	err = m.Impl.LogoutAllUsers(c.Request)
 	return &protodef.Empty{}, err
 }
@@ -330,10 +334,11 @@ func (m *GRPCSiteServer) SetCSRF(ctx context.Context, req *protodef.SiteSetCSRFR
 	if c == nil {
 		return &protodef.SiteSetCSRFResponse{}, err
 	}
+
 	token := m.Impl.SetCSRF(c.Request)
 	return &protodef.SiteSetCSRFResponse{
 		Token: token,
-	}, err
+	}, nil
 }
 
 // CSRF handler.
@@ -344,8 +349,35 @@ func (m *GRPCSiteServer) CSRF(ctx context.Context, req *protodef.SiteCSRFRequest
 			Valid: false,
 		}, err
 	}
+
 	valid := m.Impl.CSRF(c.Request, req.Token)
 	return &protodef.SiteCSRFResponse{
 		Valid: valid,
-	}, err
+	}, nil
+}
+
+// SessionValue handler.
+func (m *GRPCSiteServer) SessionValue(ctx context.Context, req *protodef.SiteSessionValueRequest) (resp *protodef.SiteSessionValueResponse, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.SiteSessionValueResponse{
+			Value: "",
+		}, err
+	}
+
+	val := m.Impl.SessionValue(c.Request, req.Name)
+	return &protodef.SiteSessionValueResponse{
+		Value: val,
+	}, nil
+}
+
+// SetSessionValue handler.
+func (m *GRPCSiteServer) SetSessionValue(ctx context.Context, req *protodef.SiteSetSessionValueRequest) (resp *protodef.Empty, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.Empty{}, err
+	}
+
+	err = m.Impl.SetSessionValue(c.Request, req.Name, req.Value)
+	return &protodef.Empty{}, err
 }
