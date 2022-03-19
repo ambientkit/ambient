@@ -221,6 +221,18 @@ func (c *GRPCSitePlugin) PostsAndPages(onlyPublished bool) (ambient.PostWithIDLi
 	return post, err
 }
 
+// PublishedPosts handler.
+func (c *GRPCSitePlugin) PublishedPosts() ([]ambient.Post, error) {
+	resp, err := c.client.PublishedPosts(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return make([]ambient.Post, 0), ErrorHandler(err)
+	}
+
+	post := make([]ambient.Post, 0)
+	err = ProtobufStructToArray(resp.Posts, &post)
+	return post, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

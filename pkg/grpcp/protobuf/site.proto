@@ -23,6 +23,7 @@ service Site {
     rpc DisablePlugin(SiteDisablePluginRequest) returns (Empty) {}
     rpc SavePost(SiteSavePostRequest) returns (Empty) {}
     rpc PostsAndPages(SitePostsAndPagesRequest) returns (SitePostsAndPagesResponse) {}
+    rpc PublishedPosts(Empty) returns (SitePublishedPostsResponse) {}
 
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
@@ -111,11 +112,15 @@ message SitePostsAndPagesResponse {
     repeated google.protobuf.Struct postwithidlist = 1;
 }
 
+message SitePublishedPostsResponse {
+    repeated google.protobuf.Struct posts = 1;
+}
+
 
 message SiteUserLoginRequest {
     string requestid = 1;
     string username = 2;
-}
+} 
 
 message SiteAuthenticatedUserRequest {
     string requestid = 1;

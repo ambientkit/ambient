@@ -255,7 +255,7 @@ func (p *Plugin) savePost(w http.ResponseWriter, r *http.Request) error {
 		Timestamp: time.Now().Truncate(0),
 		Content:   "content",
 		Published: true,
-		Page:      true,
+		Page:      false,
 		Tags: ambient.TagList{
 			{Name: "tag1", Timestamp: time.Now().Truncate(0)},
 		},
@@ -272,6 +272,39 @@ func (p *Plugin) savePost(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	returnedPost := arr[0].Post
+	if post.Canonical == returnedPost.Canonical &&
+		post.Content == returnedPost.Content &&
+		post.Title == post.Title {
+		fmt.Fprint(w, "Posts are the same.")
+	} else {
+		fmt.Fprintf(w, "Posts are different (Len: %v): Sent:\n%v\n|\nReceived:\n%v\n", len(arr), post, returnedPost)
+	}
+
+	return nil
+}
+
+func (p *Plugin) publishedPosts(w http.ResponseWriter, r *http.Request) error {
+	post := ambient.Post{
+		Title:     "title",
+		URL:       "url",
+		Canonical: "canonical",
+		Created:   time.Now().Truncate(0),
+		Updated:   time.Now().Truncate(0),
+		Timestamp: time.Now().Truncate(0),
+		Content:   "content",
+		Published: true,
+		Page:      false,
+		Tags: ambient.TagList{
+			{Name: "tag1", Timestamp: time.Now().Truncate(0)},
+		},
+	}
+
+	arr, err := p.Site.PublishedPosts()
+	if err != nil {
+		return err
+	}
+
+	returnedPost := arr[0]
 	if post.Canonical == returnedPost.Canonical &&
 		post.Content == returnedPost.Content &&
 		post.Title == post.Title {

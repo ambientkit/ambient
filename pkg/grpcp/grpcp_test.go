@@ -220,6 +220,10 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("POST", "/savePost", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Posts are the same.", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/publishedPosts", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Posts are the same.", string(body))
 }
 
 // Setup sets up a test gRPC server.

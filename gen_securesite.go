@@ -47,8 +47,8 @@ type SecureSite interface {
 	SavePost(ID string, post Post) error
 	// PostsAndPages returns the list of posts and pages.
 	PostsAndPages(onlyPublished bool) (PostWithIDList, error)
-	// // PublishedPosts returns the list of published posts.
-	// PublishedPosts() ([]Post, error)
+	// PublishedPosts returns the list of published posts.
+	PublishedPosts() ([]Post, error)
 	// // PublishedPages returns the list of published pages.
 	// PublishedPages() ([]Post, error)
 	// // PostBySlug returns the post by slug.

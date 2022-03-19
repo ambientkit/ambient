@@ -185,6 +185,20 @@ func (m *GRPCSiteServer) PostsAndPages(ctx context.Context, req *protodef.SitePo
 	}, err
 }
 
+// PublishedPosts handler.
+func (m *GRPCSiteServer) PublishedPosts(ctx context.Context, req *protodef.Empty) (
+	resp *protodef.SitePublishedPostsResponse, err error) {
+	post, err := m.Impl.PublishedPosts()
+	if err != nil {
+		return &protodef.SitePublishedPostsResponse{}, err
+	}
+
+	p, err := ArrayToProtobufStruct(post)
+	return &protodef.SitePublishedPostsResponse{
+		Posts: p,
+	}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.
