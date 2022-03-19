@@ -548,3 +548,14 @@ func (p *Plugin) logoutAllUsers(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) setCSRF(w http.ResponseWriter, r *http.Request) error {
+	token := p.Site.SetCSRF(r)
+	if len(token) == 0 {
+		return p.Mux.StatusError(http.StatusInternalServerError, errors.New("token is missing"))
+	}
+
+	fmt.Fprintf(w, "Token len: %v", len(token))
+
+	return nil
+}

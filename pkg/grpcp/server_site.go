@@ -323,3 +323,15 @@ func (m *GRPCSiteServer) LogoutAllUsers(ctx context.Context, req *protodef.SiteL
 	err = m.Impl.LogoutAllUsers(c.Request)
 	return &protodef.Empty{}, err
 }
+
+// SetCSRF handler.
+func (m *GRPCSiteServer) SetCSRF(ctx context.Context, req *protodef.SiteSetCSRFRequest) (resp *protodef.SiteSetCSRFResponse, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.SiteSetCSRFResponse{}, err
+	}
+	token := m.Impl.SetCSRF(c.Request)
+	return &protodef.SiteSetCSRFResponse{
+		Token: token,
+	}, err
+}

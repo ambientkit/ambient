@@ -69,9 +69,9 @@ type SecureSite interface {
 	UserLogout(r *http.Request) error
 	// LogoutAllUsers logs out all users.
 	LogoutAllUsers(r *http.Request) error
-	// // SetCSRF sets the session with a token and returns the token for use in a form
-	// // or header.
-	// SetCSRF(r *http.Request) string
+	// SetCSRF sets the session with a token and returns the token for use in a form
+	// or header.
+	SetCSRF(r *http.Request) string
 	// // CSRF returns true if the CSRF token is valid.
 	// CSRF(r *http.Request, token string) bool
 	// // SessionValue returns session value by name.

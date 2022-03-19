@@ -33,7 +33,9 @@ func (c *GRPCSitePlugin) Authorized(grant ambient.Grant) bool {
 	})
 	if err != nil {
 		c.Log.Error("grpc-plugin: site.Authorized error: %v", err.Error())
+		return false
 	}
+
 	return resp.Authorized
 }
 
@@ -355,4 +357,17 @@ func (c *GRPCSitePlugin) LogoutAllUsers(r *http.Request) error {
 	}
 
 	return nil
+}
+
+// SetCSRF handler.
+func (c *GRPCSitePlugin) SetCSRF(r *http.Request) string {
+	resp, err := c.client.SetCSRF(context.Background(), &protodef.SiteSetCSRFRequest{
+		Requestid: requestID(r),
+	})
+	if err != nil {
+		c.Log.Error("grpc-plugin: site.Authorized error: %v", err.Error())
+		return ""
+	}
+
+	return resp.Token
 }

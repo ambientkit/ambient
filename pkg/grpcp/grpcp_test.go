@@ -305,4 +305,8 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, r)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "login: () (user not found)", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/setCSRF", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Token len: 32", string(body))
 }
