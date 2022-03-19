@@ -273,6 +273,18 @@ func (c *GRPCSitePlugin) PostByID(ID string) (ambient.Post, error) {
 	return post, err
 }
 
+// DeletePostByID handler.
+func (c *GRPCSitePlugin) DeletePostByID(ID string) error {
+	_, err := c.client.DeletePostByID(context.Background(), &protodef.SiteDeletePostByIDRequest{
+		Id: ID,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

@@ -435,3 +435,32 @@ func (p *Plugin) postByIDBad(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) deletePostByID(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.DeletePostByID("abcBad")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusNotFound, err)
+	}
+
+	returnedPost, err := p.Site.PostByID("abc")
+	if err != nil {
+		return err
+	}
+
+	if returnedPost.Content != "content" {
+		return p.Mux.StatusError(http.StatusInternalServerError, fmt.Errorf("post should exist"))
+	}
+
+	err = p.Site.DeletePostByID("abc")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusNotFound, err)
+	}
+
+	returnedPost, err = p.Site.PostByID("abc")
+	if err != nil {
+		fmt.Fprint(w, "Works.")
+		return nil
+	}
+
+	return p.Mux.StatusError(http.StatusInternalServerError, fmt.Errorf("post should not exist"))
+}

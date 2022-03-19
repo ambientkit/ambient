@@ -108,4 +108,5 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/postBySlugBad", p.postBySlugBad)
 	p.Mux.Get("/postByID", p.postByID)
 	p.Mux.Get("/postByIDBad", p.postByID)
+	p.Mux.Delete("/deletePostByID", p.deletePostByID)
 }

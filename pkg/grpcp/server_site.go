@@ -241,6 +241,17 @@ func (m *GRPCSiteServer) PostByID(ctx context.Context, req *protodef.SitePostByI
 	}, err
 }
 
+// DeletePostByID handler.
+func (m *GRPCSiteServer) DeletePostByID(ctx context.Context, req *protodef.SiteDeletePostByIDRequest) (
+	resp *protodef.Empty, err error) {
+	err = m.Impl.DeletePostByID(req.Id)
+	if err != nil {
+		return &protodef.Empty{}, err
+	}
+
+	return &protodef.Empty{}, nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.
