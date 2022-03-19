@@ -274,7 +274,7 @@ func (p *Plugin) savePost(w http.ResponseWriter, r *http.Request) error {
 	returnedPost := arr[0].Post
 	if post.Canonical == returnedPost.Canonical &&
 		post.Content == returnedPost.Content &&
-		post.Title == post.Title {
+		post.Title == returnedPost.Title {
 		fmt.Fprint(w, "Posts are the same.")
 	} else {
 		fmt.Fprintf(w, "Posts are different (Len: %v): Sent:\n%v\n|\nReceived:\n%v\n", len(arr), post, returnedPost)
@@ -307,7 +307,7 @@ func (p *Plugin) publishedPosts(w http.ResponseWriter, r *http.Request) error {
 	returnedPost := arr[0]
 	if post.Canonical == returnedPost.Canonical &&
 		post.Content == returnedPost.Content &&
-		post.Title == post.Title {
+		post.Title == returnedPost.Title {
 		fmt.Fprint(w, "Posts are the same.")
 	} else {
 		fmt.Fprintf(w, "Posts are different (Len: %v): Sent:\n%v\n|\nReceived:\n%v\n", len(arr), post, returnedPost)
@@ -345,7 +345,7 @@ func (p *Plugin) publishedPages(w http.ResponseWriter, r *http.Request) error {
 	returnedPost := arr[0]
 	if post.Canonical == returnedPost.Canonical &&
 		post.Content == returnedPost.Content &&
-		post.Title == post.Title {
+		post.Title == returnedPost.Title {
 		fmt.Fprint(w, "Pages are the same.")
 	} else {
 		fmt.Fprintf(w, "Pages are different (Len: %v): Sent:\n%v\n|\nReceived:\n%v\n", len(arr), post, returnedPost)
@@ -377,7 +377,7 @@ func (p *Plugin) postBySlug(w http.ResponseWriter, r *http.Request) error {
 
 	if post.Canonical == returnedPost.Canonical &&
 		post.Content == returnedPost.Content &&
-		post.Title == post.Title {
+		post.Title == returnedPost.Title {
 		fmt.Fprint(w, "Pages are the same.")
 	} else {
 		fmt.Fprintf(w, "Pages are different: Sent:\n%v\n|\nReceived:\n%v\n", post, returnedPost)
@@ -418,7 +418,7 @@ func (p *Plugin) postByID(w http.ResponseWriter, r *http.Request) error {
 
 	if post.Canonical == returnedPost.Canonical &&
 		post.Content == returnedPost.Content &&
-		post.Title == post.Title {
+		post.Title == returnedPost.Title {
 		fmt.Fprint(w, "Pages are the same.")
 	} else {
 		fmt.Fprintf(w, "Pages are different: Sent:\n%v\n|\nReceived:\n%v\n", post, returnedPost)
