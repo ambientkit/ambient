@@ -11,7 +11,7 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/ambientapp"
-	"github.com/ambientkit/ambient/pkg/grpcp/testdata/plugin/neighbor"
+	"github.com/ambientkit/ambient/pkg/grpcp/testingdata/plugin/neighbor"
 	"github.com/ambientkit/plugin/logger/zaplogger"
 	"github.com/ambientkit/plugin/router/awayrouter"
 	"github.com/ambientkit/plugin/sessionmanager/scssession"
@@ -68,6 +68,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePostRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePostDelete))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborRouteRead))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantUserPersistWrite))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -207,9 +208,9 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Enable plugin: item was not found", string(body))
 
-	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/loadAllPluginPages", nil))
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "Load pages: <nil>", string(body))
+	// resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/loadAllPluginPages", nil))
+	// assert.Equal(t, http.StatusOK, resp.StatusCode)
+	// assert.Equal(t, "Load pages: <nil>", string(body))
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/disablePlugin", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -258,6 +259,14 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pluginNeighborRoutesListBad", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Routes: 0", string(body))
+
+	resp, _ = doRequest(t, mux, httptest.NewRequest("GET", "/userPersist", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, 86400, resp.Cookies()[0].MaxAge)
+
+	resp, _ = doRequest(t, mux, httptest.NewRequest("GET", "/userPersistFalse", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, 0, resp.Cookies()[0].MaxAge)
 }
 
 // Setup sets up a test gRPC server.
@@ -291,7 +300,7 @@ func Setup() (*ambientapp.App, error) {
 			neighbor.New(),
 		},
 		GRPCPlugins: []ambient.GRPCPlugin{
-			{Name: "hello", Path: "./pkg/grpcp/testdata/plugin/hello/cmd/plugin/hello"},
+			{Name: "hello", Path: "./pkg/grpcp/testingdata/plugin/hello/cmd/plugin/hello"},
 		},
 		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.

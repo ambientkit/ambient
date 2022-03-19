@@ -111,4 +111,6 @@ func (p *Plugin) Routes() {
 	p.Mux.Delete("/deletePostByID", p.deletePostByID)
 	p.Mux.Get("/pluginNeighborRoutesList", p.pluginNeighborRoutesList)
 	p.Mux.Get("/pluginNeighborRoutesListBad", p.pluginNeighborRoutesListBad)
+	p.Mux.Get("/userPersist", p.userPersist)
+	p.Mux.Get("/userPersistFalse", p.userPersistFalse)
 }

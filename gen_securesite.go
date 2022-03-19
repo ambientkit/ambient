@@ -63,8 +63,8 @@ type SecureSite interface {
 	AuthenticatedUser(r *http.Request) (string, error)
 	// UserLogin sets the current user as authenticated.
 	UserLogin(r *http.Request, username string) error
-	// // UserPersist sets the user session to retain after browser close.
-	// UserPersist(r *http.Request, persist bool) error
+	// UserPersist sets the user session to retain after browser close.
+	UserPersist(r *http.Request, persist bool) error
 	// // UserLogout logs out the current user.
 	// UserLogout(r *http.Request) error
 	// // LogoutAllUsers logs out all users.

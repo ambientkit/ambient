@@ -57,11 +57,11 @@ protoc:
 # Start the build and run process for grpc.
 .PHONY: start
 start: protoc
-	@cd pkg/grpcp/testdata/plugin/hello/cmd/plugin && go build -o hello
-	go run pkg/grpcp/testdata/cmd/server/main.go
+	@cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o hello
+	go run pkg/grpcp/testingdata/cmd/server/main.go
 
 # Start the test process for grpc.
 .PHONY: test
 test: protoc
-	@cd pkg/grpcp/testdata/plugin/hello/cmd/plugin && go build -o hello
+	@cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o hello
 	go test pkg/grpcp/*.go

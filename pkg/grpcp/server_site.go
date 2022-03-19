@@ -266,13 +266,29 @@ func (m *GRPCSiteServer) PluginNeighborRoutesList(ctx context.Context, req *prot
 	}, err
 }
 
+// UserPersist handler.
+func (m *GRPCSiteServer) UserPersist(ctx context.Context, req *protodef.SiteUserPersistRequest) (
+	resp *protodef.Empty, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.Empty{}, err
+	}
+
+	err = m.Impl.UserPersist(c.Request, req.Persist)
+	if err != nil {
+		return &protodef.Empty{}, err
+	}
+
+	return &protodef.Empty{}, nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.
 func (m *GRPCSiteServer) UserLogin(ctx context.Context, req *protodef.SiteUserLoginRequest) (resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return
+		return &protodef.Empty{}, err
 	}
 	err = m.Impl.UserLogin(c.Request, req.Username)
 	return &protodef.Empty{}, err
@@ -282,7 +298,7 @@ func (m *GRPCSiteServer) UserLogin(ctx context.Context, req *protodef.SiteUserLo
 func (m *GRPCSiteServer) AuthenticatedUser(ctx context.Context, req *protodef.SiteAuthenticatedUserRequest) (resp *protodef.SiteAuthenticatedUserResponse, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return
+		return &protodef.SiteAuthenticatedUserResponse{}, err
 	}
 	username, err := m.Impl.AuthenticatedUser(c.Request)
 	return &protodef.SiteAuthenticatedUserResponse{

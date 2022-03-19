@@ -299,6 +299,19 @@ func (c *GRPCSitePlugin) PluginNeighborRoutesList(pluginName string) ([]ambient.
 	return post, err
 }
 
+// UserPersist handler.
+func (c *GRPCSitePlugin) UserPersist(r *http.Request, persist bool) error {
+	_, err := c.client.UserPersist(context.Background(), &protodef.SiteUserPersistRequest{
+		Requestid: requestID(r),
+		Persist:   persist,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

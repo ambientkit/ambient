@@ -486,3 +486,26 @@ func (p *Plugin) pluginNeighborRoutesListBad(w http.ResponseWriter, r *http.Requ
 
 	return nil
 }
+
+func (p *Plugin) userPersist(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.UserLogin(r, "username")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusInternalServerError, err)
+	}
+
+	err = p.Site.UserPersist(r, true)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusInternalServerError, err)
+	}
+
+	return nil
+}
+
+func (p *Plugin) userPersistFalse(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.UserPersist(r, false)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusInternalServerError, err)
+	}
+
+	return nil
+}

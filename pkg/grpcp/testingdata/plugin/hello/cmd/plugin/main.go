@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/ambientkit/ambient/pkg/grpcp"
-	"github.com/ambientkit/ambient/pkg/grpcp/testdata/plugin/hello"
+	"github.com/ambientkit/ambient/pkg/grpcp/testingdata/plugin/hello"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 )
