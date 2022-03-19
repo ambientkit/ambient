@@ -464,3 +464,25 @@ func (p *Plugin) deletePostByID(w http.ResponseWriter, r *http.Request) error {
 
 	return p.Mux.StatusError(http.StatusInternalServerError, fmt.Errorf("post should not exist"))
 }
+
+func (p *Plugin) pluginNeighborRoutesList(w http.ResponseWriter, r *http.Request) error {
+	routes, err := p.Site.PluginNeighborRoutesList("neighbor")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusNotFound, err)
+	}
+
+	fmt.Fprintf(w, "Routes: %v", len(routes))
+
+	return nil
+}
+
+func (p *Plugin) pluginNeighborRoutesListBad(w http.ResponseWriter, r *http.Request) error {
+	routes, err := p.Site.PluginNeighborRoutesList("neighborBad")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusNotFound, err)
+	}
+
+	fmt.Fprintf(w, "Routes: %v", len(routes))
+
+	return nil
+}

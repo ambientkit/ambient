@@ -285,6 +285,20 @@ func (c *GRPCSitePlugin) DeletePostByID(ID string) error {
 	return nil
 }
 
+// PluginNeighborRoutesList handler.
+func (c *GRPCSitePlugin) PluginNeighborRoutesList(pluginName string) ([]ambient.Route, error) {
+	resp, err := c.client.PluginNeighborRoutesList(context.Background(), &protodef.SitePluginNeighborRoutesListRequest{
+		Pluginname: pluginName,
+	})
+	if err != nil {
+		return make([]ambient.Route, 0), ErrorHandler(err)
+	}
+
+	post := make([]ambient.Route, 0)
+	err = ProtobufStructToArray(resp.Routes, &post)
+	return post, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

@@ -57,8 +57,8 @@ type SecureSite interface {
 	PostByID(ID string) (Post, error)
 	// DeletePostByID deletes a post.
 	DeletePostByID(ID string) error
-	// // PluginNeighborRoutesList gets the routes for a neighbor plugin.
-	// PluginNeighborRoutesList(pluginName string) ([]Route, error)
+	// PluginNeighborRoutesList gets the routes for a neighbor plugin.
+	PluginNeighborRoutesList(pluginName string) ([]Route, error)
 	// AuthenticatedUser returns if the current user is authenticated.
 	AuthenticatedUser(r *http.Request) (string, error)
 	// UserLogin sets the current user as authenticated.

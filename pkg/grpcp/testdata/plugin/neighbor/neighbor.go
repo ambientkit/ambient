@@ -2,6 +2,9 @@
 package neighbor
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/ambientkit/ambient"
 )
 
@@ -61,4 +64,12 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 		{Grant: ambient.GrantSiteFuncMapWrite, Description: "Access to create global FuncMaps for templates."},
 		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for editing the blog posts."},
 	}
+}
+
+// Routes sets routes for the plugin.
+func (p *Plugin) Routes() {
+	p.Mux.Get("/", func(w http.ResponseWriter, r *http.Request) error {
+		fmt.Fprint(w, "hello world")
+		return nil
+	})
 }

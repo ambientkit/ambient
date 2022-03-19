@@ -28,6 +28,7 @@ service Site {
     rpc PostBySlug(SitePostBySlugRequest) returns (SitePostBySlugResponse) {}
     rpc PostByID(SitePostByIDRequest) returns (SitePostByIDResponse) {}
     rpc DeletePostByID(SiteDeletePostByIDRequest) returns (Empty) {}
+    rpc PluginNeighborRoutesList(SitePluginNeighborRoutesListRequest) returns (SitePluginNeighborRoutesListResponse) {}
 
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
@@ -142,6 +143,14 @@ message SitePostByIDResponse {
 
 message SiteDeletePostByIDRequest {
     string id = 1;
+}
+
+message SitePluginNeighborRoutesListRequest {
+    string pluginname = 1;
+}
+
+message SitePluginNeighborRoutesListResponse {
+    repeated google.protobuf.Struct routes = 1;
 }
 
 

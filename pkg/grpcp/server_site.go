@@ -252,6 +252,20 @@ func (m *GRPCSiteServer) DeletePostByID(ctx context.Context, req *protodef.SiteD
 	return &protodef.Empty{}, nil
 }
 
+// PluginNeighborRoutesList handler.
+func (m *GRPCSiteServer) PluginNeighborRoutesList(ctx context.Context, req *protodef.SitePluginNeighborRoutesListRequest) (
+	resp *protodef.SitePluginNeighborRoutesListResponse, err error) {
+	routes, err := m.Impl.PluginNeighborRoutesList(req.Pluginname)
+	if err != nil {
+		return &protodef.SitePluginNeighborRoutesListResponse{}, err
+	}
+
+	r, err := ArrayToProtobufStruct(routes)
+	return &protodef.SitePluginNeighborRoutesListResponse{
+		Routes: r,
+	}, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.

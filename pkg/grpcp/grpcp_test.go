@@ -67,6 +67,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePostWrite))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePostRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePostDelete))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborRouteRead))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -250,6 +251,13 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Works.", string(body))
 
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pluginNeighborRoutesList", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Routes: 1", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pluginNeighborRoutesListBad", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Routes: 0", string(body))
 }
 
 // Setup sets up a test gRPC server.
