@@ -33,6 +33,7 @@ service Site {
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
     rpc UserLogout(SiteUserLogoutRequest) returns (Empty) {}
+    rpc LogoutAllUsers(SiteLogoutAllUsersRequest) returns (Empty) {}
 }
 
 message SiteAuthorizedRequest {
@@ -173,5 +174,9 @@ message SiteAuthenticatedUserResponse {
 }
 
 message SiteUserLogoutRequest {
+    string requestid = 1;
+}
+
+message SiteLogoutAllUsersRequest {
     string requestid = 1;
 }

@@ -8,6 +8,8 @@ github.com/ambientkit/away v0.0.0-20220312051345-3985971e46d6 h1:fpnLjFY2bTm9DzT
 github.com/ambientkit/away v0.0.0-20220312051345-3985971e46d6/go.mod h1:Sk1OeLgFvcZDZMcFXEhGj4eX0AEWUIK9WyFz256aFKo=
 github.com/ambientkit/plugin v0.0.0-20220312051929-858fc1fcebc0 h1:FK55Xm5pYgYBv0YJ6KemS9ue11ezwl21vVi2XVdlg1U=
 github.com/ambientkit/plugin v0.0.0-20220312051929-858fc1fcebc0/go.mod h1:WOw9ZMaG9A4FszMVvr6Zkg8QwjygNZpkpicgyDpQNJw=
+github.com/ambientkit/plugin v0.0.0-20220319124547-f6e8b6565d1e h1:qD95Ix3dmV4EHa+N/yFOCQa4VV0RPu+I7DKg5S8itZE=
+github.com/ambientkit/plugin v0.0.0-20220319124547-f6e8b6565d1e/go.mod h1:WOw9ZMaG9A4FszMVvr6Zkg8QwjygNZpkpicgyDpQNJw=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=

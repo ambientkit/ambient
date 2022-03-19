@@ -1,6 +1,7 @@
 package hello
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -526,6 +527,24 @@ func (p *Plugin) userLogout(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return p.Mux.StatusError(http.StatusInternalServerError, err)
 	}
+
+	rAuth, _ := p.Site.AuthenticatedUser(r)
+	if rAuth != "" {
+		return p.Mux.StatusError(http.StatusInternalServerError, errors.New("username should not be found:"+rAuth))
+	}
+
+	fmt.Fprint(w, "User cleared.")
+
+	return nil
+}
+
+func (p *Plugin) logoutAllUsers(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.LogoutAllUsers(r)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusInternalServerError, err)
+	}
+
+	fmt.Fprint(w, "Users cleared.")
 
 	return nil
 }

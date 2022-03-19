@@ -115,4 +115,5 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/userPersistFalse", p.userPersistFalse)
 	p.Mux.Get("/grantRequests", p.grantRequests)
 	p.Mux.Get("/userLogout", p.userLogout)
+	p.Mux.Get("/logoutAllUsers", p.logoutAllUsers)
 }

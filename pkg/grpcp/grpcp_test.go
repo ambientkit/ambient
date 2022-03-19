@@ -64,6 +64,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSitePostDelete))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborRouteRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantUserPersistWrite))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantAllUserAuthenticatedWrite))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -267,8 +268,41 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Grant requests: 18", string(body))
 
-	resp, _ = doRequest(t, mux, httptest.NewRequest("GET", "/userLogout", nil))
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/userLogout", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "User cleared.", string(body))
 	assert.Equal(t, "", resp.Cookies()[0].Value)
 	assert.Equal(t, -1, resp.Cookies()[0].MaxAge)
+
+	// Login user.
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/login", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "login: (<nil>) (username) (<nil>)", string(body))
+
+	// Test with authenticated cookie.
+	r = httptest.NewRequest("GET", "/loggedin", nil)
+	for _, v := range resp.Cookies() {
+		r.AddCookie(v)
+	}
+	resp, body = doRequest(t, mux, r)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "login: (username) (<nil>)", string(body))
+
+	// Destroy users.
+	r = httptest.NewRequest("GET", "/logoutAllUsers", nil)
+	for _, v := range resp.Cookies() {
+		r.AddCookie(v)
+	}
+	resp, body = doRequest(t, mux, r)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Users cleared.", string(body))
+
+	// Test with authenticated cookie again.
+	r = httptest.NewRequest("GET", "/loggedin", nil)
+	for _, v := range resp.Cookies() {
+		r.AddCookie(v)
+	}
+	resp, body = doRequest(t, mux, r)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "login: () (user not found)", string(body))
 }

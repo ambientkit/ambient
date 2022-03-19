@@ -313,3 +313,13 @@ func (m *GRPCSiteServer) UserLogout(ctx context.Context, req *protodef.SiteUserL
 	err = m.Impl.UserLogout(c.Request)
 	return &protodef.Empty{}, err
 }
+
+// LogoutAllUsers handler.
+func (m *GRPCSiteServer) LogoutAllUsers(ctx context.Context, req *protodef.SiteLogoutAllUsersRequest) (resp *protodef.Empty, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.Empty{}, err
+	}
+	err = m.Impl.LogoutAllUsers(c.Request)
+	return &protodef.Empty{}, err
+}

@@ -344,3 +344,15 @@ func (c *GRPCSitePlugin) UserLogout(r *http.Request) error {
 
 	return nil
 }
+
+// LogoutAllUsers handler.
+func (c *GRPCSitePlugin) LogoutAllUsers(r *http.Request) error {
+	_, err := c.client.LogoutAllUsers(context.Background(), &protodef.SiteLogoutAllUsersRequest{
+		Requestid: requestID(r),
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
