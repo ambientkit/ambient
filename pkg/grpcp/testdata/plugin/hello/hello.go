@@ -103,4 +103,5 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/disablePluginBad", p.disablePluginBad)
 	p.Mux.Post("/savePost", p.savePost)
 	p.Mux.Get("/publishedPosts", p.publishedPosts)
+	p.Mux.Get("/publishedPages", p.publishedPages)
 }

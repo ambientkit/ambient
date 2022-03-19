@@ -315,3 +315,41 @@ func (p *Plugin) publishedPosts(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) publishedPages(w http.ResponseWriter, r *http.Request) error {
+	post := ambient.Post{
+		Title:     "title2",
+		URL:       "url2",
+		Canonical: "canonical2",
+		Created:   time.Now().Truncate(0),
+		Updated:   time.Now().Truncate(0),
+		Timestamp: time.Now().Truncate(0),
+		Content:   "content2",
+		Published: true,
+		Page:      true,
+		Tags: ambient.TagList{
+			{Name: "tag1", Timestamp: time.Now().Truncate(0)},
+		},
+	}
+
+	err := p.Site.SavePost("abc2", post)
+	if err != nil {
+		return err
+	}
+
+	arr, err := p.Site.PublishedPages()
+	if err != nil {
+		return err
+	}
+
+	returnedPost := arr[0]
+	if post.Canonical == returnedPost.Canonical &&
+		post.Content == returnedPost.Content &&
+		post.Title == post.Title {
+		fmt.Fprint(w, "Pages are the same.")
+	} else {
+		fmt.Fprintf(w, "Pages are different (Len: %v): Sent:\n%v\n|\nReceived:\n%v\n", len(arr), post, returnedPost)
+	}
+
+	return nil
+}

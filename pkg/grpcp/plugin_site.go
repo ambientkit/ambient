@@ -233,6 +233,18 @@ func (c *GRPCSitePlugin) PublishedPosts() ([]ambient.Post, error) {
 	return post, err
 }
 
+// PublishedPages handler.
+func (c *GRPCSitePlugin) PublishedPages() ([]ambient.Post, error) {
+	resp, err := c.client.PublishedPages(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return make([]ambient.Post, 0), ErrorHandler(err)
+	}
+
+	post := make([]ambient.Post, 0)
+	err = ProtobufStructToArray(resp.Posts, &post)
+	return post, err
+}
+
 /////////////////////////////////////////////////////
 
 // UserLogin handler.
