@@ -65,8 +65,8 @@ type SecureSite interface {
 	UserLogin(r *http.Request, username string) error
 	// UserPersist sets the user session to retain after browser close.
 	UserPersist(r *http.Request, persist bool) error
-	// // UserLogout logs out the current user.
-	// UserLogout(r *http.Request) error
+	// UserLogout logs out the current user.
+	UserLogout(r *http.Request) error
 	// // LogoutAllUsers logs out all users.
 	// LogoutAllUsers(r *http.Request) error
 	// // SetCSRF sets the session with a token and returns the token for use in a form

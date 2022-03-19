@@ -266,4 +266,9 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/grantRequests", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Grant requests: 18", string(body))
+
+	resp, _ = doRequest(t, mux, httptest.NewRequest("GET", "/userLogout", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "", resp.Cookies()[0].Value)
+	assert.Equal(t, -1, resp.Cookies()[0].MaxAge)
 }

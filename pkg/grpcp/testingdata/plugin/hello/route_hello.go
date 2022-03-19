@@ -515,3 +515,17 @@ func (p *Plugin) grantRequests(w http.ResponseWriter, r *http.Request) error {
 	fmt.Fprintf(w, "Grant requests: %v", len(requests))
 	return nil
 }
+
+func (p *Plugin) userLogout(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.UserLogin(r, "username")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusInternalServerError, err)
+	}
+
+	err = p.Site.UserLogout(r)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusInternalServerError, err)
+	}
+
+	return nil
+}

@@ -30,9 +30,9 @@ service Site {
     rpc DeletePostByID(SiteDeletePostByIDRequest) returns (Empty) {}
     rpc PluginNeighborRoutesList(SitePluginNeighborRoutesListRequest) returns (SitePluginNeighborRoutesListResponse) {}
     rpc UserPersist(SiteUserPersistRequest) returns (Empty) {}
-
     rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
     rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
+    rpc UserLogout(SiteUserLogoutRequest) returns (Empty) {}
 }
 
 message SiteAuthorizedRequest {
@@ -159,8 +159,6 @@ message SiteUserPersistRequest {
     bool persist = 2;
 }
 
-
-
 message SiteUserLoginRequest {
     string requestid = 1;
     string username = 2;
@@ -172,4 +170,8 @@ message SiteAuthenticatedUserRequest {
 
 message SiteAuthenticatedUserResponse {
     string username = 1;
+}
+
+message SiteUserLogoutRequest {
+    string requestid = 1;
 }

@@ -282,8 +282,6 @@ func (m *GRPCSiteServer) UserPersist(ctx context.Context, req *protodef.SiteUser
 	return &protodef.Empty{}, nil
 }
 
-/////////////////////////////////////////////////////
-
 // UserLogin handler.
 func (m *GRPCSiteServer) UserLogin(ctx context.Context, req *protodef.SiteUserLoginRequest) (resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
@@ -304,4 +302,14 @@ func (m *GRPCSiteServer) AuthenticatedUser(ctx context.Context, req *protodef.Si
 	return &protodef.SiteAuthenticatedUserResponse{
 		Username: username,
 	}, err
+}
+
+// UserLogout handler.
+func (m *GRPCSiteServer) UserLogout(ctx context.Context, req *protodef.SiteUserLogoutRequest) (resp *protodef.Empty, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.Empty{}, err
+	}
+	err = m.Impl.UserLogout(c.Request)
+	return &protodef.Empty{}, err
 }

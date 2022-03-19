@@ -312,8 +312,6 @@ func (c *GRPCSitePlugin) UserPersist(r *http.Request, persist bool) error {
 	return nil
 }
 
-/////////////////////////////////////////////////////
-
 // UserLogin handler.
 func (c *GRPCSitePlugin) UserLogin(r *http.Request, username string) error {
 	_, err := c.client.UserLogin(context.Background(), &protodef.SiteUserLoginRequest{
@@ -332,5 +330,17 @@ func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
 		return "", ErrorHandler(err)
 	}
 
-	return out.Username, err
+	return out.Username, nil
+}
+
+// UserLogout handler.
+func (c *GRPCSitePlugin) UserLogout(r *http.Request) error {
+	_, err := c.client.UserLogout(context.Background(), &protodef.SiteUserLogoutRequest{
+		Requestid: requestID(r),
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
 }
