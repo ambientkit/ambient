@@ -709,3 +709,19 @@ func (p *Plugin) pluginTrusted(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) title(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.SetTitle("foo")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	title, err := p.Site.Title()
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	fmt.Fprintf(w, "Plugin title: %v", title)
+
+	return nil
+}

@@ -544,3 +544,25 @@ func (c *GRPCSitePlugin) PluginTrusted(pluginName string) (bool, error) {
 
 	return resp.Trusted, nil
 }
+
+// SetTitle handler.
+func (c *GRPCSitePlugin) SetTitle(title string) error {
+	_, err := c.client.SetTitle(context.Background(), &protodef.SiteSetTitleRequest{
+		Title: title,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
+// Title handler.
+func (c *GRPCSitePlugin) Title() (string, error) {
+	resp, err := c.client.Title(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	return resp.Title, nil
+}

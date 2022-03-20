@@ -98,10 +98,10 @@ type SecureSite interface {
 	NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error)
 	// PluginTrusted returns whether a plugin is trusted or not.
 	PluginTrusted(pluginName string) (bool, error)
-	// // SetTitle sets the title.
-	// SetTitle(title string) error
-	// // Title returns the title.
-	// Title() (string, error)
+	// SetTitle sets the title.
+	SetTitle(title string) error
+	// Title returns the title.
+	Title() (string, error)
 	// // SetScheme sets the site scheme.
 	// SetScheme(scheme string) error
 	// // Scheme returns the site scheme.

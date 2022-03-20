@@ -49,6 +49,8 @@ service Site {
     rpc NeighborPluginSettingString(SiteNeighborPluginSettingStringRequest) returns (SiteNeighborPluginSettingStringResponse) {}
     rpc NeighborPluginSetting(SiteNeighborPluginSettingRequest) returns (SiteNeighborPluginSettingResponse) {}
     rpc PluginTrusted(SitePluginTrustedRequest) returns (SitePluginTrustedResponse) {}
+    rpc SetTitle(SiteSetTitleRequest) returns (Empty) {}
+    rpc Title(Empty) returns (SiteTitleResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -300,4 +302,12 @@ message SitePluginTrustedRequest {
 
 message SitePluginTrustedResponse {
     bool trusted = 1;
+}
+
+message SiteSetTitleRequest {
+    string title = 1;
+}
+
+message SiteTitleResponse {
+    string title = 1;
 }

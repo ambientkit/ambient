@@ -507,3 +507,27 @@ func (m *GRPCSiteServer) PluginTrusted(ctx context.Context, req *protodef.SitePl
 		Trusted: trusted,
 	}, err
 }
+
+// SetTitle handler.
+func (m *GRPCSiteServer) SetTitle(ctx context.Context, req *protodef.SiteSetTitleRequest) (resp *protodef.Empty, err error) {
+	err = m.Impl.SetTitle(req.Title)
+	if err != nil {
+		return &protodef.Empty{}, err
+	}
+
+	return &protodef.Empty{}, err
+}
+
+// Title handler.
+func (m *GRPCSiteServer) Title(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteTitleResponse, err error) {
+	title, err := m.Impl.Title()
+	if err != nil {
+		return &protodef.SiteTitleResponse{
+			Title: "",
+		}, err
+	}
+
+	return &protodef.SiteTitleResponse{
+		Title: title,
+	}, err
+}

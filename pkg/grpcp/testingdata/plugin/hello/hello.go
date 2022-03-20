@@ -123,6 +123,8 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/setPluginSetting", p.setPluginSetting)
 	p.Mux.Get("/setNeighborPluginSetting", p.setNeighborPluginSetting)
 	p.Mux.Get("/pluginTrusted", p.pluginTrusted)
+	p.Mux.Get("/title", p.title)
+
 }
 
 const (

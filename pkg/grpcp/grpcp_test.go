@@ -70,6 +70,8 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginSettingRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborSettingWrite))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginTrustedRead))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteTitleWrite))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteTitleRead))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -355,4 +357,8 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pluginTrusted", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Plugin trusted: false true", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/title", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Plugin title: foo", string(body))
 }
