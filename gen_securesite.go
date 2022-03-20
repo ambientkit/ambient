@@ -115,8 +115,8 @@ type SecureSite interface {
 	FullURL() (string, error)
 	// Updated returns the home last updated timestamp.
 	Updated() (time.Time, error)
-	// // Tags returns the list of tags.
-	// Tags(onlyPublished bool) (TagList, error)
+	// Tags returns the list of tags.
+	Tags(onlyPublished bool) (TagList, error)
 	// SetContent sets the home page content.
 	SetContent(content string) error
 	// Content returns the site home page content.

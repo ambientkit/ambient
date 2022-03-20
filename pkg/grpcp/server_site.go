@@ -632,3 +632,25 @@ func (m *GRPCSiteServer) Content(ctx context.Context, req *protodef.Empty) (resp
 		Content: Content,
 	}, nil
 }
+
+// Tags handler.
+func (m *GRPCSiteServer) Tags(ctx context.Context, req *protodef.SiteTagsRequest) (resp *protodef.SiteTagsResponse, err error) {
+	tags := make([]*protodef.Tag, 0)
+	arr, err := m.Impl.Tags(req.Onlypublished)
+	if err != nil {
+		return &protodef.SiteTagsResponse{
+			Tags: tags,
+		}, err
+	}
+
+	for _, v := range arr {
+		tags = append(tags, &protodef.Tag{
+			Name:      v.Name,
+			Timestamp: timestamppb.New(v.Timestamp),
+		})
+	}
+
+	return &protodef.SiteTagsResponse{
+		Tags: tags,
+	}, nil
+}

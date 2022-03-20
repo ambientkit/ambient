@@ -653,3 +653,23 @@ func (c *GRPCSitePlugin) Content() (string, error) {
 
 	return resp.Content, nil
 }
+
+// Tags handler.
+func (c *GRPCSitePlugin) Tags(onlyPublished bool) (ambient.TagList, error) {
+	tags := make(ambient.TagList, 0)
+	resp, err := c.client.Tags(context.Background(), &protodef.SiteTagsRequest{
+		Onlypublished: onlyPublished,
+	})
+	if err != nil {
+		return tags, ErrorHandler(err)
+	}
+
+	for _, v := range resp.Tags {
+		tags = append(tags, ambient.Tag{
+			Name:      v.Name,
+			Timestamp: v.Timestamp.AsTime(),
+		})
+	}
+
+	return tags, nil
+}

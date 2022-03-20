@@ -79,15 +79,6 @@ func (ss *SecureSite) Updated() (time.Time, error) {
 	return ss.pluginsystem.Updated(), nil
 }
 
-// Tags returns the list of tags.
-func (ss *SecureSite) Tags(onlyPublished bool) (ambient.TagList, error) {
-	if !ss.Authorized(ambient.GrantSitePostRead) {
-		return nil, amberror.ErrAccessDenied
-	}
-
-	return ss.pluginsystem.Tags(onlyPublished), nil
-}
-
 // SetContent sets the home page content.
 func (ss *SecureSite) SetContent(content string) error {
 	if !ss.Authorized(ambient.GrantSiteContentWrite) {
@@ -104,4 +95,13 @@ func (ss *SecureSite) Content() (string, error) {
 	}
 
 	return ss.pluginsystem.Content(), nil
+}
+
+// Tags returns the list of tags.
+func (ss *SecureSite) Tags(onlyPublished bool) (ambient.TagList, error) {
+	if !ss.Authorized(ambient.GrantSitePostRead) {
+		return nil, amberror.ErrAccessDenied
+	}
+
+	return ss.pluginsystem.Tags(onlyPublished), nil
 }

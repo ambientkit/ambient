@@ -385,4 +385,8 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/content", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Site content: foo bar", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/tags", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Site tags: tag1 "+time.Now().Format("20060102"), string(body))
 }

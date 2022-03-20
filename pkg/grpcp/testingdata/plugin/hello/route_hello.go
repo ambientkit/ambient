@@ -789,3 +789,19 @@ func (p *Plugin) content(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) tags(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.SetContent("foo bar")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	tags, err := p.Site.Tags(false)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	fmt.Fprintf(w, "Site tags: %v %v", tags[0].Name, tags[0].Timestamp.Format("20060102"))
+
+	return nil
+}

@@ -128,6 +128,7 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/url", p.uRL)
 	p.Mux.Get("/updated", p.updated)
 	p.Mux.Get("/content", p.content)
+	p.Mux.Get("/tags", p.tags)
 }
 
 const (

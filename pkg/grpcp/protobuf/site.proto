@@ -60,6 +60,7 @@ service Site {
     rpc Updated(Empty) returns (SiteUpdatedResponse) {}
     rpc SetContent(SiteSetContentRequest) returns (Empty) {}
     rpc Content(Empty) returns (SiteContentResponse) {}
+    rpc Tags(SiteTagsRequest) returns (SiteTagsResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -351,4 +352,17 @@ message SiteSetContentRequest {
 
 message SiteContentResponse {
     string content = 1;
+}
+
+message SiteTagsRequest {
+    bool onlypublished = 1;
+}
+
+message SiteTagsResponse {
+    repeated Tag tags = 1;
+}
+
+message Tag {
+    string name = 1;
+    google.protobuf.Timestamp timestamp = 2;
 }
