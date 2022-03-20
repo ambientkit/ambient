@@ -631,3 +631,25 @@ func (c *GRPCSitePlugin) Updated() (time.Time, error) {
 
 	return resp.Timestamp.AsTime(), nil
 }
+
+// SetContent handler.
+func (c *GRPCSitePlugin) SetContent(content string) error {
+	_, err := c.client.SetContent(context.Background(), &protodef.SiteSetContentRequest{
+		Content: content,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
+// Content handler.
+func (c *GRPCSitePlugin) Content() (string, error) {
+	resp, err := c.client.Content(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	return resp.Content, nil
+}

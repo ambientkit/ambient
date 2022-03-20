@@ -608,3 +608,27 @@ func (m *GRPCSiteServer) Updated(ctx context.Context, req *protodef.Empty) (resp
 		Timestamp: timestamppb.New(timestamp),
 	}, nil
 }
+
+// SetContent handler.
+func (m *GRPCSiteServer) SetContent(ctx context.Context, req *protodef.SiteSetContentRequest) (resp *protodef.Empty, err error) {
+	err = m.Impl.SetContent(req.Content)
+	if err != nil {
+		return &protodef.Empty{}, err
+	}
+
+	return &protodef.Empty{}, nil
+}
+
+// Content handler.
+func (m *GRPCSiteServer) Content(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteContentResponse, err error) {
+	Content, err := m.Impl.Content()
+	if err != nil {
+		return &protodef.SiteContentResponse{
+			Content: "",
+		}, err
+	}
+
+	return &protodef.SiteContentResponse{
+		Content: Content,
+	}, nil
+}

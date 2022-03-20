@@ -78,6 +78,8 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteURLWrite))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteURLRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteUpdatedRead))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteContentRead))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteContentWrite))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -379,4 +381,8 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/updated", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Site updated: "+time.Now().Format("20060102"), string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/content", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Site content: foo bar", string(body))
 }

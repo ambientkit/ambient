@@ -117,8 +117,8 @@ type SecureSite interface {
 	Updated() (time.Time, error)
 	// // Tags returns the list of tags.
 	// Tags(onlyPublished bool) (TagList, error)
-	// // SetContent sets the home page content.
-	// SetContent(content string) error
-	// // Content returns the site home page content.
-	// Content() (string, error)
+	// SetContent sets the home page content.
+	SetContent(content string) error
+	// Content returns the site home page content.
+	Content() (string, error)
 }

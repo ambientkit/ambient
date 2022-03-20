@@ -773,3 +773,19 @@ func (p *Plugin) updated(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) content(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.SetContent("foo bar")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	content, err := p.Site.Content()
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	fmt.Fprintf(w, "Site content: %v", content)
+
+	return nil
+}

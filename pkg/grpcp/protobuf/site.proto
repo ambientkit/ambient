@@ -58,6 +58,8 @@ service Site {
     rpc URL(Empty) returns (SiteURLResponse) {}
     rpc FullURL(Empty) returns (SiteFullURLResponse) {}
     rpc Updated(Empty) returns (SiteUpdatedResponse) {}
+    rpc SetContent(SiteSetContentRequest) returns (Empty) {}
+    rpc Content(Empty) returns (SiteContentResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -341,4 +343,12 @@ message SiteFullURLResponse {
 
 message SiteUpdatedResponse {
     google.protobuf.Timestamp timestamp = 1;
+}
+
+message SiteSetContentRequest {
+    string content = 1;
+}
+
+message SiteContentResponse {
+    string content = 1;
 }
