@@ -385,4 +385,8 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/tags", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Site tags: tag1 "+time.Now().Format("20060102"), string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/assets", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Site assets: []ambient.Asset{ambient.Asset{Filetype:\"generic\", Location:\"head\", Auth:\"\", Attributes:[]ambient.Attribute(nil), LayoutOnly:[]ambient.LayoutType(nil), TagName:\"title\", ClosingTag:false, External:false, Inline:true, SkipExistCheck:false, Path:\"\", Content:\"{{if .pagetitle}}{{.pagetitle}} | foo{{else}}foo{{end}}\", Replace:[]ambient.Replace(nil)}}", string(body))
 }

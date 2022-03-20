@@ -112,6 +112,39 @@ func (m *GRPCPlugin) Routes(ctx context.Context, req *protodef.Empty) (*protodef
 	return &protodef.Empty{}, nil
 }
 
+// Assets handler.
+func (m *GRPCPlugin) Assets(ctx context.Context, req *protodef.Empty) (*protodef.AssetsResponse, error) {
+	settings, _ := m.Impl.Assets()
+
+	assets, err := ArrayToProtobufStruct(settings)
+	if err != nil {
+		return &protodef.AssetsResponse{}, err
+	}
+
+	// arr := make([]*protodef.Setting, 0)
+	// for _, v := range settings {
+	// 	any, err := InterfaceToProtobufAny(v.Default)
+	// 	if err != nil {
+	// 		m.toolkit.Log.Error("grpc-plugin: error on conversion: %v", err)
+	// 	}
+
+	// 	arr = append(arr, &protodef.Setting{
+	// 		Name:        v.Name,
+	// 		Settingtype: string(v.Type),
+	// 		Description: &protodef.SettingDescription{
+	// 			Text: v.Description.Text,
+	// 			Url:  v.Description.URL,
+	// 		},
+	// 		Hide:    v.Hide,
+	// 		Default: any,
+	// 	})
+	// }
+
+	return &protodef.AssetsResponse{
+		Assets: assets,
+	}, nil
+}
+
 // Settings handler.
 func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protodef.SettingsResponse, error) {
 	settings := m.Impl.Settings()

@@ -799,3 +799,11 @@ func (p *Plugin) tags(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) assets(w http.ResponseWriter, r *http.Request) error {
+	assets, _ := p.Assets()
+
+	fmt.Fprintf(w, "Site assets: %#v", assets)
+
+	return nil
+}

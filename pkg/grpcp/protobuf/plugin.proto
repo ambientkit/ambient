@@ -4,6 +4,7 @@ package ambient.protodef;
 
 import "empty.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
 
 service GenericPlugin {
     rpc PluginName(Empty) returns (PluginNameResponse) {}
@@ -13,6 +14,7 @@ service GenericPlugin {
     rpc Disable(Empty) returns (Empty) {}
     rpc Routes(Empty) returns (Empty) {}
     rpc Settings(Empty) returns (SettingsResponse) {}
+    rpc Assets(Empty) returns (AssetsResponse) {}
 }
 
 message PluginNameResponse {
@@ -55,4 +57,9 @@ message Setting {
 message SettingDescription {
     string text = 1;
     string url = 2;
+}
+
+message AssetsResponse {
+    repeated google.protobuf.Struct assets = 1;
+    // embeddedFS
 }

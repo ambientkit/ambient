@@ -3,6 +3,7 @@ package hello
 
 import (
 	"embed"
+	"fmt"
 
 	"github.com/ambientkit/ambient"
 )
@@ -128,6 +129,7 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/updated", p.updated)
 	p.Mux.Get("/content", p.content)
 	p.Mux.Get("/tags", p.tags)
+	p.Mux.Get("/assets", p.assets)
 }
 
 const (
@@ -149,4 +151,53 @@ func (p *Plugin) Settings() []ambient.Setting {
 			Default: true,
 		},
 	}
+}
+
+// Assets returns a list of assets and an embedded filesystem.
+func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
+	arr := make([]ambient.Asset, 0)
+
+	siteTitle, err := p.Site.Title()
+	if err == nil && len(siteTitle) > 0 {
+		arr = append(arr, ambient.Asset{
+			Filetype: ambient.AssetGeneric,
+			Location: ambient.LocationHead,
+			TagName:  "title",
+			Inline:   true,
+			Content:  fmt.Sprintf(`{{if .pagetitle}}{{.pagetitle}} | %v{{else}}%v{{end}}`, siteTitle, siteTitle),
+		})
+	}
+
+	// arr = append(arr, ambient.Asset{
+	// 	Filetype:   ambient.AssetGeneric,
+	// 	Location:   ambient.LocationHead,
+	// 	TagName:    "link",
+	// 	ClosingTag: false,
+	// 	Attributes: []ambient.Attribute{
+	// 		{
+	// 			Name:  "rel",
+	// 			Value: "canonical",
+	// 		},
+	// 		{
+	// 			Name:  "href",
+	// 			Value: `{{if .canonical}}{{.canonical}}{{else}}{{bearblog_PageURL}}{{end}}`,
+	// 		},
+	// 	},
+	// })
+
+	// arr = append(arr, ambient.Asset{
+	// 	Path:     "template/partial/nav.tmpl",
+	// 	Filetype: ambient.AssetGeneric,
+	// 	Location: ambient.LocationHeader,
+	// 	Inline:   true,
+	// })
+
+	// arr = append(arr, ambient.Asset{
+	// 	Path:     "template/partial/footer.tmpl",
+	// 	Filetype: ambient.AssetGeneric,
+	// 	Location: ambient.LocationFooter,
+	// 	Inline:   true,
+	// })
+
+	return arr, &assets
 }

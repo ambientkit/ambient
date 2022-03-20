@@ -117,8 +117,18 @@ func (m *GRPCServer) Routes() {
 
 // Assets handler.
 func (m *GRPCServer) Assets() ([]ambient.Asset, *embed.FS) {
-	// TODO: Implement
-	return nil, nil
+	resp, err := m.client.Assets(context.Background(), &protodef.Empty{})
+	if err != nil {
+		m.toolkit.Log.Error("grpc-server: error calling Assets: %v", err)
+	}
+
+	var assets []ambient.Asset
+	err = ProtobufStructToArray(resp.Assets, &assets)
+	if err != nil {
+		m.toolkit.Log.Error("grpc-server: error calling Assets conversion: %v", err)
+	}
+
+	return assets, nil
 }
 
 // Settings handler.
