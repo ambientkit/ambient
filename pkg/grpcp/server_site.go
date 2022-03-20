@@ -531,3 +531,27 @@ func (m *GRPCSiteServer) Title(ctx context.Context, req *protodef.Empty) (resp *
 		Title: title,
 	}, err
 }
+
+// SetScheme handler.
+func (m *GRPCSiteServer) SetScheme(ctx context.Context, req *protodef.SiteSetSchemeRequest) (resp *protodef.Empty, err error) {
+	err = m.Impl.SetScheme(req.Scheme)
+	if err != nil {
+		return &protodef.Empty{}, err
+	}
+
+	return &protodef.Empty{}, err
+}
+
+// Scheme handler.
+func (m *GRPCSiteServer) Scheme(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteSchemeResponse, err error) {
+	scheme, err := m.Impl.Scheme()
+	if err != nil {
+		return &protodef.SiteSchemeResponse{
+			Scheme: "",
+		}, err
+	}
+
+	return &protodef.SiteSchemeResponse{
+		Scheme: scheme,
+	}, err
+}

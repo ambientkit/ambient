@@ -51,6 +51,8 @@ service Site {
     rpc PluginTrusted(SitePluginTrustedRequest) returns (SitePluginTrustedResponse) {}
     rpc SetTitle(SiteSetTitleRequest) returns (Empty) {}
     rpc Title(Empty) returns (SiteTitleResponse) {}
+    rpc SetScheme(SiteSetSchemeRequest) returns (Empty) {}
+    rpc Scheme(Empty) returns (SiteSchemeResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -310,4 +312,12 @@ message SiteSetTitleRequest {
 
 message SiteTitleResponse {
     string title = 1;
+}
+
+message SiteSetSchemeRequest {
+    string scheme = 1;
+}
+
+message SiteSchemeResponse {
+    string scheme = 1;
 }

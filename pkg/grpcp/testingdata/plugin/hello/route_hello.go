@@ -721,7 +721,23 @@ func (p *Plugin) title(w http.ResponseWriter, r *http.Request) error {
 		return p.Mux.StatusError(http.StatusBadRequest, err)
 	}
 
-	fmt.Fprintf(w, "Plugin title: %v", title)
+	fmt.Fprintf(w, "Site title: %v", title)
+
+	return nil
+}
+
+func (p *Plugin) scheme(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.SetScheme("bar")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	scheme, err := p.Site.Scheme()
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	fmt.Fprintf(w, "Site scheme: %v", scheme)
 
 	return nil
 }

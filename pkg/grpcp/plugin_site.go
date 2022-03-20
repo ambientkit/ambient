@@ -566,3 +566,25 @@ func (c *GRPCSitePlugin) Title() (string, error) {
 
 	return resp.Title, nil
 }
+
+// SetScheme handler.
+func (c *GRPCSitePlugin) SetScheme(scheme string) error {
+	_, err := c.client.SetScheme(context.Background(), &protodef.SiteSetSchemeRequest{
+		Scheme: scheme,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
+// Scheme handler.
+func (c *GRPCSitePlugin) Scheme() (string, error) {
+	resp, err := c.client.Scheme(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	return resp.Scheme, nil
+}

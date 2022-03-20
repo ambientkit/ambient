@@ -102,10 +102,10 @@ type SecureSite interface {
 	SetTitle(title string) error
 	// Title returns the title.
 	Title() (string, error)
-	// // SetScheme sets the site scheme.
-	// SetScheme(scheme string) error
-	// // Scheme returns the site scheme.
-	// Scheme() (string, error)
+	// SetScheme sets the site scheme.
+	SetScheme(scheme string) error
+	// Scheme returns the site scheme.
+	Scheme() (string, error)
 	// // SetURL sets the site URL.
 	// SetURL(URL string) error
 	// // URL returns the URL without the scheme at the beginning.
