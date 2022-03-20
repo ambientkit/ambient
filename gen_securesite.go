@@ -110,8 +110,8 @@ type SecureSite interface {
 	SetURL(URL string) error
 	// URL returns the URL without the scheme at the beginning.
 	URL() (string, error)
-	// // FullURL returns the URL with the scheme at the beginning.
-	// FullURL() (string, error)
+	// FullURL returns the URL with the scheme at the beginning.
+	FullURL() (string, error)
 	// // Updated returns the home last updated timestamp.
 	// Updated() (time.Time, error)
 	// // Tags returns the list of tags.

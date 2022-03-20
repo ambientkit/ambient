@@ -579,3 +579,17 @@ func (m *GRPCSiteServer) URL(ctx context.Context, req *protodef.Empty) (resp *pr
 		Url: URL,
 	}, err
 }
+
+// FullURL handler.
+func (m *GRPCSiteServer) FullURL(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteFullURLResponse, err error) {
+	FullURL, err := m.Impl.FullURL()
+	if err != nil {
+		return &protodef.SiteFullURLResponse{
+			Fullurl: "",
+		}, err
+	}
+
+	return &protodef.SiteFullURLResponse{
+		Fullurl: FullURL,
+	}, err
+}

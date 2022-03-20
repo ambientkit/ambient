@@ -727,7 +727,7 @@ func (p *Plugin) title(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (p *Plugin) scheme(w http.ResponseWriter, r *http.Request) error {
-	err := p.Site.SetScheme("bar")
+	err := p.Site.SetScheme("https")
 	if err != nil {
 		return p.Mux.StatusError(http.StatusBadRequest, err)
 	}
@@ -743,7 +743,7 @@ func (p *Plugin) scheme(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (p *Plugin) uRL(w http.ResponseWriter, r *http.Request) error {
-	err := p.Site.SetURL("foobar")
+	err := p.Site.SetURL("bar")
 	if err != nil {
 		return p.Mux.StatusError(http.StatusBadRequest, err)
 	}
@@ -753,7 +753,12 @@ func (p *Plugin) uRL(w http.ResponseWriter, r *http.Request) error {
 		return p.Mux.StatusError(http.StatusBadRequest, err)
 	}
 
-	fmt.Fprintf(w, "Site URL: %v", URL)
+	FullURL, err := p.Site.FullURL()
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	fmt.Fprintf(w, "Site URL: %v | Full URL: %v", URL, FullURL)
 
 	return nil
 }

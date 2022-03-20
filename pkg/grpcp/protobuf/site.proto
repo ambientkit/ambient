@@ -55,6 +55,7 @@ service Site {
     rpc Scheme(Empty) returns (SiteSchemeResponse) {}
     rpc SetURL(SiteSetURLRequest) returns (Empty) {}
     rpc URL(Empty) returns (SiteURLResponse) {}
+    rpc FullURL(Empty) returns (SiteFullURLResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -330,4 +331,8 @@ message SiteSetURLRequest {
 
 message SiteURLResponse {
     string url = 1;
+}
+
+message SiteFullURLResponse {
+    string fullurl = 1;
 }

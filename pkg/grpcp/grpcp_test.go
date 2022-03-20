@@ -368,9 +368,9 @@ func TestMain(t *testing.T) {
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/scheme", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "Site scheme: bar", string(body))
+	assert.Equal(t, "Site scheme: https", string(body))
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/url", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "Site URL: foobar", string(body))
+	assert.Equal(t, "Site URL: bar | Full URL: https://bar", string(body))
 }

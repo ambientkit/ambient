@@ -610,3 +610,13 @@ func (c *GRPCSitePlugin) URL() (string, error) {
 
 	return resp.Url, nil
 }
+
+// FullURL handler.
+func (c *GRPCSitePlugin) FullURL() (string, error) {
+	resp, err := c.client.FullURL(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	return resp.Fullurl, nil
+}
