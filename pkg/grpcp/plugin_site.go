@@ -490,3 +490,45 @@ func (c *GRPCSitePlugin) PluginSetting(fieldName string) (interface{}, error) {
 	err = ProtobufAnyToInterface(resp.Value, &i)
 	return i, err
 }
+
+// SetNeighborPluginSetting handler.
+func (c *GRPCSitePlugin) SetNeighborPluginSetting(pluginName string, settingName string, settingValue string) error {
+	_, err := c.client.SetNeighborPluginSetting(context.Background(), &protodef.SiteSetNeighborPluginSettingRequest{
+		Pluginname:   pluginName,
+		Settingname:  settingName,
+		Settingvalue: settingValue,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
+// NeighborPluginSettingString handler.
+func (c *GRPCSitePlugin) NeighborPluginSettingString(pluginName string, fieldName string) (string, error) {
+	resp, err := c.client.NeighborPluginSettingString(context.Background(), &protodef.SiteNeighborPluginSettingStringRequest{
+		PluginName: pluginName,
+		FieldName:  fieldName,
+	})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	return resp.Value, nil
+}
+
+// NeighborPluginSetting handler.
+func (c *GRPCSitePlugin) NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error) {
+	resp, err := c.client.NeighborPluginSetting(context.Background(), &protodef.SiteNeighborPluginSettingRequest{
+		PluginName: pluginName,
+		FieldName:  fieldName,
+	})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	var i interface{}
+	err = ProtobufAnyToInterface(resp.Value, &i)
+	return i, err
+}

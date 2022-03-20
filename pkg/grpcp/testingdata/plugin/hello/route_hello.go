@@ -658,3 +658,38 @@ func (p *Plugin) setPluginSetting(w http.ResponseWriter, r *http.Request) error 
 
 	return nil
 }
+
+func (p *Plugin) setNeighborPluginSetting(w http.ResponseWriter, r *http.Request) error {
+	// Set setting value.
+	err := p.Site.SetNeighborPluginSetting("neighbor", Username, "foo")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	// Get string setting.
+	val, err := p.Site.NeighborPluginSettingString("neighbor", Username)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+	if val != "foo" {
+		return p.Mux.StatusError(http.StatusInternalServerError, errors.New("missing string value"))
+	}
+
+	// Set setting value.
+	err = p.Site.SetNeighborPluginSetting("neighbor", SafeMode, "false")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	ival, err := p.Site.NeighborPluginSetting("neighbor", SafeMode)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+	if ival != "false" {
+		return p.Mux.StatusError(http.StatusInternalServerError, errors.New("missing interface false value"))
+	}
+
+	fmt.Fprint(w, "Plugin neighbor setting works.")
+
+	return nil
+}

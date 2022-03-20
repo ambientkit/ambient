@@ -121,6 +121,7 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/sessionValue", p.sessionValue)
 	p.Mux.Get("/PluginNeighborSettingsList", p.pluginNeighborSettingsList)
 	p.Mux.Get("/setPluginSetting", p.setPluginSetting)
+	p.Mux.Get("/setNeighborPluginSetting", p.setNeighborPluginSetting)
 }
 
 const (

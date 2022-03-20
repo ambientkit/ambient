@@ -68,6 +68,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborSettingRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginSettingWrite))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginSettingRead))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborSettingWrite))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -340,9 +341,14 @@ func TestMain(t *testing.T) {
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/PluginNeighborSettingsList", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "Neighbor settings: 9", string(body))
+	assert.Equal(t, "Neighbor settings: 10", string(body))
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/setPluginSetting", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Plugin setting works.", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/setNeighborPluginSetting", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Plugin neighbor setting works.", string(body))
+
 }

@@ -45,6 +45,7 @@ func ProtobufStructToObject(s *structpb.Struct, obj interface{}) error {
 
 // ArrayToProtobufStruct converts an array to a protobuf struct.
 func ArrayToProtobufStruct(obj interface{}) ([]*structpb.Struct, error) {
+	// Check for slice - this is a developer bug if the error occurs.
 	val := reflect.TypeOf(obj)
 	if val.Kind() != reflect.Slice {
 		return nil, fmt.Errorf("must pass a slice, not a: %v", val.Kind())
@@ -96,7 +97,7 @@ func ProtobufStructToArray(s []*structpb.Struct, obj interface{}) error {
 	return nil
 }
 
-// InterfaceToProtobufAny converts an object to a protobuf struct.
+// InterfaceToProtobufAny converts an interface to a protobuf any.
 func InterfaceToProtobufAny(obj interface{}) (*anypb.Any, error) {
 	nv, err := structpb.NewValue(obj)
 	if err != nil {

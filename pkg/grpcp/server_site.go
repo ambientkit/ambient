@@ -456,3 +456,40 @@ func (m *GRPCSiteServer) PluginSetting(ctx context.Context, req *protodef.SitePl
 		Value: val,
 	}, err
 }
+
+// SetNeighborPluginSetting handler.
+func (m *GRPCSiteServer) SetNeighborPluginSetting(ctx context.Context, req *protodef.SiteSetNeighborPluginSettingRequest) (resp *protodef.Empty, err error) {
+	err = m.Impl.SetNeighborPluginSetting(req.Pluginname, req.Settingname, req.Settingvalue)
+	if err != nil {
+		return &protodef.Empty{}, err
+	}
+
+	return &protodef.Empty{}, nil
+}
+
+// NeighborPluginSettingString handler.
+func (m *GRPCSiteServer) NeighborPluginSettingString(ctx context.Context, req *protodef.SiteNeighborPluginSettingStringRequest) (resp *protodef.SiteNeighborPluginSettingStringResponse, err error) {
+	val, err := m.Impl.NeighborPluginSettingString(req.PluginName, req.FieldName)
+	if err != nil {
+		return &protodef.SiteNeighborPluginSettingStringResponse{
+			Value: "",
+		}, err
+	}
+
+	return &protodef.SiteNeighborPluginSettingStringResponse{
+		Value: val,
+	}, nil
+}
+
+// NeighborPluginSetting handler.
+func (m *GRPCSiteServer) NeighborPluginSetting(ctx context.Context, req *protodef.SiteNeighborPluginSettingRequest) (resp *protodef.SiteNeighborPluginSettingResponse, err error) {
+	setting, err := m.Impl.NeighborPluginSetting(req.PluginName, req.FieldName)
+	if err != nil {
+		return &protodef.SiteNeighborPluginSettingResponse{}, err
+	}
+
+	val, err := InterfaceToProtobufAny(setting)
+	return &protodef.SiteNeighborPluginSettingResponse{
+		Value: val,
+	}, err
+}

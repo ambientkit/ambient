@@ -90,12 +90,12 @@ type SecureSite interface {
 	PluginSettingString(fieldName string) (string, error)
 	// PluginSetting returns a setting for the plugin as an interface{}.
 	PluginSetting(fieldName string) (interface{}, error)
-	// // SetNeighborPluginSetting sets a setting for a neighbor plugin.
-	// SetNeighborPluginSetting(pluginName string, settingName string, value string) error
-	// // NeighborPluginSettingString returns a setting for a neighbor plugin as a string.
-	// NeighborPluginSettingString(pluginName string, fieldName string) (string, error)
-	// // NeighborPluginSetting returns a setting for a neighbor plugin as an interface{}.
-	// NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error)
+	// SetNeighborPluginSetting sets a setting for a neighbor plugin.
+	SetNeighborPluginSetting(pluginName string, settingName string, value string) error
+	// NeighborPluginSettingString returns a setting for a neighbor plugin as a string.
+	NeighborPluginSettingString(pluginName string, fieldName string) (string, error)
+	// NeighborPluginSetting returns a setting for a neighbor plugin as an interface{}.
+	NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error)
 	// // PluginTrusted returns whether a plugin is trusted or not.
 	// PluginTrusted(pluginName string) (bool, error)
 	// // SetTitle sets the title.

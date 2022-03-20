@@ -94,6 +94,9 @@ const (
 	Password = "Password"
 	// MFAKey allows user to set the MFA key.
 	MFAKey = "MFA Key"
+
+	// SafeMode is a boolean value.
+	SafeMode = "Safe Mode"
 )
 
 // Settings returns a list of user settable fields.
@@ -102,6 +105,10 @@ func (p *Plugin) Settings() []ambient.Setting {
 		{
 			Name:    Username,
 			Default: "admin",
+		},
+		{
+			Name:    SafeMode,
+			Default: true,
 		},
 		{
 			Name:    Password,
