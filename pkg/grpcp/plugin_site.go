@@ -588,3 +588,25 @@ func (c *GRPCSitePlugin) Scheme() (string, error) {
 
 	return resp.Scheme, nil
 }
+
+// SetURL handler.
+func (c *GRPCSitePlugin) SetURL(URL string) error {
+	_, err := c.client.SetURL(context.Background(), &protodef.SiteSetURLRequest{
+		Url: URL,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
+// URL handler.
+func (c *GRPCSitePlugin) URL() (string, error) {
+	resp, err := c.client.URL(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	return resp.Url, nil
+}

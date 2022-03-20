@@ -53,6 +53,8 @@ service Site {
     rpc Title(Empty) returns (SiteTitleResponse) {}
     rpc SetScheme(SiteSetSchemeRequest) returns (Empty) {}
     rpc Scheme(Empty) returns (SiteSchemeResponse) {}
+    rpc SetURL(SiteSetURLRequest) returns (Empty) {}
+    rpc URL(Empty) returns (SiteURLResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -320,4 +322,12 @@ message SiteSetSchemeRequest {
 
 message SiteSchemeResponse {
     string scheme = 1;
+}
+
+message SiteSetURLRequest {
+    string url = 1;
+}
+
+message SiteURLResponse {
+    string url = 1;
 }

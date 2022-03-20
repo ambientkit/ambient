@@ -555,3 +555,27 @@ func (m *GRPCSiteServer) Scheme(ctx context.Context, req *protodef.Empty) (resp 
 		Scheme: scheme,
 	}, err
 }
+
+// SetURL handler.
+func (m *GRPCSiteServer) SetURL(ctx context.Context, req *protodef.SiteSetURLRequest) (resp *protodef.Empty, err error) {
+	err = m.Impl.SetURL(req.Url)
+	if err != nil {
+		return &protodef.Empty{}, err
+	}
+
+	return &protodef.Empty{}, err
+}
+
+// URL handler.
+func (m *GRPCSiteServer) URL(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteURLResponse, err error) {
+	URL, err := m.Impl.URL()
+	if err != nil {
+		return &protodef.SiteURLResponse{
+			Url: "",
+		}, err
+	}
+
+	return &protodef.SiteURLResponse{
+		Url: URL,
+	}, err
+}

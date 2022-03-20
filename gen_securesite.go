@@ -106,10 +106,10 @@ type SecureSite interface {
 	SetScheme(scheme string) error
 	// Scheme returns the site scheme.
 	Scheme() (string, error)
-	// // SetURL sets the site URL.
-	// SetURL(URL string) error
-	// // URL returns the URL without the scheme at the beginning.
-	// URL() (string, error)
+	// SetURL sets the site URL.
+	SetURL(URL string) error
+	// URL returns the URL without the scheme at the beginning.
+	URL() (string, error)
 	// // FullURL returns the URL with the scheme at the beginning.
 	// FullURL() (string, error)
 	// // Updated returns the home last updated timestamp.

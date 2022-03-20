@@ -741,3 +741,19 @@ func (p *Plugin) scheme(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) uRL(w http.ResponseWriter, r *http.Request) error {
+	err := p.Site.SetURL("foobar")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	URL, err := p.Site.URL()
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	fmt.Fprintf(w, "Site URL: %v", URL)
+
+	return nil
+}
