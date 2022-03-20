@@ -43,7 +43,7 @@ func (m *GRPCPlugin) GrantRequests(ctx context.Context, req *protodef.Empty) (*p
 		})
 	}
 
-	return &protodef.GrantRequestsResponse{GrantRequest: arr}, nil
+	return &protodef.GrantRequestsResponse{Grantrequest: arr}, nil
 }
 
 // Enable handler.

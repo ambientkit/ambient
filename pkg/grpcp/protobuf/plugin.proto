@@ -24,7 +24,7 @@ message PluginVersionResponse {
 }
 
 message GrantRequestsResponse {
-    repeated GrantRequest GrantRequest = 1;
+    repeated GrantRequest grantrequest = 1;
 }
 
 message GrantRequest {

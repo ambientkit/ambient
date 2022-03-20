@@ -163,7 +163,7 @@ func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
 	}
 
 	arr := make([]ambient.GrantRequest, 0)
-	for _, v := range resp.GrantRequest {
+	for _, v := range resp.Grantrequest {
 		arr = append(arr, ambient.GrantRequest{
 			Grant:       ambient.Grant(v.Grant),
 			Description: v.Description,

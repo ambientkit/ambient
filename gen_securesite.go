@@ -96,8 +96,8 @@ type SecureSite interface {
 	NeighborPluginSettingString(pluginName string, fieldName string) (string, error)
 	// NeighborPluginSetting returns a setting for a neighbor plugin as an interface{}.
 	NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error)
-	// // PluginTrusted returns whether a plugin is trusted or not.
-	// PluginTrusted(pluginName string) (bool, error)
+	// PluginTrusted returns whether a plugin is trusted or not.
+	PluginTrusted(pluginName string) (bool, error)
 	// // SetTitle sets the title.
 	// SetTitle(title string) error
 	// // Title returns the title.

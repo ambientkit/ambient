@@ -508,8 +508,8 @@ func (c *GRPCSitePlugin) SetNeighborPluginSetting(pluginName string, settingName
 // NeighborPluginSettingString handler.
 func (c *GRPCSitePlugin) NeighborPluginSettingString(pluginName string, fieldName string) (string, error) {
 	resp, err := c.client.NeighborPluginSettingString(context.Background(), &protodef.SiteNeighborPluginSettingStringRequest{
-		PluginName: pluginName,
-		FieldName:  fieldName,
+		Pluginname: pluginName,
+		Fieldname:  fieldName,
 	})
 	if err != nil {
 		return "", ErrorHandler(err)
@@ -521,8 +521,8 @@ func (c *GRPCSitePlugin) NeighborPluginSettingString(pluginName string, fieldNam
 // NeighborPluginSetting handler.
 func (c *GRPCSitePlugin) NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error) {
 	resp, err := c.client.NeighborPluginSetting(context.Background(), &protodef.SiteNeighborPluginSettingRequest{
-		PluginName: pluginName,
-		FieldName:  fieldName,
+		Pluginname: pluginName,
+		Fieldname:  fieldName,
 	})
 	if err != nil {
 		return "", ErrorHandler(err)
@@ -531,4 +531,16 @@ func (c *GRPCSitePlugin) NeighborPluginSetting(pluginName string, fieldName stri
 	var i interface{}
 	err = ProtobufAnyToInterface(resp.Value, &i)
 	return i, err
+}
+
+// PluginTrusted handler.
+func (c *GRPCSitePlugin) PluginTrusted(pluginName string) (bool, error) {
+	resp, err := c.client.PluginTrusted(context.Background(), &protodef.SitePluginTrustedRequest{
+		Pluginname: pluginName,
+	})
+	if err != nil {
+		return false, ErrorHandler(err)
+	}
+
+	return resp.Trusted, nil
 }

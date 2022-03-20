@@ -693,3 +693,19 @@ func (p *Plugin) setNeighborPluginSetting(w http.ResponseWriter, r *http.Request
 
 	return nil
 }
+
+func (p *Plugin) pluginTrusted(w http.ResponseWriter, r *http.Request) error {
+	trusted, err := p.Site.PluginTrusted("neighbor")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	trusted2, err := p.Site.PluginTrusted("trust")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	fmt.Fprintf(w, "Plugin trusted: %v %v", trusted, trusted2)
+
+	return nil
+}

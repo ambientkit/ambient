@@ -6,6 +6,7 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/ambientapp"
 	"github.com/ambientkit/ambient/pkg/grpcp/testingdata/plugin/neighbor"
+	trustPlugin "github.com/ambientkit/ambient/pkg/grpcp/testingdata/plugin/trust"
 	"github.com/ambientkit/plugin/logger/zaplogger"
 	"github.com/ambientkit/plugin/router/awayrouter"
 	"github.com/ambientkit/plugin/sessionmanager/scssession"
@@ -32,6 +33,7 @@ func Setup(trust bool) (*ambientapp.App, error) {
 	}
 
 	trusted := make(map[string]bool)
+	trusted["trust"] = true
 	if trust {
 		trusted["hello"] = true
 	}
@@ -47,6 +49,7 @@ func Setup(trust bool) (*ambientapp.App, error) {
 		TrustedPlugins: trusted,
 		Plugins: []ambient.Plugin{
 			neighbor.New(),
+			trustPlugin.New(),
 		},
 		GRPCPlugins: []ambient.GRPCPlugin{
 			{Name: "hello", Path: "./pkg/grpcp/testingdata/plugin/hello/cmd/plugin/hello"},

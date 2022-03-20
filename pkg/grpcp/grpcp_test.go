@@ -69,6 +69,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginSettingWrite))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginSettingRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginNeighborSettingWrite))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantPluginTrustedRead))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -186,11 +187,11 @@ func TestMain(t *testing.T) {
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/plugins", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "Plugins: 3", string(body))
+	assert.Equal(t, "Plugins: 4", string(body))
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pluginNames", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "Plugin names: 3", string(body))
+	assert.Equal(t, "Plugin names: 4", string(body))
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("DELETE", "/deletePlugin", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -351,4 +352,7 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Plugin neighbor setting works.", string(body))
 
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pluginTrusted", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Plugin trusted: false true", string(body))
 }

@@ -48,6 +48,7 @@ service Site {
     rpc SetNeighborPluginSetting(SiteSetNeighborPluginSettingRequest) returns (Empty) {}
     rpc NeighborPluginSettingString(SiteNeighborPluginSettingStringRequest) returns (SiteNeighborPluginSettingStringResponse) {}
     rpc NeighborPluginSetting(SiteNeighborPluginSettingRequest) returns (SiteNeighborPluginSettingResponse) {}
+    rpc PluginTrusted(SitePluginTrustedRequest) returns (SitePluginTrustedResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -276,8 +277,8 @@ message SiteSetNeighborPluginSettingRequest {
 }
 
 message SiteNeighborPluginSettingStringRequest {
-    string pluginName = 1;
-    string fieldName = 2; 
+    string pluginname = 1;
+    string fieldname = 2; 
 }
 
 message SiteNeighborPluginSettingStringResponse {
@@ -285,10 +286,18 @@ message SiteNeighborPluginSettingStringResponse {
 }
 
 message SiteNeighborPluginSettingRequest {
-    string pluginName = 1;
-    string fieldName = 2; 
+    string pluginname = 1;
+    string fieldname = 2; 
 }
 
 message SiteNeighborPluginSettingResponse {
     google.protobuf.Any value = 1;
+}
+
+message SitePluginTrustedRequest {
+    string pluginname = 1;
+}
+
+message SitePluginTrustedResponse {
+    bool trusted = 1;
 }
