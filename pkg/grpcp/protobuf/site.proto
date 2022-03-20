@@ -6,6 +6,7 @@ import "empty.proto";
 import "plugin.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
 
 service Site {
 	// rpc Error(SiteErrorRequest) returns (SiteErrorResponse) {}
@@ -56,6 +57,7 @@ service Site {
     rpc SetURL(SiteSetURLRequest) returns (Empty) {}
     rpc URL(Empty) returns (SiteURLResponse) {}
     rpc FullURL(Empty) returns (SiteFullURLResponse) {}
+    rpc Updated(Empty) returns (SiteUpdatedResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -335,4 +337,8 @@ message SiteURLResponse {
 
 message SiteFullURLResponse {
     string fullurl = 1;
+}
+
+message SiteUpdatedResponse {
+    google.protobuf.Timestamp timestamp = 1;
 }

@@ -3,6 +3,7 @@ package grpcp
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/secureconfig"
@@ -619,4 +620,14 @@ func (c *GRPCSitePlugin) FullURL() (string, error) {
 	}
 
 	return resp.Fullurl, nil
+}
+
+// Updated handler.
+func (c *GRPCSitePlugin) Updated() (time.Time, error) {
+	resp, err := c.client.Updated(context.Background(), &protodef.Empty{})
+	if err != nil {
+		return time.Time{}, ErrorHandler(err)
+	}
+
+	return resp.Timestamp.AsTime(), nil
 }

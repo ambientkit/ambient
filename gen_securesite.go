@@ -4,6 +4,7 @@ package ambient
 
 import (
 	"net/http"
+	"time"
 )
 
 // SecureSite provides plugin functions.
@@ -112,8 +113,8 @@ type SecureSite interface {
 	URL() (string, error)
 	// FullURL returns the URL with the scheme at the beginning.
 	FullURL() (string, error)
-	// // Updated returns the home last updated timestamp.
-	// Updated() (time.Time, error)
+	// Updated returns the home last updated timestamp.
+	Updated() (time.Time, error)
 	// // Tags returns the list of tags.
 	// Tags(onlyPublished bool) (TagList, error)
 	// // SetContent sets the home page content.

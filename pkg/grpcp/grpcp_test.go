@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/ambientapp"
@@ -76,6 +77,7 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteSchemeRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteURLWrite))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteURLRead))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteUpdatedRead))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -373,4 +375,8 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/url", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Site URL: bar | Full URL: https://bar", string(body))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/updated", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "Site updated: "+time.Now().Format("20060102"), string(body))
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"golang.org/x/net/context"
 	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // GRPCSiteServer is the server side implementation of secure site.
@@ -505,7 +506,7 @@ func (m *GRPCSiteServer) PluginTrusted(ctx context.Context, req *protodef.SitePl
 
 	return &protodef.SitePluginTrustedResponse{
 		Trusted: trusted,
-	}, err
+	}, nil
 }
 
 // SetTitle handler.
@@ -515,7 +516,7 @@ func (m *GRPCSiteServer) SetTitle(ctx context.Context, req *protodef.SiteSetTitl
 		return &protodef.Empty{}, err
 	}
 
-	return &protodef.Empty{}, err
+	return &protodef.Empty{}, nil
 }
 
 // Title handler.
@@ -529,7 +530,7 @@ func (m *GRPCSiteServer) Title(ctx context.Context, req *protodef.Empty) (resp *
 
 	return &protodef.SiteTitleResponse{
 		Title: title,
-	}, err
+	}, nil
 }
 
 // SetScheme handler.
@@ -539,7 +540,7 @@ func (m *GRPCSiteServer) SetScheme(ctx context.Context, req *protodef.SiteSetSch
 		return &protodef.Empty{}, err
 	}
 
-	return &protodef.Empty{}, err
+	return &protodef.Empty{}, nil
 }
 
 // Scheme handler.
@@ -553,7 +554,7 @@ func (m *GRPCSiteServer) Scheme(ctx context.Context, req *protodef.Empty) (resp 
 
 	return &protodef.SiteSchemeResponse{
 		Scheme: scheme,
-	}, err
+	}, nil
 }
 
 // SetURL handler.
@@ -563,7 +564,7 @@ func (m *GRPCSiteServer) SetURL(ctx context.Context, req *protodef.SiteSetURLReq
 		return &protodef.Empty{}, err
 	}
 
-	return &protodef.Empty{}, err
+	return &protodef.Empty{}, nil
 }
 
 // URL handler.
@@ -577,7 +578,7 @@ func (m *GRPCSiteServer) URL(ctx context.Context, req *protodef.Empty) (resp *pr
 
 	return &protodef.SiteURLResponse{
 		Url: URL,
-	}, err
+	}, nil
 }
 
 // FullURL handler.
@@ -591,5 +592,19 @@ func (m *GRPCSiteServer) FullURL(ctx context.Context, req *protodef.Empty) (resp
 
 	return &protodef.SiteFullURLResponse{
 		Fullurl: FullURL,
-	}, err
+	}, nil
+}
+
+// Updated handler.
+func (m *GRPCSiteServer) Updated(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteUpdatedResponse, err error) {
+	timestamp, err := m.Impl.Updated()
+	if err != nil {
+		return &protodef.SiteUpdatedResponse{
+			Timestamp: timestamppb.New(timestamp),
+		}, err
+	}
+
+	return &protodef.SiteUpdatedResponse{
+		Timestamp: timestamppb.New(timestamp),
+	}, nil
 }

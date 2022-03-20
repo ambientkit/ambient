@@ -762,3 +762,14 @@ func (p *Plugin) uRL(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) updated(w http.ResponseWriter, r *http.Request) error {
+	timestamp, err := p.Site.Updated()
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	fmt.Fprintf(w, "Site updated: %v", timestamp.Format("20060102"))
+
+	return nil
+}
