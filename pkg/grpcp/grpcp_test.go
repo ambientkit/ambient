@@ -219,10 +219,6 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Enable plugin: item was not found", string(body))
 
-	// resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/loadAllPluginPages", nil))
-	// assert.Equal(t, http.StatusOK, resp.StatusCode)
-	// assert.Equal(t, "Load pages: <nil>", string(body))
-
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/disablePlugin", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "Disable plugin: <nil>", string(body))

@@ -146,13 +146,6 @@ func (m *GRPCSiteServer) EnablePlugin(ctx context.Context, req *protodef.SiteEna
 	return &protodef.Empty{}, err
 }
 
-// LoadAllPluginPages handler.
-func (m *GRPCSiteServer) LoadAllPluginPages(ctx context.Context, req *protodef.Empty) (
-	resp *protodef.Empty, err error) {
-	err = m.Impl.LoadAllPluginPages()
-	return &protodef.Empty{}, err
-}
-
 // DisablePlugin handler.
 func (m *GRPCSiteServer) DisablePlugin(ctx context.Context, req *protodef.SiteDisablePluginRequest) (
 	resp *protodef.Empty, err error) {

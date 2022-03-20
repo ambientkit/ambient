@@ -25,8 +25,8 @@ type SecureSite struct {
 
 // NewSecureSite returns a new secure site.
 func NewSecureSite(pluginName string, log ambient.AppLogger, ps ambient.PluginSystem,
-	session ambient.AppSession, mux ambient.AppRouter, render ambient.Renderer, recorder *pluginsafe.RouteRecorder) *SecureSite {
-	return &SecureSite{
+	session ambient.AppSession, mux ambient.AppRouter, render ambient.Renderer, recorder *pluginsafe.RouteRecorder, loadPlugins bool) (*SecureSite, http.Handler, error) {
+	ss := &SecureSite{
 		pluginName: pluginName,
 
 		log:          log,
@@ -36,6 +36,17 @@ func NewSecureSite(pluginName string, log ambient.AppLogger, ps ambient.PluginSy
 		render:       render,
 		recorder:     recorder,
 	}
+
+	if loadPlugins {
+		err := ss.loadAllPluginPages()
+		if err != nil {
+			return nil, nil, err
+		}
+
+		return ss, ss.loadAllPluginMiddleware(), nil
+	}
+
+	return ss, nil, nil
 }
 
 // Error returns the proper error. Separated to allow reuse for gRPC.

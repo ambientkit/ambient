@@ -169,16 +169,6 @@ func (c *GRPCSitePlugin) EnablePlugin(pluginName string, loadPlugin bool) error 
 	return nil
 }
 
-// LoadAllPluginPages handler.
-func (c *GRPCSitePlugin) LoadAllPluginPages() error {
-	_, err := c.client.LoadAllPluginPages(context.Background(), &protodef.Empty{})
-	if err != nil {
-		return ErrorHandler(err)
-	}
-
-	return nil
-}
-
 // DisablePlugin handler.
 func (c *GRPCSitePlugin) DisablePlugin(pluginName string, unloadPlugin bool) error {
 	_, err := c.client.DisablePlugin(context.Background(), &protodef.SiteDisablePluginRequest{

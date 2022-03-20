@@ -215,16 +215,10 @@ func (app *App) Handler() (http.Handler, error) {
 
 	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
-	securesite := secureconfig.NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder)
-
-	// Load the plugin pages.
-	err := securesite.LoadAllPluginPages()
+	securesite, handler, err := secureconfig.NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder, true)
 	if err != nil {
 		return nil, err
 	}
-
-	// Enable the middleware from the plugins.
-	handler := securesite.LoadAllPluginMiddleware()
 
 	// Start Dev Console if enabled via environment variable.
 	if envdetect.DevConsoleEnabled() {

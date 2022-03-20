@@ -9,7 +9,6 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 
 service Site {
-	// rpc Error(SiteErrorRequest) returns (SiteErrorResponse) {}
 	rpc Load(Empty) returns (Empty) {}
     rpc Authorized(SiteAuthorizedRequest) returns (SiteAuthorizedResponse) {}
     rpc NeighborPluginGrantList(SiteNeighborPluginGrantListRequest) returns (SiteNeighborPluginGrantListResponse) {}
@@ -21,7 +20,6 @@ service Site {
     rpc PluginNames(Empty) returns (SitePluginNamesResponse) {}
     rpc DeletePlugin(SiteDeletePluginRequest) returns (Empty) {}
     rpc EnablePlugin(SiteEnablePluginRequest) returns (Empty) {}
-    rpc LoadAllPluginPages(Empty) returns (Empty) {}
     rpc DisablePlugin(SiteDisablePluginRequest) returns (Empty) {}
     rpc SavePost(SiteSavePostRequest) returns (Empty) {}
     rpc PostsAndPages(SitePostsAndPagesRequest) returns (SitePostsAndPagesResponse) {}

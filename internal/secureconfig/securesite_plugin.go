@@ -67,8 +67,8 @@ func (ss *SecureSite) EnablePlugin(pluginName string, loadPlugin bool) error {
 	return ss.pluginsystem.SetEnabled(pluginName, true)
 }
 
-// LoadAllPluginPages loads all of the pages from the plugins.
-func (ss *SecureSite) LoadAllPluginPages() error {
+// loadAllPluginPages loads all of the pages from the plugins.
+func (ss *SecureSite) loadAllPluginPages() error {
 	if !ss.Authorized(ambient.GrantSitePluginEnable) {
 		return amberror.ErrAccessDenied
 	}
@@ -106,10 +106,12 @@ func (ss *SecureSite) loadSinglePluginPages(name string) {
 
 	recorder := ss.recorder.WithPlugin(name)
 
+	pss, _, _ := NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render, ss.recorder, false)
+
 	toolkit := &ambient.Toolkit{
 		Mux:    recorder,
 		Render: pluginsafe.NewRenderer(ss.render),
-		Site:   NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render, ss.recorder),
+		Site:   pss,
 		Log:    pluginsafe.NewPluginLogger(ss.log),
 	}
 
@@ -229,10 +231,10 @@ func embeddedAssets(mux ambient.Router, sess ambient.AppSession, pluginName stri
 	return nil
 }
 
-// LoadAllPluginMiddleware returns a handler that is wrapped in conditional
+// loadAllPluginMiddleware returns a handler that is wrapped in conditional
 // middleware from the plugins. This only needs to be run once at start up
 // and should never be called again.
-func (ss *SecureSite) LoadAllPluginMiddleware() http.Handler {
+func (ss *SecureSite) loadAllPluginMiddleware() http.Handler {
 	var h http.Handler = ss.mux
 	for _, pluginName := range ss.pluginsystem.MiddlewareNames() {
 		plugin, err := ss.pluginsystem.Plugin(pluginName)

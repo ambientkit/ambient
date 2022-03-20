@@ -34,16 +34,8 @@ type SecureSite interface {
 	DeletePlugin(name string) error
 	// EnablePlugin enables a plugin.
 	EnablePlugin(pluginName string, loadPlugin bool) error
-	// LoadAllPluginPages loads all of the pages from the plugins.
-	LoadAllPluginPages() error
 	// DisablePlugin disables a plugin.
 	DisablePlugin(pluginName string, unloadPlugin bool) error
-	// FIXME: Need to change LoadAllPluginMiddleware to be a return instead of a
-	// plugin accessible function.
-	// // LoadAllPluginMiddleware returns a handler that is wrapped in conditional
-	// // middleware from the plugins. This only needs to be run once at start up
-	// // and should never be called again.
-	// LoadAllPluginMiddleware() http.Handler
 	// SavePost saves a post.
 	SavePost(ID string, post Post) error
 	// PostsAndPages returns the list of posts and pages.
@@ -115,10 +107,10 @@ type SecureSite interface {
 	FullURL() (string, error)
 	// Updated returns the home last updated timestamp.
 	Updated() (time.Time, error)
-	// Tags returns the list of tags.
-	Tags(onlyPublished bool) (TagList, error)
 	// SetContent sets the home page content.
 	SetContent(content string) error
 	// Content returns the site home page content.
 	Content() (string, error)
+	// Tags returns the list of tags.
+	Tags(onlyPublished bool) (TagList, error)
 }
