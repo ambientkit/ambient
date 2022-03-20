@@ -820,5 +820,6 @@ func (p *Plugin) assetsHello(w http.ResponseWriter, r *http.Request) error {
 
 	vars := make(map[string]interface{})
 	vars["postcontent"] = content
-	return p.Render.Page(w, r, assets, "template/content/home", p.FuncMap(), vars)
+	//return p.Render.Page(w, r, assets, "template/content/home", p.FuncMap(), vars)
+	return p.Render.PageContent(w, r, "Content: {{.postcontent}}", p.FuncMap(), vars)
 }

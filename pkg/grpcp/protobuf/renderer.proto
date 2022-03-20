@@ -1,0 +1,25 @@
+syntax = "proto3";
+option go_package = "./;protodef";
+package ambient.protodef;
+
+import "empty.proto";
+import "google/protobuf/struct.proto";
+
+service Renderer {
+    rpc Page(RendererPageRequest) returns (Empty) {}
+    rpc PageContent(RendererPageContentRequest) returns (Empty) {}
+    rpc Post(Empty) returns (Empty) {}
+    rpc PostContent(Empty) returns (Empty) {}
+    rpc Error(Empty) returns (Empty) {}
+}
+
+message RendererPageRequest {
+    string requestid = 1;
+    string templatename = 2;
+}
+
+message RendererPageContentRequest {
+    string requestid = 1;
+    string content = 2;
+    google.protobuf.Struct vars = 3;
+}

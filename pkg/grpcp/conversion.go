@@ -133,3 +133,13 @@ func ProtobufAnyToInterface(s *anypb.Any, obj interface{}) error {
 
 	return json.Unmarshal(b, &obj)
 }
+
+// MapToProtobufStruct converts a map to a protobuf struct.
+func MapToProtobufStruct(obj map[string]interface{}) (*structpb.Struct, error) {
+	return structpb.NewStruct(obj)
+}
+
+// ProtobufStructToMap converts a map to a protobuf struct.
+func ProtobufStructToMap(s *structpb.Struct) map[string]interface{} {
+	return s.AsMap()
+}

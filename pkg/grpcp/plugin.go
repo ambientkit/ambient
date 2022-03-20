@@ -71,6 +71,10 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 			client: protodef.NewSiteClient(m.conn),
 			Log:    logger,
 		},
+		Render: &GRPCRendererPlugin{
+			client: protodef.NewRendererClient(m.conn),
+			Log:    logger,
+		},
 	}
 
 	m.toolkit.Log.Debug("grpc-plugin: Enabled() called")

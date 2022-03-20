@@ -8,8 +8,8 @@ import (
 	"github.com/ambientkit/ambient"
 )
 
-//go:embed template/*.tmpl
-var assets embed.FS
+///go:embed template/*.tmpl
+//var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
@@ -186,19 +186,20 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	// 	},
 	// })
 
-	arr = append(arr, ambient.Asset{
-		Path:     "template/partial/nav.tmpl",
-		Filetype: ambient.AssetGeneric,
-		Location: ambient.LocationHeader,
-		Inline:   true,
-	})
+	// arr = append(arr, ambient.Asset{
+	// 	Path:     "template/partial/nav.tmpl",
+	// 	Filetype: ambient.AssetGeneric,
+	// 	Location: ambient.LocationHeader,
+	// 	Inline:   true,
+	// })
 
-	arr = append(arr, ambient.Asset{
-		Path:     "template/partial/footer.tmpl",
-		Filetype: ambient.AssetGeneric,
-		Location: ambient.LocationFooter,
-		Inline:   true,
-	})
+	// arr = append(arr, ambient.Asset{
+	// 	Path:     "template/partial/footer.tmpl",
+	// 	Filetype: ambient.AssetGeneric,
+	// 	Location: ambient.LocationFooter,
+	// 	Inline:   true,
+	// })
 
-	return arr, &assets
+	//return arr, &assets
+	return arr, nil
 }

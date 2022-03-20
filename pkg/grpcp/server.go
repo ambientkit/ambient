@@ -55,12 +55,18 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 		reqmap: m.reqmap,
 	}
 	siteServer := &GRPCSiteServer{Impl: toolkit.Site, Log: toolkit.Log, reqmap: m.reqmap}
+	rendererServer := &GRPCRendererServer{
+		Log:    toolkit.Log,
+		Impl:   toolkit.Render,
+		reqmap: m.reqmap,
+	}
 
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
 		m.server = grpc.NewServer(opts...)
 		protodef.RegisterLoggerServer(m.server, loggerServer)
 		protodef.RegisterRouterServer(m.server, routerServer)
 		protodef.RegisterSiteServer(m.server, siteServer)
+		protodef.RegisterRendererServer(m.server, rendererServer)
 
 		return m.server
 	}
