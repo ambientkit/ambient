@@ -130,6 +130,7 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/content", p.content)
 	p.Mux.Get("/tags", p.tags)
 	p.Mux.Get("/assets", p.assets)
+	p.Mux.Get("/assetsHello", p.assetsHello)
 }
 
 const (
@@ -185,19 +186,19 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	// 	},
 	// })
 
-	// arr = append(arr, ambient.Asset{
-	// 	Path:     "template/partial/nav.tmpl",
-	// 	Filetype: ambient.AssetGeneric,
-	// 	Location: ambient.LocationHeader,
-	// 	Inline:   true,
-	// })
+	arr = append(arr, ambient.Asset{
+		Path:     "template/partial/nav.tmpl",
+		Filetype: ambient.AssetGeneric,
+		Location: ambient.LocationHeader,
+		Inline:   true,
+	})
 
-	// arr = append(arr, ambient.Asset{
-	// 	Path:     "template/partial/footer.tmpl",
-	// 	Filetype: ambient.AssetGeneric,
-	// 	Location: ambient.LocationFooter,
-	// 	Inline:   true,
-	// })
+	arr = append(arr, ambient.Asset{
+		Path:     "template/partial/footer.tmpl",
+		Filetype: ambient.AssetGeneric,
+		Location: ambient.LocationFooter,
+		Inline:   true,
+	})
 
 	return arr, &assets
 }

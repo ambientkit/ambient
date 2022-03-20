@@ -1,0 +1,15 @@
+{{if .title}}
+<h1>{{.title}}</h1>
+{{end}}
+<content>
+    {{.postcontent}}
+</content>
+{{if .tags}}
+<small>
+    <div>
+        {{range $p := .tags}}
+        <a href="{{URLPrefix}}/blog?q={{.Name}}">#{{.Name}}</a>
+        {{end}}
+    </div>
+</small>
+{{end}}

@@ -807,3 +807,18 @@ func (p *Plugin) assets(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (p *Plugin) assetsHello(w http.ResponseWriter, r *http.Request) error {
+	content, err := p.Site.Content()
+	if err != nil {
+		return p.Site.Error(err)
+	}
+
+	if content == "" {
+		content = "*No content yet.*"
+	}
+
+	vars := make(map[string]interface{})
+	vars["postcontent"] = content
+	return p.Render.Page(w, r, assets, "template/content/home", p.FuncMap(), vars)
+}
