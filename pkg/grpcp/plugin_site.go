@@ -427,14 +427,66 @@ func (c *GRPCSitePlugin) DeleteSessionValue(r *http.Request, name string) {
 
 // PluginNeighborSettingsList handler.
 func (c *GRPCSitePlugin) PluginNeighborSettingsList(pluginName string) ([]ambient.Setting, error) {
+	settings := make([]ambient.Setting, 0)
+
 	resp, err := c.client.PluginNeighborSettingsList(context.Background(), &protodef.SitePluginNeighborSettingsListRequest{
 		Pluginname: pluginName,
 	})
 	if err != nil {
-		ErrorHandler(err)
+		return settings, ErrorHandler(err)
 	}
 
-	settings := make([]ambient.Setting, 0)
 	err = ProtobufStructToArray(resp.Settings, &settings)
 	return settings, err
+}
+
+// SetPluginSetting handler.
+func (c *GRPCSitePlugin) SetPluginSetting(settingName string, value string) error {
+	_, err := c.client.SetPluginSetting(context.Background(), &protodef.SiteSetPluginSettingRequest{
+		Settingname: settingName,
+		Value:       value,
+	})
+	if err != nil {
+		return ErrorHandler(err)
+	}
+
+	return nil
+}
+
+// PluginSettingBool handler.
+func (c *GRPCSitePlugin) PluginSettingBool(fieldName string) (bool, error) {
+	resp, err := c.client.PluginSettingBool(context.Background(), &protodef.SitePluginSettingBoolRequest{
+		Fieldname: fieldName,
+	})
+	if err != nil {
+		return false, ErrorHandler(err)
+	}
+
+	return resp.Value, nil
+}
+
+// PluginSettingString handler.
+func (c *GRPCSitePlugin) PluginSettingString(fieldName string) (string, error) {
+	resp, err := c.client.PluginSettingString(context.Background(), &protodef.SitePluginSettingStringRequest{
+		Fieldname: fieldName,
+	})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	return resp.Value, nil
+}
+
+// PluginSetting handler.
+func (c *GRPCSitePlugin) PluginSetting(fieldName string) (interface{}, error) {
+	resp, err := c.client.PluginSetting(context.Background(), &protodef.SitePluginSettingRequest{
+		Fieldname: fieldName,
+	})
+	if err != nil {
+		return "", ErrorHandler(err)
+	}
+
+	var i interface{}
+	err = ProtobufAnyToInterface(resp.Value, &i)
+	return i, err
 }

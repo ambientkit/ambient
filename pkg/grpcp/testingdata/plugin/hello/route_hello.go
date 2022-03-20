@@ -605,3 +605,56 @@ func (p *Plugin) pluginNeighborSettingsList(w http.ResponseWriter, r *http.Reque
 
 	return nil
 }
+
+func (p *Plugin) setPluginSetting(w http.ResponseWriter, r *http.Request) error {
+	// Set setting value.
+	err := p.Site.SetPluginSetting(Username, "foo")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	// Get string setting.
+	val, err := p.Site.PluginSettingString(Username)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+	if val != "foo" {
+		return p.Mux.StatusError(http.StatusInternalServerError, errors.New("missing string value"))
+	}
+
+	// Get bool setting.
+	b, err := p.Site.PluginSettingBool(SafeMode)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+	if !b {
+		return p.Mux.StatusError(http.StatusInternalServerError, errors.New("missing bool false default"))
+	}
+
+	// Set setting value.
+	err = p.Site.SetPluginSetting(SafeMode, "false")
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+
+	// Get bool setting.
+	b, err = p.Site.PluginSettingBool(SafeMode)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+	if b {
+		return p.Mux.StatusError(http.StatusInternalServerError, errors.New("missing bool true value"))
+	}
+
+	ival, err := p.Site.PluginSetting(SafeMode)
+	if err != nil {
+		return p.Mux.StatusError(http.StatusBadRequest, err)
+	}
+	if ival != "false" {
+		return p.Mux.StatusError(http.StatusInternalServerError, errors.New("missing interface false value"))
+	}
+
+	fmt.Fprint(w, "Plugin setting works.")
+
+	return nil
+}

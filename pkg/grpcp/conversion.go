@@ -7,6 +7,7 @@ import (
 	"reflect"
 
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -93,4 +94,41 @@ func ProtobufStructToArray(s []*structpb.Struct, obj interface{}) error {
 	}
 
 	return nil
+}
+
+// InterfaceToProtobufAny converts an object to a protobuf struct.
+func InterfaceToProtobufAny(obj interface{}) (*anypb.Any, error) {
+	nv, err := structpb.NewValue(obj)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := anypb.New(nv)
+	if err != nil {
+		return nil, err
+	}
+
+	return s, nil
+}
+
+// ProtobufAnyToInterface converts a protobuf any to an interface.
+func ProtobufAnyToInterface(s *anypb.Any, obj interface{}) error {
+	// Check for pointer - this is a developer bug if the error occurs.
+	v := reflect.ValueOf(obj)
+	if v.Kind() != reflect.Ptr {
+		return errors.New("must pass a pointer, not a value")
+	}
+
+	var val structpb.Value
+	err := s.UnmarshalTo(&val)
+	if err != nil {
+		return err
+	}
+
+	b, err := protojson.Marshal(&val)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(b, &obj)
 }

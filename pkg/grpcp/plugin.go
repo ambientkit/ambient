@@ -19,19 +19,19 @@ type GRPCPlugin struct {
 	server  *grpc.Server
 }
 
-// PluginName returns the plugin name.
+// PluginName handler.
 func (m *GRPCPlugin) PluginName(ctx context.Context, req *protodef.Empty) (*protodef.PluginNameResponse, error) {
 	name := m.Impl.PluginName()
 	return &protodef.PluginNameResponse{Name: name}, nil
 }
 
-// PluginVersion returns the plugin version.
+// PluginVersion handler.
 func (m *GRPCPlugin) PluginVersion(ctx context.Context, req *protodef.Empty) (*protodef.PluginVersionResponse, error) {
 	version := m.Impl.PluginVersion()
 	return &protodef.PluginVersionResponse{Version: version}, nil
 }
 
-// GrantRequests returns the grants requested by the plugin
+// GrantRequests handler.
 func (m *GRPCPlugin) GrantRequests(ctx context.Context, req *protodef.Empty) (*protodef.GrantRequestsResponse, error) {
 	requests := m.Impl.GrantRequests()
 	arr := make([]*protodef.GrantRequest, 0)
@@ -46,7 +46,7 @@ func (m *GRPCPlugin) GrantRequests(ctx context.Context, req *protodef.Empty) (*p
 	return &protodef.GrantRequestsResponse{GrantRequest: arr}, nil
 }
 
-// Enable .
+// Enable handler.
 func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protodef.EnableResponse, error) {
 	var err error
 	m.conn, err = m.broker.Dial(req.Uid)
@@ -98,16 +98,44 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 	}, err
 }
 
-// Disable will disable the plugin and close connections.
+// Disable handler.
 func (m *GRPCPlugin) Disable(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
 	m.toolkit.Log.Debug("grpc-plugin: Disable() called")
 	defer m.conn.Close()
 	return &protodef.Empty{}, m.Impl.Disable()
 }
 
-// Routes .
+// Routes handler.
 func (m *GRPCPlugin) Routes(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
 	m.toolkit.Log.Debug("grpc-plugin: Routes() called")
 	m.Impl.Routes()
 	return &protodef.Empty{}, nil
+}
+
+// Settings handler.
+func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protodef.SettingsResponse, error) {
+	settings := m.Impl.Settings()
+
+	arr := make([]*protodef.Setting, 0)
+	for _, v := range settings {
+		any, err := InterfaceToProtobufAny(v.Default)
+		if err != nil {
+			m.toolkit.Log.Error("grpc-plugin: error on conversion: %v", err)
+		}
+
+		arr = append(arr, &protodef.Setting{
+			Name:        v.Name,
+			Settingtype: string(v.Type),
+			Description: &protodef.SettingDescription{
+				Text: v.Description.Text,
+				Url:  v.Description.URL,
+			},
+			Hide:    v.Hide,
+			Default: any,
+		})
+	}
+
+	return &protodef.SettingsResponse{
+		Settings: arr,
+	}, nil
 }

@@ -5,6 +5,7 @@ package ambient.protodef;
 import "empty.proto";
 import "plugin.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/any.proto";
 
 service Site {
 	// rpc Error(SiteErrorRequest) returns (SiteErrorResponse) {}
@@ -40,6 +41,10 @@ service Site {
     rpc SetSessionValue(SiteSetSessionValueRequest) returns (Empty) {}
     rpc DeleteSessionValue(SiteDeleteSessionValueRequest) returns (Empty) {}
     rpc PluginNeighborSettingsList(SitePluginNeighborSettingsListRequest) returns (SitePluginNeighborSettingsListResponse) {}
+    rpc SetPluginSetting(SiteSetPluginSettingRequest) returns (Empty) {}
+    rpc PluginSettingBool(SitePluginSettingBoolRequest) returns (SitePluginSettingBoolResponse) {}
+    rpc PluginSettingString(SitePluginSettingStringRequest) returns (SitePluginSettingStringResponse) {}
+    rpc PluginSetting(SitePluginSettingRequest) returns (SitePluginSettingResponse) {}
 }
 
 message SiteAuthorizedRequest {
@@ -230,4 +235,33 @@ message SitePluginNeighborSettingsListRequest {
 
 message SitePluginNeighborSettingsListResponse {
     repeated google.protobuf.Struct settings = 1;
+}
+
+message SiteSetPluginSettingRequest {
+    string settingname = 1;
+    string value = 2;
+}
+
+message SitePluginSettingBoolRequest {
+    string fieldname = 1;
+}
+
+message SitePluginSettingBoolResponse {
+    bool value = 1;
+}
+
+message SitePluginSettingStringRequest {
+    string fieldname = 1;
+}
+
+message SitePluginSettingStringResponse {
+    string value = 1;
+}
+
+message SitePluginSettingRequest {
+    string fieldname = 1;
+}
+
+message SitePluginSettingResponse {
+    google.protobuf.Any value = 1;
 }

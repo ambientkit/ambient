@@ -82,14 +82,14 @@ type SecureSite interface {
 	DeleteSessionValue(r *http.Request, name string)
 	// PluginNeighborSettingsList gets the grants requests for a neighbor plugin.
 	PluginNeighborSettingsList(pluginName string) ([]Setting, error)
-	// // SetPluginSetting sets a variable for the plugin.
-	// SetPluginSetting(settingName string, value string) error
-	// // PluginSettingBool returns a plugin setting as a bool.
-	// PluginSettingBool(name string) (bool, error)
-	// // PluginSettingString returns a setting for the plugin as a string.
-	// PluginSettingString(fieldName string) (string, error)
-	// // PluginSetting returns a setting for the plugin as an interface{}.
-	// PluginSetting(fieldName string) (interface{}, error)
+	// SetPluginSetting sets a variable for the plugin.
+	SetPluginSetting(settingName string, value string) error
+	// PluginSettingBool returns a plugin setting as a bool.
+	PluginSettingBool(name string) (bool, error)
+	// PluginSettingString returns a setting for the plugin as a string.
+	PluginSettingString(fieldName string) (string, error)
+	// PluginSetting returns a setting for the plugin as an interface{}.
+	PluginSetting(fieldName string) (interface{}, error)
 	// // SetNeighborPluginSetting sets a setting for a neighbor plugin.
 	// SetNeighborPluginSetting(pluginName string, settingName string, value string) error
 	// // NeighborPluginSettingString returns a setting for a neighbor plugin as a string.

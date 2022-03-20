@@ -2,6 +2,7 @@ package secureconfig
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/amberror"
@@ -37,8 +38,15 @@ func (ss *SecureSite) PluginSettingBool(name string) (bool, error) {
 	}
 
 	value, err := ss.settingField(ss.pluginName, name)
+	if err != nil {
+		return false, err
+	}
 
-	return value == "true", err
+	if value == nil {
+		return false, nil
+	}
+
+	return strconv.ParseBool(fmt.Sprint(value))
 }
 
 // PluginSettingString returns a setting for the plugin as a string.
@@ -76,7 +84,7 @@ func (ss *SecureSite) PluginSetting(fieldName string) (interface{}, error) {
 		return "", nil
 	}
 
-	return fmt.Sprint(ival), nil
+	return ival, nil
 }
 
 // SetNeighborPluginSetting sets a setting for a neighbor plugin.

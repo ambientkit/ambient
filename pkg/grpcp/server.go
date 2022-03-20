@@ -123,15 +123,43 @@ func (m *GRPCServer) Assets() ([]ambient.Asset, *embed.FS) {
 
 // Settings handler.
 func (m *GRPCServer) Settings() []ambient.Setting {
-	// TODO: Implement
-	return nil
+	resp, err := m.client.Settings(context.Background(), &protodef.Empty{})
+	if err != nil {
+		m.toolkit.Log.Error("grpc-server: error calling Settings: %v", err)
+	}
+
+	arr := make([]ambient.Setting, 0)
+
+	for _, v := range resp.Settings {
+		var i interface{}
+		err = ProtobufAnyToInterface(v.Default, &i)
+		if err != nil {
+			m.toolkit.Log.Error("grpc-server: error calling Settings: %v", err)
+		}
+
+		arr = append(arr, ambient.Setting{
+			Name: v.Name,
+			Type: ambient.SettingType(v.Settingtype),
+			Description: ambient.SettingDescription{
+				Text: v.Description.Text,
+				URL:  v.Description.Url,
+			},
+			Hide:    v.Hide,
+			Default: i,
+		})
+	}
+
+	if err != nil {
+		m.toolkit.Log.Error("grpc-server: error calling Settings conversion: %v", err)
+	}
+	return arr
 }
 
 // GrantRequests handler.
 func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
 	resp, err := m.client.GrantRequests(context.Background(), &protodef.Empty{})
 	if err != nil {
-		m.toolkit.Log.Error("grpc-server: error calling routes: %v", err)
+		m.toolkit.Log.Error("grpc-server: error calling GrantRequests: %v", err)
 	}
 
 	arr := make([]ambient.GrantRequest, 0)

@@ -120,4 +120,26 @@ func (p *Plugin) Routes() {
 	p.Mux.Post("/csrf", p.cSRF)
 	p.Mux.Get("/sessionValue", p.sessionValue)
 	p.Mux.Get("/PluginNeighborSettingsList", p.pluginNeighborSettingsList)
+	p.Mux.Get("/setPluginSetting", p.setPluginSetting)
+}
+
+const (
+	// Username allows user to set the login username.
+	Username = "Username"
+	// SafeMode is a boolean value.
+	SafeMode = "Safe Mode"
+)
+
+// Settings returns a list of user settable fields.
+func (p *Plugin) Settings() []ambient.Setting {
+	return []ambient.Setting{
+		{
+			Name:    Username,
+			Default: "admin",
+		},
+		{
+			Name:    SafeMode,
+			Default: true,
+		},
+	}
 }
