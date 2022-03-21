@@ -33,8 +33,6 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 
 // PageContent handler.
 func (m *GRPCRendererServer) PageContent(ctx context.Context, req *protodef.RendererPageContentRequest) (resp *protodef.Empty, err error) {
-	m.Log.Error("grpc-server: PageContent request - received keys and request ID: %v", req.Requestid)
-
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
 		return &protodef.Empty{}, err
@@ -44,13 +42,8 @@ func (m *GRPCRendererServer) PageContent(ctx context.Context, req *protodef.Rend
 		for _, rawV := range req.Keys {
 			// Prevent race conditions.
 			v := rawV
-			m.Log.Error("grpc-server: setting key: %v | request id: %v", v, req.Requestid)
 			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
-				//m.Log.Error("Key: %v | Args: %#v", v, args)
 				val, err := m.FuncMapperClient.Do(req.Requestid, v, args)
-				// if err != nil {
-				// 	m.Log.Error("grpc-server: can't get FuncMap for key: %v | err: %v", v, err)
-				// }
 				return val, err
 			}
 		}
@@ -67,13 +60,45 @@ func (m *GRPCRendererServer) Post(ctx context.Context, req *protodef.Empty) (res
 }
 
 // PostContent handler.
-func (m *GRPCRendererServer) PostContent(ctx context.Context, req *protodef.Empty) (resp *protodef.Empty, err error) {
-	m.Log.Error("grpc-server: hit page!")
+func (m *GRPCRendererServer) PostContent(ctx context.Context, req *protodef.RendererPostContentRequest) (resp *protodef.Empty, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.Empty{}, err
+	}
+
+	err = m.Impl.PostContent(c.Response, c.Request, req.Content, func(*http.Request) template.FuncMap {
+		for _, rawV := range req.Keys {
+			// Prevent race conditions.
+			v := rawV
+			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
+				val, err := m.FuncMapperClient.Do(req.Requestid, v, args)
+				return val, err
+			}
+		}
+		return c.FuncMap
+	}, ProtobufStructToMap(req.Vars))
+
 	return &protodef.Empty{}, err
 }
 
 // Error handler.
-func (m *GRPCRendererServer) Error(ctx context.Context, req *protodef.Empty) (resp *protodef.Empty, err error) {
-	m.Log.Error("grpc-server: hit page!")
+func (m *GRPCRendererServer) Error(ctx context.Context, req *protodef.RendererErrorRequest) (resp *protodef.Empty, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.Empty{}, err
+	}
+
+	err = m.Impl.Error(c.Response, c.Request, req.Content, int(req.Statuscode), func(*http.Request) template.FuncMap {
+		for _, rawV := range req.Keys {
+			// Prevent race conditions.
+			v := rawV
+			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
+				val, err := m.FuncMapperClient.Do(req.Requestid, v, args)
+				return val, err
+			}
+		}
+		return c.FuncMap
+	}, ProtobufStructToMap(req.Vars))
+
 	return &protodef.Empty{}, err
 }

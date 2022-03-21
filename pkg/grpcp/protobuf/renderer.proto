@@ -9,8 +9,8 @@ service Renderer {
     rpc Page(RendererPageRequest) returns (Empty) {}
     rpc PageContent(RendererPageContentRequest) returns (Empty) {}
     rpc Post(Empty) returns (Empty) {}
-    rpc PostContent(Empty) returns (Empty) {}
-    rpc Error(Empty) returns (Empty) {}
+    rpc PostContent(RendererPostContentRequest) returns (Empty) {}
+    rpc Error(RendererErrorRequest) returns (Empty) {}
 }
 
 message RendererPageRequest {
@@ -23,4 +23,19 @@ message RendererPageContentRequest {
     string content = 2;
     google.protobuf.Struct vars = 3;
     repeated string keys = 4;
+}
+
+message RendererPostContentRequest {
+    string requestid = 1;
+    string content = 2;
+    google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
+}
+
+message RendererErrorRequest {
+    string requestid = 1;
+    string content = 2;
+    google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
+    uint32 statuscode = 5;
 }
