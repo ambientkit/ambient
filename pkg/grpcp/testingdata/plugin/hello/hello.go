@@ -11,8 +11,8 @@ import (
 	"github.com/ambientkit/ambient"
 )
 
-///go:embed template/*.tmpl
-//var assets embed.FS
+//go:embed template/*.tmpl template/content/*.tmpl
+var assets embed.FS
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
@@ -135,7 +135,7 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/assets", p.assets)
 	p.Mux.Get("/assetsHello", p.assetsHello)
 	p.Mux.Get("/assetsError", p.assetsError)
-
+	p.Mux.Get("/pageHello", p.pageHello)
 }
 
 const (

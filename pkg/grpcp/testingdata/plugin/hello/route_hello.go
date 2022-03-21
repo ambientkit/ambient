@@ -827,3 +827,7 @@ func (p *Plugin) assetsHello(w http.ResponseWriter, r *http.Request) error {
 func (p *Plugin) assetsError(w http.ResponseWriter, r *http.Request) error {
 	return p.Render.PageContent(w, r, `FuncMap: {{hello_Error "Foo"}}`, p.FuncMap(), nil)
 }
+
+func (p *Plugin) pageHello(w http.ResponseWriter, r *http.Request) error {
+	return p.Render.Page(w, r, assets, "template/content/hello", p.FuncMap(), nil)
+}

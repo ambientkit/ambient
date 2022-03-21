@@ -397,4 +397,8 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/assetsError", nil))
 	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
 	assert.True(t, strings.Contains(body, "this is an error"))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pageHello", nil))
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.True(t, strings.Contains(body, "FuncMap: hello: Foo"), body)
 }

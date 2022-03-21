@@ -18,6 +18,7 @@ message RendererPageRequest {
     string templatename = 2;
     google.protobuf.Struct vars = 3;
     repeated string keys = 4;
+    repeated EmbeddedFile files = 5;
 }
 
 message RendererPageContentRequest {
@@ -47,4 +48,9 @@ message RendererErrorRequest {
     google.protobuf.Struct vars = 3;
     repeated string keys = 4;
     uint32 statuscode = 5;
+}
+
+message EmbeddedFile {
+    string name = 1;
+    string body = 2;
 }

@@ -47,7 +47,7 @@ func globalFuncMapCallable(r *http.Request, fm func(r *http.Request) template.Fu
 
 // Page renders a page.
 func (rr *TemplateRenderer) Page(w http.ResponseWriter, r *http.Request,
-	assets embed.FS, templateName string, fm func(r *http.Request) template.FuncMap,
+	assets ambient.FileSystemReader, templateName string, fm func(r *http.Request) template.FuncMap,
 	vars map[string]interface{}) (err error) {
 	return rr.render.Page(w, r, assets, templateName, globalFuncMapCallable(r, fm), vars)
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/pkg/avfs"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"golang.org/x/net/context"
 )
@@ -25,7 +26,22 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 		return &protodef.Empty{}, err
 	}
 
-	err = m.Impl.Page(c.Response, c.Request, embed.FS{}, req.Templatename, func(*http.Request) template.FuncMap {
+	//efs := embed.FS{}
+	//efs.
+
+	efs := avfs.NewFS()
+	efs.AddFile("template/content/hello.tmpl", []byte("woah"))
+	//req.Files
+
+	_, err = efs.Open("template/content/hello.tmpl")
+	if err != nil {
+		return nil, err
+	}
+
+	//fff := new(fs.FS)
+	//fff.
+
+	err = m.Impl.Page(c.Response, c.Request, efs, req.Templatename, func(*http.Request) template.FuncMap {
 		for _, rawV := range req.Keys {
 			// Prevent race conditions.
 			v := rawV

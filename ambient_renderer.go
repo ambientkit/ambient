@@ -8,7 +8,7 @@ import (
 
 // Renderer represents a template renderer.
 type Renderer interface {
-	Page(w http.ResponseWriter, r *http.Request, assets embed.FS, templateName string,
+	Page(w http.ResponseWriter, r *http.Request, assets FileSystemReader, templateName string,
 		fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error)
 	PageContent(w http.ResponseWriter, r *http.Request, content string,
 		fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error)
