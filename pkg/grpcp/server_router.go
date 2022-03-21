@@ -3,6 +3,7 @@ package grpcp
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
@@ -35,6 +36,7 @@ func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRe
 		m.reqmap.Save(uuid, &HTTPContainer{
 			Request:  r,
 			Response: w,
+			FuncMap:  make(template.FuncMap),
 		})
 
 		status, errText, response, err := m.HandlerClient.Handle(req.Method, req.Path, r, uuid)

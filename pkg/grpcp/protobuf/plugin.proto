@@ -15,6 +15,7 @@ service GenericPlugin {
     rpc Routes(Empty) returns (Empty) {}
     rpc Settings(Empty) returns (SettingsResponse) {}
     rpc Assets(Empty) returns (AssetsResponse) {}
+    rpc FuncMap(FuncMapRequest) returns (FuncMapResponse) {}
 }
 
 message PluginNameResponse {
@@ -62,4 +63,12 @@ message SettingDescription {
 message AssetsResponse {
     repeated google.protobuf.Struct assets = 1;
     // embeddedFS
+}
+
+message FuncMapRequest {
+    string requestid = 1;
+}
+
+message FuncMapResponse {
+    repeated string keys = 1;
 }

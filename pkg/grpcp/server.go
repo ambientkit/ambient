@@ -48,13 +48,20 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 
 	m.reqmap = NewRequestMap()
 	m.toolkit = toolkit
-	loggerServer := &GRPCLoggerServer{Impl: toolkit.Log}
-	routerServer := &GRPCAddRouterServer{Impl: toolkit.Mux,
+	loggerServer := &GRPCLoggerServer{
+		Impl: toolkit.Log,
+	}
+	routerServer := &GRPCAddRouterServer{
+		Impl:   toolkit.Mux,
 		Log:    toolkit.Log,
 		broker: m.broker,
 		reqmap: m.reqmap,
 	}
-	siteServer := &GRPCSiteServer{Impl: toolkit.Site, Log: toolkit.Log, reqmap: m.reqmap}
+	siteServer := &GRPCSiteServer{
+		Impl:   toolkit.Site,
+		Log:    toolkit.Log,
+		reqmap: m.reqmap,
+	}
 	rendererServer := &GRPCRendererServer{
 		Log:    toolkit.Log,
 		Impl:   toolkit.Render,
@@ -88,6 +95,10 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 
 	routerServer.HandlerClient = &GRPCHandlerServer{
 		client: protodef.NewHandlerClient(m.conn),
+	}
+
+	rendererServer.FuncMapperClient = &GRPCFuncMapperServer{
+		client: protodef.NewFuncMapperClient(m.conn),
 	}
 
 	return nil
@@ -191,6 +202,29 @@ func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
 
 // FuncMap handler.
 func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
-	// TODO: Implement
-	return nil
+	// Give me back a list of keys that are callable.
+	_, err := m.client.FuncMap(context.Background(), &protodef.FuncMapRequest{
+		//Requestid: requestID(r),
+	})
+	if err != nil {
+		m.toolkit.Log.Error("grpc-server: error calling FuncMap: %v", err)
+	}
+
+	// c := m.reqmap.Load(resp.Funcmapid)
+	// if err != nil {
+	// 	m.toolkit.Log.Error("grpc-server: error calling FuncMap reqmap load: %v", err)
+	// }
+
+	return func(r *http.Request) template.FuncMap {
+		fm := make(template.FuncMap)
+		// c := m.reqmap.Load(requestID(r))
+		// for _, v := range resp.Keys {
+		// 	m.toolkit.Log.Error("grpc-server: setting key: %v | request id: %v", v, requestID(r))
+		// 	c.FuncMap[v] = func() interface{} {
+		// 		return "cool"
+		// 	}
+		// }
+
+		return fm
+	}
 }

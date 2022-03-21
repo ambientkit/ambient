@@ -22,4 +22,5 @@ message RendererPageContentRequest {
     string requestid = 1;
     string content = 2;
     google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
 }

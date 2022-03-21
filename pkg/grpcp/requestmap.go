@@ -1,6 +1,7 @@
 package grpcp
 
 import (
+	"html/template"
 	"net/http"
 	"sync"
 )
@@ -9,6 +10,7 @@ import (
 type HTTPContainer struct {
 	Request  *http.Request
 	Response http.ResponseWriter
+	FuncMap  template.FuncMap
 }
 
 // RequestMap .

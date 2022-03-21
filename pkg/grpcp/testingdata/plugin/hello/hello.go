@@ -3,7 +3,10 @@ package hello
 
 import (
 	"embed"
+	"errors"
 	"fmt"
+	"html/template"
+	"net/http"
 
 	"github.com/ambientkit/ambient"
 )
@@ -131,6 +134,8 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/tags", p.tags)
 	p.Mux.Get("/assets", p.assets)
 	p.Mux.Get("/assetsHello", p.assetsHello)
+	p.Mux.Get("/assetsError", p.assetsError)
+
 }
 
 const (
@@ -202,4 +207,19 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 
 	//return arr, &assets
 	return arr, nil
+}
+
+// FuncMap returns a callable function that accepts a request.
+func (p *Plugin) FuncMap() func(r *http.Request) template.FuncMap {
+	return func(r *http.Request) template.FuncMap {
+		fm := make(template.FuncMap)
+		fm["hello_Foo"] = func(name string) string {
+			return "hello: " + name
+		}
+		fm["hello_Error"] = func(name string) error {
+			return errors.New("this is an error")
+		}
+
+		return fm
+	}
 }

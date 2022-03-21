@@ -821,5 +821,9 @@ func (p *Plugin) assetsHello(w http.ResponseWriter, r *http.Request) error {
 	vars := make(map[string]interface{})
 	vars["postcontent"] = content
 	//return p.Render.Page(w, r, assets, "template/content/home", p.FuncMap(), vars)
-	return p.Render.PageContent(w, r, "Content: {{.postcontent}}", p.FuncMap(), vars)
+	return p.Render.PageContent(w, r, `Content: {{.postcontent}} | FuncMap: {{hello_Foo "Foo"}}`, p.FuncMap(), vars)
+}
+
+func (p *Plugin) assetsError(w http.ResponseWriter, r *http.Request) error {
+	return p.Render.PageContent(w, r, `FuncMap: {{hello_Error "Foo"}}`, p.FuncMap(), nil)
 }

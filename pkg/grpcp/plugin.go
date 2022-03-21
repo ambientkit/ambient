@@ -1,6 +1,7 @@
 package grpcp
 
 import (
+	"html/template"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
@@ -60,6 +61,8 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 
 	fnMap := make(map[string]func(http.ResponseWriter, *http.Request) error)
 
+	funcMapMap := make(map[string]template.FuncMap)
+
 	m.toolkit = &ambient.Toolkit{
 		Log: logger,
 		Mux: &GRPCRouterPlugin{
@@ -74,6 +77,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		Render: &GRPCRendererPlugin{
 			client: protodef.NewRendererClient(m.conn),
 			Log:    logger,
+			Map:    funcMapMap,
 		},
 	}
 
@@ -83,6 +87,13 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
 		m.server = grpc.NewServer(opts...)
+		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
+			Impl: &FuncMapperImpl{
+				Log: m.toolkit.Log,
+				Map: funcMapMap,
+			},
+			Log: m.toolkit.Log,
+		})
 		protodef.RegisterHandlerServer(m.server, &GRPCHandlerPlugin{
 			Log: m.toolkit.Log,
 			Impl: &HandlerImpl{
@@ -174,5 +185,25 @@ func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protod
 
 	return &protodef.SettingsResponse{
 		Settings: arr,
+	}, nil
+}
+
+// FuncMap handler.
+func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.FuncMapRequest) (*protodef.FuncMapResponse, error) {
+	//fm := m.Impl.FuncMap()
+	//fm()
+
+	m.toolkit.Log.Error("grpc-plugin: NEED TO IMPLEMENT. FuncMap() hit! Request id:", req.Requestid)
+
+	fmfn := m.Impl.FuncMap()
+	fm := fmfn(nil)
+
+	keys := make([]string, 0)
+	for k := range fm {
+		keys = append(keys, k)
+	}
+
+	return &protodef.FuncMapResponse{
+		Keys: keys,
 	}, nil
 }

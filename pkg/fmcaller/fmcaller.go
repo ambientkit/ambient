@@ -28,16 +28,8 @@ func CallFuncMap(fn interface{}, args ...interface{}) (interface{}, error) {
 
 	// Call the function.
 	out := val.Call(arrIn)
-	//fmt.Printf("Parameter count. In: %v | Out: %v\n", t1.NumIn(), len(out))
 
-	// return nil, fmt.Errorf("Output: %v", out[0])
-	//fmt.Println("Output:", out[0])
-
-	// // Return an error if there are too many returns values.
-	// if len(out) > 2 {
-	// 	return nil, fmt.Errorf("can only have up to 2 return values, but found: %v", len(out))
-	// }
-
+	// Return based on the return values from calling the function.
 	switch len(out) {
 	case 1:
 		out1 := out[0].Interface()
@@ -50,19 +42,22 @@ func CallFuncMap(fn interface{}, args ...interface{}) (interface{}, error) {
 			return nil, err
 		}
 
-		return out[0], nil
+		return out1, nil
 	case 2:
+		out1 := out[0].Interface()
+		out2 := out[1].Interface()
+
 		// If the 2nd return value is nil, then return nil.
-		if out[1].Interface() == nil {
-			return out[0], nil
+		if out2 == nil {
+			return out1, nil
 		}
 
 		// If the 1st return value is an error, then return as an error.
-		if _, ok := out[1].Interface().(error); !ok {
+		if _, ok := out2.(error); !ok {
 			return nil, errors.New("2nd return should be an error")
 		}
 
-		return out[0], out[1].Interface().(error)
+		return out1, out2.(error)
 	default:
 		return nil, nil
 	}
