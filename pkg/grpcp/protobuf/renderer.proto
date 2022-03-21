@@ -8,7 +8,7 @@ import "google/protobuf/struct.proto";
 service Renderer {
     rpc Page(RendererPageRequest) returns (Empty) {}
     rpc PageContent(RendererPageContentRequest) returns (Empty) {}
-    rpc Post(Empty) returns (Empty) {}
+    rpc Post(RendererPostRequest) returns (Empty) {}
     rpc PostContent(RendererPostContentRequest) returns (Empty) {}
     rpc Error(RendererErrorRequest) returns (Empty) {}
 }
@@ -16,11 +16,20 @@ service Renderer {
 message RendererPageRequest {
     string requestid = 1;
     string templatename = 2;
+    google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
 }
 
 message RendererPageContentRequest {
     string requestid = 1;
     string content = 2;
+    google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
+}
+
+message RendererPostRequest {
+    string requestid = 1;
+    string templatename = 2;
     google.protobuf.Struct vars = 3;
     repeated string keys = 4;
 }

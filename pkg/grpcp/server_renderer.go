@@ -1,6 +1,7 @@
 package grpcp
 
 import (
+	"embed"
 	"html/template"
 	"net/http"
 
@@ -19,14 +20,22 @@ type GRPCRendererServer struct {
 
 // Page handler.
 func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPageRequest) (resp *protodef.Empty, err error) {
-	m.Log.Error("grpc-server: hit page 1!")
-
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
 		return &protodef.Empty{}, err
 	}
 
-	//err = m.Impl.Page(c.Response, c.Request, embed.FS{}, req.Templatename, nil, nil)
+	err = m.Impl.Page(c.Response, c.Request, embed.FS{}, req.Templatename, func(*http.Request) template.FuncMap {
+		for _, rawV := range req.Keys {
+			// Prevent race conditions.
+			v := rawV
+			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
+				val, err := m.FuncMapperClient.Do(req.Requestid, v, args)
+				return val, err
+			}
+		}
+		return c.FuncMap
+	}, ProtobufStructToMap(req.Vars))
 
 	return &protodef.Empty{}, err
 }
@@ -54,8 +63,24 @@ func (m *GRPCRendererServer) PageContent(ctx context.Context, req *protodef.Rend
 }
 
 // Post handler.
-func (m *GRPCRendererServer) Post(ctx context.Context, req *protodef.Empty) (resp *protodef.Empty, err error) {
-	m.Log.Error("grpc-server: hit page!")
+func (m *GRPCRendererServer) Post(ctx context.Context, req *protodef.RendererPostRequest) (resp *protodef.Empty, err error) {
+	c := m.reqmap.Load(req.Requestid)
+	if c == nil {
+		return &protodef.Empty{}, err
+	}
+
+	err = m.Impl.Post(c.Response, c.Request, embed.FS{}, req.Templatename, func(*http.Request) template.FuncMap {
+		for _, rawV := range req.Keys {
+			// Prevent race conditions.
+			v := rawV
+			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
+				val, err := m.FuncMapperClient.Do(req.Requestid, v, args)
+				return val, err
+			}
+		}
+		return c.FuncMap
+	}, ProtobufStructToMap(req.Vars))
+
 	return &protodef.Empty{}, err
 }
 

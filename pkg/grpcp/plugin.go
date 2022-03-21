@@ -1,7 +1,6 @@
 package grpcp
 
 import (
-	"html/template"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
@@ -61,7 +60,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 
 	fnMap := make(map[string]func(http.ResponseWriter, *http.Request) error)
 
-	funcMapMap := make(map[string]template.FuncMap)
+	funcMapMap := make(map[string]*FMContainer)
 
 	m.toolkit = &ambient.Toolkit{
 		Log: logger,
