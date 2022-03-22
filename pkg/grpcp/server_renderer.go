@@ -26,20 +26,11 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 		return &protodef.Empty{}, err
 	}
 
-	//efs := embed.FS{}
-	//efs.
-
+	// Build a file system.
 	efs := avfs.NewFS()
-	efs.AddFile("template/content/hello.tmpl", []byte("woah"))
-	//req.Files
-
-	_, err = efs.Open("template/content/hello.tmpl")
-	if err != nil {
-		return nil, err
+	for _, v := range req.Files {
+		efs.AddFile(v.Name, []byte(v.Body))
 	}
-
-	//fff := new(fs.FS)
-	//fff.
 
 	err = m.Impl.Page(c.Response, c.Request, efs, req.Templatename, func(*http.Request) template.FuncMap {
 		for _, rawV := range req.Keys {

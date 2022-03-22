@@ -2,6 +2,7 @@ package avfs
 
 import (
 	"errors"
+	"io"
 	"io/fs"
 	"time"
 )
@@ -13,7 +14,8 @@ import (
 //     Close() error
 // }
 type File struct {
-	fi fs.FileInfo
+	fi     fs.FileInfo
+	offset int64 // current read offset
 }
 
 // NewFile returns a new file.
@@ -31,7 +33,7 @@ func NewFile(name string, contents []byte) *File {
 
 // Stat handler.
 func (f *File) Stat() (fs.FileInfo, error) {
-	if f.fi != nil {
+	if f.fi == nil {
 		return nil, errors.New("invalid file")
 	}
 
@@ -39,8 +41,33 @@ func (f *File) Stat() (fs.FileInfo, error) {
 }
 
 // Read handler.
-func (f *File) Read([]byte) (int, error) {
-	return int(f.fi.Size()), nil
+func (f *File) Read(b []byte) (int, error) {
+	if f.offset >= int64(len(f.fi.Sys().([]byte))) {
+		return 0, io.EOF
+	}
+	if f.offset < 0 {
+		return 0, &fs.PathError{Op: "read", Path: f.fi.Name(), Err: fs.ErrInvalid}
+	}
+	n := copy(b, f.fi.Sys().([]byte)[f.offset:])
+	f.offset += int64(n)
+	return n, nil
+}
+
+// Seek handler.
+func (f *File) Seek(offset int64, whence int) (int64, error) {
+	switch whence {
+	case 0:
+		// offset += 0
+	case 1:
+		offset += f.offset
+	case 2:
+		offset += int64(len(f.fi.Sys().([]byte)))
+	}
+	if offset < 0 || offset > int64(len(f.fi.Sys().([]byte))) {
+		return 0, &fs.PathError{Op: "seek", Path: f.fi.Name(), Err: fs.ErrInvalid}
+	}
+	f.offset = offset
+	return offset, nil
 }
 
 // Close handler.
