@@ -45,7 +45,7 @@ func (m *GRPCServer) PluginVersion() string {
 
 // Enable handler.
 func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
-	toolkit.Log.Debug("grpc-server: enabled called")
+	//toolkit.Log.Debug("grpc-server: enabled called")
 
 	funcMapMap := make(map[string]*FMContainer)
 
@@ -213,37 +213,18 @@ func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
 
 // FuncMap handler.
 func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
-	// Give me back a list of keys that are callable.
-	resp, err := m.client.FuncMap(context.Background(), &protodef.FuncMapRequest{
-		//Requestid: requestID(r),
-	})
+	// Return a list of keys for the FuncMap().
+	resp, err := m.client.FuncMap(context.Background(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("grpc-server: error calling FuncMap: %v", err)
 	}
 
-	m.toolkit.Log.Error("grpc-server: FuncMap called.")
-
-	// c := m.reqmap.Load(resp.Funcmapid)
-	// if err != nil {
-	// 	m.toolkit.Log.Error("grpc-server: error calling FuncMap reqmap load: %v", err)
-	// }
-
 	return func(req *http.Request) template.FuncMap {
 		fm := make(template.FuncMap)
-		// c := m.reqmap.Load(requestID(r))
-		// for _, v := range resp.Keys {
-		// 	m.toolkit.Log.Error("grpc-server: setting key: %v | request id: %v", v, requestID(r))
-		// 	c.FuncMap[v] = func() interface{} {
-		// 		return "cool"
-		// 	}
-		// }
-
 		for _, rawV := range resp.Keys {
 			// Prevent race conditions.
 			v := rawV
 			fm[v] = func(args ...interface{}) (interface{}, error) {
-				// FIXME: Not sure what the requestID is.
-				m.toolkit.Log.Error("HIT FUNCMAP: %v", requestID(req))
 				val, err := m.funcMapperClient.Do(requestID(req), v, args)
 				return val, err
 			}

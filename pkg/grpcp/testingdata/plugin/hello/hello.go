@@ -43,7 +43,7 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 		return err
 	}
 
-	p.Log.Info("plugin: enabled called")
+	//p.Log.Info("plugin: enabled called")
 
 	return nil
 }
@@ -74,7 +74,7 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 
 // Routes sets routes for the plugin.
 func (p *Plugin) Routes() {
-	p.Log.Error("plugin: routes called")
+	//p.Log.Error("plugin: routes called")
 	p.Mux.Get("/", p.index)
 	p.Mux.Get("/another", p.another)
 	p.Mux.Get("/name/{name}", p.name)

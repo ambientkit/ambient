@@ -212,8 +212,8 @@ func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protod
 }
 
 // FuncMap handler.
-func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.FuncMapRequest) (*protodef.FuncMapResponse, error) {
-	m.toolkit.Log.Error("grpc-plugin: FuncMap called.")
+func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protodef.FuncMapResponse, error) {
+	//m.toolkit.Log.Error("grpc-plugin: FuncMap called.")
 	fn := m.Impl.FuncMap()
 	r, _ := http.NewRequest("GET", "/", nil)
 	fm := fn(r)
@@ -222,14 +222,6 @@ func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.FuncMapRequest) 
 	for k := range fm {
 		keys = append(keys, k)
 	}
-
-	// TODO: I just coped this in, I need to figure out how to get the right request ID and then request.
-	// rid := requestID(r)
-	// m.Map[rid] = &FMContainer{
-	// 	FuncMap: fm(r),
-	// 	FS:      nil,
-	// }
-	// defer delete(l.Map, rid)
 
 	return &protodef.FuncMapResponse{
 		Keys: keys,

@@ -37,7 +37,7 @@ func (p *Plugin) Enable(toolkit *ambient.Toolkit) error {
 		return err
 	}
 
-	p.Log.Info("plugin: enabled called")
+	//p.Log.Info("plugin: enabled called")
 
 	return nil
 }

@@ -25,21 +25,23 @@ type GRPCAddRouterServer struct {
 
 // Handle request handler.
 func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRequest) (resp *protodef.Empty, err error) {
-	m.Log.Warn("grpc-server: GET called: %v", req.Path)
+	//m.Log.Warn("grpc-server: GET called: %v", req.Path)
 
 	m.Impl.Handle(req.Method, req.Path, func(w http.ResponseWriter, r *http.Request) error {
-		m.Log.Warn("grpc-server: %v func called: %v", req.Method, req.Path)
+		//m.Log.Warn("grpc-server: %v func called: %v", req.Method, req.Path)
 
 		// Generate a unique request object, store the request for use by
 		// Param(), then delete the request once the request is done to clean up.
 		uuid, _ := generateUUID()
+		newContext := context.WithValue(r.Context(), ambientRequestID, uuid)
+		r2 := r.WithContext(newContext)
 		m.reqmap.Save(uuid, &HTTPContainer{
-			Request:  r,
+			Request:  r2,
 			Response: w,
 			FuncMap:  make(template.FuncMap),
 		})
 
-		status, errText, response, err := m.HandlerClient.Handle(req.Method, req.Path, r, uuid)
+		status, errText, response, err := m.HandlerClient.Handle(req.Method, req.Path, r2, uuid)
 		m.reqmap.Delete(uuid)
 		if err != nil {
 			m.Log.Error("grpc-server: %v func error: %v", req.Method, err.Error())

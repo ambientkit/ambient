@@ -15,11 +15,11 @@ type HandlerImpl struct {
 }
 
 // Handle .
-func (d *HandlerImpl) Handle(requestID string, method string, path string, headers http.Header, body []byte) (int, string, string) {
-	d.Log.Warn("grpc-plugin: Handle start: %v %v | Routes: %v | %v", method, path, len(d.Map), requestID)
+func (d *HandlerImpl) Handle(requestid string, method string, path string, headers http.Header, body []byte) (int, string, string) {
+	//d.Log.Warn("grpc-plugin: Handle start: %v %v | Routes: %v | %v", method, path, len(d.Map), requestid)
 
 	req, _ := http.NewRequest(method, path, bytes.NewBuffer(body))
-	newContext := context.WithValue(req.Context(), ambientRequestID, requestID)
+	newContext := context.WithValue(req.Context(), ambientRequestID, requestid)
 	req = req.WithContext(newContext)
 	req.Header = headers
 	w := NewResponseWriter()
@@ -49,7 +49,7 @@ func (d *HandlerImpl) Handle(requestID string, method string, path string, heade
 		}
 	}
 
-	d.Log.Warn("grpc-plugin: Handle end: %v Output: \"%v\"", statusCode, w.Output())
+	//d.Log.Warn("grpc-plugin: Handle end: %v Output: \"%v\"", statusCode, w.Output())
 
 	return statusCode, errText, w.Output()
 }

@@ -552,53 +552,6 @@ func (x *AssetsResponse) GetFiles() []*EmbeddedFile {
 	return nil
 }
 
-type FuncMapRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Requestid string `protobuf:"bytes,1,opt,name=requestid,proto3" json:"requestid,omitempty"`
-}
-
-func (x *FuncMapRequest) Reset() {
-	*x = FuncMapRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[10]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *FuncMapRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*FuncMapRequest) ProtoMessage() {}
-
-func (x *FuncMapRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[10]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use FuncMapRequest.ProtoReflect.Descriptor instead.
-func (*FuncMapRequest) Descriptor() ([]byte, []int) {
-	return file_plugin_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *FuncMapRequest) GetRequestid() string {
-	if x != nil {
-		return x.Requestid
-	}
-	return ""
-}
-
 type FuncMapResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -610,7 +563,7 @@ type FuncMapResponse struct {
 func (x *FuncMapResponse) Reset() {
 	*x = FuncMapResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[11]
+		mi := &file_plugin_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -623,7 +576,7 @@ func (x *FuncMapResponse) String() string {
 func (*FuncMapResponse) ProtoMessage() {}
 
 func (x *FuncMapResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[11]
+	mi := &file_plugin_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -636,7 +589,7 @@ func (x *FuncMapResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FuncMapResponse.ProtoReflect.Descriptor instead.
 func (*FuncMapResponse) Descriptor() ([]byte, []int) {
-	return file_plugin_proto_rawDescGZIP(), []int{11}
+	return file_plugin_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *FuncMapResponse) GetKeys() []string {
@@ -705,12 +658,9 @@ var file_plugin_proto_rawDesc = []byte{
 	0x73, 0x12, 0x34, 0x0a, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b,
 	0x32, 0x1e, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x62, 0x65, 0x64, 0x64, 0x65, 0x64, 0x46, 0x69, 0x6c, 0x65,
-	0x52, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x22, 0x2e, 0x0a, 0x0e, 0x46, 0x75, 0x6e, 0x63, 0x4d,
-	0x61, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x72, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x72, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x69, 0x64, 0x22, 0x25, 0x0a, 0x0f, 0x46, 0x75, 0x6e, 0x63, 0x4d,
+	0x52, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x22, 0x25, 0x0a, 0x0f, 0x46, 0x75, 0x6e, 0x63, 0x4d,
 	0x61, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x65,
-	0x79, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x65, 0x79, 0x73, 0x32, 0xb2,
+	0x79, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x65, 0x79, 0x73, 0x32, 0xa9,
 	0x05, 0x0a, 0x0d, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x69, 0x63, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e,
 	0x12, 0x4d, 0x0a, 0x0a, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x17,
 	0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65,
@@ -749,13 +699,13 @@ var file_plugin_proto_rawDesc = []byte{
 	0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x20, 0x2e,
 	0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66,
 	0x2e, 0x41, 0x73, 0x73, 0x65, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0x00, 0x12, 0x50, 0x0a, 0x07, 0x46, 0x75, 0x6e, 0x63, 0x4d, 0x61, 0x70, 0x12, 0x20, 0x2e, 0x61,
+	0x00, 0x12, 0x47, 0x0a, 0x07, 0x46, 0x75, 0x6e, 0x63, 0x4d, 0x61, 0x70, 0x12, 0x17, 0x2e, 0x61,
 	0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e,
-	0x46, 0x75, 0x6e, 0x63, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21,
-	0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65,
-	0x66, 0x2e, 0x46, 0x75, 0x6e, 0x63, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x00, 0x42, 0x0d, 0x5a, 0x0b, 0x2e, 0x2f, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64,
-	0x65, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x21, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e, 0x46, 0x75, 0x6e, 0x63, 0x4d, 0x61, 0x70,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0d, 0x5a, 0x0b, 0x2e, 0x2f,
+	0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -770,7 +720,7 @@ func file_plugin_proto_rawDescGZIP() []byte {
 	return file_plugin_proto_rawDescData
 }
 
-var file_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_plugin_proto_goTypes = []interface{}{
 	(*PluginNameResponse)(nil),    // 0: ambient.protodef.PluginNameResponse
 	(*PluginVersionResponse)(nil), // 1: ambient.protodef.PluginVersionResponse
@@ -782,38 +732,37 @@ var file_plugin_proto_goTypes = []interface{}{
 	(*Setting)(nil),               // 7: ambient.protodef.Setting
 	(*SettingDescription)(nil),    // 8: ambient.protodef.SettingDescription
 	(*AssetsResponse)(nil),        // 9: ambient.protodef.AssetsResponse
-	(*FuncMapRequest)(nil),        // 10: ambient.protodef.FuncMapRequest
-	(*FuncMapResponse)(nil),       // 11: ambient.protodef.FuncMapResponse
-	(*anypb.Any)(nil),             // 12: google.protobuf.Any
-	(*structpb.Struct)(nil),       // 13: google.protobuf.Struct
-	(*EmbeddedFile)(nil),          // 14: ambient.protodef.EmbeddedFile
-	(*Empty)(nil),                 // 15: ambient.protodef.Empty
+	(*FuncMapResponse)(nil),       // 10: ambient.protodef.FuncMapResponse
+	(*anypb.Any)(nil),             // 11: google.protobuf.Any
+	(*structpb.Struct)(nil),       // 12: google.protobuf.Struct
+	(*EmbeddedFile)(nil),          // 13: ambient.protodef.EmbeddedFile
+	(*Empty)(nil),                 // 14: ambient.protodef.Empty
 }
 var file_plugin_proto_depIdxs = []int32{
 	3,  // 0: ambient.protodef.GrantRequestsResponse.grantrequest:type_name -> ambient.protodef.GrantRequest
 	7,  // 1: ambient.protodef.SettingsResponse.settings:type_name -> ambient.protodef.Setting
 	8,  // 2: ambient.protodef.Setting.description:type_name -> ambient.protodef.SettingDescription
-	12, // 3: ambient.protodef.Setting.default:type_name -> google.protobuf.Any
-	13, // 4: ambient.protodef.AssetsResponse.assets:type_name -> google.protobuf.Struct
-	14, // 5: ambient.protodef.AssetsResponse.files:type_name -> ambient.protodef.EmbeddedFile
-	15, // 6: ambient.protodef.GenericPlugin.PluginName:input_type -> ambient.protodef.Empty
-	15, // 7: ambient.protodef.GenericPlugin.PluginVersion:input_type -> ambient.protodef.Empty
-	15, // 8: ambient.protodef.GenericPlugin.GrantRequests:input_type -> ambient.protodef.Empty
+	11, // 3: ambient.protodef.Setting.default:type_name -> google.protobuf.Any
+	12, // 4: ambient.protodef.AssetsResponse.assets:type_name -> google.protobuf.Struct
+	13, // 5: ambient.protodef.AssetsResponse.files:type_name -> ambient.protodef.EmbeddedFile
+	14, // 6: ambient.protodef.GenericPlugin.PluginName:input_type -> ambient.protodef.Empty
+	14, // 7: ambient.protodef.GenericPlugin.PluginVersion:input_type -> ambient.protodef.Empty
+	14, // 8: ambient.protodef.GenericPlugin.GrantRequests:input_type -> ambient.protodef.Empty
 	4,  // 9: ambient.protodef.GenericPlugin.Enable:input_type -> ambient.protodef.Toolkit
-	15, // 10: ambient.protodef.GenericPlugin.Disable:input_type -> ambient.protodef.Empty
-	15, // 11: ambient.protodef.GenericPlugin.Routes:input_type -> ambient.protodef.Empty
-	15, // 12: ambient.protodef.GenericPlugin.Settings:input_type -> ambient.protodef.Empty
-	15, // 13: ambient.protodef.GenericPlugin.Assets:input_type -> ambient.protodef.Empty
-	10, // 14: ambient.protodef.GenericPlugin.FuncMap:input_type -> ambient.protodef.FuncMapRequest
+	14, // 10: ambient.protodef.GenericPlugin.Disable:input_type -> ambient.protodef.Empty
+	14, // 11: ambient.protodef.GenericPlugin.Routes:input_type -> ambient.protodef.Empty
+	14, // 12: ambient.protodef.GenericPlugin.Settings:input_type -> ambient.protodef.Empty
+	14, // 13: ambient.protodef.GenericPlugin.Assets:input_type -> ambient.protodef.Empty
+	14, // 14: ambient.protodef.GenericPlugin.FuncMap:input_type -> ambient.protodef.Empty
 	0,  // 15: ambient.protodef.GenericPlugin.PluginName:output_type -> ambient.protodef.PluginNameResponse
 	1,  // 16: ambient.protodef.GenericPlugin.PluginVersion:output_type -> ambient.protodef.PluginVersionResponse
 	2,  // 17: ambient.protodef.GenericPlugin.GrantRequests:output_type -> ambient.protodef.GrantRequestsResponse
 	5,  // 18: ambient.protodef.GenericPlugin.Enable:output_type -> ambient.protodef.EnableResponse
-	15, // 19: ambient.protodef.GenericPlugin.Disable:output_type -> ambient.protodef.Empty
-	15, // 20: ambient.protodef.GenericPlugin.Routes:output_type -> ambient.protodef.Empty
+	14, // 19: ambient.protodef.GenericPlugin.Disable:output_type -> ambient.protodef.Empty
+	14, // 20: ambient.protodef.GenericPlugin.Routes:output_type -> ambient.protodef.Empty
 	6,  // 21: ambient.protodef.GenericPlugin.Settings:output_type -> ambient.protodef.SettingsResponse
 	9,  // 22: ambient.protodef.GenericPlugin.Assets:output_type -> ambient.protodef.AssetsResponse
-	11, // 23: ambient.protodef.GenericPlugin.FuncMap:output_type -> ambient.protodef.FuncMapResponse
+	10, // 23: ambient.protodef.GenericPlugin.FuncMap:output_type -> ambient.protodef.FuncMapResponse
 	15, // [15:24] is the sub-list for method output_type
 	6,  // [6:15] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
@@ -950,18 +899,6 @@ func file_plugin_proto_init() {
 			}
 		}
 		file_plugin_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FuncMapRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_plugin_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*FuncMapResponse); i {
 			case 0:
 				return &v.state
@@ -980,7 +917,7 @@ func file_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_plugin_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -1014,7 +951,7 @@ type GenericPluginClient interface {
 	Routes(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 	Settings(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SettingsResponse, error)
 	Assets(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*AssetsResponse, error)
-	FuncMap(ctx context.Context, in *FuncMapRequest, opts ...grpc.CallOption) (*FuncMapResponse, error)
+	FuncMap(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*FuncMapResponse, error)
 }
 
 type genericPluginClient struct {
@@ -1097,7 +1034,7 @@ func (c *genericPluginClient) Assets(ctx context.Context, in *Empty, opts ...grp
 	return out, nil
 }
 
-func (c *genericPluginClient) FuncMap(ctx context.Context, in *FuncMapRequest, opts ...grpc.CallOption) (*FuncMapResponse, error) {
+func (c *genericPluginClient) FuncMap(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*FuncMapResponse, error) {
 	out := new(FuncMapResponse)
 	err := c.cc.Invoke(ctx, "/ambient.protodef.GenericPlugin/FuncMap", in, out, opts...)
 	if err != nil {
@@ -1116,7 +1053,7 @@ type GenericPluginServer interface {
 	Routes(context.Context, *Empty) (*Empty, error)
 	Settings(context.Context, *Empty) (*SettingsResponse, error)
 	Assets(context.Context, *Empty) (*AssetsResponse, error)
-	FuncMap(context.Context, *FuncMapRequest) (*FuncMapResponse, error)
+	FuncMap(context.Context, *Empty) (*FuncMapResponse, error)
 }
 
 // UnimplementedGenericPluginServer can be embedded to have forward compatible implementations.
@@ -1147,7 +1084,7 @@ func (*UnimplementedGenericPluginServer) Settings(context.Context, *Empty) (*Set
 func (*UnimplementedGenericPluginServer) Assets(context.Context, *Empty) (*AssetsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Assets not implemented")
 }
-func (*UnimplementedGenericPluginServer) FuncMap(context.Context, *FuncMapRequest) (*FuncMapResponse, error) {
+func (*UnimplementedGenericPluginServer) FuncMap(context.Context, *Empty) (*FuncMapResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FuncMap not implemented")
 }
 
@@ -1300,7 +1237,7 @@ func _GenericPlugin_Assets_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 func _GenericPlugin_FuncMap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncMapRequest)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1312,7 +1249,7 @@ func _GenericPlugin_FuncMap_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/ambient.protodef.GenericPlugin/FuncMap",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GenericPluginServer).FuncMap(ctx, req.(*FuncMapRequest))
+		return srv.(GenericPluginServer).FuncMap(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
