@@ -1,7 +1,6 @@
 package grpcp
 
 import (
-	"embed"
 	"html/template"
 	"net/http"
 
@@ -29,7 +28,7 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 	// Build a file system.
 	efs := avfs.NewFS()
 	for _, v := range req.Files {
-		efs.AddFile(v.Name, []byte(v.Body))
+		efs.AddFile(v.Name, v.Body)
 	}
 
 	err = m.Impl.Page(c.Response, c.Request, efs, req.Templatename, func(*http.Request) template.FuncMap {
@@ -76,7 +75,13 @@ func (m *GRPCRendererServer) Post(ctx context.Context, req *protodef.RendererPos
 		return &protodef.Empty{}, err
 	}
 
-	err = m.Impl.Post(c.Response, c.Request, embed.FS{}, req.Templatename, func(*http.Request) template.FuncMap {
+	// Build a file system.
+	efs := avfs.NewFS()
+	for _, v := range req.Files {
+		efs.AddFile(v.Name, v.Body)
+	}
+
+	err = m.Impl.Post(c.Response, c.Request, efs, req.Templatename, func(*http.Request) template.FuncMap {
 		for _, rawV := range req.Keys {
 			// Prevent race conditions.
 			v := rawV

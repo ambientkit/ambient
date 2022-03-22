@@ -33,6 +33,7 @@ message RendererPostRequest {
     string templatename = 2;
     google.protobuf.Struct vars = 3;
     repeated string keys = 4;
+    repeated EmbeddedFile files = 5;
 }
 
 message RendererPostContentRequest {
@@ -52,5 +53,5 @@ message RendererErrorRequest {
 
 message EmbeddedFile {
     string name = 1;
-    string body = 2;
+    bytes body = 2;
 }

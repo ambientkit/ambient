@@ -1,7 +1,6 @@
 package pluginsafe
 
 import (
-	"embed"
 	"html/template"
 	"net/http"
 	"os"
@@ -61,7 +60,7 @@ func (rr *TemplateRenderer) PageContent(w http.ResponseWriter, r *http.Request,
 
 // Post renders a post.
 func (rr *TemplateRenderer) Post(w http.ResponseWriter, r *http.Request,
-	assets embed.FS, templateName string, fm func(r *http.Request) template.FuncMap,
+	assets ambient.FileSystemReader, templateName string, fm func(r *http.Request) template.FuncMap,
 	vars map[string]interface{}) (err error) {
 	return rr.render.Post(w, r, assets, templateName, globalFuncMapCallable(r, fm), vars)
 }

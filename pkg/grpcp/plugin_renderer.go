@@ -2,7 +2,6 @@ package grpcp
 
 import (
 	"context"
-	"embed"
 	"html/template"
 	"io/fs"
 	"net/http"
@@ -63,7 +62,7 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 
 		files = append(files, &protodef.EmbeddedFile{
 			Name: path,
-			Body: string(b),
+			Body: b,
 		})
 		return nil
 	})
@@ -114,7 +113,7 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 }
 
 // Post handler.
-func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets embed.FS, templateName string,
+func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets ambient.FileSystemReader, templateName string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
 	pvars, err := MapToProtobufStruct(vars)
 	if err != nil {
@@ -130,9 +129,35 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 	rid := requestID(r)
 	l.Map[rid] = &FMContainer{
 		FuncMap: fm(r),
-		FS:      &assets,
+		FS:      assets,
 	}
 	defer delete(l.Map, rid)
+
+	files := make([]*protodef.EmbeddedFile, 0)
+
+	err = fs.WalkDir(assets, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		b, err := assets.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		files = append(files, &protodef.EmbeddedFile{
+			Name: path,
+			Body: b,
+		})
+		return nil
+	})
+	if err != nil {
+		return err
+	}
 
 	_, err = l.client.Post(context.Background(), &protodef.RendererPostRequest{
 		Requestid:    rid,
