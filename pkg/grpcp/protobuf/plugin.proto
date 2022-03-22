@@ -3,6 +3,7 @@ option go_package = "./;protodef";
 package ambient.protodef;
 
 import "empty.proto";
+import "renderer.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/struct.proto";
 
@@ -62,7 +63,7 @@ message SettingDescription {
 
 message AssetsResponse {
     repeated google.protobuf.Struct assets = 1;
-    // embeddedFS
+    repeated EmbeddedFile files = 2;
 }
 
 message FuncMapRequest {

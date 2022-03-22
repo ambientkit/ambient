@@ -2,7 +2,6 @@
 package ambient
 
 import (
-	"embed"
 	"html/template"
 	"io"
 	"net/http"
@@ -25,7 +24,7 @@ type Plugin interface {
 	Enable(*Toolkit) error                           // optional, called during enable
 	Disable() error                                  // optional, called during disable
 	Routes()                                         // optional, called during enable
-	Assets() ([]Asset, *embed.FS)                    // optional, called during enable
+	Assets() ([]Asset, FileSystemReader)             // optional, called during enable
 	Settings() []Setting                             // optional, called during special operations
 	GrantRequests() []GrantRequest                   // optional, called during every plugin operation against data provider
 	FuncMap() func(r *http.Request) template.FuncMap // optional, called on every render

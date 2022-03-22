@@ -1,12 +1,13 @@
 package secureconfig
 
 import (
-	"embed"
 	"io/fs"
+
+	"github.com/ambientkit/ambient"
 )
 
 // fileExists determines if an embedded file exists.
-func fileExists(assets *embed.FS, filename string) bool {
+func fileExists(assets ambient.FileSystemReader, filename string) bool {
 	// Use the root folder.
 	fsys, err := fs.Sub(assets, ".")
 	if err != nil {

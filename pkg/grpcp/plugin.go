@@ -1,6 +1,7 @@
 package grpcp
 
 import (
+	"io/fs"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
@@ -12,11 +13,12 @@ import (
 
 // GRPCPlugin is the plugin side implementation.
 type GRPCPlugin struct {
-	Impl    ambient.Plugin
-	broker  *plugin.GRPCBroker
-	toolkit *ambient.Toolkit
-	conn    *grpc.ClientConn
-	server  *grpc.Server
+	Impl             ambient.Plugin
+	broker           *plugin.GRPCBroker
+	toolkit          *ambient.Toolkit
+	conn             *grpc.ClientConn
+	server           *grpc.Server
+	funcMapperClient *GRPCFuncMapperServer
 }
 
 // PluginName handler.
@@ -56,6 +58,10 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 
 	logger := &GRPCLoggerPlugin{
 		client: protodef.NewLoggerClient(m.conn),
+	}
+
+	m.funcMapperClient = &GRPCFuncMapperServer{
+		client: protodef.NewFuncMapperClient(m.conn),
 	}
 
 	fnMap := make(map[string]func(http.ResponseWriter, *http.Request) error)
@@ -128,34 +134,52 @@ func (m *GRPCPlugin) Routes(ctx context.Context, req *protodef.Empty) (*protodef
 
 // Assets handler.
 func (m *GRPCPlugin) Assets(ctx context.Context, req *protodef.Empty) (*protodef.AssetsResponse, error) {
-	settings, _ := m.Impl.Assets()
+	settings, embedFS := m.Impl.Assets()
 
 	assets, err := ArrayToProtobufStruct(settings)
 	if err != nil {
 		return &protodef.AssetsResponse{}, err
 	}
 
-	// arr := make([]*protodef.Setting, 0)
-	// for _, v := range settings {
-	// 	any, err := InterfaceToProtobufAny(v.Default)
-	// 	if err != nil {
-	// 		m.toolkit.Log.Error("grpc-plugin: error on conversion: %v", err)
-	// 	}
+	files := make([]*protodef.EmbeddedFile, 0)
 
-	// 	arr = append(arr, &protodef.Setting{
-	// 		Name:        v.Name,
-	// 		Settingtype: string(v.Type),
-	// 		Description: &protodef.SettingDescription{
-	// 			Text: v.Description.Text,
-	// 			Url:  v.Description.URL,
-	// 		},
-	// 		Hide:    v.Hide,
-	// 		Default: any,
-	// 	})
-	// }
+	if embedFS == nil {
+		return &protodef.AssetsResponse{
+			Assets: assets,
+			Files:  files,
+		}, nil
+	}
+
+	err = fs.WalkDir(embedFS, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		b, err := embedFS.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		files = append(files, &protodef.EmbeddedFile{
+			Name: path,
+			Body: b,
+		})
+		return nil
+	})
+	if err != nil {
+		return &protodef.AssetsResponse{
+			Assets: assets,
+			Files:  files,
+		}, err
+	}
 
 	return &protodef.AssetsResponse{
 		Assets: assets,
+		Files:  files,
 	}, nil
 }
 
@@ -189,18 +213,23 @@ func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protod
 
 // FuncMap handler.
 func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.FuncMapRequest) (*protodef.FuncMapResponse, error) {
-	//fm := m.Impl.FuncMap()
-	//fm()
-
-	m.toolkit.Log.Error("grpc-plugin: NEED TO IMPLEMENT. FuncMap() hit! Request id:", req.Requestid)
-
-	fmfn := m.Impl.FuncMap()
-	fm := fmfn(nil)
+	m.toolkit.Log.Error("grpc-plugin: FuncMap called.")
+	fn := m.Impl.FuncMap()
+	r, _ := http.NewRequest("GET", "/", nil)
+	fm := fn(r)
 
 	keys := make([]string, 0)
 	for k := range fm {
 		keys = append(keys, k)
 	}
+
+	// TODO: I just coped this in, I need to figure out how to get the right request ID and then request.
+	// rid := requestID(r)
+	// m.Map[rid] = &FMContainer{
+	// 	FuncMap: fm(r),
+	// 	FS:      nil,
+	// }
+	// defer delete(l.Map, rid)
 
 	return &protodef.FuncMapResponse{
 		Keys: keys,

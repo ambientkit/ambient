@@ -160,7 +160,7 @@ func (p *Plugin) Settings() []ambient.Setting {
 }
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
+func (p *Plugin) Assets() ([]ambient.Asset, ambient.FileSystemReader) {
 	arr := make([]ambient.Asset, 0)
 
 	siteTitle, err := p.Site.Title()
@@ -174,22 +174,22 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 		})
 	}
 
-	// arr = append(arr, ambient.Asset{
-	// 	Filetype:   ambient.AssetGeneric,
-	// 	Location:   ambient.LocationHead,
-	// 	TagName:    "link",
-	// 	ClosingTag: false,
-	// 	Attributes: []ambient.Attribute{
-	// 		{
-	// 			Name:  "rel",
-	// 			Value: "canonical",
-	// 		},
-	// 		{
-	// 			Name:  "href",
-	// 			Value: `{{if .canonical}}{{.canonical}}{{else}}{{bearblog_PageURL}}{{end}}`,
-	// 		},
-	// 	},
-	// })
+	arr = append(arr, ambient.Asset{
+		Filetype:   ambient.AssetGeneric,
+		Location:   ambient.LocationHead,
+		TagName:    "link",
+		ClosingTag: false,
+		Attributes: []ambient.Attribute{
+			{
+				Name:  "rel",
+				Value: "canonical",
+			},
+			{
+				Name:  "href",
+				Value: `{{if .canonical}}{{.canonical}}{{else}}{{hello_Cool}}{{end}}`,
+			},
+		},
+	})
 
 	// arr = append(arr, ambient.Asset{
 	// 	Path:     "template/partial/nav.tmpl",
@@ -206,13 +206,16 @@ func (p *Plugin) Assets() ([]ambient.Asset, *embed.FS) {
 	// })
 
 	//return arr, &assets
-	return arr, nil
+	return arr, &assets
 }
 
 // FuncMap returns a callable function that accepts a request.
 func (p *Plugin) FuncMap() func(r *http.Request) template.FuncMap {
 	return func(r *http.Request) template.FuncMap {
 		fm := make(template.FuncMap)
+		fm["hello_Cool"] = func() string {
+			return "cool"
+		}
 		fm["hello_Foo"] = func(name string) string {
 			return "hello: " + name
 		}

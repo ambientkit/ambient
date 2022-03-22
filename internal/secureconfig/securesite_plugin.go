@@ -2,7 +2,6 @@ package secureconfig
 
 import (
 	"bytes"
-	"embed"
 	"fmt"
 	"net/http"
 	"path"
@@ -176,7 +175,7 @@ func SaveRoutesForPlugin(name string, recorder *pluginsafe.PluginRouteRecorder, 
 	pluginsystem.SetRoute(name, arr)
 }
 
-func embeddedAssets(mux ambient.Router, sess ambient.AppSession, pluginName string, files []ambient.Asset, assets *embed.FS) error {
+func embeddedAssets(mux ambient.Router, sess ambient.AppSession, pluginName string, files []ambient.Asset, assets ambient.FileSystemReader) error {
 	for _, unsafeFile := range files {
 		// Recreate the variable when using closures:
 		// https://golang.org/doc/faq#closures_and_goroutines

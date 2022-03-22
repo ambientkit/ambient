@@ -1,11 +1,11 @@
 package grpcp
 
 import (
-	"embed"
 	"html/template"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/pkg/avfs"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	plugin "github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
@@ -14,12 +14,13 @@ import (
 
 // GRPCServer is the server side implementation.
 type GRPCServer struct {
-	broker  *plugin.GRPCBroker
-	client  protodef.GenericPluginClient
-	toolkit *ambient.Toolkit
-	conn    *grpc.ClientConn
-	server  *grpc.Server
-	reqmap  *RequestMap
+	broker           *plugin.GRPCBroker
+	client           protodef.GenericPluginClient
+	toolkit          *ambient.Toolkit
+	conn             *grpc.ClientConn
+	server           *grpc.Server
+	reqmap           *RequestMap
+	funcMapperClient *GRPCFuncMapperServer
 }
 
 // PluginName handler.
@@ -45,6 +46,8 @@ func (m *GRPCServer) PluginVersion() string {
 // Enable handler.
 func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 	toolkit.Log.Debug("grpc-server: enabled called")
+
+	funcMapMap := make(map[string]*FMContainer)
 
 	m.reqmap = NewRequestMap()
 	m.toolkit = toolkit
@@ -74,6 +77,13 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 		protodef.RegisterRouterServer(m.server, routerServer)
 		protodef.RegisterSiteServer(m.server, siteServer)
 		protodef.RegisterRendererServer(m.server, rendererServer)
+		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
+			Impl: &FuncMapperImpl{
+				Log: m.toolkit.Log,
+				Map: funcMapMap,
+			},
+			Log: m.toolkit.Log,
+		})
 
 		return m.server
 	}
@@ -100,6 +110,7 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 	rendererServer.FuncMapperClient = &GRPCFuncMapperServer{
 		client: protodef.NewFuncMapperClient(m.conn),
 	}
+	m.funcMapperClient = rendererServer.FuncMapperClient
 
 	return nil
 }
@@ -117,23 +128,17 @@ func (m *GRPCServer) Disable() error {
 // Routes handler.
 func (m *GRPCServer) Routes() {
 	if m.server == nil || m.toolkit == nil || m.toolkit.Log == nil {
-		return //fmt.Errorf("grpc-server: plugin is disabled")
+		return
 	}
-
-	m.toolkit.Log.Warn("grpc-server: routes called")
 
 	_, err := m.client.Routes(context.Background(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("grpc-server: error calling routes: %v", err)
 	}
-
-	m.toolkit.Log.Warn("grpc-server: routes called END")
-
-	//return err
 }
 
 // Assets handler.
-func (m *GRPCServer) Assets() ([]ambient.Asset, *embed.FS) {
+func (m *GRPCServer) Assets() ([]ambient.Asset, ambient.FileSystemReader) {
 	resp, err := m.client.Assets(context.Background(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("grpc-server: error calling Assets: %v", err)
@@ -145,7 +150,13 @@ func (m *GRPCServer) Assets() ([]ambient.Asset, *embed.FS) {
 		m.toolkit.Log.Error("grpc-server: error calling Assets conversion: %v", err)
 	}
 
-	return assets, nil
+	// Build a file system.
+	efs := avfs.NewFS()
+	for _, v := range resp.Files {
+		efs.AddFile(v.Name, v.Body)
+	}
+
+	return assets, efs
 }
 
 // Settings handler.
@@ -203,19 +214,21 @@ func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
 // FuncMap handler.
 func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 	// Give me back a list of keys that are callable.
-	_, err := m.client.FuncMap(context.Background(), &protodef.FuncMapRequest{
+	resp, err := m.client.FuncMap(context.Background(), &protodef.FuncMapRequest{
 		//Requestid: requestID(r),
 	})
 	if err != nil {
 		m.toolkit.Log.Error("grpc-server: error calling FuncMap: %v", err)
 	}
 
+	m.toolkit.Log.Error("grpc-server: FuncMap called.")
+
 	// c := m.reqmap.Load(resp.Funcmapid)
 	// if err != nil {
 	// 	m.toolkit.Log.Error("grpc-server: error calling FuncMap reqmap load: %v", err)
 	// }
 
-	return func(r *http.Request) template.FuncMap {
+	return func(req *http.Request) template.FuncMap {
 		fm := make(template.FuncMap)
 		// c := m.reqmap.Load(requestID(r))
 		// for _, v := range resp.Keys {
@@ -224,6 +237,17 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 		// 		return "cool"
 		// 	}
 		// }
+
+		for _, rawV := range resp.Keys {
+			// Prevent race conditions.
+			v := rawV
+			fm[v] = func(args ...interface{}) (interface{}, error) {
+				// FIXME: Not sure what the requestID is.
+				m.toolkit.Log.Error("HIT FUNCMAP: %v", requestID(req))
+				val, err := m.funcMapperClient.Do(requestID(req), v, args)
+				return val, err
+			}
+		}
 
 		return fm
 	}
