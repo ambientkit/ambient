@@ -156,6 +156,11 @@ func loadStorage(log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) 
 	return storage, ss, err
 }
 
+// StopGRPCClients stops the gRPC plugins.
+func (app *App) StopGRPCClients() {
+	app.pluginsystem.StopGRPCClients()
+}
+
 // Handler loads the plugins and returns the handler.
 func (app *App) Handler() (http.Handler, error) {
 	// Get the session manager from the plugins.
@@ -210,16 +215,10 @@ func (app *App) Handler() (http.Handler, error) {
 
 	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
-	securesite := secureconfig.NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder)
-
-	// Load the plugin pages.
-	err := securesite.LoadAllPluginPages()
+	securesite, handler, err := secureconfig.NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder, true)
 	if err != nil {
 		return nil, err
 	}
-
-	// Enable the middleware from the plugins.
-	handler := securesite.LoadAllPluginMiddleware()
 
 	// Start Dev Console if enabled via environment variable.
 	if envdetect.DevConsoleEnabled() {
@@ -290,7 +289,7 @@ func (app *App) SetEscapeTemplates(enable bool) {
 // ListenAndServe will start the web listener on port 8080 or will pull the
 // environment variable from:
 // PORT (GCP), _LAMBDA_SERVER_PORT (AWS), or FUNCTIONS_CUSTOMHANDLER_PORT (Azure).
-func (app *App) ListenAndServe(h http.Handler) {
+func (app *App) ListenAndServe(h http.Handler) error {
 	// Start the web server. Google Cloud uses standardized PORT env variable.
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -312,7 +311,7 @@ func (app *App) ListenAndServe(h http.Handler) {
 	app.handleExit()
 
 	app.log.Info("ambient: web server listening on port: %v", port)
-	app.log.Fatal("", http.ListenAndServe(":"+port, h))
+	return http.ListenAndServe(":"+port, h)
 }
 
 // handleExit will handle app shutdown when Ctrl+c is pressed.
@@ -321,16 +320,19 @@ func (app *App) handleExit() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		app.cleanup()
+		app.CleanUp()
 		os.Exit(0)
 	}()
 }
 
-// cleanup runs the final steps to ensure the server shutdown doesn't leave
+// CleanUp runs the final steps to ensure the server shutdown doesn't leave
 // the app in a bad state.
-func (app *App) cleanup() {
+func (app *App) CleanUp() {
 	var err error
 	app.log.Info("ambient: shutdown started")
+
+	app.log.Info("ambient: stopping gRPC plugins")
+	app.StopGRPCClients()
 
 	// Load decrypted just in case the storage was decrypted by AMB.
 	app.log.Info("ambient: loading storage")

@@ -1,0 +1,57 @@
+syntax = "proto3";
+option go_package = "./;protodef";
+package ambient.protodef;
+
+import "empty.proto";
+import "google/protobuf/struct.proto";
+
+service Renderer {
+    rpc Page(RendererPageRequest) returns (Empty) {}
+    rpc PageContent(RendererPageContentRequest) returns (Empty) {}
+    rpc Post(RendererPostRequest) returns (Empty) {}
+    rpc PostContent(RendererPostContentRequest) returns (Empty) {}
+    rpc Error(RendererErrorRequest) returns (Empty) {}
+}
+
+message RendererPageRequest {
+    string requestid = 1;
+    string templatename = 2;
+    google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
+    repeated EmbeddedFile files = 5;
+}
+
+message RendererPageContentRequest {
+    string requestid = 1;
+    string content = 2;
+    google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
+}
+
+message RendererPostRequest {
+    string requestid = 1;
+    string templatename = 2;
+    google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
+    repeated EmbeddedFile files = 5;
+}
+
+message RendererPostContentRequest {
+    string requestid = 1;
+    string content = 2;
+    google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
+}
+
+message RendererErrorRequest {
+    string requestid = 1;
+    string content = 2;
+    google.protobuf.Struct vars = 3;
+    repeated string keys = 4;
+    uint32 statuscode = 5;
+}
+
+message EmbeddedFile {
+    string name = 1;
+    bytes body = 2;
+}

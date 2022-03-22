@@ -4,13 +4,13 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/config"
+	"github.com/ambientkit/ambient/internal/amberror"
 )
 
 // AuthenticatedUser returns if the current user is authenticated.
 func (ss *SecureSite) AuthenticatedUser(r *http.Request) (string, error) {
 	if !ss.Authorized(ambient.GrantUserAuthenticatedRead) {
-		return "false", config.ErrAccessDenied
+		return "", amberror.ErrAccessDenied
 	}
 
 	return ss.sess.AuthenticatedUser(r)
@@ -19,7 +19,7 @@ func (ss *SecureSite) AuthenticatedUser(r *http.Request) (string, error) {
 // UserLogin sets the current user as authenticated.
 func (ss *SecureSite) UserLogin(r *http.Request, username string) error {
 	if !ss.Authorized(ambient.GrantUserAuthenticatedWrite) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	ss.sess.Login(r, username)
@@ -30,7 +30,7 @@ func (ss *SecureSite) UserLogin(r *http.Request, username string) error {
 // UserPersist sets the user session to retain after browser close.
 func (ss *SecureSite) UserPersist(r *http.Request, persist bool) error {
 	if !ss.Authorized(ambient.GrantUserPersistWrite) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	ss.sess.Persist(r, persist)
@@ -41,7 +41,7 @@ func (ss *SecureSite) UserPersist(r *http.Request, persist bool) error {
 // UserLogout logs out the current user.
 func (ss *SecureSite) UserLogout(r *http.Request) error {
 	if !ss.Authorized(ambient.GrantUserAuthenticatedWrite) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	ss.sess.Logout(r)
@@ -52,7 +52,7 @@ func (ss *SecureSite) UserLogout(r *http.Request) error {
 // LogoutAllUsers logs out all users.
 func (ss *SecureSite) LogoutAllUsers(r *http.Request) error {
 	if !ss.Authorized(ambient.GrantAllUserAuthenticatedWrite) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	ss.sess.LogoutAll(r)

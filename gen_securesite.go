@@ -21,6 +21,9 @@ type SecureSite interface {
 	NeighborPluginGrants(pluginName string) (map[Grant]bool, error)
 	// NeighborPluginGranted returns true if the plugin has the grant.
 	NeighborPluginGranted(pluginName string, grantName Grant) (bool, error)
+	// NeighborPluginRequestedGrant returns true if the plugin requests the grant.
+	// This shouldn't be used to determine if a plugin has been approved the grant.
+	NeighborPluginRequestedGrant(pluginName string, grantName Grant) (bool, error)
 	// SetNeighborPluginGrant sets a grant for a neighbor plugin.
 	SetNeighborPluginGrant(pluginName string, grantName Grant, granted bool) error
 	// Plugins returns the plugin list.
@@ -31,14 +34,8 @@ type SecureSite interface {
 	DeletePlugin(name string) error
 	// EnablePlugin enables a plugin.
 	EnablePlugin(pluginName string, loadPlugin bool) error
-	// LoadAllPluginPages loads all of the pages from the plugins.
-	LoadAllPluginPages() error
 	// DisablePlugin disables a plugin.
 	DisablePlugin(pluginName string, unloadPlugin bool) error
-	// LoadAllPluginMiddleware returns a handler that is wrapped in conditional
-	// middlware from the plugins. This only needs to be run once at start up
-	// and should never be called again.
-	LoadAllPluginMiddleware() http.Handler
 	// SavePost saves a post.
 	SavePost(ID string, post Post) error
 	// PostsAndPages returns the list of posts and pages.
@@ -110,10 +107,10 @@ type SecureSite interface {
 	FullURL() (string, error)
 	// Updated returns the home last updated timestamp.
 	Updated() (time.Time, error)
-	// Tags returns the list of tags.
-	Tags(onlyPublished bool) (TagList, error)
 	// SetContent sets the home page content.
 	SetContent(content string) error
 	// Content returns the site home page content.
 	Content() (string, error)
+	// Tags returns the list of tags.
+	Tags(onlyPublished bool) (TagList, error)
 }

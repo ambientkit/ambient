@@ -1,7 +1,6 @@
 package ambient
 
 import (
-	"embed"
 	"html/template"
 	"net/http"
 )
@@ -26,7 +25,7 @@ func (p *PluginBase) Disable() error {
 func (p *PluginBase) Routes() {}
 
 // Assets returns a list of assets and an embedded filesystem.
-func (p *PluginBase) Assets() ([]Asset, *embed.FS) {
+func (p *PluginBase) Assets() ([]Asset, FileSystemReader) {
 	return nil, nil
 }
 

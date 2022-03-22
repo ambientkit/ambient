@@ -1,0 +1,18 @@
+<a class="title" href="{{URLPrefix}}/">
+    <h2>{{bearblog_SiteSubtitle}}</h2>
+</a>
+<nav>
+    {{if bearblog_Authenticated}}
+    <a href="{{URLPrefix}}/dashboard">Dashboard</a>
+    <a href="{{URLPrefix}}/dashboard/posts">Edit Blog</a>
+    <a href="{{URLPrefix}}/dashboard/plugins">Plugins</a>
+    {{end}}
+    <a href="{{URLPrefix}}/">Home</a>
+    {{range $p := bearblog_PublishedPages}}
+    <a href="{{URLPrefix}}/{{.URL}}">{{.Title}}</a>
+    {{end}}
+    <a href="{{URLPrefix}}/blog">Blog</a>
+    {{if bearblog_Authenticated}}
+    <a href="{{URLPrefix}}/dashboard/logout">Logout</a>
+    {{end}}
+</nav>

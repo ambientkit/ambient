@@ -25,4 +25,3 @@ thumbs.db
 /package-lock.json
 /deploy/azure/ambient
 /deploy/azure/ambient/tmp
-/cmd

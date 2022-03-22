@@ -8,6 +8,8 @@ import (
 
 // PluginSystem provides config functions.
 type PluginSystem interface {
+	// StopGRPCClients stops the gRPC clients.
+	StopGRPCClients()
 	// SessionManager returns the session manager.
 	SessionManager() SessionManagerPlugin
 	// TemplateEngine returns the template engine.

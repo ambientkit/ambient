@@ -1,0 +1,71 @@
+syntax = "proto3";
+option go_package = "./;protodef";
+package ambient.protodef;
+
+import "empty.proto";
+import "renderer.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+
+service GenericPlugin {
+    rpc PluginName(Empty) returns (PluginNameResponse) {}
+    rpc PluginVersion(Empty) returns (PluginVersionResponse) {}
+    rpc GrantRequests(Empty) returns (GrantRequestsResponse) {}
+    rpc Enable(Toolkit) returns (EnableResponse) {}
+    rpc Disable(Empty) returns (Empty) {}
+    rpc Routes(Empty) returns (Empty) {}
+    rpc Settings(Empty) returns (SettingsResponse) {}
+    rpc Assets(Empty) returns (AssetsResponse) {}
+    rpc FuncMap(Empty) returns (FuncMapResponse) {}
+}
+
+message PluginNameResponse {
+    string name = 1;
+}
+
+message PluginVersionResponse {
+    string version = 1;
+}
+
+message GrantRequestsResponse {
+    repeated GrantRequest grantrequest = 1;
+}
+
+message GrantRequest {
+    string grant = 1;
+    string description = 2;
+}
+
+message Toolkit {
+    uint32 uid = 1;
+}
+
+message EnableResponse {
+    uint32 uid = 1;
+}
+
+message SettingsResponse {
+    repeated Setting settings = 1;
+}
+
+message Setting {
+    string name = 1;
+    string settingtype = 2;
+    SettingDescription description = 3;
+    bool hide = 4;
+    google.protobuf.Any default = 5;
+}
+
+message SettingDescription {
+    string text = 1;
+    string url = 2;
+}
+
+message AssetsResponse {
+    repeated google.protobuf.Struct assets = 1;
+    repeated EmbeddedFile files = 2;
+}
+
+message FuncMapResponse {
+    repeated string keys = 1;
+}

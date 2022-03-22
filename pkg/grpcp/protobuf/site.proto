@@ -1,0 +1,366 @@
+syntax = "proto3";
+option go_package = "./;protodef";
+package ambient.protodef;
+
+import "empty.proto";
+import "plugin.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+service Site {
+	rpc Load(Empty) returns (Empty) {}
+    rpc Authorized(SiteAuthorizedRequest) returns (SiteAuthorizedResponse) {}
+    rpc NeighborPluginGrantList(SiteNeighborPluginGrantListRequest) returns (SiteNeighborPluginGrantListResponse) {}
+    rpc NeighborPluginGrants(SiteNeighborPluginGrantsRequest) returns (SiteNeighborPluginGrantsResponse) {}
+    rpc NeighborPluginGranted(SiteNeighborPluginGrantedRequest) returns (SiteNeighborPluginGrantedResponse) {}
+    rpc NeighborPluginRequestedGrant(SiteNeighborPluginRequestedGrantRequest) returns (SiteNeighborPluginRequestedGrantResponse) {}
+    rpc SetNeighborPluginGrant(SiteSetNeighborPluginGrantRequest) returns (Empty) {}
+    rpc Plugins(Empty) returns (SitePluginsResponse) {}
+    rpc PluginNames(Empty) returns (SitePluginNamesResponse) {}
+    rpc DeletePlugin(SiteDeletePluginRequest) returns (Empty) {}
+    rpc EnablePlugin(SiteEnablePluginRequest) returns (Empty) {}
+    rpc DisablePlugin(SiteDisablePluginRequest) returns (Empty) {}
+    rpc SavePost(SiteSavePostRequest) returns (Empty) {}
+    rpc PostsAndPages(SitePostsAndPagesRequest) returns (SitePostsAndPagesResponse) {}
+    rpc PublishedPosts(Empty) returns (SitePublishedPostsResponse) {}
+    rpc PublishedPages(Empty) returns (SitePublishedPagesResponse) {}
+    rpc PostBySlug(SitePostBySlugRequest) returns (SitePostBySlugResponse) {}
+    rpc PostByID(SitePostByIDRequest) returns (SitePostByIDResponse) {}
+    rpc DeletePostByID(SiteDeletePostByIDRequest) returns (Empty) {}
+    rpc PluginNeighborRoutesList(SitePluginNeighborRoutesListRequest) returns (SitePluginNeighborRoutesListResponse) {}
+    rpc UserPersist(SiteUserPersistRequest) returns (Empty) {}
+    rpc UserLogin(SiteUserLoginRequest) returns (Empty) {}
+    rpc AuthenticatedUser(SiteAuthenticatedUserRequest) returns (SiteAuthenticatedUserResponse) {}
+    rpc UserLogout(SiteUserLogoutRequest) returns (Empty) {}
+    rpc LogoutAllUsers(SiteLogoutAllUsersRequest) returns (Empty) {}
+    rpc SetCSRF(SiteSetCSRFRequest) returns (SiteSetCSRFResponse) {}
+    rpc CSRF(SiteCSRFRequest) returns (SiteCSRFResponse) {}
+    rpc SessionValue(SiteSessionValueRequest) returns (SiteSessionValueResponse) {}
+    rpc SetSessionValue(SiteSetSessionValueRequest) returns (Empty) {}
+    rpc DeleteSessionValue(SiteDeleteSessionValueRequest) returns (Empty) {}
+    rpc PluginNeighborSettingsList(SitePluginNeighborSettingsListRequest) returns (SitePluginNeighborSettingsListResponse) {}
+    rpc SetPluginSetting(SiteSetPluginSettingRequest) returns (Empty) {}
+    rpc PluginSettingBool(SitePluginSettingBoolRequest) returns (SitePluginSettingBoolResponse) {}
+    rpc PluginSettingString(SitePluginSettingStringRequest) returns (SitePluginSettingStringResponse) {}
+    rpc PluginSetting(SitePluginSettingRequest) returns (SitePluginSettingResponse) {}
+    rpc SetNeighborPluginSetting(SiteSetNeighborPluginSettingRequest) returns (Empty) {}
+    rpc NeighborPluginSettingString(SiteNeighborPluginSettingStringRequest) returns (SiteNeighborPluginSettingStringResponse) {}
+    rpc NeighborPluginSetting(SiteNeighborPluginSettingRequest) returns (SiteNeighborPluginSettingResponse) {}
+    rpc PluginTrusted(SitePluginTrustedRequest) returns (SitePluginTrustedResponse) {}
+    rpc SetTitle(SiteSetTitleRequest) returns (Empty) {}
+    rpc Title(Empty) returns (SiteTitleResponse) {}
+    rpc SetScheme(SiteSetSchemeRequest) returns (Empty) {}
+    rpc Scheme(Empty) returns (SiteSchemeResponse) {}
+    rpc SetURL(SiteSetURLRequest) returns (Empty) {}
+    rpc URL(Empty) returns (SiteURLResponse) {}
+    rpc FullURL(Empty) returns (SiteFullURLResponse) {}
+    rpc Updated(Empty) returns (SiteUpdatedResponse) {}
+    rpc SetContent(SiteSetContentRequest) returns (Empty) {}
+    rpc Content(Empty) returns (SiteContentResponse) {}
+    rpc Tags(SiteTagsRequest) returns (SiteTagsResponse) {}
+}
+
+message SiteAuthorizedRequest {
+    string grant = 1;
+}
+
+message SiteAuthorizedResponse {
+    bool authorized = 1;
+}
+
+message SiteNeighborPluginGrantListRequest {
+    string pluginname = 1;
+}
+
+message SiteNeighborPluginGrantListResponse {
+    repeated GrantRequest grants = 1;
+}
+
+message SiteNeighborPluginGrantsRequest {
+    string pluginname = 1;
+}
+
+message SiteNeighborPluginGrantsResponse {
+    google.protobuf.Struct grants = 1;
+}
+
+message SiteNeighborPluginGrantedRequest {
+    string pluginname = 1;
+    string grant = 2;
+}
+
+message SiteNeighborPluginGrantedResponse {
+    bool granted = 1;
+}
+
+message SiteNeighborPluginRequestedGrantRequest {
+    string pluginname = 1;
+    string grant = 2;
+}
+
+message SiteNeighborPluginRequestedGrantResponse {
+    bool granted = 1;
+}
+
+message SiteSetNeighborPluginGrantRequest {
+    string pluginname = 1;
+    string grant = 2;
+    bool granted = 3;
+}
+
+message SitePluginsResponse {
+    google.protobuf.Struct plugindata = 1;
+}
+
+message SitePluginNamesResponse {
+    repeated string names = 1;
+}
+
+message SiteDeletePluginRequest {
+    string name = 1;
+}
+
+message SiteEnablePluginRequest {
+    string name = 1;
+    bool load = 2;
+}
+
+message SiteDisablePluginRequest {
+    string name = 1;
+    bool unload = 2;
+}
+
+message SiteSavePostRequest {
+    string id = 1;
+    google.protobuf.Struct post = 2;
+}
+
+message SitePostsAndPagesRequest {
+    bool onlypublished = 1;
+}
+
+message SitePostsAndPagesResponse {
+    repeated google.protobuf.Struct postwithidlist = 1;
+}
+
+message SitePublishedPostsResponse {
+    repeated google.protobuf.Struct posts = 1;
+}
+
+message SitePublishedPagesResponse {
+    repeated google.protobuf.Struct posts = 1;
+}
+
+message SitePostBySlugRequest {
+    string slug = 1;
+}
+
+message SitePostBySlugResponse {
+    google.protobuf.Struct post = 1;
+}
+
+message SitePostByIDRequest {
+    string id = 1;
+}
+
+message SitePostByIDResponse {
+    google.protobuf.Struct post = 1;
+}
+
+message SiteDeletePostByIDRequest {
+    string id = 1;
+}
+
+message SitePluginNeighborRoutesListRequest {
+    string pluginname = 1;
+}
+
+message SitePluginNeighborRoutesListResponse {
+    repeated google.protobuf.Struct routes = 1;
+}
+
+message SiteUserPersistRequest {
+    string requestid = 1;
+    bool persist = 2;
+}
+
+message SiteUserLoginRequest {
+    string requestid = 1;
+    string username = 2;
+} 
+
+message SiteAuthenticatedUserRequest {
+    string requestid = 1;
+}
+
+message SiteAuthenticatedUserResponse {
+    string username = 1;
+}
+
+message SiteUserLogoutRequest {
+    string requestid = 1;
+}
+
+message SiteLogoutAllUsersRequest {
+    string requestid = 1;
+}
+
+message SiteSetCSRFRequest {
+    string requestid = 1;
+}
+
+message SiteSetCSRFResponse {
+    string token = 1;
+}
+
+message SiteCSRFRequest {
+    string requestid = 1;
+    string token = 2;
+}
+
+message SiteCSRFResponse {
+    bool valid = 1;
+}
+
+message SiteSessionValueRequest {
+    string requestid = 1;
+    string name = 2;
+}
+
+message SiteSessionValueResponse {
+    string value = 1;
+}
+
+message SiteSetSessionValueRequest {
+    string requestid = 1;
+    string name = 2;
+    string value = 3;
+}
+
+message SiteDeleteSessionValueRequest {
+    string requestid = 1;
+    string name = 2;
+}
+
+message SitePluginNeighborSettingsListRequest {
+    string pluginname = 1;
+}
+
+message SitePluginNeighborSettingsListResponse {
+    repeated google.protobuf.Struct settings = 1;
+}
+
+message SiteSetPluginSettingRequest {
+    string settingname = 1;
+    string value = 2;
+}
+
+message SitePluginSettingBoolRequest {
+    string fieldname = 1;
+}
+
+message SitePluginSettingBoolResponse {
+    bool value = 1;
+}
+
+message SitePluginSettingStringRequest {
+    string fieldname = 1;
+}
+
+message SitePluginSettingStringResponse {
+    string value = 1;
+}
+
+message SitePluginSettingRequest {
+    string fieldname = 1;
+}
+
+message SitePluginSettingResponse {
+    google.protobuf.Any value = 1;
+}
+
+message SiteSetNeighborPluginSettingRequest {
+    string pluginname = 1;
+    string settingname = 2;
+    string settingvalue = 3;
+}
+
+message SiteNeighborPluginSettingStringRequest {
+    string pluginname = 1;
+    string fieldname = 2; 
+}
+
+message SiteNeighborPluginSettingStringResponse {
+    string value = 1;
+}
+
+message SiteNeighborPluginSettingRequest {
+    string pluginname = 1;
+    string fieldname = 2; 
+}
+
+message SiteNeighborPluginSettingResponse {
+    google.protobuf.Any value = 1;
+}
+
+message SitePluginTrustedRequest {
+    string pluginname = 1;
+}
+
+message SitePluginTrustedResponse {
+    bool trusted = 1;
+}
+
+message SiteSetTitleRequest {
+    string title = 1;
+}
+
+message SiteTitleResponse {
+    string title = 1;
+}
+
+message SiteSetSchemeRequest {
+    string scheme = 1;
+}
+
+message SiteSchemeResponse {
+    string scheme = 1;
+}
+
+message SiteSetURLRequest {
+    string url = 1;
+}
+
+message SiteURLResponse {
+    string url = 1;
+}
+
+message SiteFullURLResponse {
+    string fullurl = 1;
+}
+
+message SiteUpdatedResponse {
+    google.protobuf.Timestamp timestamp = 1;
+}
+
+message SiteSetContentRequest {
+    string content = 1;
+}
+
+message SiteContentResponse {
+    string content = 1;
+}
+
+message SiteTagsRequest {
+    bool onlypublished = 1;
+}
+
+message SiteTagsResponse {
+    repeated Tag tags = 1;
+}
+
+message Tag {
+    string name = 1;
+    google.protobuf.Timestamp timestamp = 2;
+}

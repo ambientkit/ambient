@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/internal/amberror"
 )
 
 // SetTitle sets the title.
@@ -95,7 +96,7 @@ func (p *PluginSystem) PostBySlug(slug string) ambient.PostWithID {
 func (p *PluginSystem) PostByID(ID string) (ambient.Post, error) {
 	post, ok := p.storage.site.Posts[ID]
 	if !ok {
-		return ambient.Post{}, ErrNotFound
+		return ambient.Post{}, amberror.ErrNotFound
 	}
 
 	return post, nil

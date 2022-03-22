@@ -1,0 +1,16 @@
+syntax = "proto3";
+option go_package = "./;protodef";
+package ambient.protodef;
+
+import "empty.proto";
+
+service Logger {
+    rpc Debug(LogFormat) returns (Empty) {}
+    rpc Info(LogFormat) returns (Empty) {}
+    rpc Warn(LogFormat) returns (Empty) {}
+    rpc Error(LogFormat) returns (Empty) {}
+}
+
+message LogFormat {
+    string format = 1;
+}

@@ -1,0 +1,53 @@
+syntax = "proto3";
+option go_package = "./;protodef";
+package ambient.protodef;
+
+import "empty.proto";
+
+service Router {
+    rpc Handle(RouterRequest) returns (Empty) {}
+    rpc Get(RouterRequest) returns (Empty) {}
+    rpc Post(RouterRequest) returns (Empty) {}
+    rpc Patch(RouterRequest) returns (Empty) {}
+    rpc Put(RouterRequest) returns (Empty) {}
+    rpc Delete(RouterRequest) returns (Empty) {}
+    rpc Head(RouterRequest) returns (Empty) {}
+    rpc Options(RouterRequest) returns (Empty) {}
+    //rpc StatusError(RouterStatusErrorRequest) returns (Empty) {}
+    rpc Error(RouterErrorRequest) returns (Empty) {}
+    rpc Param(RouterParamRequest) returns (RouterParamResponse) {}
+    // rpc Wrap(RouterRequest) returns (Empty) {}
+
+	// Handle(method string, path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Get(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Post(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Patch(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Put(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Delete(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Head(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Options(path string, fn func(http.ResponseWriter, *http.Request) (int, error))
+	// Error(status int, w http.ResponseWriter, r *http.Request)
+	// Param(r *http.Request, name string) string
+	// Wrap(handler http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) (err error)
+
+}
+
+message RouterRequest {
+    uint32 uid = 1;
+    string method = 2;
+    string path = 3;
+}
+
+message RouterParamRequest {
+    string name = 1;
+    string requestid = 2;
+}
+
+message RouterParamResponse {
+    string value = 1;
+}
+
+message RouterErrorRequest {
+    uint32 status = 1;
+    string requestid = 2;
+}

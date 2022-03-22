@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/config"
+	"github.com/ambientkit/ambient/internal/amberror"
 	"github.com/ambientkit/ambient/internal/pluginsafe"
 )
 
@@ -25,8 +25,8 @@ type SecureSite struct {
 
 // NewSecureSite returns a new secure site.
 func NewSecureSite(pluginName string, log ambient.AppLogger, ps ambient.PluginSystem,
-	session ambient.AppSession, mux ambient.AppRouter, render ambient.Renderer, recorder *pluginsafe.RouteRecorder) *SecureSite {
-	return &SecureSite{
+	session ambient.AppSession, mux ambient.AppRouter, render ambient.Renderer, recorder *pluginsafe.RouteRecorder, loadPlugins bool) (*SecureSite, http.Handler, error) {
+	ss := &SecureSite{
 		pluginName: pluginName,
 
 		log:          log,
@@ -36,24 +36,40 @@ func NewSecureSite(pluginName string, log ambient.AppLogger, ps ambient.PluginSy
 		render:       render,
 		recorder:     recorder,
 	}
+
+	if loadPlugins {
+		err := ss.loadAllPluginPages()
+		if err != nil {
+			return nil, nil, err
+		}
+
+		return ss, ss.loadAllPluginMiddleware(), nil
+	}
+
+	return ss, nil, nil
 }
 
-// Error handles returning the proper error.
-func (ss *SecureSite) Error(siteError error) (err error) {
+// Error returns the proper error. Separated to allow reuse for gRPC.
+func Error(siteError error) (err error) {
 	switch siteError {
-	case config.ErrAccessDenied, config.ErrGrantNotRequested, config.ErrSettingNotSpecified:
+	case amberror.ErrAccessDenied, amberror.ErrGrantNotRequested, amberror.ErrSettingNotSpecified:
 		return ambient.StatusError{Code: http.StatusForbidden, Err: siteError}
-	case config.ErrNotFound:
+	case amberror.ErrNotFound:
 		return ambient.StatusError{Code: http.StatusNotFound, Err: siteError}
 	default:
 		return ambient.StatusError{Code: http.StatusInternalServerError, Err: siteError}
 	}
 }
 
+// Error handles returning the proper error.
+func (ss *SecureSite) Error(siteError error) (err error) {
+	return Error(siteError)
+}
+
 // Load forces a reload of the data.
 func (ss *SecureSite) Load() error {
 	if !ss.Authorized(ambient.GrantSiteLoadTrigger) {
-		return config.ErrAccessDenied
+		return amberror.ErrAccessDenied
 	}
 
 	return ss.pluginsystem.Load()
