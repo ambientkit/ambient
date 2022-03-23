@@ -43,3 +43,8 @@ func (p *PluginBase) Settings() []Setting {
 func (p *PluginBase) GrantRequests() []GrantRequest {
 	return nil
 }
+
+// Middleware returns a list of middleware.
+func (p *PluginBase) Middleware() []func(next http.Handler) http.Handler {
+	return []func(next http.Handler) http.Handler{}
+}

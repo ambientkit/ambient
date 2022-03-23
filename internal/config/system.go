@@ -38,21 +38,45 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 	middlewareNames := make([]string, 0)
 	plugins := make(map[string]ambient.Plugin)
 	shouldSave := false
+	pluginClients := make([]*plugin.Client, 0)
 
 	// Load the middleware.
 	for _, p := range arr.Middleware {
-		save, err := loadPlugin(log, p, plugins, storage)
-		if err != nil {
-			return nil, err
-		} else if save {
-			shouldSave = true
+		// If plugin is a gRPC plugin, then connect to it.
+		if p.PluginVersion() == "gRPC" {
+			gpb, ok := p.(*ambient.GRPCPluginBase)
+			if !ok {
+				log.Error("ambient: plugin, %v, is not a gRPC plugin: %v", p.PluginName())
+				continue
+			}
+
+			gp, pc, err := grpcp.ConnectPlugin(gpb.PluginName(), gpb.PluginPath())
+			if err != nil {
+				return nil, err
+			}
+
+			// Store reference to the gRPC plugin.
+			pluginClients = append(pluginClients, pc)
+
+			save, err := loadPlugin(log, gp, plugins, storage)
+			if err != nil {
+				return nil, err
+			} else if save {
+				shouldSave = true
+			}
+		} else {
+			// Else, load the standard plugin.
+			save, err := loadPlugin(log, p, plugins, storage)
+			if err != nil {
+				return nil, err
+			} else if save {
+				shouldSave = true
+			}
 		}
 
 		names = append(names, p.PluginName())
 		middlewareNames = append(middlewareNames, p.PluginName())
 	}
-
-	pluginClients := make([]*plugin.Client, 0)
 
 	// Load the plugins.
 	for _, p := range arr.Plugins {
