@@ -7,12 +7,5 @@ type PluginLoader struct {
 	SessionManager SessionManagerPlugin
 	TrustedPlugins map[string]bool
 	Plugins        []Plugin
-	GRPCPlugins    []GRPCPlugin
 	Middleware     []MiddlewarePlugin
-}
-
-// GRPCPlugin is a plugin over gRPC.
-type GRPCPlugin struct {
-	Name string
-	Path string
 }
