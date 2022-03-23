@@ -232,5 +232,10 @@ func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protode
 func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
 	m.toolkit.Log.Debug("grpc-plugin: Middleware() called")
 	m.Impl.Middleware()
+	// TODO: Need to return count and wrap middleware in the client caller because
+	// they will need to be called individual by ID.
+	// for _,v := range mw {
+
+	// }
 	return &protodef.Empty{}, nil
 }
