@@ -2,10 +2,10 @@ package grpcp
 
 import (
 	"bytes"
-	"context"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/pkg/requestuuid"
 )
 
 // HandlerImpl .
@@ -19,8 +19,7 @@ func (d *HandlerImpl) Handle(requestid string, method string, path string, heade
 	//d.Log.Warn("grpc-plugin: Handle start: %v %v | Routes: %v | %v", method, path, len(d.Map), requestid)
 
 	req, _ := http.NewRequest(method, path, bytes.NewBuffer(body))
-	newContext := context.WithValue(req.Context(), ambientRequestID, requestid)
-	req = req.WithContext(newContext)
+	req = requestuuid.Set(req, requestid)
 	req.Header = headers
 	w := NewResponseWriter()
 

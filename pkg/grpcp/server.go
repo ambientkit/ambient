@@ -7,6 +7,7 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/avfs"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
+	"github.com/ambientkit/ambient/pkg/requestuuid"
 	plugin "github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -225,7 +226,7 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 			// Prevent race conditions.
 			v := rawV
 			fm[v] = func(args ...interface{}) (interface{}, error) {
-				val, err := m.funcMapperClient.Do(requestID(req), v, args)
+				val, err := m.funcMapperClient.Do(requestuuid.Get(req), v, args)
 				return val, err
 			}
 		}
@@ -241,5 +242,12 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 		m.toolkit.Log.Error("grpc-server: error calling Middleware: %v", err)
 	}
 
-	return nil
+	return []func(next http.Handler) http.Handler{
+		func(h http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// TODO: Add implementation here.
+				h.ServeHTTP(w, r)
+			})
+		},
+	}
 }

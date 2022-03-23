@@ -50,10 +50,10 @@ func Setup(trust bool) (*ambientapp.App, error) {
 		Plugins: []ambient.Plugin{
 			neighbor.New(),
 			trustPlugin.New(),
-			ambient.NewGRPCPlugin("hello", "./pkg/grpcp/testingdata/plugin/hello/cmd/plugin/hello"),
 		},
 		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.
+			ambient.NewGRPCPlugin("hello", "./pkg/grpcp/testingdata/plugin/hello/cmd/plugin/hello"),
 			sessPlugin,
 		},
 	}

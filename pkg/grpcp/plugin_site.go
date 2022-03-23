@@ -8,6 +8,7 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/secureconfig"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
+	"github.com/ambientkit/ambient/pkg/requestuuid"
 )
 
 // GRPCSitePlugin is the plugin side implementation of secure site.
@@ -295,7 +296,7 @@ func (c *GRPCSitePlugin) PluginNeighborRoutesList(pluginName string) ([]ambient.
 // UserPersist handler.
 func (c *GRPCSitePlugin) UserPersist(r *http.Request, persist bool) error {
 	_, err := c.client.UserPersist(context.Background(), &protodef.SiteUserPersistRequest{
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 		Persist:   persist,
 	})
 	if err != nil {
@@ -309,7 +310,7 @@ func (c *GRPCSitePlugin) UserPersist(r *http.Request, persist bool) error {
 func (c *GRPCSitePlugin) UserLogin(r *http.Request, username string) error {
 	_, err := c.client.UserLogin(context.Background(), &protodef.SiteUserLoginRequest{
 		Username:  username,
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 	})
 	return err
 }
@@ -317,7 +318,7 @@ func (c *GRPCSitePlugin) UserLogin(r *http.Request, username string) error {
 // AuthenticatedUser handler.
 func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
 	out, err := c.client.AuthenticatedUser(context.Background(), &protodef.SiteAuthenticatedUserRequest{
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 	})
 	if err != nil {
 		return "", ErrorHandler(err)
@@ -329,7 +330,7 @@ func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
 // UserLogout handler.
 func (c *GRPCSitePlugin) UserLogout(r *http.Request) error {
 	_, err := c.client.UserLogout(context.Background(), &protodef.SiteUserLogoutRequest{
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 	})
 	if err != nil {
 		return ErrorHandler(err)
@@ -341,7 +342,7 @@ func (c *GRPCSitePlugin) UserLogout(r *http.Request) error {
 // LogoutAllUsers handler.
 func (c *GRPCSitePlugin) LogoutAllUsers(r *http.Request) error {
 	_, err := c.client.LogoutAllUsers(context.Background(), &protodef.SiteLogoutAllUsersRequest{
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 	})
 	if err != nil {
 		return ErrorHandler(err)
@@ -353,7 +354,7 @@ func (c *GRPCSitePlugin) LogoutAllUsers(r *http.Request) error {
 // SetCSRF handler.
 func (c *GRPCSitePlugin) SetCSRF(r *http.Request) string {
 	resp, err := c.client.SetCSRF(context.Background(), &protodef.SiteSetCSRFRequest{
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 	})
 	if err != nil {
 		c.Log.Error("grpc-plugin: site.SetCSRF error: %v", err.Error())
@@ -366,7 +367,7 @@ func (c *GRPCSitePlugin) SetCSRF(r *http.Request) string {
 // CSRF handler.
 func (c *GRPCSitePlugin) CSRF(r *http.Request, token string) bool {
 	resp, err := c.client.CSRF(context.Background(), &protodef.SiteCSRFRequest{
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 		Token:     token,
 	})
 	if err != nil {
@@ -380,7 +381,7 @@ func (c *GRPCSitePlugin) CSRF(r *http.Request, token string) bool {
 // SessionValue handler.
 func (c *GRPCSitePlugin) SessionValue(r *http.Request, name string) string {
 	resp, err := c.client.SessionValue(context.Background(), &protodef.SiteSessionValueRequest{
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 		Name:      name,
 	})
 	if err != nil {
@@ -394,7 +395,7 @@ func (c *GRPCSitePlugin) SessionValue(r *http.Request, name string) string {
 // SetSessionValue handler.
 func (c *GRPCSitePlugin) SetSessionValue(r *http.Request, name string, value string) error {
 	_, err := c.client.SetSessionValue(context.Background(), &protodef.SiteSetSessionValueRequest{
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 		Name:      name,
 		Value:     value,
 	})
@@ -408,7 +409,7 @@ func (c *GRPCSitePlugin) SetSessionValue(r *http.Request, name string, value str
 // DeleteSessionValue handler.
 func (c *GRPCSitePlugin) DeleteSessionValue(r *http.Request, name string) {
 	_, err := c.client.DeleteSessionValue(context.Background(), &protodef.SiteDeleteSessionValueRequest{
-		Requestid: requestID(r),
+		Requestid: requestuuid.Get(r),
 		Name:      name,
 	})
 	if err != nil {

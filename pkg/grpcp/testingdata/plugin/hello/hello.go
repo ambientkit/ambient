@@ -226,3 +226,15 @@ func (p *Plugin) FuncMap() func(r *http.Request) template.FuncMap {
 		return fm
 	}
 }
+
+// Middleware returns router middleware.
+func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
+	return []func(next http.Handler) http.Handler{
+		func(h http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				p.Log.Error("HELLO PLUGIN HIT")
+				h.ServeHTTP(w, r)
+			})
+		},
+	}
+}

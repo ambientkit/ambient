@@ -80,6 +80,9 @@ func TestMain(t *testing.T) {
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteUpdatedRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteContentRead))
 	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteContentWrite))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteFuncMapWrite))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantSiteAssetWrite))
+	assert.NoError(t, ps.SetGrant("hello", ambient.GrantRouterMiddlewareWrite))
 
 	mux, err := app.Handler()
 	if err != nil {
@@ -401,4 +404,5 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/pageHello", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.True(t, strings.Contains(body, "FuncMap: hello: Foo"), body)
+	assert.True(t, strings.Contains(body, `<link rel="canonical" href="cool">`), body)
 }

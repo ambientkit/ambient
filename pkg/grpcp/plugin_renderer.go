@@ -8,6 +8,7 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
+	"github.com/ambientkit/ambient/pkg/requestuuid"
 )
 
 // GRPCRendererPlugin .
@@ -37,7 +38,7 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 		keys = append(keys, k)
 	}
 
-	rid := requestID(r)
+	rid := requestuuid.Get(r)
 	l.Map[rid] = &FMContainer{
 		FuncMap: fm(r),
 		FS:      assets,
@@ -95,7 +96,7 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 		keys = append(keys, k)
 	}
 
-	rid := requestID(r)
+	rid := requestuuid.Get(r)
 	l.Map[rid] = &FMContainer{
 		FuncMap: fm(r),
 		FS:      nil,
@@ -126,7 +127,7 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 		keys = append(keys, k)
 	}
 
-	rid := requestID(r)
+	rid := requestuuid.Get(r)
 	l.Map[rid] = &FMContainer{
 		FuncMap: fm(r),
 		FS:      assets,
@@ -183,7 +184,7 @@ func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request,
 		keys = append(keys, k)
 	}
 
-	rid := requestID(r)
+	rid := requestuuid.Get(r)
 	l.Map[rid] = &FMContainer{
 		FuncMap: fm(r),
 		FS:      nil,
@@ -214,7 +215,7 @@ func (l *GRPCRendererPlugin) Error(w http.ResponseWriter, r *http.Request, conte
 		keys = append(keys, k)
 	}
 
-	rid := requestID(r)
+	rid := requestuuid.Get(r)
 	l.Map[rid] = &FMContainer{
 		FuncMap: fm(r),
 		FS:      nil,

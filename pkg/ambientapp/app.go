@@ -14,6 +14,7 @@ import (
 	"github.com/ambientkit/ambient/internal/pluginsafe"
 	"github.com/ambientkit/ambient/internal/secureconfig"
 	"github.com/ambientkit/ambient/pkg/envdetect"
+	"github.com/ambientkit/ambient/pkg/requestuuid"
 )
 
 // App represents an Ambient app that supports plugins.
@@ -227,7 +228,8 @@ func (app *App) Handler() (http.Handler, error) {
 		dc.EnableDevConsole()
 	}
 
-	return handler, nil
+	// Add a request UUID around all routes.
+	return requestuuid.Middleware(handler), nil
 }
 
 // GrantAccess grants access to all trusted plugins.

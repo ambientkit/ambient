@@ -5,6 +5,7 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
+	"github.com/ambientkit/ambient/pkg/requestuuid"
 	"golang.org/x/net/context"
 )
 
@@ -68,14 +69,11 @@ func (c *GRPCRouterPlugin) Delete(path string, fn func(http.ResponseWriter, *htt
 
 // Param request handler.
 func (c *GRPCRouterPlugin) Param(r *http.Request, name string) string {
-	v := r.Context().Value(ambientRequestID)
-	if v == nil {
-		v = ""
-	}
+	v := requestuuid.Get(r)
 
 	out, _ := c.client.Param(context.Background(), &protodef.RouterParamRequest{
 		Name:      name,
-		Requestid: v.(string),
+		Requestid: v,
 	})
 	return out.Value
 }
@@ -87,16 +85,13 @@ func (c *GRPCRouterPlugin) StatusError(status int, err error) error {
 
 // Error handler.
 func (c *GRPCRouterPlugin) Error(status int, w http.ResponseWriter, r *http.Request) {
-	v := r.Context().Value(ambientRequestID)
-	if v == nil {
-		v = ""
-	}
+	v := requestuuid.Get(r)
 
 	c.Log.Warn("grpc-plugin: Error called: %v %v", v, status)
 
 	_, err := c.client.Error(context.Background(), &protodef.RouterErrorRequest{
 		Status:    uint32(status),
-		Requestid: v.(string),
+		Requestid: v,
 	})
 	if err != nil {
 		c.Log.Error("grpc-plugin: error from Error call: %v", err.Error())
