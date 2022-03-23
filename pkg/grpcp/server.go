@@ -1,7 +1,11 @@
 package grpcp
 
 import (
+	"bytes"
+	"fmt"
 	"html/template"
+	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
@@ -237,15 +241,66 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 
 // Middleware handler.
 func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
-	_, err := m.client.Middleware(context.Background(), &protodef.Empty{})
-	if err != nil {
-		m.toolkit.Log.Error("grpc-server: error calling Middleware: %v", err)
-	}
-
 	return []func(next http.Handler) http.Handler{
 		func(h http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// TODO: Add implementation here.
+				sm, err := ObjectToProtobufStruct(r.Header)
+				if err != nil {
+					m.toolkit.Log.Error("grpc-server: error getting Middleware header: %v", err)
+				}
+
+				body := bytes.NewBuffer(nil)
+				_, err = io.Copy(body, r.Body)
+				if err != nil {
+					m.toolkit.Log.Error("grpc-server: error getting Middleware body: %v", err)
+				}
+				// Restore body.
+				r.Body = ioutil.NopCloser(body)
+
+				//m.toolkit.Log.Error("grpc-server: body in: %v | %v", len(body.Bytes()), body.String())
+
+				resp, err := m.client.Middleware(context.Background(), &protodef.MiddlewareRequest{
+					Requestid: requestuuid.Get(r),
+					Method:    r.Method,
+					Path:      r.URL.Path,
+					Headers:   sm,
+					Body:      body.Bytes(),
+				})
+				if err != nil {
+					m.toolkit.Log.Error("grpc-server: error calling Middleware: %v", err)
+				}
+
+				if resp.Status != 0 {
+					var outHeader http.Header
+					err = ProtobufStructToObject(resp.Headers, &outHeader)
+					if err != nil {
+						m.toolkit.Log.Error("grpc-server: error converting Middleware headers: %v", err)
+					}
+
+					// Copy over the headers.
+					for k, v := range outHeader {
+						w.Header()[k] = v
+					}
+
+					//m.toolkit.Log.Error("grpc-server: body ou: %v | %v", len(resp.Response), string(resp.Response))
+
+					// If the response has text, then display it.
+					if len(resp.Response) > 0 {
+						w.WriteHeader(int(resp.Status))
+						fmt.Fprint(w, resp.Response)
+						return
+					}
+
+					// If the status came back as something other than 200, then display it.
+					if resp.Status != http.StatusOK {
+						w.WriteHeader(int(resp.Status))
+						if len(resp.Error) > 0 {
+							fmt.Fprint(w, resp.Error)
+						}
+						return
+					}
+				}
+
 				h.ServeHTTP(w, r)
 			})
 		},

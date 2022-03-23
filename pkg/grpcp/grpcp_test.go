@@ -405,4 +405,9 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.True(t, strings.Contains(body, "FuncMap: hello: Foo"), body)
 	assert.True(t, strings.Contains(body, `<link rel="canonical" href="cool">`), body)
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/api/healthcheck", nil))
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+	assert.Equal(t, `{"message":"ok"}`, body)
+	assert.Equal(t, "application/json", resp.Header.Get("Content-Type"))
 }

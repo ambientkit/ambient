@@ -1,6 +1,8 @@
 package grpcp
 
 import (
+	"bytes"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -23,17 +25,20 @@ func (l *GRPCHandlerServer) Handle(method string, path string, r *http.Request, 
 		return http.StatusInternalServerError, err.Error(), "", err
 	}
 
-	body, err := ioutil.ReadAll(r.Body)
+	body := bytes.NewBuffer(nil)
+	_, err = io.Copy(body, r.Body)
 	if err != nil {
 		return http.StatusInternalServerError, err.Error(), "", err
 	}
+	// Restore body.
+	r.Body = ioutil.NopCloser(body)
 
 	resp, err := l.client.Handle(ctx, &protodef.HandleRequest{
 		Requestid: requestID,
 		Method:    method,
 		Path:      path,
 		Headers:   sm,
-		Body:      body,
+		Body:      body.Bytes(),
 	})
 	if err != nil {
 		return http.StatusInternalServerError, err.Error(), "", err

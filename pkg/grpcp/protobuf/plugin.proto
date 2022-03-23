@@ -17,7 +17,7 @@ service GenericPlugin {
     rpc Settings(Empty) returns (SettingsResponse) {}
     rpc Assets(Empty) returns (AssetsResponse) {}
     rpc FuncMap(Empty) returns (FuncMapResponse) {}
-    rpc Middleware(Empty) returns (Empty) {}
+    rpc Middleware(MiddlewareRequest) returns (MiddlewareResponse) {}
 }
 
 message PluginNameResponse {
@@ -69,4 +69,19 @@ message AssetsResponse {
 
 message FuncMapResponse {
     repeated string keys = 1;
+}
+
+message MiddlewareRequest {
+    string requestid = 1;
+    string method = 2;
+    string path = 3;
+    google.protobuf.Struct headers = 4;
+    bytes body = 5;
+}
+
+message MiddlewareResponse {
+    uint32 status = 1;
+    string error = 2;
+    string response = 3;
+    google.protobuf.Struct headers = 4;
 }

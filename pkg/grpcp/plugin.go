@@ -1,11 +1,13 @@
 package grpcp
 
 import (
+	"bytes"
 	"io/fs"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
+	"github.com/ambientkit/ambient/pkg/requestuuid"
 	plugin "github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -19,6 +21,8 @@ type GRPCPlugin struct {
 	conn             *grpc.ClientConn
 	server           *grpc.Server
 	funcMapperClient *GRPCFuncMapperServer
+	reqMap           map[string]func(http.ResponseWriter, *http.Request) error
+	funcMap          map[string]*FMContainer
 }
 
 // PluginName handler.
@@ -64,16 +68,16 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		client: protodef.NewFuncMapperClient(m.conn),
 	}
 
-	fnMap := make(map[string]func(http.ResponseWriter, *http.Request) error)
+	m.reqMap = make(map[string]func(http.ResponseWriter, *http.Request) error)
 
-	funcMapMap := make(map[string]*FMContainer)
+	m.funcMap = make(map[string]*FMContainer)
 
 	m.toolkit = &ambient.Toolkit{
 		Log: logger,
 		Mux: &GRPCRouterPlugin{
 			client: protodef.NewRouterClient(m.conn),
 			Log:    logger,
-			Map:    fnMap,
+			Map:    m.reqMap,
 		},
 		Site: &GRPCSitePlugin{
 			client: protodef.NewSiteClient(m.conn),
@@ -82,7 +86,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		Render: &GRPCRendererPlugin{
 			client: protodef.NewRendererClient(m.conn),
 			Log:    logger,
-			Map:    funcMapMap,
+			Map:    m.funcMap,
 		},
 	}
 
@@ -95,7 +99,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
 			Impl: &FuncMapperImpl{
 				Log: m.toolkit.Log,
-				Map: funcMapMap,
+				Map: m.funcMap,
 			},
 			Log: m.toolkit.Log,
 		})
@@ -103,7 +107,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 			Log: m.toolkit.Log,
 			Impl: &HandlerImpl{
 				Log: m.toolkit.Log,
-				Map: fnMap,
+				Map: m.reqMap,
 			},
 		})
 
@@ -229,13 +233,82 @@ func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protode
 }
 
 // Middleware handler.
-func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
+func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareRequest) (*protodef.MiddlewareResponse, error) {
 	m.toolkit.Log.Debug("grpc-plugin: Middleware() called")
-	m.Impl.Middleware()
-	// TODO: Need to return count and wrap middleware in the client caller because
-	// they will need to be called individual by ID.
-	// for _,v := range mw {
 
-	// }
-	return &protodef.Empty{}, nil
+	// Get the middleware from the plugin.
+	arr := m.Impl.Middleware()
+	if len(arr) == 0 {
+		return &protodef.MiddlewareResponse{}, nil
+	}
+
+	headers := http.Header{}
+	err := ProtobufStructToObject(req.Headers, &headers)
+	if err != nil {
+		return &protodef.MiddlewareResponse{}, err
+	}
+
+	r, _ := http.NewRequest(req.Method, req.Path, bytes.NewBuffer(req.Body))
+	r = requestuuid.Set(r, req.Requestid)
+	r.Header = headers
+	w := NewResponseWriter()
+
+	mux := &MockHandler{
+		//Log: m.toolkit.Log,
+	}
+	var h http.Handler
+	h = mux
+
+	for _, mw := range arr {
+		//m.toolkit.Log.Warn("Looping for: %v %v %v", req.Method, req.Path, req.Requestid)
+		h = mw(h)
+	}
+	h.ServeHTTP(w, r)
+
+	statusCode := 0
+	if w.statusCode != 0 {
+		statusCode = w.statusCode
+	}
+	errText := ""
+	if err != nil {
+		switch e := err.(type) {
+		case ambient.Error:
+			statusCode = e.Status()
+		default:
+			statusCode = http.StatusInternalServerError
+		}
+		errText = err.Error()
+		if len(errText) == 0 {
+			errText = http.StatusText(statusCode)
+		}
+	}
+
+	//m.toolkit.Log.Error("Sending Middleware: %v | %v | %v", statusCode, errText, w.Output())
+
+	outHeaders, err := ObjectToProtobufStruct(w.header)
+	if err != nil {
+		m.toolkit.Log.Error("grpc-plugin: error getting headers: %v", err.Error())
+		return &protodef.MiddlewareResponse{}, err
+	}
+
+	return &protodef.MiddlewareResponse{
+		Status:   uint32(statusCode),
+		Error:    errText,
+		Response: w.Output(),
+		Headers:  outHeaders,
+	}, nil
+}
+
+// MockHandler is a mock mux.
+type MockHandler struct {
+	//W http.ResponseWriter
+	//R *http.Request
+	//Log ambient.Logger
+}
+
+// ServeHTTP stores the requests.
+func (h *MockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//h.Log.Warn("Final loop for: %v %v %v", r.Method, r.URL.Path, requestuuid.Get(r))
+	//h.W = w
+	//h.R = r
 }

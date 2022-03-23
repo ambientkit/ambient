@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"html"
+	"io"
 	"io/fs"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -241,10 +241,12 @@ func (file *Asset) Contents(assets fs.FS) (ff []byte, status int, err error) {
 		defer f.Close()
 
 		// Get the contents.
-		ff, err = ioutil.ReadAll(f)
+		fbuf := bytes.NewBuffer(nil)
+		_, err = io.Copy(fbuf, f)
 		if err != nil {
 			return nil, http.StatusInternalServerError, err
 		}
+		ff = fbuf.Bytes()
 	} else {
 		ff = []byte(file.Content)
 	}

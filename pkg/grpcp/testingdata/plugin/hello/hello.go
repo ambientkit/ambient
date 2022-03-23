@@ -3,6 +3,7 @@ package hello
 
 import (
 	"embed"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
@@ -232,8 +233,22 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 	return []func(next http.Handler) http.Handler{
 		func(h http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				p.Log.Error("HELLO PLUGIN HIT")
+				// Middleware that does nothing.
 				h.ServeHTTP(w, r)
+			})
+		},
+		func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/api/healthcheck" {
+					m := make(map[string]interface{})
+					m["message"] = "ok"
+					b, _ := json.Marshal(m)
+					w.WriteHeader(http.StatusCreated)
+					w.Header().Add("Content-Type", "application/json")
+					fmt.Fprint(w, string(b))
+					return
+				}
+				next.ServeHTTP(w, r)
 			})
 		},
 	}

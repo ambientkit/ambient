@@ -15,7 +15,7 @@ type HandlerImpl struct {
 }
 
 // Handle .
-func (d *HandlerImpl) Handle(requestid string, method string, path string, headers http.Header, body []byte) (int, string, string) {
+func (d *HandlerImpl) Handle(requestid string, method string, path string, headers http.Header, body []byte) (int, string, string, http.Header) {
 	//d.Log.Warn("grpc-plugin: Handle start: %v %v | Routes: %v | %v", method, path, len(d.Map), requestid)
 
 	req, _ := http.NewRequest(method, path, bytes.NewBuffer(body))
@@ -25,7 +25,7 @@ func (d *HandlerImpl) Handle(requestid string, method string, path string, heade
 
 	fn, found := d.Map[pathkey(method, path)]
 	if !found {
-		return http.StatusNotFound, "", ""
+		return http.StatusNotFound, "", "", nil
 	}
 
 	err := fn(w, req)
@@ -50,5 +50,5 @@ func (d *HandlerImpl) Handle(requestid string, method string, path string, heade
 
 	//d.Log.Warn("grpc-plugin: Handle end: %v Output: \"%v\"", statusCode, w.Output())
 
-	return statusCode, errText, w.Output()
+	return statusCode, errText, w.Output(), w.Header()
 }
