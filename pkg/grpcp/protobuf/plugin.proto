@@ -17,6 +17,7 @@ service GenericPlugin {
     rpc Settings(Empty) returns (SettingsResponse) {}
     rpc Assets(Empty) returns (AssetsResponse) {}
     rpc FuncMap(Empty) returns (FuncMapResponse) {}
+    rpc Middleware(Empty) returns (Empty) {}
 }
 
 message PluginNameResponse {

@@ -233,3 +233,13 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 		return fm
 	}
 }
+
+// Middleware handler.
+func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
+	_, err := m.client.Middleware(context.Background(), &protodef.Empty{})
+	if err != nil {
+		m.toolkit.Log.Error("grpc-server: error calling Middleware: %v", err)
+	}
+
+	return nil
+}

@@ -21,7 +21,7 @@ var Handshake = plugin.HandshakeConfig{
 // gRPC.
 type GenericPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
-	Impl ambient.Plugin
+	Impl ambient.MiddlewarePlugin
 }
 
 // GRPCServer .

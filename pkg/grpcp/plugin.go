@@ -13,7 +13,7 @@ import (
 
 // GRPCPlugin is the plugin side implementation.
 type GRPCPlugin struct {
-	Impl             ambient.Plugin
+	Impl             ambient.MiddlewarePlugin
 	broker           *plugin.GRPCBroker
 	toolkit          *ambient.Toolkit
 	conn             *grpc.ClientConn
@@ -226,4 +226,11 @@ func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protode
 	return &protodef.FuncMapResponse{
 		Keys: keys,
 	}, nil
+}
+
+// Middleware handler.
+func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
+	m.toolkit.Log.Debug("grpc-plugin: Middleware() called")
+	m.Impl.Middleware()
+	return &protodef.Empty{}, nil
 }

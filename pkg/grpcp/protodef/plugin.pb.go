@@ -660,7 +660,7 @@ var file_plugin_proto_rawDesc = []byte{
 	0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x62, 0x65, 0x64, 0x64, 0x65, 0x64, 0x46, 0x69, 0x6c, 0x65,
 	0x52, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x22, 0x25, 0x0a, 0x0f, 0x46, 0x75, 0x6e, 0x63, 0x4d,
 	0x61, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x65,
-	0x79, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x65, 0x79, 0x73, 0x32, 0xa9,
+	0x79, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x65, 0x79, 0x73, 0x32, 0xeb,
 	0x05, 0x0a, 0x0d, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x69, 0x63, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e,
 	0x12, 0x4d, 0x0a, 0x0a, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x17,
 	0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65,
@@ -703,9 +703,13 @@ var file_plugin_proto_rawDesc = []byte{
 	0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e,
 	0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x21, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e, 0x46, 0x75, 0x6e, 0x63, 0x4d, 0x61, 0x70,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0d, 0x5a, 0x0b, 0x2e, 0x2f,
-	0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x40, 0x0a, 0x0a, 0x4d, 0x69,
+	0x64, 0x64, 0x6c, 0x65, 0x77, 0x61, 0x72, 0x65, 0x12, 0x17, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65,
+	0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
+	0x79, 0x1a, 0x17, 0x2e, 0x61, 0x6d, 0x62, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x64, 0x65, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x42, 0x0d, 0x5a, 0x0b,
+	0x2e, 0x2f, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x64, 0x65, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -754,17 +758,19 @@ var file_plugin_proto_depIdxs = []int32{
 	14, // 12: ambient.protodef.GenericPlugin.Settings:input_type -> ambient.protodef.Empty
 	14, // 13: ambient.protodef.GenericPlugin.Assets:input_type -> ambient.protodef.Empty
 	14, // 14: ambient.protodef.GenericPlugin.FuncMap:input_type -> ambient.protodef.Empty
-	0,  // 15: ambient.protodef.GenericPlugin.PluginName:output_type -> ambient.protodef.PluginNameResponse
-	1,  // 16: ambient.protodef.GenericPlugin.PluginVersion:output_type -> ambient.protodef.PluginVersionResponse
-	2,  // 17: ambient.protodef.GenericPlugin.GrantRequests:output_type -> ambient.protodef.GrantRequestsResponse
-	5,  // 18: ambient.protodef.GenericPlugin.Enable:output_type -> ambient.protodef.EnableResponse
-	14, // 19: ambient.protodef.GenericPlugin.Disable:output_type -> ambient.protodef.Empty
-	14, // 20: ambient.protodef.GenericPlugin.Routes:output_type -> ambient.protodef.Empty
-	6,  // 21: ambient.protodef.GenericPlugin.Settings:output_type -> ambient.protodef.SettingsResponse
-	9,  // 22: ambient.protodef.GenericPlugin.Assets:output_type -> ambient.protodef.AssetsResponse
-	10, // 23: ambient.protodef.GenericPlugin.FuncMap:output_type -> ambient.protodef.FuncMapResponse
-	15, // [15:24] is the sub-list for method output_type
-	6,  // [6:15] is the sub-list for method input_type
+	14, // 15: ambient.protodef.GenericPlugin.Middleware:input_type -> ambient.protodef.Empty
+	0,  // 16: ambient.protodef.GenericPlugin.PluginName:output_type -> ambient.protodef.PluginNameResponse
+	1,  // 17: ambient.protodef.GenericPlugin.PluginVersion:output_type -> ambient.protodef.PluginVersionResponse
+	2,  // 18: ambient.protodef.GenericPlugin.GrantRequests:output_type -> ambient.protodef.GrantRequestsResponse
+	5,  // 19: ambient.protodef.GenericPlugin.Enable:output_type -> ambient.protodef.EnableResponse
+	14, // 20: ambient.protodef.GenericPlugin.Disable:output_type -> ambient.protodef.Empty
+	14, // 21: ambient.protodef.GenericPlugin.Routes:output_type -> ambient.protodef.Empty
+	6,  // 22: ambient.protodef.GenericPlugin.Settings:output_type -> ambient.protodef.SettingsResponse
+	9,  // 23: ambient.protodef.GenericPlugin.Assets:output_type -> ambient.protodef.AssetsResponse
+	10, // 24: ambient.protodef.GenericPlugin.FuncMap:output_type -> ambient.protodef.FuncMapResponse
+	14, // 25: ambient.protodef.GenericPlugin.Middleware:output_type -> ambient.protodef.Empty
+	16, // [16:26] is the sub-list for method output_type
+	6,  // [6:16] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
 	6,  // [6:6] is the sub-list for extension extendee
 	0,  // [0:6] is the sub-list for field type_name
@@ -952,6 +958,7 @@ type GenericPluginClient interface {
 	Settings(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SettingsResponse, error)
 	Assets(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*AssetsResponse, error)
 	FuncMap(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*FuncMapResponse, error)
+	Middleware(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type genericPluginClient struct {
@@ -1043,6 +1050,15 @@ func (c *genericPluginClient) FuncMap(ctx context.Context, in *Empty, opts ...gr
 	return out, nil
 }
 
+func (c *genericPluginClient) Middleware(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/ambient.protodef.GenericPlugin/Middleware", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GenericPluginServer is the server API for GenericPlugin service.
 type GenericPluginServer interface {
 	PluginName(context.Context, *Empty) (*PluginNameResponse, error)
@@ -1054,6 +1070,7 @@ type GenericPluginServer interface {
 	Settings(context.Context, *Empty) (*SettingsResponse, error)
 	Assets(context.Context, *Empty) (*AssetsResponse, error)
 	FuncMap(context.Context, *Empty) (*FuncMapResponse, error)
+	Middleware(context.Context, *Empty) (*Empty, error)
 }
 
 // UnimplementedGenericPluginServer can be embedded to have forward compatible implementations.
@@ -1086,6 +1103,9 @@ func (*UnimplementedGenericPluginServer) Assets(context.Context, *Empty) (*Asset
 }
 func (*UnimplementedGenericPluginServer) FuncMap(context.Context, *Empty) (*FuncMapResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FuncMap not implemented")
+}
+func (*UnimplementedGenericPluginServer) Middleware(context.Context, *Empty) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Middleware not implemented")
 }
 
 func RegisterGenericPluginServer(s *grpc.Server, srv GenericPluginServer) {
@@ -1254,6 +1274,24 @@ func _GenericPlugin_FuncMap_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GenericPlugin_Middleware_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GenericPluginServer).Middleware(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ambient.protodef.GenericPlugin/Middleware",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GenericPluginServer).Middleware(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _GenericPlugin_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "ambient.protodef.GenericPlugin",
 	HandlerType: (*GenericPluginServer)(nil),
@@ -1293,6 +1331,10 @@ var _GenericPlugin_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FuncMap",
 			Handler:    _GenericPlugin_FuncMap_Handler,
+		},
+		{
+			MethodName: "Middleware",
+			Handler:    _GenericPlugin_Middleware_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
