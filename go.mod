@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/ambientkit/away v0.0.0-20220312051345-3985971e46d6
-	github.com/ambientkit/plugin v0.0.0-20220322050140-2f53e54a54b1
+	github.com/ambientkit/plugin v0.0.0-20220323235716-0f0616ff4825
 	github.com/hashicorp/go-hclog v1.2.0
 	github.com/hashicorp/go-plugin v1.4.3
 	github.com/stretchr/testify v1.7.0
