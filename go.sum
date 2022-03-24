@@ -5,8 +5,6 @@ github.com/alexedwards/scs/v2 v2.5.0 h1:zgxOfNFmiJyXG7UPIuw1g2b9LWBeRLh3PjfB9BDm
 github.com/alexedwards/scs/v2 v2.5.0/go.mod h1:ToaROZxyKukJKT/xLcVQAChi5k6+Pn1Gvmdl7h3RRj8=
 github.com/ambientkit/away v0.0.0-20220312051345-3985971e46d6 h1:fpnLjFY2bTm9DzTe0z1XFc0BP1WJh4HurINa3k0Dl30=
 github.com/ambientkit/away v0.0.0-20220312051345-3985971e46d6/go.mod h1:Sk1OeLgFvcZDZMcFXEhGj4eX0AEWUIK9WyFz256aFKo=
-github.com/ambientkit/plugin v0.0.0-20220322050140-2f53e54a54b1 h1:HIOprcJzUQlb/l/RwGUlGAyRzLa8sBRssf9gbagE3sQ=
-github.com/ambientkit/plugin v0.0.0-20220322050140-2f53e54a54b1/go.mod h1:nQXVsXRVcZPFnDNGQ5+so+yK/om/1SzAvmh74sSV+QQ=
 github.com/ambientkit/plugin v0.0.0-20220323235716-0f0616ff4825 h1:/uTVzKgACZZLCxAXfswmv5AbVMatZcoLaeucu/nJ9Ss=
 github.com/ambientkit/plugin v0.0.0-20220323235716-0f0616ff4825/go.mod h1:8gwT/pdDCaqG+yG2oQvHKRJApypvCABahUi0LugC0lg=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
