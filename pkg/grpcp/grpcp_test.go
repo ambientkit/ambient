@@ -410,4 +410,9 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 	assert.Equal(t, `{"message":"ok"}`, body)
 	assert.Equal(t, "application/json", resp.Header.Get("Content-Type"))
+
+	// resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/context", nil))
+	// assert.Equal(t, http.StatusOK, resp.StatusCode)
+	// assert.Equal(t, "context is foundf", body)
+	// assert.Equal(t, "foo", hello.Get(r))
 }

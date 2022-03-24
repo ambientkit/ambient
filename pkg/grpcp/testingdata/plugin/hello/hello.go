@@ -137,6 +137,7 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/assetsHello", p.assetsHello)
 	p.Mux.Get("/assetsError", p.assetsError)
 	p.Mux.Get("/pageHello", p.pageHello)
+	p.Mux.Get("/context", p.context)
 }
 
 const (
@@ -233,8 +234,8 @@ func (p *Plugin) Middleware() []func(next http.Handler) http.Handler {
 	return []func(next http.Handler) http.Handler{
 		func(h http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// Middleware that does nothing.
-				h.ServeHTTP(w, r)
+				// Set a context key.
+				h.ServeHTTP(w, Set(r, "foo"))
 			})
 		},
 		func(next http.Handler) http.Handler {

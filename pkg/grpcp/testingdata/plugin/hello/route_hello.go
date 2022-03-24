@@ -831,3 +831,12 @@ func (p *Plugin) assetsError(w http.ResponseWriter, r *http.Request) error {
 func (p *Plugin) pageHello(w http.ResponseWriter, r *http.Request) error {
 	return p.Render.Page(w, r, assets, "template/content/hello", p.FuncMap(), nil)
 }
+
+func (p *Plugin) context(w http.ResponseWriter, r *http.Request) error {
+	v := Get(r)
+	if v == "foo" {
+		fmt.Fprint(w, "context is found")
+		return nil
+	}
+	return p.Mux.StatusError(http.StatusBadRequest, errors.New("context is not found"))
+}

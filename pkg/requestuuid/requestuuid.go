@@ -29,6 +29,9 @@ func Set(r *http.Request, value string) *http.Request {
 
 // Get returns the request ID from the request context.
 func Get(r *http.Request) string {
+	if r == nil {
+		return ""
+	}
 	val := r.Context().Value(AmbientUUID)
 	if val == nil {
 		val = ""
