@@ -460,7 +460,6 @@ type RouterClient interface {
 	Delete(ctx context.Context, in *RouterRequest, opts ...grpc.CallOption) (*Empty, error)
 	Head(ctx context.Context, in *RouterRequest, opts ...grpc.CallOption) (*Empty, error)
 	Options(ctx context.Context, in *RouterRequest, opts ...grpc.CallOption) (*Empty, error)
-	//rpc StatusError(RouterStatusErrorRequest) returns (Empty) {}
 	Error(ctx context.Context, in *RouterErrorRequest, opts ...grpc.CallOption) (*Empty, error)
 	Param(ctx context.Context, in *RouterParamRequest, opts ...grpc.CallOption) (*RouterParamResponse, error)
 }
@@ -573,7 +572,6 @@ type RouterServer interface {
 	Delete(context.Context, *RouterRequest) (*Empty, error)
 	Head(context.Context, *RouterRequest) (*Empty, error)
 	Options(context.Context, *RouterRequest) (*Empty, error)
-	//rpc StatusError(RouterStatusErrorRequest) returns (Empty) {}
 	Error(context.Context, *RouterErrorRequest) (*Empty, error)
 	Param(context.Context, *RouterParamRequest) (*RouterParamResponse, error)
 }

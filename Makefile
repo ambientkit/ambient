@@ -1,6 +1,7 @@
 # This Makefile is an easy way to run common operations.
 # Execute commands like this:
 # * make
+# * make install
 # * make update-children
 # * make update-all
 
@@ -9,6 +10,14 @@ include .env
 
 .PHONY: default
 default: start
+
+################################################################################
+# Common
+################################################################################
+
+# Install dependencies.
+.PHONY: install
+install: protoc-install tidy
 
 ################################################################################
 # Update dependencies
@@ -40,7 +49,7 @@ update-all:
 # Install protoc to project bin folder to allow generating a Go file from proto file.
 .PHONY: protoc-install
 protoc-install:
-	mkdir ./bin
+	mkdir -p ./bin
 	curl -s -o protoc.zip -L https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protoc-3.19.4-osx-x86_64.zip
 	unzip -q protoc.zip -d tempdir
 	rm protoc.zip
