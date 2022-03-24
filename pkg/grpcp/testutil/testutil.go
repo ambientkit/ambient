@@ -87,11 +87,10 @@ func Setup2(trust bool) (*ambientapp.App, error) {
 	trusted := make(map[string]bool)
 	trusted["trust"] = true
 	if trust {
-		trusted["hello"] = true
+		//trusted["hello"] = true
+		trusted["bearblog"] = true
+		trusted["bearcss"] = true
 	}
-
-	//trusted["hello"] = true
-	trusted["bearblog"] = true
 
 	sessPlugin := scssession.New("5ba3ad678ee1fd9c4fddcef0d45454904422479ed762b3b0ddc990e743cb65e0")
 	plugins := &ambient.PluginLoader{
@@ -105,7 +104,9 @@ func Setup2(trust bool) (*ambientapp.App, error) {
 		Plugins: []ambient.Plugin{
 			neighbor.New(),
 			trustPlugin.New(),
-			ambient.NewGRPCPlugin("bearblog", "../plugin/generic/bearblog/cmd/plugin/bearblog"),
+			ambient.NewGRPCPlugin("bearblog", "../plugin/generic/bearblog/cmd/plugin/plugin"),
+			ambient.NewGRPCPlugin("bearcss", "../plugin/generic/bearcss/cmd/plugin/plugin"),
+			//bearcss.New(),
 		},
 		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.

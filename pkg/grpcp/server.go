@@ -225,6 +225,10 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 		m.toolkit.Log.Error("grpc-server: error calling FuncMap: %v", err)
 	}
 
+	if len(resp.Keys) == 0 {
+		return nil
+	}
+
 	return func(req *http.Request) template.FuncMap {
 		fm := make(template.FuncMap)
 		for _, rawV := range resp.Keys {

@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	app, err := testutil.Setup(true)
+	app, err := testutil.Setup2(true)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}

@@ -220,6 +220,10 @@ func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protode
 	//m.toolkit.Log.Error("grpc-plugin: FuncMap called.")
 	fn := m.Impl.FuncMap()
 	r, _ := http.NewRequest("GET", "/", nil)
+	if fn == nil {
+		return &protodef.FuncMapResponse{}, nil
+	}
+
 	fm := fn(r)
 
 	keys := make([]string, 0)

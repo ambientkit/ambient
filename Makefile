@@ -67,7 +67,8 @@ protoc:
 .PHONY: start
 start: protoc
 	@cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o hello
-	@cd ../plugin/generic/bearblog/cmd/plugin && go build -o bearblog
+	@cd ../plugin/generic/bearblog/cmd/plugin && go build
+	@cd ../plugin/generic/bearcss/cmd/plugin && go build
 	go run pkg/grpcp/testingdata/cmd/server/main.go
 
 # Start the test process for grpc.
