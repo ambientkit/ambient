@@ -4,7 +4,6 @@ package ambient.protodef;
 
 import "google/protobuf/struct.proto";
 
-// Handler sends the request information from the server to the plugin.
 service Handler {
     rpc Handle(HandleRequest) returns (HandleResponse) {}
 }

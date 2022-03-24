@@ -9,7 +9,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 
 service Site {
-	rpc Load(Empty) returns (Empty) {}
+    rpc Load(Empty) returns (Empty) {}
     rpc Authorized(SiteAuthorizedRequest) returns (SiteAuthorizedResponse) {}
     rpc NeighborPluginGrantList(SiteNeighborPluginGrantListRequest) returns (SiteNeighborPluginGrantListResponse) {}
     rpc NeighborPluginGrants(SiteNeighborPluginGrantsRequest) returns (SiteNeighborPluginGrantsResponse) {}
