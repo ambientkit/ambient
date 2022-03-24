@@ -114,6 +114,7 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 
 	rendererServer.FuncMapperClient = &GRPCFuncMapperServer{
 		client: protodef.NewFuncMapperClient(m.conn),
+		Log:    toolkit.Log,
 	}
 	m.funcMapperClient = rendererServer.FuncMapperClient
 

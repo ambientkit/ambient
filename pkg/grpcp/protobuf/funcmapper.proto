@@ -3,6 +3,7 @@ option go_package = "./;protodef";
 package ambient.protodef;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
 
 service FuncMapper {
     rpc Do(FuncMapperDoRequest) returns (FuncMapperDoResponse) {}
@@ -16,4 +17,5 @@ message FuncMapperDoRequest {
 
 message FuncMapperDoResponse {
     google.protobuf.Any value = 1;
+    repeated google.protobuf.Struct arr = 2;
 }

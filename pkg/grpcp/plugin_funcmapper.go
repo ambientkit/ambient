@@ -1,9 +1,14 @@
 package grpcp
 
 import (
+	"fmt"
+	"reflect"
+
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"golang.org/x/net/context"
+	"google.golang.org/protobuf/types/known/anypb"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // FuncMapper handler.
@@ -32,12 +37,24 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 		return &protodef.FuncMapperDoResponse{}, err
 	}
 
-	anyVal, err := InterfaceToProtobufAny(val)
-	if err != nil {
-		return &protodef.FuncMapperDoResponse{}, err
+	//m.Log.Error("Kind: %v %v", reflect.TypeOf(val).Kind(), val)
+
+	arr := make([]*structpb.Struct, 0)
+	var anyVal *anypb.Any
+	if reflect.TypeOf(val).Kind() == reflect.Slice {
+		arr, err = ArrayToProtobufStruct(val)
+		if err != nil {
+			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do array error: %v", err.Error())
+		}
+	} else {
+		anyVal, err = InterfaceToProtobufAny(val)
+		if err != nil {
+			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do interface error: %v", err.Error())
+		}
 	}
 
 	return &protodef.FuncMapperDoResponse{
 		Value: anyVal,
+		Arr:   arr,
 	}, err
 }

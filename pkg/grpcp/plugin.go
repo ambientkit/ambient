@@ -69,7 +69,6 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 	}
 
 	m.reqMap = make(map[string]func(http.ResponseWriter, *http.Request) error)
-
 	m.funcMap = make(map[string]*FMContainer)
 
 	m.toolkit = &ambient.Toolkit{
@@ -98,8 +97,9 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		m.server = grpc.NewServer(opts...)
 		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
 			Impl: &FuncMapperImpl{
-				Log: m.toolkit.Log,
-				Map: m.funcMap,
+				Log:  m.toolkit.Log,
+				Map:  m.funcMap,
+				Impl: m.Impl,
 			},
 			Log: m.toolkit.Log,
 		})

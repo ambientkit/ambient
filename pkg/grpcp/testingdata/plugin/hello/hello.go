@@ -70,6 +70,7 @@ func (p *Plugin) GrantRequests() []ambient.GrantRequest {
 		{Grant: ambient.GrantSiteAssetWrite, Description: "Access to write blog meta tags to the header and add a nav and footer."},
 		{Grant: ambient.GrantSiteFuncMapWrite, Description: "Access to create global FuncMaps for templates."},
 		{Grant: ambient.GrantRouterRouteWrite, Description: "Access to create routes for editing the blog posts."},
+		{Grant: ambient.GrantRouterMiddlewareWrite, Description: "Access to add middleware."},
 	}
 }
 

@@ -280,7 +280,7 @@ func TestMain(t *testing.T) {
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/grantRequests", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "Grant requests: 18", string(body))
+	assert.Equal(t, "Grant requests: 19", string(body))
 
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/userLogout", nil))
 	assert.Equal(t, http.StatusOK, resp.StatusCode)

@@ -79,8 +79,6 @@ func ProtobufStructToArray(s []*structpb.Struct, obj interface{}) error {
 	val := reflect.ValueOf(obj)
 	if val.Kind() != reflect.Ptr {
 		return errors.New("must pass a pointer, not a: value")
-	} else if val.Elem().Kind() != reflect.Slice {
-		return fmt.Errorf("must pass a slice, not a: %v", val.Elem().Kind())
 	}
 
 	objVal := val.Elem()
