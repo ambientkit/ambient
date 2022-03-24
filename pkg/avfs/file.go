@@ -72,6 +72,7 @@ func (f *File) Seek(offset int64, whence int) (int64, error) {
 
 // Close handler.
 func (f *File) Close() error {
+	f.offset = 0
 	return nil
 }
 
