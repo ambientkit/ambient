@@ -33,7 +33,6 @@ type FMContainer struct {
 // Page handler.
 func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets ambient.FileSystemReader, templateName string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
-	l.Log.Error("Vars: %#v | %T", vars, vars)
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
 		return fmt.Errorf("grpc-plugin: error on Page struct conversion: %v | %v", err.Error(), pvars)
