@@ -17,6 +17,14 @@ func pathkey(method string, path string) string {
 
 // ObjectToProtobufStruct converts an object to a protobuf struct.
 func ObjectToProtobufStruct(obj interface{}) (*structpb.Struct, error) {
+	if obj == nil {
+		return nil, nil
+	}
+
+	if o, ok := obj.(map[string]interface{}); ok && len(o) == 0 {
+		return nil, nil
+	}
+
 	b, err := json.Marshal(obj)
 	if err != nil {
 		return nil, err

@@ -2,6 +2,7 @@ package grpcp
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"io/fs"
 	"net/http"
@@ -24,12 +25,18 @@ type FMContainer struct {
 	FS      ambient.FileSystemReader
 }
 
+// FIXME: Determine how to handle strings that are template.HTML.
+// https://github.com/golang/protobuf/issues/1302
+// l.Log.Error("Vars: %#v | %T", vars, vars["postcontent"])
+// l.Log.Error("PVars: %#v | %T", pvars.AsMap(), pvars.AsMap()["postcontent"])
+
 // Page handler.
 func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets ambient.FileSystemReader, templateName string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
-	pvars, err := MapToProtobufStruct(vars)
+	l.Log.Error("Vars: %#v | %T", vars, vars)
+	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return err
+		return fmt.Errorf("grpc-plugin: error on Page struct conversion: %v | %v", err.Error(), pvars)
 	}
 
 	funcMap := fm(nil)
@@ -85,9 +92,9 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 // PageContent handler.
 func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request, content string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
-	pvars, err := MapToProtobufStruct(vars)
+	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return err
+		return fmt.Errorf("grpc-plugin: error on PageContent struct conversion: %v", err.Error())
 	}
 
 	funcMap := fm(nil)
@@ -116,9 +123,9 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 // Post handler.
 func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets ambient.FileSystemReader, templateName string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
-	pvars, err := MapToProtobufStruct(vars)
+	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return err
+		return fmt.Errorf("grpc-plugin: error on Post struct conversion: %v", err.Error())
 	}
 
 	funcMap := fm(nil)
@@ -173,9 +180,9 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 // PostContent handler.
 func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request, content string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
-	pvars, err := MapToProtobufStruct(vars)
+	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return err
+		return fmt.Errorf("grpc-plugin: error on PostContent struct conversion: %v", err.Error())
 	}
 
 	funcMap := fm(nil)
@@ -204,9 +211,9 @@ func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request,
 // Error handler.
 func (l *GRPCRendererPlugin) Error(w http.ResponseWriter, r *http.Request, content string, statusCode int,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
-	pvars, err := MapToProtobufStruct(vars)
+	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return err
+		return fmt.Errorf("grpc-plugin: error on Error struct conversion: %v", err.Error())
 	}
 
 	funcMap := fm(nil)

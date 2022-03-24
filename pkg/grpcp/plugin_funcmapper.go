@@ -28,13 +28,13 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 	for i, v := range req.Params {
 		err = ProtobufAnyToInterface(v, &params[i])
 		if err != nil {
-			return &protodef.FuncMapperDoResponse{}, err
+			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do any error: %v", err.Error())
 		}
 	}
 
 	val, err := m.Impl.Do(req.Requestid, req.Key, params)
 	if err != nil {
-		return &protodef.FuncMapperDoResponse{}, err
+		return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do error: %v", err.Error())
 	}
 
 	//m.Log.Error("Kind: %v %v", reflect.TypeOf(val).Kind(), val)

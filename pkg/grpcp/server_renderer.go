@@ -1,6 +1,7 @@
 package grpcp
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -31,6 +32,12 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 		efs.AddFile(v.Name, v.Body)
 	}
 
+	vars := make(map[string]interface{})
+	err = ProtobufStructToObject(req.Vars, &vars)
+	if err != nil {
+		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on Page object conversion: %v", err.Error())
+	}
+
 	err = m.Impl.Page(c.Response, c.Request, efs, req.Templatename, func(*http.Request) template.FuncMap {
 		for _, rawV := range req.Keys {
 			// Prevent race conditions.
@@ -41,7 +48,7 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 			}
 		}
 		return c.FuncMap
-	}, ProtobufStructToMap(req.Vars))
+	}, vars)
 
 	return &protodef.Empty{}, err
 }
@@ -51,6 +58,12 @@ func (m *GRPCRendererServer) PageContent(ctx context.Context, req *protodef.Rend
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
 		return &protodef.Empty{}, err
+	}
+
+	vars := make(map[string]interface{})
+	err = ProtobufStructToObject(req.Vars, &vars)
+	if err != nil {
+		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on PageContent object conversion: %v", err.Error())
 	}
 
 	err = m.Impl.PageContent(c.Response, c.Request, req.Content, func(*http.Request) template.FuncMap {
@@ -63,7 +76,7 @@ func (m *GRPCRendererServer) PageContent(ctx context.Context, req *protodef.Rend
 			}
 		}
 		return c.FuncMap
-	}, ProtobufStructToMap(req.Vars))
+	}, vars)
 
 	return &protodef.Empty{}, err
 }
@@ -81,6 +94,12 @@ func (m *GRPCRendererServer) Post(ctx context.Context, req *protodef.RendererPos
 		efs.AddFile(v.Name, v.Body)
 	}
 
+	vars := make(map[string]interface{})
+	err = ProtobufStructToObject(req.Vars, &vars)
+	if err != nil {
+		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on Post object conversion: %v", err.Error())
+	}
+
 	err = m.Impl.Post(c.Response, c.Request, efs, req.Templatename, func(*http.Request) template.FuncMap {
 		for _, rawV := range req.Keys {
 			// Prevent race conditions.
@@ -91,7 +110,7 @@ func (m *GRPCRendererServer) Post(ctx context.Context, req *protodef.RendererPos
 			}
 		}
 		return c.FuncMap
-	}, ProtobufStructToMap(req.Vars))
+	}, vars)
 
 	return &protodef.Empty{}, err
 }
@@ -101,6 +120,12 @@ func (m *GRPCRendererServer) PostContent(ctx context.Context, req *protodef.Rend
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
 		return &protodef.Empty{}, err
+	}
+
+	vars := make(map[string]interface{})
+	err = ProtobufStructToObject(req.Vars, &vars)
+	if err != nil {
+		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on PostContent object conversion: %v", err.Error())
 	}
 
 	err = m.Impl.PostContent(c.Response, c.Request, req.Content, func(*http.Request) template.FuncMap {
@@ -113,7 +138,7 @@ func (m *GRPCRendererServer) PostContent(ctx context.Context, req *protodef.Rend
 			}
 		}
 		return c.FuncMap
-	}, ProtobufStructToMap(req.Vars))
+	}, vars)
 
 	return &protodef.Empty{}, err
 }
@@ -123,6 +148,12 @@ func (m *GRPCRendererServer) Error(ctx context.Context, req *protodef.RendererEr
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
 		return &protodef.Empty{}, err
+	}
+
+	vars := make(map[string]interface{})
+	err = ProtobufStructToObject(req.Vars, &vars)
+	if err != nil {
+		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on Error object conversion: %v", err.Error())
 	}
 
 	err = m.Impl.Error(c.Response, c.Request, req.Content, int(req.Statuscode), func(*http.Request) template.FuncMap {
@@ -135,7 +166,7 @@ func (m *GRPCRendererServer) Error(ctx context.Context, req *protodef.RendererEr
 			}
 		}
 		return c.FuncMap
-	}, ProtobufStructToMap(req.Vars))
+	}, vars)
 
 	return &protodef.Empty{}, err
 }

@@ -63,17 +63,19 @@ protoc-install:
 protoc:
 	@PATH="${PATH}:$(shell pwd)/bin" && protoc -I pkg/grpcp/protobuf/ pkg/grpcp/protobuf/*.proto --go_out=plugins=grpc:pkg/grpcp/protodef/
 
-# Start the build and run process for grpc.
-.PHONY: start
-start: protoc
+# Build the plugins.
+.PHONY: build-plugins
+build-plugins:
 	@cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o hello
 	@cd ../plugin/generic/bearblog/cmd/plugin && go build
 	@cd ../plugin/generic/bearcss/cmd/plugin && go build
+
+# Start the build and run process for grpc.
+.PHONY: start
+start: protoc build-plugins
 	go run pkg/grpcp/testingdata/cmd/server/main.go
 
 # Start the test process for grpc.
 .PHONY: test
-test: protoc
-	@cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o hello
-	@cd ../plugin/generic/bearblog/cmd/plugin && go build -o bearblog
+test: protoc build-plugins
 	go test pkg/grpcp/*.go

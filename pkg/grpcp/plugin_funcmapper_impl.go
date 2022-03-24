@@ -1,6 +1,7 @@
 package grpcp
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
@@ -45,7 +46,7 @@ func (d *FuncMapperImpl) Do(requestID string, key string, args []interface{}) (i
 
 	anyVal, err := fmcaller.CallFuncMap(val, args...)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("grpc-plugin: CallFuncMap error: %v", err.Error())
 	}
 
 	return anyVal, nil
