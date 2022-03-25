@@ -69,6 +69,7 @@ build-plugins:
 	@cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o ambplugin
 	@cd ../plugin/generic/bearblog/cmd/plugin && go build -o ambplugin
 	@cd ../plugin/generic/bearcss/cmd/plugin && go build -o ambplugin
+	@cd ../plugin/generic/pluginmanager/cmd/plugin && go build -o ambplugin
 
 # Start the build and run process for grpc.
 .PHONY: start

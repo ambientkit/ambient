@@ -10,6 +10,7 @@ import (
 	"github.com/ambientkit/plugin/logger/zaplogger"
 	"github.com/ambientkit/plugin/router/awayrouter"
 	"github.com/ambientkit/plugin/sessionmanager/scssession"
+	"github.com/ambientkit/plugin/storage/localstorage"
 	"github.com/ambientkit/plugin/storage/memorystorage"
 	"github.com/ambientkit/plugin/templateengine/htmlengine"
 )
@@ -85,11 +86,12 @@ func Setup2(trust bool) (*ambientapp.App, error) {
 	}
 
 	trusted := make(map[string]bool)
-	trusted["trust"] = true
+	//trusted["trust"] = true
 	if trust {
 		//trusted["hello"] = true
 		trusted["bearblog"] = true
 		trusted["bearcss"] = true
+		trusted["pluginmanager"] = true
 	}
 
 	sessPlugin := scssession.New("5ba3ad678ee1fd9c4fddcef0d45454904422479ed762b3b0ddc990e743cb65e0")
@@ -102,10 +104,11 @@ func Setup2(trust bool) (*ambientapp.App, error) {
 		// will be enabled and given full access.
 		TrustedPlugins: trusted,
 		Plugins: []ambient.Plugin{
-			neighbor.New(),
-			trustPlugin.New(),
+			//neighbor.New(),
+			//trustPlugin.New(),
 			ambient.NewGRPCPlugin("bearblog", "../plugin/generic/bearblog/cmd/plugin/ambplugin"),
 			ambient.NewGRPCPlugin("bearcss", "../plugin/generic/bearcss/cmd/plugin/ambplugin"),
+			ambient.NewGRPCPlugin("pluginmanager", "../plugin/generic/pluginmanager/cmd/plugin/ambplugin"),
 			//bearcss.New(),
 		},
 		Middleware: []ambient.MiddlewarePlugin{
@@ -117,7 +120,8 @@ func Setup2(trust bool) (*ambientapp.App, error) {
 	app, _, err := ambientapp.NewApp("myapp", "1.0",
 		zaplogger.New(),
 		ambient.StoragePluginGroup{
-			Storage: memorystorage.New(),
+			//Storage: memorystorage.New(),
+			Storage: localstorage.New("storage/site.json", "storage/session.bin"),
 		},
 		plugins)
 	return app, err
