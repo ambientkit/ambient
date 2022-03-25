@@ -139,6 +139,7 @@ func (p *Plugin) Routes() {
 	p.Mux.Get("/assetsError", p.assetsError)
 	p.Mux.Get("/pageHello", p.pageHello)
 	p.Mux.Get("/context", p.context)
+	p.Mux.Get("/redirect", p.redirect)
 }
 
 const (

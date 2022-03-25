@@ -66,9 +66,9 @@ protoc:
 # Build the plugins.
 .PHONY: build-plugins
 build-plugins:
-	@cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o hello
-	@cd ../plugin/generic/bearblog/cmd/plugin && go build
-	@cd ../plugin/generic/bearcss/cmd/plugin && go build
+	@cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o ambplugin
+	@cd ../plugin/generic/bearblog/cmd/plugin && go build -o ambplugin
+	@cd ../plugin/generic/bearcss/cmd/plugin && go build -o ambplugin
 
 # Start the build and run process for grpc.
 .PHONY: start

@@ -840,3 +840,8 @@ func (p *Plugin) context(w http.ResponseWriter, r *http.Request) error {
 	}
 	return p.Mux.StatusError(http.StatusBadRequest, errors.New("context is not found"))
 }
+
+func (p *Plugin) redirect(w http.ResponseWriter, r *http.Request) error {
+	p.Redirect(w, r, "/redirectTo", http.StatusFound)
+	return nil
+}

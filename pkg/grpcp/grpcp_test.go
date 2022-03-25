@@ -415,4 +415,8 @@ func TestMain(t *testing.T) {
 	// assert.Equal(t, http.StatusOK, resp.StatusCode)
 	// assert.Equal(t, "context is foundf", body)
 	// assert.Equal(t, "foo", hello.Get(r))
+
+	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/redirect", nil))
+	assert.Equal(t, http.StatusFound, resp.StatusCode)
+	assert.Equal(t, `<a href="/redirectTo">Found</a>.`+"\n\n", body)
 }

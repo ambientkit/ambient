@@ -53,7 +53,7 @@ func Setup(trust bool) (*ambientapp.App, error) {
 		},
 		Middleware: []ambient.MiddlewarePlugin{
 			// Middleware - executes bottom to top.
-			ambient.NewGRPCPlugin("hello", "./pkg/grpcp/testingdata/plugin/hello/cmd/plugin/hello"),
+			ambient.NewGRPCPlugin("hello", "./pkg/grpcp/testingdata/plugin/hello/cmd/plugin/ambplugin"),
 			sessPlugin,
 		},
 	}
@@ -104,8 +104,8 @@ func Setup2(trust bool) (*ambientapp.App, error) {
 		Plugins: []ambient.Plugin{
 			neighbor.New(),
 			trustPlugin.New(),
-			ambient.NewGRPCPlugin("bearblog", "../plugin/generic/bearblog/cmd/plugin/plugin"),
-			ambient.NewGRPCPlugin("bearcss", "../plugin/generic/bearcss/cmd/plugin/plugin"),
+			ambient.NewGRPCPlugin("bearblog", "../plugin/generic/bearblog/cmd/plugin/ambplugin"),
+			ambient.NewGRPCPlugin("bearcss", "../plugin/generic/bearcss/cmd/plugin/ambplugin"),
 			//bearcss.New(),
 		},
 		Middleware: []ambient.MiddlewarePlugin{
