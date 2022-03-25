@@ -45,19 +45,12 @@ func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRe
 			return err
 		}
 
-		// TODO: Need to add in headers.
-
 		if status >= 400 && len(response) == 0 {
 			return ambient.StatusError{Code: status, Err: errors.New(errText)}
-		} else if status == http.StatusFound || status == http.StatusMovedPermanently {
-			loc := headers.Get("Location")
-			if len(loc) > 0 {
-				http.Redirect(w, r, loc, status)
-				return nil
-			}
-			http.Redirect(w, r, response, status)
-			return nil
 		} else if len(errText) > 0 {
+			for k, v := range headers {
+				w.Header()[k] = v
+			}
 			return errors.New(errText)
 		}
 
@@ -65,6 +58,9 @@ func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRe
 		// already been handled by other functions like Error().
 		if len(response) > 0 {
 			w.WriteHeader(status)
+			for k, v := range headers {
+				w.Header()[k] = v
+			}
 			fmt.Fprint(w, response)
 		}
 
