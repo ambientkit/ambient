@@ -37,11 +37,11 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 		return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do error: %v", err.Error())
 	}
 
-	if val != nil {
-		m.Log.Error("PLUGIN: Kind: %v | Value: %v | Valid: %v", reflect.TypeOf(val).Kind(), val, reflect.ValueOf(val).IsValid())
-	} else {
-		m.Log.Error("PLUGIN: Type: %v | Value: %v", reflect.TypeOf(val), val)
-	}
+	// if val != nil {
+	// 	m.Log.Error("PLUGIN: Kind: %v | Value: %v | Valid: %v", reflect.TypeOf(val).Kind(), val, reflect.ValueOf(val).IsValid())
+	// } else {
+	// 	m.Log.Error("PLUGIN: Type: %v | Value: %v", reflect.TypeOf(val), val)
+	// }
 
 	arr := make([]*structpb.Struct, 0)
 	var anyVal *anypb.Any
