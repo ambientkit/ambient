@@ -31,11 +31,11 @@ func TestMain(t *testing.T) {
 		}
 		return fmcaller.CallFuncMap(fn, args...)
 	}
-	fm["oneinterface_one"] = func(args ...interface{}) (interface{}, error) {
+	fm["oneinterface_one"] = func(_ ...interface{}) (interface{}, error) {
 		fn := func(t time.Time) string {
 			return t.Format("2006-01-02")
 		}
-		args = make([]interface{}, 0)
+		args := make([]interface{}, 0)
 		var v interface{} = nil
 		args = append(args, v)
 		return fmcaller.CallFuncMap(fn, args...)
