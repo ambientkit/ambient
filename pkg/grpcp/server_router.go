@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"regexp"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
@@ -39,20 +38,21 @@ func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRe
 			FuncMap:  make(template.FuncMap),
 		})
 
-		status, errText, response, err := m.HandlerClient.Handle(req.Method, req.Path, r, uuid)
+		status, errText, response, headers, err := m.HandlerClient.Handle(req.Method, req.Path, r, uuid)
 		m.reqmap.Delete(uuid)
 		if err != nil {
 			m.Log.Error("grpc-server: %v func error: %v", req.Method, err.Error())
 			return err
 		}
 
+		// TODO: Need to add in headers.
+
 		if status >= 400 && len(response) == 0 {
 			return ambient.StatusError{Code: status, Err: errors.New(errText)}
 		} else if status == http.StatusFound || status == http.StatusMovedPermanently {
-			re := regexp.MustCompile(`<a\s+href=(?:"([^"]+)"|'([^']+)').*?>(.*?)<\/a>`)
-			arr := re.FindStringSubmatch(response)
-			if len(arr) > 1 {
-				http.Redirect(w, r, arr[1], status)
+			loc := headers.Get("Location")
+			if len(loc) > 0 {
+				http.Redirect(w, r, loc, status)
 				return nil
 			}
 			http.Redirect(w, r, response, status)

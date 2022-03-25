@@ -17,18 +17,18 @@ type GRPCHandlerServer struct {
 
 // Handle sends the request information from the server to the plugin.
 func (l *GRPCHandlerServer) Handle(method string, path string, r *http.Request, requestID string) (
-	status int, errText string, response string, err error) {
+	status int, errText string, response string, headers http.Header, err error) {
 	ctx := context.Background()
 
 	sm, err := ObjectToProtobufStruct(r.Header)
 	if err != nil {
-		return http.StatusInternalServerError, err.Error(), "", err
+		return http.StatusInternalServerError, err.Error(), "", headers, err
 	}
 
 	body := bytes.NewBuffer(nil)
 	_, err = io.Copy(body, r.Body)
 	if err != nil {
-		return http.StatusInternalServerError, err.Error(), "", err
+		return http.StatusInternalServerError, err.Error(), "", headers, err
 	}
 	// Restore body.
 	r.Body = ioutil.NopCloser(body)
@@ -41,8 +41,13 @@ func (l *GRPCHandlerServer) Handle(method string, path string, r *http.Request, 
 		Body:      body.Bytes(),
 	})
 	if err != nil {
-		return http.StatusInternalServerError, err.Error(), "", err
+		return http.StatusInternalServerError, err.Error(), "", headers, err
 	}
 
-	return int(resp.Status), resp.Error, resp.Response, err
+	err = ProtobufStructToObject(resp.Headers, &headers)
+	if err != nil {
+		return http.StatusInternalServerError, err.Error(), "", headers, err
+	}
+
+	return int(resp.Status), resp.Error, resp.Response, headers, err
 }
