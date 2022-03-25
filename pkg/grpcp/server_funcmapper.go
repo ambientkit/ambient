@@ -37,12 +37,21 @@ func (l *GRPCFuncMapperServer) Do(requestID string, key string, args []interface
 		return nil, fmt.Errorf("grpc-server: Do response error:%v", err.Error())
 	}
 
+	//l.Log.Error("SERVER: Kind: %v | Value: %v | Valid: %v | Args: %#v", reflect.TypeOf(resp.Value).Kind(), resp.Value, reflect.ValueOf(resp.Value).IsValid(), args)
+
+	// switch resp.vl.(type) {
+
+	// }
+
 	var i interface{}
 	if resp.Value != nil {
 		err = ProtobufAnyToInterface(resp.Value, &i)
 	} else {
 		err = ProtobufStructToArray(resp.Arr, &i)
 	}
+
+	//l.Log.Error("SERVED: Kind: %v | Value: %v | Valid: %v", reflect.TypeOf(i).Kind(), i, reflect.ValueOf(i).IsValid())
+	//l.Log.Error("SERVED: Type: %v | Value: %v", reflect.TypeOf(i), i)
 
 	return i, err
 }

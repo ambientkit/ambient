@@ -37,11 +37,20 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 		return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do error: %v", err.Error())
 	}
 
-	//m.Log.Error("Kind: %v %v", reflect.TypeOf(val).Kind(), val)
+	if val != nil {
+		m.Log.Error("PLUGIN: Kind: %v | Value: %v | Valid: %v", reflect.TypeOf(val).Kind(), val, reflect.ValueOf(val).IsValid())
+	} else {
+		m.Log.Error("PLUGIN: Type: %v | Value: %v", reflect.TypeOf(val), val)
+	}
 
 	arr := make([]*structpb.Struct, 0)
 	var anyVal *anypb.Any
-	if reflect.TypeOf(val).Kind() == reflect.Slice {
+	if !reflect.ValueOf(val).IsValid() {
+		return &protodef.FuncMapperDoResponse{
+			Value: nil,
+			Arr:   nil,
+		}, nil
+	} else if reflect.TypeOf(val).Kind() == reflect.Slice {
 		arr, err = ArrayToProtobufStruct(val)
 		if err != nil {
 			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do array error: %v", err.Error())

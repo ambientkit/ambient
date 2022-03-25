@@ -31,6 +31,18 @@ func TestMain(t *testing.T) {
 		}
 		return fmcaller.CallFuncMap(fn, args...)
 	}
+	fm["oneinterface_one"] = func(args ...interface{}) (interface{}, error) {
+		fn := func(t time.Time) string {
+			return t.Format("2006-01-02")
+		}
+		args = make([]interface{}, 0)
+		var v interface{} = nil
+		args = append(args, v)
+		return fmcaller.CallFuncMap(fn, args...)
+	}
+	fm["REAL_onetime_one"] = func(t time.Time) string {
+		return t.Format("2006-01-02")
+	}
 	fm["one_error"] = func(args ...interface{}) (interface{}, error) {
 		fn := func(shouldError bool) error {
 			if shouldError {
@@ -97,6 +109,18 @@ func TestMain(t *testing.T) {
 	body, err = parseTemplate(t, fm, `{{onetime_one "2022-03-25T00:00:00Z"}}`)
 	assert.NoError(t, err)
 	assert.Equal(t, "2022-03-25", body)
+
+	body, err = parseTemplate(t, fm, `{{onetime_one nil}}`)
+	assert.Error(t, err)
+	assert.Equal(t, "", body)
+
+	body, err = parseTemplate(t, fm, `{{REAL_onetime_one nil}}`)
+	assert.Error(t, err)
+	assert.Equal(t, "", body)
+
+	body, err = parseTemplate(t, fm, `{{oneinterface_one nil}}`)
+	assert.Error(t, err)
+	assert.Equal(t, "", body)
 
 	body, err = parseTemplate(t, fm, `{{one_error "Foo"}}`)
 	assert.Error(t, err) // Call using string as type bool

@@ -38,16 +38,20 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on Page object conversion: %v", err.Error())
 	}
 
+	//m.Log.Error("PAGE VARS: %#v", vars)
+
 	err = m.Impl.Page(c.Response, c.Request, efs, req.Templatename, func(*http.Request) template.FuncMap {
+		fm := template.FuncMap{}
 		for _, rawV := range req.Keys {
 			// Prevent race conditions.
 			v := rawV
-			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
+			fm[v] = func(args ...interface{}) (interface{}, error) {
+				//m.Log.Error("FUNC ARGS: %v | %#v", v, args)
 				val, err := m.FuncMapperClient.Do(req.Requestid, v, args)
 				return val, err
 			}
 		}
-		return c.FuncMap
+		return fm
 	}, vars)
 
 	return &protodef.Empty{}, err

@@ -24,20 +24,51 @@ func CallFuncMap(fn interface{}, args ...interface{}) (interface{}, error) {
 	// Build a list of all the input parameters.
 	arrIn := make([]reflect.Value, 0)
 	for i := 0; i < t1.NumIn(); i++ {
-		argInType := reflect.ValueOf(args[i])
+		argInValue := reflect.ValueOf(args[i])
 		funcInType := t1.In(i)
 
-		// TODO: Figure out a better way to handle this for types that are not
-		// primitives.
-		if argInType.Type() != funcInType {
-			// Try converting to time.
-			t, err := time.Parse(time.RFC3339, argInType.String())
-			if err == nil {
-				argInType = reflect.ValueOf(t)
+		// If nil, then append and continue. Don't need to do any more work.
+		// When 'nil' is passed in the array:
+		// Type: <nil>
+		// Value: <invalid reflect.Value>
+		if !argInValue.IsValid() {
+			arrIn = append(arrIn, argInValue)
+			continue
+
+			// An example when you pass in nil when it requires a value between
+			// this package and the html/template package:
+			// This: template: name:1:2: executing "name" at <onetime_one nil>: error calling onetime_one: reflect: call of reflect.Value.Type on zero Value
+			// Real: template: name:1:15: executing "name" at <nil>: cannot assign nil to time.Time
+		}
+
+		// If someone passed in something unassignable, then try to convert it.
+		if !argInValue.Type().AssignableTo(funcInType) {
+			switch funcInType {
+			case reflect.TypeOf(time.Time{}):
+				// Try converting to time.
+				t, err := time.Parse(time.RFC3339, argInValue.String())
+				if err == nil {
+					argInValue = reflect.ValueOf(t)
+				}
+			default:
+				return nil, fmt.Errorf("error with FuncMap: cannot assign %v to %v", argInValue.Type(), funcInType)
 			}
 		}
 
-		arrIn = append(arrIn, argInType)
+		// I could always pass in the zero value if something is not right, but
+		// that doesn't seem correct. Should respond the same way as the native
+		// template package - with an error.
+		// arrIn = append(arrIn, reflect.Zero(funcInType))
+
+		if argInValue.Type() != funcInType {
+			// Try converting to time.
+			t, err := time.Parse(time.RFC3339, argInValue.String())
+			if err == nil {
+				argInValue = reflect.ValueOf(t)
+			}
+		}
+
+		arrIn = append(arrIn, argInValue)
 	}
 
 	// Call the function.
