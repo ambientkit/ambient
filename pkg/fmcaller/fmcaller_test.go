@@ -5,6 +5,7 @@ import (
 	"errors"
 	"html/template"
 	"testing"
+	"time"
 
 	"github.com/ambientkit/ambient/pkg/fmcaller"
 	"github.com/stretchr/testify/assert"
@@ -22,6 +23,12 @@ func TestMain(t *testing.T) {
 	}
 	fm["one_one"] = func(args ...interface{}) (interface{}, error) {
 		fn := func(s string) string { return s }
+		return fmcaller.CallFuncMap(fn, args...)
+	}
+	fm["onetime_one"] = func(args ...interface{}) (interface{}, error) {
+		fn := func(t time.Time) string {
+			return t.Format("2006-01-02")
+		}
 		return fmcaller.CallFuncMap(fn, args...)
 	}
 	fm["one_error"] = func(args ...interface{}) (interface{}, error) {
@@ -86,6 +93,10 @@ func TestMain(t *testing.T) {
 	body, err = parseTemplate(t, fm, `{{one_one "Foo"}}`)
 	assert.NoError(t, err)
 	assert.Equal(t, "Foo", body)
+
+	body, err = parseTemplate(t, fm, `{{onetime_one "2022-03-25T00:00:00Z"}}`)
+	assert.NoError(t, err)
+	assert.Equal(t, "2022-03-25", body)
 
 	body, err = parseTemplate(t, fm, `{{one_error "Foo"}}`)
 	assert.Error(t, err) // Call using string as type bool

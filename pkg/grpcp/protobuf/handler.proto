@@ -12,8 +12,9 @@ message HandleRequest {
     string requestid = 1;
     string method = 2;
     string path = 3;
-    google.protobuf.Struct headers = 4;
-    bytes body = 5;
+    string fullpath = 4;
+    google.protobuf.Struct headers = 5;
+    bytes body = 6;
 }
 
 message HandleResponse {

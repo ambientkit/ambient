@@ -37,6 +37,7 @@ func (l *GRPCHandlerServer) Handle(method string, path string, r *http.Request, 
 		Requestid: requestID,
 		Method:    method,
 		Path:      path,
+		Fullpath:  r.URL.RequestURI(),
 		Headers:   sm,
 		Body:      body.Bytes(),
 	})

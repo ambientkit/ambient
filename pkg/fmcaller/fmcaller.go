@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"time"
 )
 
 // CallFuncMap calls a FuncMap function and returns an interface and an error.
@@ -23,7 +24,20 @@ func CallFuncMap(fn interface{}, args ...interface{}) (interface{}, error) {
 	// Build a list of all the input parameters.
 	arrIn := make([]reflect.Value, 0)
 	for i := 0; i < t1.NumIn(); i++ {
-		arrIn = append(arrIn, reflect.ValueOf(args[i]))
+		argInType := reflect.ValueOf(args[i])
+		funcInType := t1.In(i)
+
+		// TODO: Figure out a better way to handle this for types that are not
+		// primitives.
+		if argInType.Type() != funcInType {
+			// Try converting to time.
+			t, err := time.Parse(time.RFC3339, argInType.String())
+			if err == nil {
+				argInType = reflect.ValueOf(t)
+			}
+		}
+
+		arrIn = append(arrIn, argInType)
 	}
 
 	// Call the function.

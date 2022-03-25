@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"reflect"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -18,22 +19,26 @@ func pathkey(method string, path string) string {
 // ObjectToProtobufStruct converts an object to a protobuf struct.
 func ObjectToProtobufStruct(obj interface{}) (*structpb.Struct, error) {
 	if obj == nil {
-		return nil, nil
+		return &structpb.Struct{}, nil
 	}
 
 	if o, ok := obj.(map[string]interface{}); ok && len(o) == 0 {
-		return nil, nil
+		return &structpb.Struct{}, nil
+	}
+
+	if o, ok := obj.(http.Header); ok && len(o) == 0 {
+		return &structpb.Struct{}, nil
 	}
 
 	b, err := json.Marshal(obj)
 	if err != nil {
-		return nil, err
+		return &structpb.Struct{}, fmt.Errorf("could not marshal: %v", err.Error())
 	}
 
 	s := &structpb.Struct{}
 	err = protojson.Unmarshal(b, s)
 	if err != nil {
-		return nil, err
+		return &structpb.Struct{}, fmt.Errorf("could not unmarshal: %v ", err.Error())
 	}
 
 	return s, nil

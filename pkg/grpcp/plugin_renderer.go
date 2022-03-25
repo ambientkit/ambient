@@ -171,6 +171,7 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 		Templatename: templateName,
 		Vars:         pvars,
 		Keys:         keys,
+		Files:        files,
 	})
 
 	return err

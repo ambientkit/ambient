@@ -42,7 +42,7 @@ func (d *FuncMapperImpl) Do(requestID string, key string, args []interface{}) (i
 	fm := fmc(req)
 	val := fm[key]
 
-	//d.Log.Warn("grpc-plugin: Do start: %v %#v", requestID, args)
+	//d.Log.Warn("grpc-plugin: CallFuncMap: %v | %v | %v | %#v", requestID, key, val, args)
 
 	anyVal, err := fmcaller.CallFuncMap(val, args...)
 	if err != nil {

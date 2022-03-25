@@ -29,7 +29,7 @@ func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRe
 	//m.Log.Warn("grpc-server: GET called: %v", req.Path)
 
 	m.Impl.Handle(req.Method, req.Path, func(w http.ResponseWriter, r *http.Request) error {
-		//m.Log.Warn("grpc-server: %v func called: %v", req.Method, req.Path)
+		// m.Log.Warn("grpc-server: %v func called: %v | %v", req.Method, req.Path, r.URL.RequestURI())
 
 		uuid := requestuuid.Get(r)
 		m.reqmap.Save(uuid, &HTTPContainer{

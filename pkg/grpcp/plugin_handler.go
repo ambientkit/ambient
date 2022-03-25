@@ -10,7 +10,7 @@ import (
 
 // Handler .
 type Handler interface {
-	Handle(requestID string, method string, path string, headers http.Header, body []byte) (status int, errorText string, response string, outHeaders http.Header)
+	Handle(requestID string, method string, path string, fullPath string, headers http.Header, body []byte) (status int, errorText string, response string, outHeaders http.Header)
 }
 
 // GRPCHandlerPlugin is the gRPC server that GRPCClient talks to.
@@ -27,11 +27,11 @@ func (m *GRPCHandlerPlugin) Handle(ctx context.Context, req *protodef.HandleRequ
 		m.Log.Error("grpc-plugin: error getting headers: %v", err.Error())
 	}
 
-	status, errText, response, rawHeaders := m.Impl.Handle(req.Requestid, req.Method, req.Path, headers, req.Body)
+	status, errText, response, rawHeaders := m.Impl.Handle(req.Requestid, req.Method, req.Path, req.Fullpath, headers, req.Body)
 
 	outHeaders, err := ObjectToProtobufStruct(rawHeaders)
 	if err != nil {
-		m.Log.Error("grpc-plugin: error getting headers: %v", err.Error())
+		m.Log.Error("grpc-plugin: error converting headers: %v", err.Error(), rawHeaders)
 		//return &protodef.MiddlewareResponse{}, err
 	}
 
