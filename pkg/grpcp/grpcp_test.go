@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -419,4 +420,12 @@ func TestMain(t *testing.T) {
 	resp, body = doRequest(t, mux, httptest.NewRequest("GET", "/redirect", nil))
 	assert.Equal(t, http.StatusFound, resp.StatusCode)
 	assert.Equal(t, `<a href="/redirectTo">Found</a>.`+"\n\n", body)
+}
+
+func TestRegex(t *testing.T) {
+	re, err := regexp.Compile(`<a\s+href=(?:"([^"]+)"|'([^']+)').*?>`)
+	assert.NoError(t, err)
+	response := `<a href="/redirectTo">Found</a>.`
+	arr := re.FindStringSubmatch(response)
+	assert.Equal(t, "/redirectTo", arr[1])
 }
