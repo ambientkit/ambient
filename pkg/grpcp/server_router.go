@@ -56,7 +56,7 @@ func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRe
 
 		// Only write to response if there is content. The response could have
 		// already been handled by other functions like Error().
-		if len(response) > 0 {
+		if len(response) > 0 || status > 0 {
 			w.WriteHeader(status)
 			for k, v := range headers {
 				w.Header()[k] = v
