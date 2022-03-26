@@ -10,6 +10,7 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/config"
 	"github.com/ambientkit/ambient/internal/devconsole"
+	"github.com/ambientkit/ambient/internal/grpcsystem"
 	"github.com/ambientkit/ambient/internal/injector"
 	"github.com/ambientkit/ambient/internal/pluginsafe"
 	"github.com/ambientkit/ambient/internal/secureconfig"
@@ -21,6 +22,7 @@ import (
 type App struct {
 	log           ambient.AppLogger
 	pluginsystem  ambient.PluginSystem
+	grpcsystem    ambient.GRPCSystem
 	sessionstorer ambient.SessionStorer
 	mux           ambient.AppRouter
 	renderer      ambient.Renderer
@@ -98,9 +100,14 @@ func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
 		log.Fatal(err.Error())
 	}
 
+	grpcsystem := grpcsystem.New(log, pluginsystem)
+	grpcsystem.ConnectAll()
+	grpcsystem.Monitor()
+
 	ambientApp := &App{
 		log:             log,
 		pluginsystem:    pluginsystem,
+		grpcsystem:      grpcsystem,
 		sessionstorer:   sessionstorer,
 		escapeTemplates: true,
 	}
@@ -159,7 +166,7 @@ func loadStorage(log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) 
 
 // StopGRPCClients stops the gRPC plugins.
 func (app *App) StopGRPCClients() {
-	app.pluginsystem.StopGRPCClients()
+	app.grpcsystem.Disconnect()
 }
 
 // Handler loads the plugins and returns the handler.
@@ -234,12 +241,12 @@ func (app *App) Handler() (http.Handler, error) {
 
 // GrantAccess grants access to all trusted plugins.
 func (app *App) grantAccess() {
-	plugins := app.pluginsystem.Plugins()
+	pluginsData := app.pluginsystem.PluginsData()
 
 	// Enable trusted plugins.
 	for _, pluginName := range app.pluginsystem.TrustedPluginNames() {
 		// If plugin is not enabled, then enable.
-		pluginInfo, found := plugins[pluginName]
+		pluginInfo, found := pluginsData[pluginName]
 		if !found {
 			continue
 		}

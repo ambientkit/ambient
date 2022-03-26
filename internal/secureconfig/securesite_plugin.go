@@ -19,7 +19,7 @@ func (ss *SecureSite) Plugins() (map[string]ambient.PluginData, error) {
 		return nil, amberror.ErrAccessDenied
 	}
 
-	return ss.pluginsystem.Plugins(), nil
+	return ss.pluginsystem.PluginsData(), nil
 }
 
 // PluginNames returns the list of plugin name.
@@ -92,10 +92,12 @@ func (ss *SecureSite) loadSinglePlugin(name string) error {
 }
 
 func (ss *SecureSite) loadSinglePluginPages(name string) {
-	if name == "ambient" {
-		ss.log.Error("plugin load: preventing loading plugin with reserved name: %v", name)
-		return
-	}
+	// TODO: Should we do name checking here since we have gRPC dynamic plugin loading
+	// now? We should use the ambient.Validate package if so.
+	// if name == "ambient" {
+	// 	ss.log.Error("plugin load: preventing loading plugin with reserved name: %v", name)
+	// 	return
+	// }
 
 	v, err := ss.pluginsystem.Plugin(name)
 	if err != nil {
@@ -105,7 +107,11 @@ func (ss *SecureSite) loadSinglePluginPages(name string) {
 
 	recorder := ss.recorder.WithPlugin(name)
 
-	pss, _, _ := NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render, ss.recorder, false)
+	pss, _, err := NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render, ss.recorder, false)
+	if err != nil {
+		ss.log.Error("plugin load: problem creating securesite for (%v): %v", name, err.Error())
+		return
+	}
 
 	toolkit := &ambient.Toolkit{
 		Mux:    recorder,

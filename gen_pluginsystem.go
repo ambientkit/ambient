@@ -8,8 +8,16 @@ import (
 
 // PluginSystem provides config functions.
 type PluginSystem interface {
-	// StopGRPCClients stops the gRPC clients.
-	StopGRPCClients()
+	// LoaderPlugins returns the loader plugins, these include initial gRPC plugins
+	// as well.
+	LoaderPlugins() []Plugin
+	// LoaderMiddleware returns the loader middleware, these include initial gRPC plugins
+	// as well.
+	LoaderMiddleware() []MiddlewarePlugin
+	// Plugins returns the map of plugins. This returns a map that is passed by
+	// reference and all the values are pointers so any changes to it will
+	// be reflected in the plugin system.
+	Plugins() map[string]Plugin
 	// SessionManager returns the session manager.
 	SessionManager() SessionManagerPlugin
 	// TemplateEngine returns the template engine.
@@ -18,6 +26,8 @@ type PluginSystem interface {
 	Router() RouterPlugin
 	// StorageManager returns the storage manager.
 	StorageManager() Storage
+	// LoadPlugin loads a single plugin into the plugin system and saves the config.
+	LoadPlugin(plugin Plugin, middleware bool, grpcPlugin bool) (err error)
 	// Load will load the storage and return an error if one occurs.
 	Load() error
 	// Save will save the storage and return an error if one occurs.
@@ -32,14 +42,16 @@ type PluginSystem interface {
 	Names() []string
 	// MiddlewareNames returns a list of middleware plugin names.
 	MiddlewareNames() []string
+	// IsMiddleware returns if the plugin is middleware.
+	IsMiddleware(name string) bool
 	// TrustedPluginNames returns a list of sorted trusted names.
 	TrustedPluginNames() []string
 	// Trusted returns if a plugin is trusted.
 	Trusted(pluginName string) bool
 	// Routes returns a list of plugin routes.
 	Routes(pluginName string) []Route
-	// Plugins returns the plugin list.
-	Plugins() map[string]PluginData
+	// PluginsData returns the plugin data map.
+	PluginsData() map[string]PluginData
 	// Plugin returns a plugin by name.
 	Plugin(name string) (Plugin, error)
 	// PluginData returns a plugin data by name.

@@ -109,7 +109,7 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 					continue
 				}
 
-				// Render the first enable plugin.
+				// Render the first enabled plugin.
 				return plugin.Fn(w, r)
 			}
 
