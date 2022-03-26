@@ -3,7 +3,6 @@ package pluginsafe
 import (
 	"html/template"
 	"net/http"
-	"os"
 
 	"github.com/ambientkit/ambient"
 )
@@ -20,19 +19,6 @@ func NewRenderer(render ambient.Renderer) *TemplateRenderer {
 	}
 }
 
-// globalFuncMap adds the URL prefix to the FuncMap.
-func globalFuncMap(fm template.FuncMap) template.FuncMap {
-	if fm == nil {
-		fm = template.FuncMap{}
-	}
-
-	fm["URLPrefix"] = func() string {
-		return os.Getenv("AMB_URL_PREFIX")
-	}
-
-	return fm
-}
-
 // globalFuncMapCallable returns a callable function.
 func globalFuncMapCallable(r *http.Request, fm func(r *http.Request) template.FuncMap) func(r *http.Request) template.FuncMap {
 	var f = template.FuncMap{}
@@ -40,7 +26,7 @@ func globalFuncMapCallable(r *http.Request, fm func(r *http.Request) template.Fu
 		f = fm(r)
 	}
 	return func(r *http.Request) template.FuncMap {
-		return globalFuncMap(f)
+		return ambient.GlobalFuncMap(f)
 	}
 }
 

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/ambientkit/ambient"
@@ -145,43 +144,30 @@ func (c *PluginInjector) Inject(inject ambient.LayoutInjector, t *template.Templ
 
 	// Inject into each component.
 	var err error
-	t, err = inject.Head(t, pluginHead, globalFuncMap(fm), data)
+	t, err = inject.Head(t, pluginHead, ambient.GlobalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = inject.Header(t, pluginHeader, globalFuncMap(fm), data)
+	t, err = inject.Header(t, pluginHeader, ambient.GlobalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = inject.Main(t, pluginMain, globalFuncMap(fm), data)
+	t, err = inject.Main(t, pluginMain, ambient.GlobalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = inject.Body(t, pluginBody, globalFuncMap(fm), data)
+	t, err = inject.Body(t, pluginBody, ambient.GlobalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err = inject.Footer(t, pluginFooter, globalFuncMap(fm), data)
+	t, err = inject.Footer(t, pluginFooter, ambient.GlobalFuncMap(fm), data)
 	if err != nil {
 		return nil, err
 	}
 
 	return t, nil
-}
-
-// globalFuncMap adds the URL prefix to the FuncMap.
-func globalFuncMap(fm template.FuncMap) template.FuncMap {
-	if fm == nil {
-		fm = template.FuncMap{}
-	}
-
-	fm["URLPrefix"] = func() string {
-		return os.Getenv("AMB_URL_PREFIX")
-	}
-
-	return fm
 }
