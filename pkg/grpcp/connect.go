@@ -2,27 +2,22 @@ package grpcp
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 
 	"github.com/ambientkit/ambient"
-	"github.com/hashicorp/go-hclog"
+	"github.com/ambientkit/ambient/pkg/hclogadapter"
 	plugin "github.com/hashicorp/go-plugin"
 )
 
 // ConnectPlugin will connect to a plugin over gRPC.
-func ConnectPlugin(pluginName string, pluginPath string) (ambient.Plugin, *plugin.Client, error) {
+func ConnectPlugin(logger ambient.AppLogger, pluginName string, pluginPath string) (ambient.Plugin, *plugin.Client, error) {
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig: Handshake,
 		Plugins: map[string]plugin.Plugin{
 			pluginName: &GenericPlugin{},
 		},
-		Cmd: exec.Command(pluginPath),
-		Logger: hclog.New(&hclog.LoggerOptions{
-			Level:      hclog.Debug,
-			Output:     os.Stderr,
-			JSONFormat: true,
-		}),
+		Cmd:    exec.Command(pluginPath),
+		Logger: hclogadapter.New(pluginName, logger),
 		AllowedProtocols: []plugin.Protocol{
 			plugin.ProtocolNetRPC, plugin.ProtocolGRPC,
 		},

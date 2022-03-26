@@ -50,7 +50,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 				continue
 			}
 
-			gp, pc, err := grpcp.ConnectPlugin(gpb.PluginName(), gpb.PluginPath())
+			gp, pc, err := grpcp.ConnectPlugin(log, gpb.PluginName(), gpb.PluginPath())
 			if err != nil {
 				return nil, err
 			}
@@ -88,7 +88,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 				continue
 			}
 
-			gp, pc, err := grpcp.ConnectPlugin(gpb.PluginName(), gpb.PluginPath())
+			gp, pc, err := grpcp.ConnectPlugin(log, gpb.PluginName(), gpb.PluginPath())
 			if err != nil {
 				return nil, err
 			}
