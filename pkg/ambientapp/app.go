@@ -102,7 +102,6 @@ func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
 
 	grpcsystem := grpcsystem.New(log, pluginsystem)
 	grpcsystem.ConnectAll()
-	grpcsystem.Monitor()
 
 	ambientApp := &App{
 		log:             log,
@@ -227,6 +226,9 @@ func (app *App) Handler() (http.Handler, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Start monitoring with the ability to restart/reload plugin.
+	app.grpcsystem.Monitor(securesite)
 
 	// Start Dev Console if enabled via environment variable.
 	if envdetect.DevConsoleEnabled() {

@@ -28,6 +28,12 @@ func (c *GRPCSitePlugin) Load() error {
 	return ErrorHandler(err)
 }
 
+// LoadSinglePluginPages handler.
+func (c *GRPCSitePlugin) LoadSinglePluginPages(name string) {
+	//_, err := c.client.Load(context.Background(), &protodef.Empty{})
+	//return ErrorHandler(err)
+}
+
 // Authorized handler.
 func (c *GRPCSitePlugin) Authorized(grant ambient.Grant) bool {
 	resp, err := c.client.Authorized(context.Background(), &protodef.SiteAuthorizedRequest{

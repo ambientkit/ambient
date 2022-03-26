@@ -197,10 +197,14 @@ func (p *PluginSystem) loadPlugin(plugin ambient.Plugin, middleware bool, grpcPl
 	// Store the plugin.
 	p.plugins[name] = plugin
 	p.grpcPlugins[plugin.PluginName()] = grpcPlugin
-	p.pluginNames = append(p.pluginNames, plugin.PluginName())
+	if !exists {
+		p.pluginNames = append(p.pluginNames, plugin.PluginName())
+	}
 	if middleware {
 		p.middlewareNamesMap[plugin.PluginName()] = true
-		p.middlewareNames = append(p.middlewareNames, plugin.PluginName())
+		if !exists {
+			p.middlewareNames = append(p.middlewareNames, plugin.PluginName())
+		}
 	}
 
 	// Determine if plugin if found in app config.

@@ -18,6 +18,7 @@ import (
 type GRPCSystem struct {
 	log          ambient.AppLogger
 	pluginsystem ambient.PluginSystem
+	securesite   ambient.SecureSite
 
 	// pluginClients contains a map for quick lookup of gRPC plugins.
 	pluginClients      map[string]*plugin.Client
@@ -39,15 +40,16 @@ func New(log ambient.AppLogger, pluginsystem ambient.PluginSystem) *GRPCSystem {
 		pluginsystem:         pluginsystem,
 		pluginClients:        pluginClients,
 		MonitoringFrequency:  2 * time.Second,
-		RestartAutomatically: false,
+		RestartAutomatically: true,
 	}
 }
 
 // Monitor starts monitoring the gRPC plugins.
-func (s *GRPCSystem) Monitor() {
+func (s *GRPCSystem) Monitor(securesite ambient.SecureSite) {
+	s.securesite = securesite
 	s.pluginClientsMutex.RLock()
 	if !s.monitoring && len(s.pluginClients) > 0 {
-		go s.MonitorGRPCClients()
+		go s.monitorGRPCClients()
 	}
 	s.pluginClientsMutex.RUnlock()
 }
@@ -109,8 +111,8 @@ func (s *GRPCSystem) Disconnect() {
 	s.pluginClientsMutex.Unlock()
 }
 
-// MonitorGRPCClients will restart clients if they crash.
-func (s *GRPCSystem) MonitorGRPCClients() {
+// monitorGRPCClients will restart clients if they crash.
+func (s *GRPCSystem) monitorGRPCClients() {
 	if s.monitoring {
 		return
 	}
@@ -149,6 +151,7 @@ func (s *GRPCSystem) MonitorGRPCClients() {
 				if plugin != nil {
 					if s.RestartAutomatically {
 						s.Connect(plugin, isMiddleware)
+						s.securesite.LoadSinglePluginPages(name)
 						if isMiddleware {
 							s.log.Info("ambient: gRPC middleware restarted: %v", name)
 						} else {

@@ -119,9 +119,16 @@ func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn fu
 	}
 
 	// Ensure the plugin is not already added.
-	for _, v := range rec.rr.routeMap[rs] {
+	for i, v := range rec.rr.routeMap[rs] {
 		if v.PluginName == rec.pluginName {
-			rec.rr.log.Debug("routerecorder: plugin (%v) route already registered: %v", v.PluginName, rs)
+			// If the plugin is already added, then replace it.
+			// FIXME: I'm not sure if this actually worked, looks like the
+			// page is doubled.
+			rec.rr.routeMap[rs][i] = PluginFn{
+				PluginName: rec.pluginName,
+				Fn:         rec.protect(fn),
+			}
+			//rec.rr.log.Error("routerecorder: plugin (%v) route already registered: %v", v.PluginName, rs)
 			rec.rr.routeMapMutex.Unlock()
 			return
 		}

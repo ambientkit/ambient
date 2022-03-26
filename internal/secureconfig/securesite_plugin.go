@@ -79,19 +79,20 @@ func (ss *SecureSite) loadAllPluginPages() error {
 		}
 
 		// Load plugin.
-		ss.loadSinglePluginPages(name)
+		ss.LoadSinglePluginPages(name)
 	}
 
 	return nil
 }
 
 func (ss *SecureSite) loadSinglePlugin(name string) error {
-	ss.loadSinglePluginPages(name)
+	ss.LoadSinglePluginPages(name)
 
 	return nil
 }
 
-func (ss *SecureSite) loadSinglePluginPages(name string) {
+// LoadSinglePluginPages loads the plugin.
+func (ss *SecureSite) LoadSinglePluginPages(name string) {
 	// TODO: Should we do name checking here since we have gRPC dynamic plugin loading
 	// now? We should use the ambient.Validate package if so.
 	// if name == "ambient" {
@@ -134,7 +135,7 @@ func (ss *SecureSite) loadSinglePluginPages(name string) {
 	assets, files := v.Assets()
 	if files != nil {
 		// Handle embedded assets.
-		err = embeddedAssets(recorder, ss.sess, name, assets, files)
+		err = ss.embeddedAssets(recorder, ss.sess, name, assets, files)
 		if err != nil {
 			ss.log.Error("plugin load: problem loading assets for plugin (%v): %v", name, err.Error())
 		}
@@ -181,7 +182,7 @@ func SaveRoutesForPlugin(name string, recorder *pluginsafe.PluginRouteRecorder, 
 	pluginsystem.SetRoute(name, arr)
 }
 
-func embeddedAssets(mux ambient.Router, sess ambient.AppSession, pluginName string, files []ambient.Asset, assets ambient.FileSystemReader) error {
+func (ss *SecureSite) embeddedAssets(mux ambient.Router, sess ambient.AppSession, pluginName string, files []ambient.Asset, assets ambient.FileSystemReader) error {
 	for _, unsafeFile := range files {
 		// Recreate the variable when using closures:
 		// https://golang.org/doc/faq#closures_and_goroutines

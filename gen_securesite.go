@@ -34,6 +34,8 @@ type SecureSite interface {
 	DeletePlugin(name string) error
 	// EnablePlugin enables a plugin.
 	EnablePlugin(pluginName string, loadPlugin bool) error
+	// LoadSinglePluginPages loads the plugin.
+	LoadSinglePluginPages(name string)
 	// DisablePlugin disables a plugin.
 	DisablePlugin(pluginName string, unloadPlugin bool) error
 	// SavePost saves a post.
