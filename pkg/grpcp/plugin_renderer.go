@@ -25,11 +25,6 @@ type FMContainer struct {
 	FS      ambient.FileSystemReader
 }
 
-// FIXME: Determine how to handle strings that are template.HTML.
-// https://github.com/golang/protobuf/issues/1302
-// l.Log.Error("Vars: %#v | %T", vars, vars["postcontent"])
-// l.Log.Error("PVars: %#v | %T", pvars.AsMap(), pvars.AsMap()["postcontent"])
-
 // Page handler.
 func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets ambient.FileSystemReader, templateName string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
