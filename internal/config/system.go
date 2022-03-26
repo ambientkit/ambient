@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"sort"
+	"time"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/amberror"
@@ -24,11 +25,14 @@ type PluginSystem struct {
 	sessionManager  ambient.SessionManagerPlugin
 	plugins         map[string]ambient.Plugin
 	trusted         map[string]bool
+	initialPlugins  *ambient.PluginLoader
 
 	// gRPC plugin clients that need to be closed.
-	pluginClients []*plugin.Client
+	pluginClients map[string]*plugin.Client
 
 	routes map[string][]ambient.Route
+
+	monitoring bool
 }
 
 // NewPluginSystem returns a plugin system.
@@ -38,7 +42,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 	middlewareNames := make([]string, 0)
 	plugins := make(map[string]ambient.Plugin)
 	shouldSave := false
-	pluginClients := make([]*plugin.Client, 0)
+	pluginClients := make(map[string]*plugin.Client, 0)
 
 	// Load the middleware.
 	for _, p := range arr.Middleware {
@@ -56,7 +60,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 			}
 
 			// Store reference to the gRPC plugin.
-			pluginClients = append(pluginClients, pc)
+			pluginClients[gpb.PluginName()] = pc
 
 			save, err := loadPlugin(log, gp, plugins, storage)
 			if err != nil {
@@ -94,7 +98,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 			}
 
 			// Store reference to the gRPC plugin.
-			pluginClients = append(pluginClients, pc)
+			pluginClients[gpb.PluginName()] = pc
 
 			save, err := loadPlugin(log, gp, plugins, storage)
 			if err != nil {
@@ -122,7 +126,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 		}
 	}
 
-	return &PluginSystem{
+	ps := &PluginSystem{
 		log:     log,
 		storage: storage,
 
@@ -133,14 +137,83 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, arr *ambient.Plugi
 		sessionManager:  arr.SessionManager,
 		trusted:         arr.TrustedPlugins,
 		pluginClients:   pluginClients,
+		initialPlugins:  arr,
 
 		plugins: plugins,
 		routes:  make(map[string][]ambient.Route),
-	}, nil
+	}
+
+	if len(pluginClients) > 0 {
+		go ps.MonitorGRPCClients()
+	}
+
+	return ps, nil
+}
+
+// MonitorGRPCClients will restart clients if they crash.
+func (p *PluginSystem) MonitorGRPCClients() {
+	p.monitoring = true
+	for p.monitoring {
+		<-time.After(2 * time.Second)
+		if !p.monitoring {
+			break
+		}
+
+		for name, v := range p.pluginClients {
+			if v.Exited() {
+				p.log.Info("ambient: detected crashed gRPC plugin: %v", name)
+				// plug, ok := p.plugins[name]
+				// if !ok {
+				// 	fmt.Println("Could not find plugin:", name)
+				// 	continue
+				// }
+
+				// TODO: Will need to add the Middleware list as well.
+				for _, plug := range p.initialPlugins.Plugins {
+					if plug.PluginName() != name {
+						continue
+					}
+
+					// If plugin is a gRPC plugin, then connect to it.
+					if plug.PluginVersion() == "gRPC" {
+						gpb, ok := plug.(*ambient.GRPCPluginBase)
+						if !ok {
+							p.log.Error("ambient: plugin, %v, is not a gRPC plugin: %v", plug.PluginName())
+							continue
+						}
+
+						gp, pc, err := grpcp.ConnectPlugin(p.log, gpb.PluginName(), gpb.PluginPath())
+						if err != nil {
+							p.log.Error("ambient: plugin, %v, is not be connected via gRPC: %v", plug.PluginName(), err.Error())
+							continue
+						}
+
+						// Store reference to the gRPC plugin.
+						p.pluginClients[name] = pc
+
+						// TODO: A plugin can't be loaded twice so it needs to
+						// be unloaded properly.
+						_, err = loadPlugin(p.log, gp, p.plugins, p.storage)
+						if err != nil {
+							p.log.Error("ambient: plugin, %v, could not be loaded: %v", plug.PluginName(), err.Error())
+							//return nil, err
+						} //else if save {
+						//shouldSave = true
+						//}
+					} else {
+						fmt.Println("Nope, not gRPC:", name, plug.PluginVersion())
+					}
+				}
+
+			}
+		}
+	}
+
 }
 
 // StopGRPCClients stops the gRPC clients.
 func (p *PluginSystem) StopGRPCClients() {
+	p.monitoring = false
 	for _, v := range p.pluginClients {
 		v.Kill()
 	}

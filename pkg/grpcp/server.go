@@ -148,6 +148,7 @@ func (m *GRPCServer) Assets() ([]ambient.Asset, ambient.FileSystemReader) {
 	resp, err := m.client.Assets(context.Background(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("grpc-server: error calling Assets: %v", err)
+		return nil, nil
 	}
 
 	var assets []ambient.Asset
@@ -170,6 +171,7 @@ func (m *GRPCServer) Settings() []ambient.Setting {
 	resp, err := m.client.Settings(context.Background(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("grpc-server: error calling Settings: %v", err)
+		return nil
 	}
 
 	arr := make([]ambient.Setting, 0)
@@ -204,6 +206,7 @@ func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
 	resp, err := m.client.GrantRequests(context.Background(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("grpc-server: error calling GrantRequests: %v", err)
+		return nil
 	}
 
 	arr := make([]ambient.GrantRequest, 0)
@@ -223,6 +226,7 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 	resp, err := m.client.FuncMap(context.Background(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("grpc-server: error calling FuncMap: %v", err)
+		return nil
 	}
 
 	if len(resp.Keys) == 0 {
@@ -273,6 +277,7 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 				})
 				if err != nil {
 					m.toolkit.Log.Error("grpc-server: error calling Middleware: %v", err)
+					return
 				}
 
 				if resp.Status != 0 {
