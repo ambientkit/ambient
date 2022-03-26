@@ -26,7 +26,8 @@ type GRPCSystem struct {
 	monitoring bool
 	// MonitoringFrequency is the minimum length of time between checks.
 	// Defaults to 2 seconds.
-	MonitoringFrequency time.Duration
+	MonitoringFrequency  time.Duration
+	RestartAutomatically bool
 }
 
 // New returns a new GRPCSystem.
@@ -34,10 +35,11 @@ func New(log ambient.AppLogger, pluginsystem ambient.PluginSystem) *GRPCSystem {
 	pluginClients := make(map[string]*plugin.Client, 0)
 
 	return &GRPCSystem{
-		log:                 log,
-		pluginsystem:        pluginsystem,
-		pluginClients:       pluginClients,
-		MonitoringFrequency: 2 * time.Second,
+		log:                  log,
+		pluginsystem:         pluginsystem,
+		pluginClients:        pluginClients,
+		MonitoringFrequency:  2 * time.Second,
+		RestartAutomatically: false,
 	}
 }
 
@@ -124,22 +126,46 @@ func (s *GRPCSystem) MonitorGRPCClients() {
 	ClientLoop:
 		for name, v := range s.pluginClients {
 			if v.Exited() {
-				s.log.Info("ambient: detected crashed gRPC plugin: %v", name)
+				s.log.Warn("ambient: detected crashed gRPC plugin: %v", name)
+
+				var plugin ambient.Plugin
+				isMiddleware := false
 
 				for _, v := range s.pluginsystem.LoaderMiddleware() {
 					if v.PluginName() == name {
-						s.Connect(v, true)
-						s.log.Info("ambient: gRPC middleware restarted: %v", name)
-						continue ClientLoop
+						plugin = v
+						isMiddleware = true
 					}
 				}
 
-				for _, v := range s.pluginsystem.LoaderPlugins() {
-					if v.PluginName() == name {
-						s.Connect(v, false)
-						s.log.Info("ambient: gRPC plugin restarted: %v", name)
-						continue ClientLoop
+				if plugin == nil {
+					for _, v := range s.pluginsystem.LoaderPlugins() {
+						if v.PluginName() == name {
+							plugin = v
+						}
 					}
+				}
+
+				if plugin != nil {
+					if s.RestartAutomatically {
+						s.Connect(plugin, isMiddleware)
+						if isMiddleware {
+							s.log.Info("ambient: gRPC middleware restarted: %v", name)
+						} else {
+							s.log.Info("ambient: gRPC plugin restarted: %v", name)
+						}
+					} else {
+						s.pluginsystem.SetEnabled(name, false)
+						plugin.Disable()
+						delete(s.pluginClients, name)
+						if isMiddleware {
+							s.log.Info("ambient: gRPC middleware disabled: %v", name)
+						} else {
+							s.log.Info("ambient: gRPC plugin disabled: %v", name)
+						}
+					}
+
+					continue ClientLoop
 				}
 
 				s.log.Error("ambient: could not find gRPC plugin: %v", name)
