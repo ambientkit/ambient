@@ -203,8 +203,7 @@ func (p *PluginSystem) loadPlugin(plugin ambient.Plugin, middleware bool, grpcPl
 	if middleware {
 		p.middlewareNamesMap[plugin.PluginName()] = true
 		if !exists {
-			// Prepend since middleware runs in reverse order.
-			p.middlewareNames = append([]string{plugin.PluginName()}, p.middlewareNames...)
+			p.middlewareNames = append(p.middlewareNames, plugin.PluginName())
 		}
 	}
 

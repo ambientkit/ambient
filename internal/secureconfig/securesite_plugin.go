@@ -245,7 +245,11 @@ func (ss *SecureSite) loadAllPluginMiddleware() http.Handler {
 	h = func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			hi := next
-			for _, pluginName := range ss.pluginsystem.MiddlewareNames() {
+			names := ss.pluginsystem.MiddlewareNames()
+			// Iterate in reverse since the nature of middleware is recursive and
+			// we want top middleware to execute first consistently.
+			for i := len(names) - 1; i >= 0; i-- {
+				pluginName := names[i]
 				pluginRaw, err := ss.pluginsystem.Plugin(pluginName)
 				if err != nil {
 					continue
@@ -270,7 +274,10 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin ambient.
 		ss.log.Debug("plugin middleware: loading (%v) middleware for plugin: %v", len(plugin.Middleware()), plugin.PluginName())
 	}
 
-	for i, pluginMiddleware := range arrHandlers {
+	// Iterate in reverse since the nature of middleware is recursive and
+	// we want top middleware to execute first consistently.
+	for i := len(arrHandlers) - 1; i >= 0; i-- {
+		pluginMiddleware := arrHandlers[i]
 		// Wrap each middleware with a conditional to only use it if the
 		// plugin is enabled.
 		h = func(next http.Handler) http.Handler {
@@ -288,8 +295,6 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin ambient.
 					next.ServeHTTP(w, r)
 					return
 				}
-
-				//fmt.Println("Middleware:", plugin.PluginName())
 
 				// If the plugin is enabled, then wrap with the middleware.
 				if safePluginSettings.Enabled {
