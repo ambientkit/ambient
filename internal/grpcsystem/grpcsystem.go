@@ -47,11 +47,9 @@ func New(log ambient.AppLogger, pluginsystem ambient.PluginSystem) *GRPCSystem {
 // Monitor starts monitoring the gRPC plugins.
 func (s *GRPCSystem) Monitor(securesite ambient.SecureSite) {
 	s.securesite = securesite
-	s.pluginClientsMutex.RLock()
-	if !s.monitoring && len(s.pluginClients) > 0 {
+	if !s.isMonitoring() && len(s.pluginClients) > 0 {
 		go s.monitorGRPCClients()
 	}
-	s.pluginClientsMutex.RUnlock()
 }
 
 // ConnectAll will connect to all initial gRPC plugins in the plugin system.
@@ -103,25 +101,38 @@ func (s *GRPCSystem) Connect(p ambient.Plugin, middleware bool) {
 
 // Disconnect stops the gRPC clients.
 func (s *GRPCSystem) Disconnect() {
+	s.setMonitor(false)
 	s.pluginClientsMutex.Lock()
-	s.monitoring = false
 	for _, v := range s.pluginClients {
 		v.Kill()
 	}
 	s.pluginClientsMutex.Unlock()
 }
 
+func (s *GRPCSystem) isMonitoring() bool {
+	s.pluginClientsMutex.RLock()
+	b := s.monitoring
+	s.pluginClientsMutex.RUnlock()
+	return b
+}
+
+func (s *GRPCSystem) setMonitor(val bool) {
+	s.pluginClientsMutex.Lock()
+	s.monitoring = val
+	s.pluginClientsMutex.Unlock()
+}
+
 // monitorGRPCClients will restart clients if they crash.
 func (s *GRPCSystem) monitorGRPCClients() {
-	if s.monitoring {
+	if s.isMonitoring() {
 		return
 	}
+	s.setMonitor(true)
 
-	s.monitoring = true
-	for s.monitoring {
+	for s.isMonitoring() {
 		<-time.After(s.MonitoringFrequency)
 		// Break if monitoring changes while waiting.
-		if !s.monitoring {
+		if !s.isMonitoring() {
 			break
 		}
 
