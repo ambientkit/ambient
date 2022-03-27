@@ -1,7 +1,11 @@
 package grpcp
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
@@ -16,7 +20,7 @@ type GRPCFuncMapperServer struct {
 }
 
 // Do handler.
-func (l *GRPCFuncMapperServer) Do(requestID string, key string, args []interface{}) (interface{}, error) {
+func (l *GRPCFuncMapperServer) Do(r *http.Request, requestID string, key string, args []interface{}) (interface{}, error) {
 	var err error
 	ctx := context.Background()
 
@@ -28,20 +32,33 @@ func (l *GRPCFuncMapperServer) Do(requestID string, key string, args []interface
 		}
 	}
 
+	sm, err := ObjectToProtobufStruct(r.Header)
+	if err != nil {
+		return nil, fmt.Errorf("grpc-server: Do header conversion error: %v", err.Error())
+	}
+
+	body := bytes.NewBuffer(nil)
+	_, err = io.Copy(body, r.Body)
+	if err != nil {
+		return nil, fmt.Errorf("grpc-server: Do body copy error: %v", err.Error())
+	}
+	// Restore body.
+	r.Body = ioutil.NopCloser(body)
+
 	resp, err := l.client.Do(ctx, &protodef.FuncMapperDoRequest{
 		Key:       key,
 		Requestid: requestID,
 		Params:    arr,
+		Method:    r.Method,
+		Path:      r.RequestURI,
+		Headers:   sm,
+		Body:      body.Bytes(),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("grpc-server: Do response error:%v", err.Error())
 	}
 
 	//l.Log.Error("SERVER: Kind: %v | Value: %v | Valid: %v | Args: %#v", reflect.TypeOf(resp.Value).Kind(), resp.Value, reflect.ValueOf(resp.Value).IsValid(), args)
-
-	// switch resp.vl.(type) {
-
-	// }
 
 	var i interface{}
 	if resp.Value != nil {

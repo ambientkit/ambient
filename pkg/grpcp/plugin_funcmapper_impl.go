@@ -1,7 +1,9 @@
 package grpcp
 
 import (
+	"bytes"
 	"fmt"
+	"net/http"
 	"net/http/httptest"
 
 	"github.com/ambientkit/ambient"
@@ -17,27 +19,18 @@ type FuncMapperImpl struct {
 }
 
 // Do handler.
-func (d *FuncMapperImpl) Do(requestID string, key string, args []interface{}) (interface{}, error) {
+func (d *FuncMapperImpl) Do(requestID string, key string, args []interface{}, method string, path string, headers http.Header, body []byte) (interface{}, error) {
 	//d.Log.Warn("grpc-plugin: Do start: %v", requestID)
-
-	// c, ok := d.Map[requestID]
-	// if !ok {
-	// 	return nil, fmt.Errorf("could not find funcmap for request, len(%v): %v", len(d.Map), requestID)
-	// }
-
-	// val, ok := c.FuncMap[key]
-	// if !ok {
-	// 	return nil, fmt.Errorf("could not get funcmap value for key: %v", key)
-	// }
 
 	// FIXME: May not want to use the map here since it may not be set up in
 	// another call. Probably better to construct the http.Request
 
-	req := httptest.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest(method, path, bytes.NewReader(body))
 	req = requestuuid.Set(req, requestID)
-	//req.Header = headers
-	//w := NewResponseWriter()
+	req.Header = headers
 
+	// FIXME: This is ignoring what is passed in - this will behave differently
+	// from the global funcmap.
 	fmc := d.Impl.FuncMap()
 	fm := fmc(req)
 	val := fm[key]

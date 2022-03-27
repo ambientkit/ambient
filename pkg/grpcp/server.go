@@ -239,7 +239,7 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 			// Prevent race conditions.
 			v := rawV
 			fm[v] = func(args ...interface{}) (interface{}, error) {
-				val, err := m.funcMapperClient.Do(requestuuid.Get(req), v, args)
+				val, err := m.funcMapperClient.Do(req, requestuuid.Get(req), v, args)
 				return val, err
 			}
 		}
@@ -268,13 +268,22 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 
 				//m.toolkit.Log.Error("grpc-server: body in: %v | %v | %v", r.RequestURI, len(body.Bytes()), body.String())
 
+				uuid := requestuuid.Get(r)
+				m.reqmap.Save(uuid, &HTTPContainer{
+					Request:  r,
+					Response: w,
+					FuncMap:  make(template.FuncMap),
+				})
+				defer m.reqmap.Delete(uuid)
+
 				resp, err := m.client.Middleware(context.Background(), &protodef.MiddlewareRequest{
-					Requestid: requestuuid.Get(r),
+					Requestid: uuid,
 					Method:    r.Method,
 					Path:      r.RequestURI,
 					Headers:   sm,
 					Body:      body.Bytes(),
 				})
+
 				if err != nil {
 					m.toolkit.Log.Error("grpc-server: error calling Middleware: %v", err)
 					return

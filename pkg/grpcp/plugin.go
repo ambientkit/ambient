@@ -220,6 +220,7 @@ func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protod
 func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protodef.FuncMapResponse, error) {
 	//m.toolkit.Log.Error("grpc-plugin: FuncMap called.")
 	fn := m.Impl.FuncMap()
+	// This is fine just to grab the keys since it doesn't execute anything.
 	r := httptest.NewRequest("GET", "/", nil)
 	if fn == nil {
 		return &protodef.FuncMapResponse{}, nil
@@ -253,7 +254,7 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 		return &protodef.MiddlewareResponse{}, err
 	}
 
-	r := httptest.NewRequest(req.Method, req.Path, bytes.NewBuffer(req.Body))
+	r := httptest.NewRequest(req.Method, req.Path, bytes.NewReader(req.Body))
 	r = requestuuid.Set(r, req.Requestid)
 	r.Header = headers
 	w := NewResponseWriter()
@@ -265,12 +266,10 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 	h = mux
 
 	for _, mw := range arr {
-		//m.toolkit.Log.Warn("Looping for: %v %v %v", req.Method, req.Path, req.Requestid)
+		//m.toolkit.Log.Warn("Looping for: %v %v %v %v", req.Method, req.Path, req.Requestid, len(arr))
 		h = mw(h)
 	}
 	h.ServeHTTP(w, r)
-
-	//m.toolkit.Log.Warn("Plugin out: %v | %v", mux.W, w.Output())
 
 	statusCode := 0
 	if w.statusCode != 0 {

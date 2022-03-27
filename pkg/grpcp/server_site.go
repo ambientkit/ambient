@@ -1,6 +1,8 @@
 package grpcp
 
 import (
+	"errors"
+
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"golang.org/x/net/context"
@@ -271,7 +273,7 @@ func (m *GRPCSiteServer) UserPersist(ctx context.Context, req *protodef.SiteUser
 	resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return &protodef.Empty{}, err
+		return &protodef.Empty{}, errors.New("could not find request")
 	}
 
 	err = m.Impl.UserPersist(c.Request, req.Persist)
@@ -286,7 +288,7 @@ func (m *GRPCSiteServer) UserPersist(ctx context.Context, req *protodef.SiteUser
 func (m *GRPCSiteServer) UserLogin(ctx context.Context, req *protodef.SiteUserLoginRequest) (resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return &protodef.Empty{}, err
+		return &protodef.Empty{}, errors.New("could not find request")
 	}
 
 	err = m.Impl.UserLogin(c.Request, req.Username)
@@ -297,10 +299,11 @@ func (m *GRPCSiteServer) UserLogin(ctx context.Context, req *protodef.SiteUserLo
 func (m *GRPCSiteServer) AuthenticatedUser(ctx context.Context, req *protodef.SiteAuthenticatedUserRequest) (resp *protodef.SiteAuthenticatedUserResponse, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return &protodef.SiteAuthenticatedUserResponse{}, err
+		return &protodef.SiteAuthenticatedUserResponse{}, errors.New("could not find request")
 	}
 
 	username, err := m.Impl.AuthenticatedUser(c.Request)
+
 	return &protodef.SiteAuthenticatedUserResponse{
 		Username: username,
 	}, err
@@ -310,7 +313,7 @@ func (m *GRPCSiteServer) AuthenticatedUser(ctx context.Context, req *protodef.Si
 func (m *GRPCSiteServer) UserLogout(ctx context.Context, req *protodef.SiteUserLogoutRequest) (resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return &protodef.Empty{}, err
+		return &protodef.Empty{}, errors.New("could not find request")
 	}
 
 	err = m.Impl.UserLogout(c.Request)
@@ -321,7 +324,7 @@ func (m *GRPCSiteServer) UserLogout(ctx context.Context, req *protodef.SiteUserL
 func (m *GRPCSiteServer) LogoutAllUsers(ctx context.Context, req *protodef.SiteLogoutAllUsersRequest) (resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return &protodef.Empty{}, err
+		return &protodef.Empty{}, errors.New("could not find request")
 	}
 
 	err = m.Impl.LogoutAllUsers(c.Request)
@@ -332,7 +335,7 @@ func (m *GRPCSiteServer) LogoutAllUsers(ctx context.Context, req *protodef.SiteL
 func (m *GRPCSiteServer) SetCSRF(ctx context.Context, req *protodef.SiteSetCSRFRequest) (resp *protodef.SiteSetCSRFResponse, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return &protodef.SiteSetCSRFResponse{}, err
+		return &protodef.SiteSetCSRFResponse{}, errors.New("could not find request")
 	}
 
 	token := m.Impl.SetCSRF(c.Request)
@@ -347,7 +350,7 @@ func (m *GRPCSiteServer) CSRF(ctx context.Context, req *protodef.SiteCSRFRequest
 	if c == nil {
 		return &protodef.SiteCSRFResponse{
 			Valid: false,
-		}, err
+		}, errors.New("could not find request")
 	}
 
 	valid := m.Impl.CSRF(c.Request, req.Token)
@@ -362,7 +365,7 @@ func (m *GRPCSiteServer) SessionValue(ctx context.Context, req *protodef.SiteSes
 	if c == nil {
 		return &protodef.SiteSessionValueResponse{
 			Value: "",
-		}, err
+		}, errors.New("could not find request")
 	}
 
 	val := m.Impl.SessionValue(c.Request, req.Name)
@@ -375,7 +378,7 @@ func (m *GRPCSiteServer) SessionValue(ctx context.Context, req *protodef.SiteSes
 func (m *GRPCSiteServer) SetSessionValue(ctx context.Context, req *protodef.SiteSetSessionValueRequest) (resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return &protodef.Empty{}, err
+		return &protodef.Empty{}, errors.New("could not find request")
 	}
 
 	err = m.Impl.SetSessionValue(c.Request, req.Name, req.Value)
@@ -386,7 +389,7 @@ func (m *GRPCSiteServer) SetSessionValue(ctx context.Context, req *protodef.Site
 func (m *GRPCSiteServer) DeleteSessionValue(ctx context.Context, req *protodef.SiteDeleteSessionValueRequest) (resp *protodef.Empty, err error) {
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {
-		return &protodef.Empty{}, err
+		return &protodef.Empty{}, errors.New("could not find request")
 	}
 
 	m.Impl.DeleteSessionValue(c.Request, req.Name)

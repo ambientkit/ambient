@@ -13,6 +13,10 @@ message FuncMapperDoRequest {
     string requestid = 1;
     string key = 2;
     repeated google.protobuf.Any params = 3;
+    string method = 4;
+    string path = 5;
+    google.protobuf.Struct headers = 6;
+    bytes body = 7;
 }
 
 message FuncMapperDoResponse {
