@@ -22,9 +22,9 @@ func (m *GRPCSiteServer) Load(ctx context.Context, req *protodef.Empty) (resp *p
 }
 
 // LoadSinglePluginPages handler.
-func (m *GRPCSiteServer) LoadSinglePluginPages(ctx context.Context, req *protodef.Empty) (resp *protodef.Empty, err error) {
-	//err = m.Impl.Load()
-	return &protodef.Empty{}, err
+func (m *GRPCSiteServer) LoadSinglePluginPages(ctx context.Context, req *protodef.SiteLoadSinglePluginPagesRequest) (resp *protodef.Empty, err error) {
+	m.Impl.LoadSinglePluginPages(req.Pluginname)
+	return &protodef.Empty{}, nil
 }
 
 // Authorized handler.

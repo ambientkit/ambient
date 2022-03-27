@@ -10,7 +10,7 @@ import "google/protobuf/timestamp.proto";
 
 service Site {
     rpc Load(Empty) returns (Empty) {}
-    rpc LoadSinglePluginPages(Empty) returns (Empty) {}
+    rpc LoadSinglePluginPages(SiteLoadSinglePluginPagesRequest) returns (Empty) {}
     rpc Authorized(SiteAuthorizedRequest) returns (SiteAuthorizedResponse) {}
     rpc NeighborPluginGrantList(SiteNeighborPluginGrantListRequest) returns (SiteNeighborPluginGrantListResponse) {}
     rpc NeighborPluginGrants(SiteNeighborPluginGrantsRequest) returns (SiteNeighborPluginGrantsResponse) {}
@@ -60,6 +60,10 @@ service Site {
     rpc SetContent(SiteSetContentRequest) returns (Empty) {}
     rpc Content(Empty) returns (SiteContentResponse) {}
     rpc Tags(SiteTagsRequest) returns (SiteTagsResponse) {}
+}
+
+message SiteLoadSinglePluginPagesRequest {
+    string pluginname = 1;
 }
 
 message SiteAuthorizedRequest {

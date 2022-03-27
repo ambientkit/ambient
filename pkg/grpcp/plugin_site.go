@@ -30,8 +30,13 @@ func (c *GRPCSitePlugin) Load() error {
 
 // LoadSinglePluginPages handler.
 func (c *GRPCSitePlugin) LoadSinglePluginPages(name string) {
-	//_, err := c.client.Load(context.Background(), &protodef.Empty{})
-	//return ErrorHandler(err)
+	_, err := c.client.LoadSinglePluginPages(context.Background(), &protodef.SiteLoadSinglePluginPagesRequest{
+		Pluginname: name,
+	})
+	if err != nil {
+		c.Log.Error("grpc-plugin: site.LoadSinglePluginPages error: %v", err.Error())
+		return
+	}
 }
 
 // Authorized handler.
