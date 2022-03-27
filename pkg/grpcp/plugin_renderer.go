@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io/fs"
 	"net/http"
+	"time"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
@@ -14,9 +15,10 @@ import (
 
 // GRPCRendererPlugin .
 type GRPCRendererPlugin struct {
-	client protodef.RendererClient
-	Log    ambient.Logger
-	Map    map[string]*FMContainer
+	client     protodef.RendererClient
+	Log        ambient.Logger
+	Map        map[string]*FMContainer
+	ContextMap map[string]context.Context
 }
 
 // FMContainer .
@@ -57,6 +59,18 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 	rid := requestuuid.Get(r)
 	l.Map[rid] = c
 	defer delete(l.Map, rid)
+
+	// Save and remove context after 30 seconds.
+	_, ok := l.ContextMap[rid]
+	l.ContextMap[rid] = r.Context()
+	if !ok {
+		// If doesn't exist, then the middleware didn't add it so it needs to be deleted
+		// after.
+		go func() {
+			<-time.After(30 * time.Second)
+			delete(l.ContextMap, rid)
+		}()
+	}
 
 	files := make([]*protodef.EmbeddedFile, 0)
 
@@ -127,6 +141,18 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 	l.Map[rid] = c
 	defer delete(l.Map, rid)
 
+	// Save and remove context after 30 seconds.
+	_, ok := l.ContextMap[rid]
+	l.ContextMap[rid] = r.Context()
+	if !ok {
+		// If doesn't exist, then the middleware didn't add it so it needs to be deleted
+		// after.
+		go func() {
+			<-time.After(30 * time.Second)
+			delete(l.ContextMap, rid)
+		}()
+	}
+
 	_, err = l.client.PageContent(context.Background(), &protodef.RendererPageContentRequest{
 		Requestid: rid,
 		Content:   content,
@@ -169,6 +195,18 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 	rid := requestuuid.Get(r)
 	l.Map[rid] = c
 	defer delete(l.Map, rid)
+
+	// Save and remove context after 30 seconds.
+	_, ok := l.ContextMap[rid]
+	l.ContextMap[rid] = r.Context()
+	if !ok {
+		// If doesn't exist, then the middleware didn't add it so it needs to be deleted
+		// after.
+		go func() {
+			<-time.After(30 * time.Second)
+			delete(l.ContextMap, rid)
+		}()
+	}
 
 	files := make([]*protodef.EmbeddedFile, 0)
 
@@ -239,6 +277,18 @@ func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request,
 	l.Map[rid] = c
 	defer delete(l.Map, rid)
 
+	// Save and remove context after 30 seconds.
+	_, ok := l.ContextMap[rid]
+	l.ContextMap[rid] = r.Context()
+	if !ok {
+		// If doesn't exist, then the middleware didn't add it so it needs to be deleted
+		// after.
+		go func() {
+			<-time.After(30 * time.Second)
+			delete(l.ContextMap, rid)
+		}()
+	}
+
 	_, err = l.client.PostContent(context.Background(), &protodef.RendererPostContentRequest{
 		Requestid: rid,
 		Content:   content,
@@ -278,6 +328,18 @@ func (l *GRPCRendererPlugin) Error(w http.ResponseWriter, r *http.Request, conte
 	rid := requestuuid.Get(r)
 	l.Map[rid] = c
 	defer delete(l.Map, rid)
+
+	// Save and remove context after 30 seconds.
+	_, ok := l.ContextMap[rid]
+	l.ContextMap[rid] = r.Context()
+	if !ok {
+		// If doesn't exist, then the middleware didn't add it so it needs to be deleted
+		// after.
+		go func() {
+			<-time.After(30 * time.Second)
+			delete(l.ContextMap, rid)
+		}()
+	}
 
 	_, err = l.client.Error(context.Background(), &protodef.RendererErrorRequest{
 		Requestid:  rid,

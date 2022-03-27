@@ -87,9 +87,10 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 			Log:    logger,
 		},
 		Render: &GRPCRendererPlugin{
-			client: protodef.NewRendererClient(m.conn),
-			Log:    logger,
-			Map:    m.funcMap,
+			client:     protodef.NewRendererClient(m.conn),
+			Log:        logger,
+			Map:        m.funcMap,
+			ContextMap: m.contextMap,
 		},
 	}
 
