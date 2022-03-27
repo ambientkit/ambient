@@ -106,6 +106,7 @@ func Setup2(trust bool) (*ambientapp.App, error) {
 		Plugins: []ambient.Plugin{
 			//neighbor.New(),
 			//trustPlugin.New(),
+			//bearblog.New(os.Getenv("AMB_PASSWORD_HASH")),
 			ambient.NewGRPCPlugin("bearblog", "../plugin/generic/bearblog/cmd/plugin/ambplugin"),
 			ambient.NewGRPCPlugin("bearcss", "../plugin/generic/bearcss/cmd/plugin/ambplugin"),
 			ambient.NewGRPCPlugin("pluginmanager", "../plugin/generic/pluginmanager/cmd/plugin/ambplugin"),
