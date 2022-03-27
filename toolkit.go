@@ -28,38 +28,37 @@ func (t *Toolkit) Path(url string) string {
 }
 
 // JSON sends a JSON response that is marshalable.
-func (t *Toolkit) JSON(w http.ResponseWriter, status int, response interface{}) (int, error) {
+func (t *Toolkit) JSON(w http.ResponseWriter, status int, response interface{}) error {
 	// Convert to JSON bytes.
 	b, err := json.Marshal(response)
 	if err != nil {
-		return http.StatusInternalServerError, err
+		return StatusError{Code: http.StatusInternalServerError, Err: err}
 	}
 
 	return t.sendJSON(w, status, b)
 }
 
 // JSONPretty sends an indented JSON response that is marshalable.
-func (t *Toolkit) JSONPretty(w http.ResponseWriter, status int, response interface{}) (int, error) {
+func (t *Toolkit) JSONPretty(w http.ResponseWriter, status int, response interface{}) error {
 	// Convert to JSON bytes.
 	b, err := json.MarshalIndent(response, "", "    ")
 	if err != nil {
-		return http.StatusInternalServerError, err
+		return StatusError{Code: http.StatusInternalServerError, Err: err}
 	}
 
 	return t.sendJSON(w, status, b)
 }
 
 // sendJSON sends a JSON response.
-func (t *Toolkit) sendJSON(w http.ResponseWriter, status int, response []byte) (int, error) {
+func (t *Toolkit) sendJSON(w http.ResponseWriter, status int, response []byte) error {
 	// Set the header.
 	w.Header().Set("Content-Type", "application/json")
 
 	// Write out the response.
 	_, err := fmt.Fprint(w, string(response))
 	if err != nil {
-		return http.StatusInternalServerError, err
+		return StatusError{Code: http.StatusInternalServerError, Err: err}
 	}
 
-	// Return the status.
-	return status, nil
+	return nil
 }

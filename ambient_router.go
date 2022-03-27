@@ -45,50 +45,58 @@ func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP Cust
 	// Set the default handler.
 	defaultServeHTTP := func(w http.ResponseWriter, r *http.Request, err error) {
 		if err != nil {
-			status := http.StatusNotFound
-			errText := ""
+			// Set default errors to internal server error.
+			status := http.StatusInternalServerError
+			friendlyError := "Darn, something went wrong."
 
+			// If the error is a status error, then use the information.
 			se, ok := err.(StatusError)
 			if ok {
-				status = se.Code
+				if se.Code > 0 {
+					status = se.Code
+				}
 				if se.Err != nil {
-					errText = se.Err.Error()
+					err = se.Err
+				}
+				if len(se.Friendly) > 0 {
+					friendlyError = se.Friendly
 				}
 			}
 
 			// Handle only errors.
 			if status >= 400 {
-				if len(errText) == 0 {
-					switch status {
-					case 403:
-						// Already logged on plugin access denials.
-						errText = "A plugin has been denied permission."
-					case 404:
-						// No need to log.
-						errText = "Darn, we cannot find the page."
-					case 400:
-						errText = "Darn, something went wrong."
-						if err != nil {
-							logger.Info("awayrouter: error (%v): %v", status, err.Error())
-						}
-					default:
-						if err != nil {
-							logger.Info("awayrouter: error (%v): %v", status, err.Error())
-						}
+				switch status {
+				case 403:
+					// Already logged on plugin access denials.
+					friendlyError = "A plugin has been denied permission."
+				case 404:
+					// No need to log.
+					friendlyError = "Darn, we cannot find the page."
+				case 400:
+					if err != nil {
+						logger.Info("ambient: router error (%v): %v", status, err.Error())
+					}
+				case 500:
+					if err != nil {
+						logger.Error("ambient: router error (%v): %v", status, err.Error())
+					}
+				default:
+					if err != nil {
+						logger.Info("ambient: router error (%v): %v", status, err.Error())
 					}
 				}
 
 				if te != nil {
-					err = te.Error(w, r, fmt.Sprintf("<h1>%v</h1>%v", status, errText), status, nil, nil)
+					err = te.Error(w, r, fmt.Sprintf("<h1>%v</h1>%v", status, friendlyError), status, nil, nil)
 					if err != nil {
 						if err != nil {
-							logger.Info("awayrouter: error in rendering error template (%v): %v", status, err.Error())
+							logger.Info("ambient: router error in rendering error template (%v): %v", status, err.Error())
 						}
 						http.Error(w, "500 internal server error", http.StatusInternalServerError)
 						return
 					}
 				} else {
-					http.Error(w, errText, status)
+					http.Error(w, friendlyError, status)
 				}
 			}
 		}
@@ -121,8 +129,9 @@ type Error interface {
 
 // StatusError represents an error with an associated HTTP status code.
 type StatusError struct {
-	Code int
-	Err  error
+	Code     int
+	Err      error
+	Friendly string
 }
 
 // Error returns the error.
@@ -134,7 +143,7 @@ func (se StatusError) Error() string {
 	return ""
 }
 
-// Status returns a HTTP status code.
-func (se StatusError) Status() int {
-	return se.Code
-}
+// // Status returns a HTTP status code.
+// func (se StatusError) Status() int {
+// 	return se.Code
+// }

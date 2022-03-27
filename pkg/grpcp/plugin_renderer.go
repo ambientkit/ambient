@@ -28,6 +28,12 @@ type FMContainer struct {
 // Page handler.
 func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets ambient.FileSystemReader, templateName string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
+	if r == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.Request cannot be nil")}
+	} else if w == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.ResponseWriter cannot be nil: %v", r.RequestURI)}
+	}
+
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
 		return fmt.Errorf("grpc-plugin: error on Page struct conversion: %v | %v", err.Error(), pvars)
@@ -94,6 +100,12 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 // PageContent handler.
 func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request, content string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
+	if r == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.Request cannot be nil")}
+	} else if w == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.ResponseWriter cannot be nil: %v", r.RequestURI)}
+	}
+
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
 		return fmt.Errorf("grpc-plugin: error on PageContent struct conversion: %v", err.Error())
@@ -128,6 +140,12 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 // Post handler.
 func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets ambient.FileSystemReader, templateName string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
+	if r == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.Request cannot be nil")}
+	} else if w == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.ResponseWriter cannot be nil: %v", r.RequestURI)}
+	}
+
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
 		return fmt.Errorf("grpc-plugin: error on Post struct conversion: %v", err.Error())
@@ -194,6 +212,12 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 // PostContent handler.
 func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request, content string,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
+	if r == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.Request cannot be nil")}
+	} else if w == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.ResponseWriter cannot be nil: %v", r.RequestURI)}
+	}
+
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
 		return fmt.Errorf("grpc-plugin: error on PostContent struct conversion: %v", err.Error())
@@ -228,6 +252,12 @@ func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request,
 // Error handler.
 func (l *GRPCRendererPlugin) Error(w http.ResponseWriter, r *http.Request, content string, statusCode int,
 	fm func(r *http.Request) template.FuncMap, vars map[string]interface{}) (err error) {
+	if r == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.Request cannot be nil")}
+	} else if w == nil {
+		return ambient.StatusError{Code: http.StatusInternalServerError, Err: fmt.Errorf("htmlengine: http.ResponseWriter cannot be nil: %v", r.RequestURI)}
+	}
+
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
 		return fmt.Errorf("grpc-plugin: error on Error struct conversion: %v", err.Error())

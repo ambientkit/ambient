@@ -220,6 +220,13 @@ func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protod
 func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protodef.FuncMapResponse, error) {
 	//m.toolkit.Log.Error("grpc-plugin: FuncMap called.")
 	fn := m.Impl.FuncMap()
+	keys := make([]string, 0)
+	if fn == nil {
+		return &protodef.FuncMapResponse{
+			Keys: keys,
+		}, nil
+	}
+
 	// This is fine just to grab the keys since it doesn't execute anything.
 	r := httptest.NewRequest("GET", "/", nil)
 	if fn == nil {
@@ -228,7 +235,6 @@ func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protode
 
 	fm := fn(r)
 
-	keys := make([]string, 0)
 	for k := range fm {
 		keys = append(keys, k)
 	}
