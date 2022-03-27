@@ -1,6 +1,7 @@
 package ambient
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -42,7 +43,56 @@ type CustomServeHTTP func(log Logger, renderer Renderer,
 // SetupRouter sets the router with the NotFound handler and the default handler.
 func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP CustomServeHTTP) {
 	// Set the default handler.
-	defaultServeHTTP := func(w http.ResponseWriter, r *http.Request, err error) {}
+	defaultServeHTTP := func(w http.ResponseWriter, r *http.Request, err error) {
+		if err != nil {
+			status := http.StatusNotFound
+			errText := ""
+
+			se, ok := err.(StatusError)
+			if ok {
+				status = se.Code
+				if se.Err != nil {
+					errText = se.Err.Error()
+				}
+			}
+
+			// Handle only errors.
+			if status >= 400 {
+				if len(errText) == 0 {
+					switch status {
+					case 403:
+						// Already logged on plugin access denials.
+						errText = "A plugin has been denied permission."
+					case 404:
+						// No need to log.
+						errText = "Darn, we cannot find the page."
+					case 400:
+						errText = "Darn, something went wrong."
+						if err != nil {
+							logger.Info("awayrouter: error (%v): %v", status, err.Error())
+						}
+					default:
+						if err != nil {
+							logger.Info("awayrouter: error (%v): %v", status, err.Error())
+						}
+					}
+				}
+
+				if te != nil {
+					err = te.Error(w, r, fmt.Sprintf("<h1>%v</h1>%v", status, errText), status, nil, nil)
+					if err != nil {
+						if err != nil {
+							logger.Info("awayrouter: error in rendering error template (%v): %v", status, err.Error())
+						}
+						http.Error(w, "500 internal server error", http.StatusInternalServerError)
+						return
+					}
+				} else {
+					http.Error(w, errText, status)
+				}
+			}
+		}
+	}
 
 	// Use the custom handler if it's set.
 	serveHTTP := defaultServeHTTP
