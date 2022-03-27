@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path"
 )
 
 // Toolkit provides utilities to plugins.
@@ -16,14 +15,16 @@ type Toolkit struct {
 	Site   SecureSite
 }
 
-// Redirect to a page with the proper URL prefix.
+// Redirect to a relative page with the proper URL prefix.
 func (t *Toolkit) Redirect(w http.ResponseWriter, r *http.Request, url string, code int) {
 	http.Redirect(w, r, t.Path(url), code)
 }
 
 // Path to a page with the proper URL prefix.
 func (t *Toolkit) Path(url string) string {
-	return path.Join(os.Getenv("AMB_URL_PREFIX"), url)
+	// Don't want to use path.Join() because it will strip the trailing slash in
+	// some cases.
+	return fmt.Sprintf("%v%v", os.Getenv("AMB_URL_PREFIX"), url)
 }
 
 // JSON sends a JSON response that is marshalable.

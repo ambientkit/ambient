@@ -253,8 +253,6 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 		return &protodef.MiddlewareResponse{}, err
 	}
 
-	//m.toolkit.Log.Error("grpc-plugin:", v ...interface{})
-
 	r := httptest.NewRequest(req.Method, req.Path, bytes.NewBuffer(req.Body))
 	r = requestuuid.Set(r, req.Requestid)
 	r.Header = headers

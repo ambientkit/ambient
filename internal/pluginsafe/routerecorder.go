@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path"
 	"sync"
 
 	"github.com/ambientkit/ambient"
@@ -61,7 +60,9 @@ func pathKey(method string, path string) string {
 }
 
 func prefixedRoute(urlpath string) string {
-	return path.Join(os.Getenv("AMB_URL_PREFIX"), urlpath)
+	// Don't want to use path.Join() because it will strip the trailing slash in
+	// some cases.
+	return fmt.Sprintf("%v%v", os.Getenv("AMB_URL_PREFIX"), urlpath)
 }
 
 func (rec *PluginRouteRecorder) handleRoute(method string, rawpath string, fn func(http.ResponseWriter, *http.Request) (err error)) {
