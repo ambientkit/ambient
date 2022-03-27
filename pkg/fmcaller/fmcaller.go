@@ -44,12 +44,12 @@ func CallFuncMap(fn interface{}, args ...interface{}) (interface{}, error) {
 		// If someone passed in something unassignable, then try to convert it.
 		if !argInValue.Type().AssignableTo(funcInType) {
 			switch funcInType {
-			case reflect.TypeOf(time.Time{}):
-				// Try converting to time.
-				t, err := time.Parse(time.RFC3339, argInValue.String())
-				if err == nil {
-					argInValue = reflect.ValueOf(t)
-				}
+			// case reflect.TypeOf(time.Time{}):
+			// 	// Try converting to time.
+			// 	t, err := time.Parse(time.RFC3339, argInValue.String())
+			// 	if err == nil {
+			// 		argInValue = reflect.ValueOf(t)
+			// 	}
 			default:
 				return nil, fmt.Errorf("error with FuncMap: cannot assign %v to %v", argInValue.Type(), funcInType)
 			}
