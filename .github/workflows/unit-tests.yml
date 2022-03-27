@@ -24,9 +24,6 @@ jobs:
       # Checkout the code.
       - name: Checkout code
         uses: actions/checkout@v2
-      # Build the hello plugin.
-      - name: Build plugin
-        run: cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o ambplugin
       # Run all the unit tests.
       - name: Run all unit tests
         run: go test -race -covermode atomic -coverprofile=covprofile ./...
