@@ -11,7 +11,7 @@ func (p *Plugin) index(w http.ResponseWriter, r *http.Request) error {
 	vars["title"] = "Plugins"
 	fmt.Fprint(w, "hello world")
 	return nil
-	//return p.Render.Page(w, r, assets, "template/hello", nil, vars)
+	//return p.Render.Page(w, r, assets, "template/hello.tmpl", nil, vars)
 }
 
 func (p *Plugin) another(w http.ResponseWriter, r *http.Request) error {
@@ -41,7 +41,7 @@ func (p *Plugin) created(w http.ResponseWriter, r *http.Request) error {
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, "created: %v", p.Mux.Param(r, "name"))
 	return nil
-	//return p.Render.Page(w, r, assets, "template/hello", nil, vars)
+	//return p.Render.Page(w, r, assets, "template/hello.tmpl", nil, vars)
 }
 
 func (p *Plugin) headersPOST(w http.ResponseWriter, r *http.Request) error {
