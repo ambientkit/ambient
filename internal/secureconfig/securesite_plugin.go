@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/amberror"
 	"github.com/ambientkit/ambient/internal/pluginsafe"
+	"github.com/ambientkit/ambient/pkg/amberror"
 )
 
 // Plugins returns the plugin list.

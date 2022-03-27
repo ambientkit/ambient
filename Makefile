@@ -9,7 +9,7 @@
 include .env
 
 .PHONY: default
-default: start
+default: protoc
 
 ################################################################################
 # Common
@@ -62,21 +62,3 @@ protoc-install:
 .PHONY: protoc
 protoc:
 	@PATH="${PATH}:$(shell pwd)/bin" && protoc -I pkg/grpcp/protobuf/ pkg/grpcp/protobuf/*.proto --go_out=plugins=grpc:pkg/grpcp/protodef/
-
-# Build the plugins.
-.PHONY: build-plugins
-build-plugins:
-	@cd pkg/grpcp/testingdata/plugin/hello/cmd/plugin && go build -o ambplugin
-	@cd ../plugin/generic/bearblog/cmd/plugin && go build -o ambplugin
-	@cd ../plugin/generic/bearcss/cmd/plugin && go build -o ambplugin
-	@cd ../plugin/generic/pluginmanager/cmd/plugin && go build -o ambplugin
-
-# Start the build and run process for grpc.
-.PHONY: start
-start: protoc build-plugins
-	go run pkg/grpcp/testingdata/cmd/server/main.go
-
-# Start the test process for grpc.
-.PHONY: test
-test: protoc build-plugins
-	go test pkg/grpcp/*.go

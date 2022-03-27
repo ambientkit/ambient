@@ -107,8 +107,8 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, "Foo", body)
 
 	body, err = parseTemplate(t, fm, `{{onetime_one "2022-03-25T00:00:00Z"}}`)
-	assert.NoError(t, err)
-	assert.Equal(t, "2022-03-25", body)
+	assert.Error(t, err)
+	assert.Equal(t, "", body)
 
 	body, err = parseTemplate(t, fm, `{{onetime_one nil}}`)
 	assert.Error(t, err)

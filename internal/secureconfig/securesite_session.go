@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/amberror"
+	"github.com/ambientkit/ambient/pkg/amberror"
 )
 
 // AuthenticatedUser returns if the current user is authenticated.

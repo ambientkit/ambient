@@ -2,7 +2,7 @@ package secureconfig
 
 import (
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/amberror"
+	"github.com/ambientkit/ambient/pkg/amberror"
 )
 
 // NeighborPluginGrantList gets the grants requests for a neighbor plugin.

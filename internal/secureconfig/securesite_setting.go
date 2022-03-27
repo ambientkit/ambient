@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/amberror"
+	"github.com/ambientkit/ambient/pkg/amberror"
 )
 
 // PluginNeighborSettingsList gets the grants requests for a neighbor plugin.

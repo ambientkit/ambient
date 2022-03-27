@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/amberror"
+	"github.com/ambientkit/ambient/pkg/amberror"
 )
 
 // SetTitle sets the title.
