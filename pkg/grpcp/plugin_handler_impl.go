@@ -7,12 +7,14 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
+	"golang.org/x/net/context"
 )
 
 // HandlerImpl .
 type HandlerImpl struct {
-	Log ambient.Logger
-	Map map[string]func(http.ResponseWriter, *http.Request) error
+	Log        ambient.Logger
+	Map        map[string]func(http.ResponseWriter, *http.Request) error
+	ContextMap map[string]context.Context
 }
 
 // Handle .
@@ -22,6 +24,13 @@ func (d *HandlerImpl) Handle(requestid string, method string, path string, fullP
 	req := httptest.NewRequest(method, fullPath, bytes.NewReader(body))
 	req = requestuuid.Set(req, requestid)
 	req.Header = headers
+
+	// Get the context if saved from middleware.
+	ctx, ok := d.ContextMap[requestid]
+	if ok {
+		req = req.WithContext(ctx)
+	}
+
 	w := NewResponseWriter()
 
 	fn, found := d.Map[pathkey(method, path)]

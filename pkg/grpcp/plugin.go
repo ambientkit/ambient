@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
+	"time"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
@@ -24,6 +25,7 @@ type GRPCPlugin struct {
 	funcMapperClient *GRPCFuncMapperServer
 	reqMap           map[string]func(http.ResponseWriter, *http.Request) error
 	funcMap          map[string]*FMContainer
+	contextMap       map[string]context.Context
 }
 
 // PluginName handler.
@@ -71,6 +73,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 
 	m.reqMap = make(map[string]func(http.ResponseWriter, *http.Request) error)
 	m.funcMap = make(map[string]*FMContainer)
+	m.contextMap = make(map[string]context.Context)
 
 	m.toolkit = &ambient.Toolkit{
 		Log: logger,
@@ -98,17 +101,19 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		m.server = grpc.NewServer(opts...)
 		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
 			Impl: &FuncMapperImpl{
-				Log:  m.toolkit.Log,
-				Map:  m.funcMap,
-				Impl: m.Impl,
+				Log:        m.toolkit.Log,
+				Map:        m.funcMap,
+				Impl:       m.Impl,
+				ContextMap: m.contextMap,
 			},
 			Log: m.toolkit.Log,
 		})
 		protodef.RegisterHandlerServer(m.server, &GRPCHandlerPlugin{
 			Log: m.toolkit.Log,
 			Impl: &HandlerImpl{
-				Log: m.toolkit.Log,
-				Map: m.reqMap,
+				Log:        m.toolkit.Log,
+				Map:        m.reqMap,
+				ContextMap: m.contextMap,
 			},
 		})
 
@@ -266,7 +271,7 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 	w := NewResponseWriter()
 
 	mux := &MockHandler{
-		//Log: m.toolkit.Log,
+		Log: m.toolkit.Log,
 	}
 	var h http.Handler
 	h = mux
@@ -276,6 +281,13 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 		h = mw(h)
 	}
 	h.ServeHTTP(w, r)
+
+	// Save and remove context after 30 seconds.
+	m.contextMap[req.Requestid] = mux.R.Context()
+	go func() {
+		<-time.After(30 * time.Second)
+		delete(m.contextMap, req.Requestid)
+	}()
 
 	statusCode := 0
 	if w.statusCode != 0 {
@@ -314,13 +326,13 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 // MockHandler is a mock mux.
 type MockHandler struct {
 	//W http.ResponseWriter
-	//R *http.Request
-	//Log ambient.Logger
+	R   *http.Request
+	Log ambient.Logger
 }
 
 // ServeHTTP stores the requests.
 func (h *MockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//h.Log.Warn("Final loop for: %v %v %v", r.Method, r.URL.Path, requestuuid.Get(r))
 	//h.W = w
-	//h.R = r
+	h.R = r
 }
