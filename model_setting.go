@@ -25,6 +25,6 @@ const (
 
 // SettingDescription is a type of description.
 type SettingDescription struct {
-	Text string `json:"name"`
+	Text string `json:"text"`
 	URL  string `json:"url"`
 }
