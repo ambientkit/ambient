@@ -7,6 +7,7 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/avfs"
+	"github.com/ambientkit/ambient/pkg/grpcp/grpcsafe"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"golang.org/x/net/context"
 )
@@ -15,7 +16,7 @@ import (
 type GRPCRendererServer struct {
 	Log              ambient.Logger
 	Impl             ambient.Renderer
-	reqmap           *RequestMap
+	reqmap           *grpcsafe.RequestMap
 	FuncMapperClient *GRPCFuncMapperServer
 }
 

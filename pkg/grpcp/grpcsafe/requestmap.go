@@ -1,4 +1,4 @@
-package grpcp
+package grpcsafe
 
 import (
 	"html/template"

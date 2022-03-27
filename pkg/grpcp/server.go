@@ -10,6 +10,7 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/avfs"
+	"github.com/ambientkit/ambient/pkg/grpcp/grpcsafe"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
 	plugin "github.com/hashicorp/go-plugin"
@@ -24,7 +25,7 @@ type GRPCServer struct {
 	toolkit          *ambient.Toolkit
 	conn             *grpc.ClientConn
 	server           *grpc.Server
-	reqmap           *RequestMap
+	reqmap           *grpcsafe.RequestMap
 	funcMapperClient *GRPCFuncMapperServer
 }
 
@@ -52,7 +53,7 @@ func (m *GRPCServer) PluginVersion() string {
 func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 	//toolkit.Log.Debug("grpc-server: enabled called")
 
-	m.reqmap = NewRequestMap()
+	m.reqmap = grpcsafe.NewRequestMap()
 	m.toolkit = toolkit
 	loggerServer := &GRPCLoggerServer{
 		Impl: toolkit.Log,
@@ -267,7 +268,7 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 				//m.toolkit.Log.Error("grpc-server: body in: %v | %v | %v", r.RequestURI, len(body.Bytes()), body.String())
 
 				uuid := requestuuid.Get(r)
-				m.reqmap.Save(uuid, &HTTPContainer{
+				m.reqmap.Save(uuid, &grpcsafe.HTTPContainer{
 					Request:  r,
 					Response: w,
 					FuncMap:  make(template.FuncMap),

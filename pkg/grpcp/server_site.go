@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/pkg/grpcp/grpcsafe"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"golang.org/x/net/context"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -14,7 +15,7 @@ import (
 type GRPCSiteServer struct {
 	Impl   ambient.SecureSite
 	Log    ambient.Logger
-	reqmap *RequestMap
+	reqmap *grpcsafe.RequestMap
 }
 
 // Load handler.
