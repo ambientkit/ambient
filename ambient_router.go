@@ -125,6 +125,7 @@ func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP Cust
 type Error interface {
 	error
 	Status() int
+	Message() string
 }
 
 // StatusError represents an error with an associated HTTP status code.
@@ -143,7 +144,12 @@ func (se StatusError) Error() string {
 	return ""
 }
 
-// // Status returns a HTTP status code.
-// func (se StatusError) Status() int {
-// 	return se.Code
-// }
+// Status returns a HTTP status code.
+func (se StatusError) Status() int {
+	return se.Code
+}
+
+// Message returns a optional user friendly error message.
+func (se StatusError) Message() string {
+	return se.Friendly
+}
