@@ -33,43 +33,51 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 		return fmt.Errorf("grpc-plugin: error on Page struct conversion: %v | %v", err.Error(), pvars)
 	}
 
-	funcMap := fm(nil)
 	keys := make([]string, 0)
-	for k := range funcMap {
-		keys = append(keys, k)
+
+	c := &FMContainer{
+		FS: assets,
+	}
+
+	if fm != nil {
+		funcMap := fm(r)
+		for k := range funcMap {
+			keys = append(keys, k)
+		}
+
+		c.FuncMap = funcMap
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = &FMContainer{
-		FuncMap: fm(r),
-		FS:      assets,
-	}
+	l.Map[rid] = c
 	defer delete(l.Map, rid)
 
 	files := make([]*protodef.EmbeddedFile, 0)
 
-	err = fs.WalkDir(assets, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
+	if assets != nil {
+		err = fs.WalkDir(assets, ".", func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
 
-		if d.IsDir() {
+			if d.IsDir() {
+				return nil
+			}
+
+			b, err := assets.ReadFile(path)
+			if err != nil {
+				return err
+			}
+
+			files = append(files, &protodef.EmbeddedFile{
+				Name: path,
+				Body: b,
+			})
 			return nil
-		}
-
-		b, err := assets.ReadFile(path)
+		})
 		if err != nil {
 			return err
 		}
-
-		files = append(files, &protodef.EmbeddedFile{
-			Name: path,
-			Body: b,
-		})
-		return nil
-	})
-	if err != nil {
-		return err
 	}
 
 	_, err = l.client.Page(context.Background(), &protodef.RendererPageRequest{
@@ -91,17 +99,20 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 		return fmt.Errorf("grpc-plugin: error on PageContent struct conversion: %v", err.Error())
 	}
 
-	funcMap := fm(nil)
 	keys := make([]string, 0)
-	for k := range funcMap {
-		keys = append(keys, k)
+	c := &FMContainer{}
+
+	if fm != nil {
+		funcMap := fm(r)
+		for k := range funcMap {
+			keys = append(keys, k)
+		}
+
+		c.FuncMap = funcMap
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = &FMContainer{
-		FuncMap: fm(r),
-		FS:      nil,
-	}
+	l.Map[rid] = c
 	defer delete(l.Map, rid)
 
 	_, err = l.client.PageContent(context.Background(), &protodef.RendererPageContentRequest{
@@ -122,43 +133,51 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 		return fmt.Errorf("grpc-plugin: error on Post struct conversion: %v", err.Error())
 	}
 
-	funcMap := fm(nil)
 	keys := make([]string, 0)
-	for k := range funcMap {
-		keys = append(keys, k)
+
+	c := &FMContainer{
+		FS: assets,
+	}
+
+	if fm != nil {
+		funcMap := fm(r)
+		for k := range funcMap {
+			keys = append(keys, k)
+		}
+
+		c.FuncMap = funcMap
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = &FMContainer{
-		FuncMap: fm(r),
-		FS:      assets,
-	}
+	l.Map[rid] = c
 	defer delete(l.Map, rid)
 
 	files := make([]*protodef.EmbeddedFile, 0)
 
-	err = fs.WalkDir(assets, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
+	if assets != nil {
+		err = fs.WalkDir(assets, ".", func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
 
-		if d.IsDir() {
+			if d.IsDir() {
+				return nil
+			}
+
+			b, err := assets.ReadFile(path)
+			if err != nil {
+				return err
+			}
+
+			files = append(files, &protodef.EmbeddedFile{
+				Name: path,
+				Body: b,
+			})
 			return nil
-		}
-
-		b, err := assets.ReadFile(path)
+		})
 		if err != nil {
 			return err
 		}
-
-		files = append(files, &protodef.EmbeddedFile{
-			Name: path,
-			Body: b,
-		})
-		return nil
-	})
-	if err != nil {
-		return err
 	}
 
 	_, err = l.client.Post(context.Background(), &protodef.RendererPostRequest{
@@ -180,17 +199,20 @@ func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request,
 		return fmt.Errorf("grpc-plugin: error on PostContent struct conversion: %v", err.Error())
 	}
 
-	funcMap := fm(nil)
 	keys := make([]string, 0)
-	for k := range funcMap {
-		keys = append(keys, k)
+	c := &FMContainer{}
+
+	if fm != nil {
+		funcMap := fm(r)
+		for k := range funcMap {
+			keys = append(keys, k)
+		}
+
+		c.FuncMap = funcMap
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = &FMContainer{
-		FuncMap: fm(r),
-		FS:      nil,
-	}
+	l.Map[rid] = c
 	defer delete(l.Map, rid)
 
 	_, err = l.client.PostContent(context.Background(), &protodef.RendererPostContentRequest{
@@ -211,17 +233,20 @@ func (l *GRPCRendererPlugin) Error(w http.ResponseWriter, r *http.Request, conte
 		return fmt.Errorf("grpc-plugin: error on Error struct conversion: %v", err.Error())
 	}
 
-	funcMap := fm(nil)
 	keys := make([]string, 0)
-	for k := range funcMap {
-		keys = append(keys, k)
+	c := &FMContainer{}
+
+	if fm != nil {
+		funcMap := fm(r)
+		for k := range funcMap {
+			keys = append(keys, k)
+		}
+
+		c.FuncMap = funcMap
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = &FMContainer{
-		FuncMap: fm(r),
-		FS:      nil,
-	}
+	l.Map[rid] = c
 	defer delete(l.Map, rid)
 
 	_, err = l.client.Error(context.Background(), &protodef.RendererErrorRequest{

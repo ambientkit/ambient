@@ -19,25 +19,55 @@ type FuncMapperImpl struct {
 }
 
 // Do handler.
-func (d *FuncMapperImpl) Do(requestID string, key string, args []interface{}, method string, path string, headers http.Header, body []byte) (interface{}, error) {
+func (d *FuncMapperImpl) Do(globalFuncMap bool, requestID string, key string, args []interface{}, method string, path string, headers http.Header, body []byte) (interface{}, error) {
 	//d.Log.Warn("grpc-plugin: Do start: %v", requestID)
-
-	// FIXME: May not want to use the map here since it may not be set up in
-	// another call. Probably better to construct the http.Request
 
 	req := httptest.NewRequest(method, path, bytes.NewReader(body))
 	req = requestuuid.Set(req, requestID)
 	req.Header = headers
 
-	// FIXME: This is ignoring what is passed in - this will behave differently
-	// from the global funcmap.
-	fmc := d.Impl.FuncMap()
-	fm := fmc(req)
-	val := fm[key]
+	var callable interface{}
+	if globalFuncMap {
+		fmc := d.Impl.FuncMap()
+		if fmc == nil {
+			return nil, nil
+		}
 
-	//d.Log.Warn("grpc-plugin: CallFuncMap: %v | %v | %v | %#v", requestID, key, val, args)
+		fm := fmc(req)
+		if fm == nil {
+			return nil, nil
+		}
 
-	anyVal, err := fmcaller.CallFuncMap(val, args...)
+		var ok bool
+		callable, ok = fm[key]
+		if !ok {
+			//d.Log.Debug("grpc-plugin: FuncMap field not found: %v", key)
+			return nil, nil
+		}
+
+		//d.Log.Debug("grpc-plugin: CallFuncMap global: %v | %v | %v | %#v", requestID, key, callable, args)
+	} else {
+		c, ok := d.Map[requestID]
+		if !ok {
+			//d.Log.Error("grpc-plugin: FuncMap not found for request ID: %v", requestID)
+			return nil, nil
+		}
+		//d.Log.Debug("grpc-plugin: CallFuncMap local: %v | %v | %v | %#v", requestID, key, callable, args)
+
+		if c.FuncMap == nil {
+			return nil, nil
+		}
+
+		callable, ok = c.FuncMap[key]
+		if !ok {
+			//d.Log.Debug("grpc-plugin: FuncMap field not found: %v", key)
+			return nil, nil
+		}
+	}
+
+	//d.Log.Debug("grpc-plugin: CallFuncMap: %v | %v | %v | %#v", requestID, key, callable, args)
+
+	anyVal, err := fmcaller.CallFuncMap(callable, args...)
 	if err != nil {
 		return nil, fmt.Errorf("grpc-plugin: CallFuncMap error: %v", err.Error())
 	}

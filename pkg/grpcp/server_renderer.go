@@ -45,7 +45,7 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 			v := rawV
 			fm[v] = func(args ...interface{}) (interface{}, error) {
 				//m.Log.Error("FUNC ARGS: %v | %#v", v, args)
-				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args)
+				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				return val, err
 			}
 		}
@@ -73,7 +73,7 @@ func (m *GRPCRendererServer) PageContent(ctx context.Context, req *protodef.Rend
 			// Prevent race conditions.
 			v := rawV
 			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
-				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args)
+				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				return val, err
 			}
 		}
@@ -107,7 +107,7 @@ func (m *GRPCRendererServer) Post(ctx context.Context, req *protodef.RendererPos
 			// Prevent race conditions.
 			v := rawV
 			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
-				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args)
+				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				return val, err
 			}
 		}
@@ -135,7 +135,7 @@ func (m *GRPCRendererServer) PostContent(ctx context.Context, req *protodef.Rend
 			// Prevent race conditions.
 			v := rawV
 			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
-				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args)
+				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				return val, err
 			}
 		}
@@ -163,7 +163,7 @@ func (m *GRPCRendererServer) Error(ctx context.Context, req *protodef.RendererEr
 			// Prevent race conditions.
 			v := rawV
 			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
-				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args)
+				val, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				return val, err
 			}
 		}

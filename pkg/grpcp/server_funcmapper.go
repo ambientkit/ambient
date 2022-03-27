@@ -20,7 +20,7 @@ type GRPCFuncMapperServer struct {
 }
 
 // Do handler.
-func (l *GRPCFuncMapperServer) Do(r *http.Request, requestID string, key string, args []interface{}) (interface{}, error) {
+func (l *GRPCFuncMapperServer) Do(r *http.Request, requestID string, key string, args []interface{}, globalFuncMap bool) (interface{}, error) {
 	var err error
 	ctx := context.Background()
 
@@ -46,6 +46,7 @@ func (l *GRPCFuncMapperServer) Do(r *http.Request, requestID string, key string,
 	r.Body = ioutil.NopCloser(body)
 
 	resp, err := l.client.Do(ctx, &protodef.FuncMapperDoRequest{
+		Globalfm:  globalFuncMap,
 		Key:       key,
 		Requestid: requestID,
 		Params:    arr,

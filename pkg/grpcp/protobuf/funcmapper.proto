@@ -10,13 +10,14 @@ service FuncMapper {
 }
 
 message FuncMapperDoRequest {
-    string requestid = 1;
-    string key = 2;
-    repeated google.protobuf.Any params = 3;
-    string method = 4;
-    string path = 5;
-    google.protobuf.Struct headers = 6;
-    bytes body = 7;
+    bool globalfm = 1;
+    string requestid = 2;
+    string key = 3;
+    repeated google.protobuf.Any params = 4;
+    string method = 5;
+    string path = 6;
+    google.protobuf.Struct headers = 7;
+    bytes body = 8;
 }
 
 message FuncMapperDoResponse {

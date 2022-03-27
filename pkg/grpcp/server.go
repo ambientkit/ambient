@@ -52,8 +52,6 @@ func (m *GRPCServer) PluginVersion() string {
 func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 	//toolkit.Log.Debug("grpc-server: enabled called")
 
-	funcMapMap := make(map[string]*FMContainer)
-
 	m.reqmap = NewRequestMap()
 	m.toolkit = toolkit
 	loggerServer := &GRPCLoggerServer{
@@ -75,6 +73,12 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 		Impl:   toolkit.Render,
 		reqmap: m.reqmap,
 	}
+	funcMapperServer := &GRPCFuncMapperPlugin{
+		Impl: &FuncMapperImpl{
+			Log: m.toolkit.Log,
+		},
+		Log: m.toolkit.Log,
+	}
 
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
 		m.server = grpc.NewServer(opts...)
@@ -82,13 +86,7 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 		protodef.RegisterRouterServer(m.server, routerServer)
 		protodef.RegisterSiteServer(m.server, siteServer)
 		protodef.RegisterRendererServer(m.server, rendererServer)
-		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
-			Impl: &FuncMapperImpl{
-				Log: m.toolkit.Log,
-				Map: funcMapMap,
-			},
-			Log: m.toolkit.Log,
-		})
+		protodef.RegisterFuncMapperServer(m.server, funcMapperServer)
 
 		return m.server
 	}
@@ -239,7 +237,7 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 			// Prevent race conditions.
 			v := rawV
 			fm[v] = func(args ...interface{}) (interface{}, error) {
-				val, err := m.funcMapperClient.Do(req, requestuuid.Get(req), v, args)
+				val, err := m.funcMapperClient.Do(req, requestuuid.Get(req), v, args, true)
 				return val, err
 			}
 		}

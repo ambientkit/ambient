@@ -14,7 +14,7 @@ import (
 
 // FuncMapper handler.
 type FuncMapper interface {
-	Do(requestID string, key string, args []interface{}, method string, path string, headers http.Header, body []byte) (value interface{}, err error)
+	Do(globalFuncMap bool, requestID string, key string, args []interface{}, method string, path string, headers http.Header, body []byte) (value interface{}, err error)
 }
 
 // GRPCFuncMapperPlugin is the gRPC server that GRPCClient talks to.
@@ -39,7 +39,7 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 		return nil, fmt.Errorf("grpc-server: Do header conversion error: %v", err.Error())
 	}
 
-	val, err := m.Impl.Do(req.Requestid, req.Key, params, req.Method, req.Path, headers, req.Body)
+	val, err := m.Impl.Do(req.Globalfm, req.Requestid, req.Key, params, req.Method, req.Path, headers, req.Body)
 	if err != nil {
 		return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do error: %v", err.Error())
 	}
