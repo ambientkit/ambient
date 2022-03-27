@@ -71,10 +71,6 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		client: protodef.NewFuncMapperClient(m.conn),
 	}
 
-	m.reqMap = make(map[string]func(http.ResponseWriter, *http.Request) error)
-	m.funcMap = make(map[string]*FMContainer)
-	m.contextMap = make(map[string]context.Context)
-
 	m.toolkit = &ambient.Toolkit{
 		Log: logger,
 		Mux: &GRPCRouterPlugin{
@@ -284,11 +280,13 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 	h.ServeHTTP(w, r)
 
 	// Save and remove context after 30 seconds.
-	m.contextMap[req.Requestid] = mux.R.Context()
-	go func() {
-		<-time.After(30 * time.Second)
-		delete(m.contextMap, req.Requestid)
-	}()
+	if mux.R != nil {
+		m.contextMap[req.Requestid] = mux.R.Context()
+		go func() {
+			<-time.After(30 * time.Second)
+			delete(m.contextMap, req.Requestid)
+		}()
+	}
 
 	statusCode := 0
 	if w.statusCode != 0 {
