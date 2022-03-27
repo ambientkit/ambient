@@ -2,7 +2,7 @@ package grpcp
 
 import (
 	"fmt"
-	"net/http"
+	"net/http/httptest"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/fmcaller"
@@ -33,7 +33,7 @@ func (d *FuncMapperImpl) Do(requestID string, key string, args []interface{}) (i
 	// FIXME: May not want to use the map here since it may not be set up in
 	// another call. Probably better to construct the http.Request
 
-	req, _ := http.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest("GET", "/", nil)
 	req = requestuuid.Set(req, requestID)
 	//req.Header = headers
 	//w := NewResponseWriter()

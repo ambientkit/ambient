@@ -3,6 +3,7 @@ package grpcp
 import (
 	"bytes"
 	"net/http"
+	"net/http/httptest"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
@@ -18,7 +19,7 @@ type HandlerImpl struct {
 func (d *HandlerImpl) Handle(requestid string, method string, path string, fullPath string, headers http.Header, body []byte) (int, string, string, http.Header) {
 	// d.Log.Warn("grpc-plugin: Handle start: %v %v | Routes: %v | %v", method, path, len(d.Map), requestid)
 
-	req, _ := http.NewRequest(method, fullPath, bytes.NewBuffer(body))
+	req := httptest.NewRequest(method, fullPath, bytes.NewBuffer(body))
 	req = requestuuid.Set(req, requestid)
 	req.Header = headers
 	w := NewResponseWriter()

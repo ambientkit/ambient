@@ -239,17 +239,24 @@ func (ss *SecureSite) embeddedAssets(mux ambient.Router, sess ambient.AppSession
 
 // loadAllPluginMiddleware returns a handler that is wrapped in conditional
 // middleware from the plugins. This only needs to be run once at start up
-// and should never be called again.
+// and should never be called again. The middleware should work dynamically.
 func (ss *SecureSite) loadAllPluginMiddleware() http.Handler {
 	var h http.Handler = ss.mux
-	for _, pluginName := range ss.pluginsystem.MiddlewareNames() {
-		plugin, err := ss.pluginsystem.Plugin(pluginName)
-		if err != nil {
-			continue
-		}
+	h = func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			hi := next
+			for _, pluginName := range ss.pluginsystem.MiddlewareNames() {
+				pluginRaw, err := ss.pluginsystem.Plugin(pluginName)
+				if err != nil {
+					continue
+				}
 
-		h = ss.loadSinglePluginMiddleware(h, plugin.(ambient.MiddlewarePlugin))
-	}
+				plugin := pluginRaw.(ambient.MiddlewarePlugin)
+				hi = ss.loadSinglePluginMiddleware(hi, plugin)
+			}
+			hi.ServeHTTP(w, r)
+		})
+	}(h)
 
 	return h
 }
@@ -273,6 +280,7 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin ambient.
 			safePluginMiddleware := pluginMiddleware
 			middlewareIndex := i
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				//fmt.Println("middleware called")
 				// If the plugin is not found in the storage, then skip it.
 				safePluginSettings, err := ss.pluginsystem.PluginData(safePlugin.PluginName())
 				if err != nil {
@@ -280,6 +288,8 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin ambient.
 					next.ServeHTTP(w, r)
 					return
 				}
+
+				//fmt.Println("Middleware:", plugin.PluginName())
 
 				// If the plugin is enabled, then wrap with the middleware.
 				if safePluginSettings.Enabled {

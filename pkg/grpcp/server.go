@@ -266,12 +266,12 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 				// Restore body.
 				r.Body = ioutil.NopCloser(body)
 
-				//m.toolkit.Log.Error("grpc-server: body in: %v | %v", len(body.Bytes()), body.String())
+				//m.toolkit.Log.Error("grpc-server: body in: %v | %v | %v", r.RequestURI, len(body.Bytes()), body.String())
 
 				resp, err := m.client.Middleware(context.Background(), &protodef.MiddlewareRequest{
 					Requestid: requestuuid.Get(r),
 					Method:    r.Method,
-					Path:      r.URL.Path,
+					Path:      r.RequestURI,
 					Headers:   sm,
 					Body:      body.Bytes(),
 				})

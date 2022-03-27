@@ -2,6 +2,7 @@ package grpcp
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
@@ -333,6 +334,10 @@ func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
 	})
 	if err != nil {
 		return "", ErrorHandler(err)
+	}
+
+	if len(out.Username) == 0 {
+		return "", errors.New("user not found")
 	}
 
 	return out.Username, nil

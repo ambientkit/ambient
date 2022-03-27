@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io/fs"
 	"net/http"
+	"net/http/httptest"
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
@@ -219,7 +220,7 @@ func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protod
 func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protodef.FuncMapResponse, error) {
 	//m.toolkit.Log.Error("grpc-plugin: FuncMap called.")
 	fn := m.Impl.FuncMap()
-	r, _ := http.NewRequest("GET", "/", nil)
+	r := httptest.NewRequest("GET", "/", nil)
 	if fn == nil {
 		return &protodef.FuncMapResponse{}, nil
 	}
@@ -252,7 +253,9 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 		return &protodef.MiddlewareResponse{}, err
 	}
 
-	r, _ := http.NewRequest(req.Method, req.Path, bytes.NewBuffer(req.Body))
+	//m.toolkit.Log.Error("grpc-plugin:", v ...interface{})
+
+	r := httptest.NewRequest(req.Method, req.Path, bytes.NewBuffer(req.Body))
 	r = requestuuid.Set(r, req.Requestid)
 	r.Header = headers
 	w := NewResponseWriter()
@@ -268,6 +271,8 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 		h = mw(h)
 	}
 	h.ServeHTTP(w, r)
+
+	//m.toolkit.Log.Warn("Plugin out: %v | %v", mux.W, w.Output())
 
 	statusCode := 0
 	if w.statusCode != 0 {
