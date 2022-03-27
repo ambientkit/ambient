@@ -5,9 +5,9 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"time"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/pkg/grpcp/grpcsafe"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
 	plugin "github.com/hashicorp/go-plugin"
@@ -25,7 +25,7 @@ type GRPCPlugin struct {
 	funcMapperClient *GRPCFuncMapperServer
 	reqMap           map[string]func(http.ResponseWriter, *http.Request) error
 	funcMap          map[string]*FMContainer
-	contextMap       map[string]context.Context
+	pluginState      *grpcsafe.PluginState
 }
 
 // PluginName handler.
@@ -83,10 +83,10 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 			Log:    logger,
 		},
 		Render: &GRPCRendererPlugin{
-			client:     protodef.NewRendererClient(m.conn),
-			Log:        logger,
-			Map:        m.funcMap,
-			ContextMap: m.contextMap,
+			client:      protodef.NewRendererClient(m.conn),
+			Log:         logger,
+			Map:         m.funcMap,
+			PluginState: m.pluginState,
 		},
 	}
 
@@ -98,19 +98,19 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		m.server = grpc.NewServer(opts...)
 		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
 			Impl: &FuncMapperImpl{
-				Log:        m.toolkit.Log,
-				Map:        m.funcMap,
-				Impl:       m.Impl,
-				ContextMap: m.contextMap,
+				Log:         m.toolkit.Log,
+				Map:         m.funcMap,
+				Impl:        m.Impl,
+				PluginState: m.pluginState,
 			},
 			Log: m.toolkit.Log,
 		})
 		protodef.RegisterHandlerServer(m.server, &GRPCHandlerPlugin{
 			Log: m.toolkit.Log,
 			Impl: &HandlerImpl{
-				Log:        m.toolkit.Log,
-				Map:        m.reqMap,
-				ContextMap: m.contextMap,
+				Log:         m.toolkit.Log,
+				Map:         m.reqMap,
+				PluginState: m.pluginState,
 			},
 		})
 
@@ -279,13 +279,10 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 	}
 	h.ServeHTTP(w, r)
 
-	// Save and remove context after 30 seconds.
 	if mux.R != nil {
-		m.contextMap[req.Requestid] = mux.R.Context()
-		go func() {
-			<-time.After(30 * time.Second)
-			delete(m.contextMap, req.Requestid)
-		}()
+		// Save and remove context after 30 seconds.
+		m.pluginState.SaveContext(r.Context(), req.Requestid)
+		m.pluginState.DeleteContextDelayed(req.Requestid)
 	}
 
 	statusCode := 0

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/pkg/grpcp/grpcsafe"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	plugin "github.com/hashicorp/go-plugin"
 	"golang.org/x/net/context"
@@ -29,11 +30,11 @@ type GenericPlugin struct {
 // GRPCServer .
 func (p *GenericPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	protodef.RegisterGenericPluginServer(s, &GRPCPlugin{
-		Impl:       p.Impl,
-		broker:     broker,
-		contextMap: make(map[string]context.Context),
-		reqMap:     make(map[string]func(http.ResponseWriter, *http.Request) error),
-		funcMap:    make(map[string]*FMContainer),
+		Impl:        p.Impl,
+		broker:      broker,
+		pluginState: grpcsafe.NewPluginState(),
+		reqMap:      make(map[string]func(http.ResponseWriter, *http.Request) error),
+		funcMap:     make(map[string]*FMContainer),
 	})
 	return nil
 }

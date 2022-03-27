@@ -8,16 +8,16 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/fmcaller"
+	"github.com/ambientkit/ambient/pkg/grpcp/grpcsafe"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
-	"golang.org/x/net/context"
 )
 
 // FuncMapperImpl handles the FuncMap logic.
 type FuncMapperImpl struct {
-	Log        ambient.Logger
-	Map        map[string]*FMContainer
-	Impl       ambient.MiddlewarePlugin
-	ContextMap map[string]context.Context
+	Log         ambient.Logger
+	Map         map[string]*FMContainer
+	Impl        ambient.MiddlewarePlugin
+	PluginState *grpcsafe.PluginState
 }
 
 // Do handler.
@@ -29,7 +29,7 @@ func (d *FuncMapperImpl) Do(globalFuncMap bool, requestID string, key string, ar
 	req.Header = headers
 
 	// Get the context if saved from middleware.
-	ctx, ok := d.ContextMap[requestID]
+	ctx, ok := d.PluginState.Context(requestID)
 	if ok {
 		req = req.WithContext(ctx)
 	}

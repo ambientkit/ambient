@@ -28,14 +28,11 @@ func (m *PluginState) SaveContext(c context.Context, requestID string) {
 }
 
 // Context will return the request context.
-func (m *PluginState) Context(requestID string) context.Context {
+func (m *PluginState) Context(requestID string) (context.Context, bool) {
 	m.contextMapMutext.RLock()
 	c, found := m.contextMap[requestID]
 	m.contextMapMutext.RUnlock()
-	if !found {
-		return nil
-	}
-	return c
+	return c, found
 }
 
 // DeleteContextDelayed will delete the request context after 30 seconds.

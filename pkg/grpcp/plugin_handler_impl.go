@@ -6,15 +6,15 @@ import (
 	"net/http/httptest"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/pkg/grpcp/grpcsafe"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
-	"golang.org/x/net/context"
 )
 
 // HandlerImpl .
 type HandlerImpl struct {
-	Log        ambient.Logger
-	Map        map[string]func(http.ResponseWriter, *http.Request) error
-	ContextMap map[string]context.Context
+	Log         ambient.Logger
+	Map         map[string]func(http.ResponseWriter, *http.Request) error
+	PluginState *grpcsafe.PluginState
 }
 
 // Handle .
@@ -26,7 +26,7 @@ func (d *HandlerImpl) Handle(requestid string, method string, path string, fullP
 	req.Header = headers
 
 	// Get the context if saved from middleware.
-	ctx, ok := d.ContextMap[requestid]
+	ctx, ok := d.PluginState.Context(requestid)
 	if ok {
 		req = req.WithContext(ctx)
 	}
