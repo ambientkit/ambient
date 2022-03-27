@@ -10,7 +10,7 @@ import (
 )
 
 // ConnectPlugin will connect to a plugin over gRPC.
-func ConnectPlugin(logger ambient.AppLogger, pluginName string, pluginPath string) (ambient.Plugin, *plugin.Client, error) {
+func ConnectPlugin(logger ambient.AppLogger, pluginName string, pluginPath string) (ambient.Plugin, *plugin.Client, plugin.ClientProtocol, error) {
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig: Handshake,
 		Plugins: map[string]plugin.Plugin{
@@ -26,13 +26,13 @@ func ConnectPlugin(logger ambient.AppLogger, pluginName string, pluginPath strin
 	// Connect via RPC.
 	rpcClient, err := client.Client()
 	if err != nil {
-		return nil, client, fmt.Errorf("server: could not get gRPC client: %v", err.Error())
+		return nil, client, nil, fmt.Errorf("server: could not get gRPC client: %v", err.Error())
 	}
 
 	// Request the plugin.
 	raw, err := rpcClient.Dispense(pluginName)
 	if err != nil {
-		return nil, client, fmt.Errorf("server: could not get connect to plugin (%v): %v", pluginName, err.Error())
+		return nil, client, rpcClient, fmt.Errorf("server: could not get connect to plugin (%v): %v", pluginName, err.Error())
 	}
 
 	p := raw.(ambient.Plugin)
@@ -41,5 +41,5 @@ func ConnectPlugin(logger ambient.AppLogger, pluginName string, pluginPath strin
 	// 	return
 	// }
 
-	return p, client, nil
+	return p, client, rpcClient, nil
 }
