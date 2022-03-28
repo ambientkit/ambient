@@ -50,16 +50,13 @@ func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP Cust
 			friendlyError := "Darn, something went wrong."
 
 			// If the error is a status error, then use the information.
-			se, ok := err.(StatusError)
+			se, ok := err.(Error)
 			if ok {
-				if se.Code > 0 {
-					status = se.Code
+				if se.Status() > 0 {
+					status = se.Status()
 				}
-				if se.Err != nil {
-					err = se.Err
-				}
-				if len(se.Friendly) > 0 {
-					friendlyError = se.Friendly
+				if len(se.Message()) > 0 {
+					friendlyError = se.Message()
 				}
 			}
 

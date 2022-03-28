@@ -3,6 +3,8 @@ cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/ambientkit/away v0.0.0-20220312051345-3985971e46d6 h1:fpnLjFY2bTm9DzTe0z1XFc0BP1WJh4HurINa3k0Dl30=
 github.com/ambientkit/away v0.0.0-20220312051345-3985971e46d6/go.mod h1:Sk1OeLgFvcZDZMcFXEhGj4eX0AEWUIK9WyFz256aFKo=
+github.com/ambientkit/away v0.0.0-20220328003214-20621e0687a2 h1:SmlsFELikl7w8GpEVoNrAuFNPddhAboc/1Mnb0F8M+w=
+github.com/ambientkit/away v0.0.0-20220328003214-20621e0687a2/go.mod h1:1hCMDmB9r8hoXM1ERveJSJTTHQl/VgFbdzdI94L4Q74=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
