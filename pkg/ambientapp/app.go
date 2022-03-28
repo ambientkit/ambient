@@ -28,6 +28,7 @@ type App struct {
 	renderer      ambient.Renderer
 	sess          ambient.AppSession
 	recorder      *pluginsafe.RouteRecorder
+	securesite    *secureconfig.SecureSite
 
 	debugTemplates  bool
 	escapeTemplates bool
@@ -222,18 +223,20 @@ func (app *App) Handler() (http.Handler, error) {
 
 	// Create secure site for the core app and use "ambient" so it gets
 	// full permissions.
-	securesite, handler, err := secureconfig.NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder, true)
+	var err error
+	var handler http.Handler
+	app.securesite, handler, err = secureconfig.NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder, true)
 	if err != nil {
 		return nil, err
 	}
 
 	// Start monitoring with the ability to restart/reload plugin.
-	app.grpcsystem.Monitor(securesite)
+	app.grpcsystem.Monitor(app.securesite)
 
 	// Start Dev Console if enabled via environment variable.
 	if envdetect.DevConsoleEnabled() {
 		// TODO: Should probably store in an object that can be edited by system.
-		dc := devconsole.NewDevConsole(app.log, app.pluginsystem, app.pluginsystem.StorageManager(), securesite)
+		dc := devconsole.NewDevConsole(app.log, app.pluginsystem, app.pluginsystem.StorageManager(), app.securesite)
 		dc.EnableDevConsole()
 	}
 
@@ -334,6 +337,11 @@ func (app *App) handleExit() {
 		app.CleanUp()
 		os.Exit(0)
 	}()
+}
+
+// SecureSite returns the secure site configuration.
+func (app *App) SecureSite() *secureconfig.SecureSite {
+	return app.securesite
 }
 
 // CleanUp runs the final steps to ensure the server shutdown doesn't leave

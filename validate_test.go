@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/ambientkit/ambient"
-	"github.com/ambientkit/ambient/internal/mock"
+	"github.com/ambientkit/ambient/pkg/mock"
 	"github.com/stretchr/testify/assert"
 )
 
