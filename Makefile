@@ -3,6 +3,8 @@
 # * make
 # * make install
 # * make generate
+# * make test
+# * make test-all
 # * make update-children
 # * make update-all
 
@@ -19,6 +21,20 @@ default: generate
 # Install dependencies.
 .PHONY: install
 install: protoc-install tidy
+
+# Test the repo.
+.PHONY: test
+test:
+	go test -race ./...
+
+# Test all the code.
+.PHONY: test-all
+test-all:
+	go test -race ./...
+	cd ../plugin && go test -race ./...
+	cd ../ambient-template && go test -race ./...
+	cd ../amb && go test -race ./...
+	cd ../away && go test -race ./...
 
 ################################################################################
 # Update dependencies
