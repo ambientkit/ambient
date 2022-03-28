@@ -2,6 +2,7 @@
 # Execute commands like this:
 # * make
 # * make install
+# * make generate
 # * make update-children
 # * make update-all
 
@@ -31,6 +32,15 @@ update-children:
 	cd ../ambient-template && go get github.com/ambientkit/plugin@$(shell cd ../plugin && git rev-parse HEAD) && go mod tidy -compat=1.17
 	cd ../amb && go get github.com/ambientkit/ambient@$(shell cd ../ambient && git rev-parse HEAD) && go mod tidy -compat=1.17
 	cd ../amb && go get github.com/ambientkit/plugin@$(shell cd ../plugin && git rev-parse HEAD) && go mod tidy -compat=1.17
+
+# Update all Go dependencies.
+.PHONY: update-all
+update-all: update-all-go tidy
+
+# Update all Go dependencies.
+.PHONY: update-all-go
+update-all-go:
+	go get -u -f -d ./...
 
 # Run go mod tidy.
 .PHONY: tidy
