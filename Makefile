@@ -9,7 +9,7 @@
 include .env
 
 .PHONY: default
-default: protoc
+default: generate
 
 ################################################################################
 # Common
@@ -23,24 +23,19 @@ install: protoc-install tidy
 # Update dependencies
 ################################################################################
 
-# Run go mod tidy.
-.PHONY: tidy
-tidy:
-	go generate ./...
-	go mod tidy -compat=1.17
-
 # Update dependencies of other repos using Ambient.
 .PHONY: update-children
 update-children:
-	cd ../plugin && go get github.com/ambientkit/ambient@$(shell git rev-parse HEAD) && go mod tidy -compat=1.17
-	cd ../ambient-template && go get github.com/ambientkit/ambient@$(shell git rev-parse HEAD) && go mod tidy -compat=1.17
-	cd ../amb && go get github.com/ambientkit/ambient@$(shell git rev-parse HEAD) && go mod tidy -compat=1.17
+	cd ../plugin && go get github.com/ambientkit/ambient@$(shell cd ../ambient && git rev-parse HEAD) && go mod tidy -compat=1.17
+	cd ../ambient-template && go get github.com/ambientkit/ambient@$(shell cd ../ambient && git rev-parse HEAD) && go mod tidy -compat=1.17
+	cd ../ambient-template && go get github.com/ambientkit/plugin@$(shell cd ../plugin && git rev-parse HEAD) && go mod tidy -compat=1.17
+	cd ../amb && go get github.com/ambientkit/ambient@$(shell cd ../ambient && git rev-parse HEAD) && go mod tidy -compat=1.17
+	cd ../amb && go get github.com/ambientkit/plugin@$(shell cd ../plugin && git rev-parse HEAD) && go mod tidy -compat=1.17
 
-# Update all other repos with latest Ambient dependencies.
-.PHONY: update-all
-update-all:
-	 ./bash/update-dependencies.sh
-
+# Run go mod tidy.
+.PHONY: tidy
+tidy:
+	go mod tidy -compat=1.17
 
 ################################################################################
 # gRPC
@@ -58,7 +53,9 @@ protoc-install:
 	rm -r tempdir
 	GOBIN=$(shell pwd)/bin go install github.com/golang/protobuf/protoc-gen-go@latest
 
-# Generate the grpc code.
-.PHONY: protoc
-protoc:
+# Generate the Go code, grpc code, and tidy.
+.PHONY: generate
+generate:
+	go generate ./...
 	@PATH="${PATH}:$(shell pwd)/bin" && protoc -I pkg/grpcp/protobuf/ pkg/grpcp/protobuf/*.proto --go_out=plugins=grpc:pkg/grpcp/protodef/
+	go mod tidy -compat=1.17
