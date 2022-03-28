@@ -135,8 +135,8 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, "", body)
 
 	body, err = parseTemplate(t, fm, `{{one_error true}}`)
-	assert.Error(t, err) // this is a an error
-	assert.Equal(t, "", body)
+	assert.NoError(t, err)
+	assert.Equal(t, "this is an error", body)
 
 	body, err = parseTemplate(t, fm, `{{one_two "foo"}}`)
 	assert.NoError(t, err)
@@ -171,4 +171,42 @@ func parseTemplate(t *testing.T, fm template.FuncMap, content string) (string, e
 	err = tmpl.Execute(bs, nil)
 
 	return bs.String(), err
+}
+
+func TestComparison(t *testing.T) {
+	fm := make(template.FuncMap)
+	fm["hello_Error1"] = func(name string) error {
+		return errors.New("this is an error")
+	}
+	fm["hello_Error2"] = func(name string) (string, error) {
+		return "", errors.New("this is an error")
+	}
+	fm["hello_Error3"] = func(args ...interface{}) (interface{}, error) {
+		fn := func(name string) error {
+			return errors.New("this is an error")
+		}
+		return fmcaller.CallFuncMap(fn, args...)
+	}
+	fm["hello_Error4"] = func(args ...interface{}) (interface{}, error) {
+		fn := func(name string) (string, error) {
+			return "", errors.New("this is an error")
+		}
+		return fmcaller.CallFuncMap(fn, args...)
+	}
+
+	body, err := parseTemplate(t, fm, `FuncMap: {{hello_Error1 "Foo"}}`)
+	assert.NoError(t, err)
+	assert.Equal(t, "FuncMap: this is an error", body)
+
+	body, err = parseTemplate(t, fm, `FuncMap: {{hello_Error2 "Foo"}}`)
+	assert.Error(t, err)
+	assert.Equal(t, "FuncMap: ", body)
+
+	body, err = parseTemplate(t, fm, `FuncMap: {{hello_Error3 "Foo"}}`)
+	assert.NoError(t, err)
+	assert.Equal(t, "FuncMap: this is an error", body)
+
+	body, err = parseTemplate(t, fm, `FuncMap: {{hello_Error4 "Foo"}}`)
+	assert.Error(t, err)
+	assert.Equal(t, "FuncMap: ", body)
 }

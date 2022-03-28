@@ -59,6 +59,7 @@ func (c *GRPCSitePlugin) NeighborPluginGrantList(pluginName string) ([]ambient.G
 		Pluginname: pluginName,
 	})
 	if err != nil {
+		// FIXME: Need to determine if it should return nil and error? Or what kind of error?
 		return []ambient.GrantRequest{}, ErrorHandler(err)
 	}
 

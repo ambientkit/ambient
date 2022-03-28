@@ -23,4 +23,5 @@ message FuncMapperDoRequest {
 message FuncMapperDoResponse {
     google.protobuf.Any value = 1;
     repeated google.protobuf.Struct arr = 2;
+    string error = 3;
 }

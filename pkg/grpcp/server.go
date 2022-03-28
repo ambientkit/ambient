@@ -2,6 +2,7 @@ package grpcp
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"html/template"
 	"io"
@@ -237,8 +238,14 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 			// Prevent race conditions.
 			v := rawV
 			fm[v] = func(args ...interface{}) (interface{}, error) {
-				val, err := m.funcMapperClient.Do(req, requestuuid.Get(req), v, args, true)
-				return val, err
+				val, errText, err := m.funcMapperClient.Do(req, requestuuid.Get(req), v, args, true)
+				if err != nil {
+					m.toolkit.Log.Error("grpc-server: error executing FuncMap: %v", err)
+				}
+				if len(errText) > 0 {
+					return val, errors.New(errText)
+				}
+				return val, nil
 			}
 		}
 

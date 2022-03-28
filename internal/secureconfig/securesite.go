@@ -57,6 +57,12 @@ func Error(siteError error) (err error) {
 	case amberror.ErrNotFound:
 		return ambient.StatusError{Code: http.StatusNotFound, Err: siteError}
 	default:
+		// switch strings.TrimSuffix(siteError.Error(), "\n") { // FIXME: Need to get this to work.
+		// case amberror.ErrAccessDenied.Error(), amberror.ErrGrantNotRequested.Error(), amberror.ErrSettingNotSpecified.Error():
+		// 	return ambient.StatusError{Code: http.StatusForbidden, Err: siteError}
+		// case amberror.ErrNotFound.Error():
+		// 	return ambient.StatusError{Code: http.StatusNotFound, Err: siteError}
+		// }
 		return ambient.StatusError{Code: http.StatusInternalServerError, Err: siteError}
 	}
 }

@@ -14,7 +14,7 @@ import (
 
 // FuncMapper handler.
 type FuncMapper interface {
-	Do(globalFuncMap bool, requestID string, key string, args []interface{}, method string, path string, headers http.Header, body []byte) (value interface{}, err error)
+	Do(globalFuncMap bool, requestID string, key string, args []interface{}, method string, path string, headers http.Header, body []byte) (value interface{}, errText string, err error)
 }
 
 // GRPCFuncMapperPlugin is the gRPC server that GRPCClient talks to.
@@ -39,7 +39,7 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 		return nil, fmt.Errorf("grpc-server: Do header conversion error: %v", err.Error())
 	}
 
-	val, err := m.Impl.Do(req.Globalfm, req.Requestid, req.Key, params, req.Method, req.Path, headers, req.Body)
+	val, errText, err := m.Impl.Do(req.Globalfm, req.Requestid, req.Key, params, req.Method, req.Path, headers, req.Body)
 	if err != nil {
 		return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do error: %v", err.Error())
 	}
@@ -56,6 +56,7 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 		return &protodef.FuncMapperDoResponse{
 			Value: nil,
 			Arr:   nil,
+			Error: errText,
 		}, nil
 	} else if reflect.TypeOf(val).Kind() == reflect.Slice {
 		arr, err = ArrayToProtobufStruct(val)
@@ -72,5 +73,6 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 	return &protodef.FuncMapperDoResponse{
 		Value: anyVal,
 		Arr:   arr,
+		Error: errText,
 	}, err
 }

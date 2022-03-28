@@ -46,13 +46,18 @@ func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRe
 			return err
 		}
 
-		if status >= 400 && len(response) == 0 {
-			return ambient.StatusError{Code: status, Err: errors.New(errText)}
-		} else if len(errText) > 0 {
-			for k, v := range headers {
-				w.Header()[k] = v
+		if status >= 400 {
+			if len(response) == 0 {
+				if len(errText) > 0 {
+					return ambient.StatusError{Code: status, Err: errors.New(errText)}
+				}
+				return ambient.StatusError{Code: status, Err: nil}
+			} else if len(errText) > 0 {
+				for k, v := range headers {
+					w.Header()[k] = v
+				}
+				return ambient.StatusError{Code: status, Err: errors.New(errText)}
 			}
-			return errors.New(errText)
 		}
 
 		// Only write to response if there is content. The response could have

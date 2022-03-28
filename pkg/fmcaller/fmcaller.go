@@ -4,8 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"time"
 )
+
+// FMError is an error from a FuncMap, not an RPC error.
+type FMError struct {
+	error
+}
 
 // CallFuncMap calls a FuncMap function and returns an interface and an error.
 func CallFuncMap(fn interface{}, args ...interface{}) (interface{}, error) {
@@ -60,13 +64,13 @@ func CallFuncMap(fn interface{}, args ...interface{}) (interface{}, error) {
 		// template package - with an error.
 		// arrIn = append(arrIn, reflect.Zero(funcInType))
 
-		if argInValue.Type() != funcInType {
-			// Try converting to time.
-			t, err := time.Parse(time.RFC3339, argInValue.String())
-			if err == nil {
-				argInValue = reflect.ValueOf(t)
-			}
-		}
+		// if argInValue.Type() != funcInType {
+		// 	// Try converting to time.
+		// 	t, err := time.Parse(time.RFC3339, argInValue.String())
+		// 	if err == nil {
+		// 		argInValue = reflect.ValueOf(t)
+		// 	}
+		// }
 
 		arrIn = append(arrIn, argInValue)
 	}
@@ -84,7 +88,7 @@ func CallFuncMap(fn interface{}, args ...interface{}) (interface{}, error) {
 
 		// If the 1st return value is an error, then return as an error.
 		if err, ok := out1.(error); ok {
-			return nil, err
+			return FMError{err}, nil
 		}
 
 		return out1, nil
@@ -102,7 +106,7 @@ func CallFuncMap(fn interface{}, args ...interface{}) (interface{}, error) {
 			return nil, errors.New("2nd return should be an error")
 		}
 
-		return out1, out2.(error)
+		return out1, FMError{out2.(error)}
 	default:
 		return nil, nil
 	}
