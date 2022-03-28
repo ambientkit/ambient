@@ -15,7 +15,6 @@ import (
 // FuncMapperImpl handles the FuncMap logic.
 type FuncMapperImpl struct {
 	Log         ambient.Logger
-	Map         map[string]*FMContainer
 	Impl        ambient.MiddlewarePlugin
 	PluginState *grpcsafe.PluginState
 }
@@ -55,7 +54,7 @@ func (d *FuncMapperImpl) Do(globalFuncMap bool, requestID string, key string, ar
 
 		//d.Log.Debug("grpc-plugin: CallFuncMap global: %v | %v | %v | %#v", requestID, key, callable, args)
 	} else {
-		c, ok := d.Map[requestID]
+		c, ok := d.PluginState.Assets(requestID)
 		if !ok {
 			//d.Log.Error("grpc-plugin: FuncMap not found for request ID: %v", requestID)
 			return nil, nil

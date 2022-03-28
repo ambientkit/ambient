@@ -17,14 +17,7 @@ import (
 type GRPCRendererPlugin struct {
 	client      protodef.RendererClient
 	Log         ambient.Logger
-	Map         map[string]*FMContainer
 	PluginState *grpcsafe.PluginState
-}
-
-// FMContainer .
-type FMContainer struct {
-	FuncMap template.FuncMap
-	FS      ambient.FileSystemReader
 }
 
 // Page handler.
@@ -43,7 +36,7 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 
 	keys := make([]string, 0)
 
-	c := &FMContainer{
+	c := &grpcsafe.AssetContainer{
 		FS: assets,
 	}
 
@@ -57,8 +50,8 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = c
-	defer delete(l.Map, rid)
+	l.PluginState.SaveAssets(c, rid)
+	defer l.PluginState.DeleteAssets(rid)
 
 	// Save and remove context after 30 seconds.
 	_, ok := l.PluginState.Context(rid)
@@ -123,7 +116,7 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 	}
 
 	keys := make([]string, 0)
-	c := &FMContainer{}
+	c := &grpcsafe.AssetContainer{}
 
 	if fm != nil {
 		funcMap := fm(r)
@@ -135,8 +128,8 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = c
-	defer delete(l.Map, rid)
+	l.PluginState.SaveAssets(c, rid)
+	defer l.PluginState.DeleteAssets(rid)
 
 	// Save and remove context after 30 seconds.
 	_, ok := l.PluginState.Context(rid)
@@ -173,7 +166,7 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 
 	keys := make([]string, 0)
 
-	c := &FMContainer{
+	c := &grpcsafe.AssetContainer{
 		FS: assets,
 	}
 
@@ -187,8 +180,8 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = c
-	defer delete(l.Map, rid)
+	l.PluginState.SaveAssets(c, rid)
+	defer l.PluginState.DeleteAssets(rid)
 
 	// Save and remove context after 30 seconds.
 	_, ok := l.PluginState.Context(rid)
@@ -253,7 +246,7 @@ func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request,
 	}
 
 	keys := make([]string, 0)
-	c := &FMContainer{}
+	c := &grpcsafe.AssetContainer{}
 
 	if fm != nil {
 		funcMap := fm(r)
@@ -265,8 +258,8 @@ func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request,
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = c
-	defer delete(l.Map, rid)
+	l.PluginState.SaveAssets(c, rid)
+	defer l.PluginState.DeleteAssets(rid)
 
 	// Save and remove context after 30 seconds.
 	_, ok := l.PluginState.Context(rid)
@@ -302,7 +295,7 @@ func (l *GRPCRendererPlugin) Error(w http.ResponseWriter, r *http.Request, conte
 	}
 
 	keys := make([]string, 0)
-	c := &FMContainer{}
+	c := &grpcsafe.AssetContainer{}
 
 	if fm != nil {
 		funcMap := fm(r)
@@ -314,8 +307,8 @@ func (l *GRPCRendererPlugin) Error(w http.ResponseWriter, r *http.Request, conte
 	}
 
 	rid := requestuuid.Get(r)
-	l.Map[rid] = c
-	defer delete(l.Map, rid)
+	l.PluginState.SaveAssets(c, rid)
+	defer l.PluginState.DeleteAssets(rid)
 
 	// Save and remove context after 30 seconds.
 	_, ok := l.PluginState.Context(rid)

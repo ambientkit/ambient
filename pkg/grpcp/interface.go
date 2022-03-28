@@ -34,7 +34,6 @@ func (p *GenericPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) er
 		broker:      broker,
 		pluginState: grpcsafe.NewPluginState(),
 		reqMap:      make(map[string]func(http.ResponseWriter, *http.Request) error),
-		funcMap:     make(map[string]*FMContainer),
 	})
 	return nil
 }

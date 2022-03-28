@@ -24,7 +24,6 @@ type GRPCPlugin struct {
 	server           *grpc.Server
 	funcMapperClient *GRPCFuncMapperServer
 	reqMap           map[string]func(http.ResponseWriter, *http.Request) error
-	funcMap          map[string]*FMContainer
 	pluginState      *grpcsafe.PluginState
 }
 
@@ -85,7 +84,6 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		Render: &GRPCRendererPlugin{
 			client:      protodef.NewRendererClient(m.conn),
 			Log:         logger,
-			Map:         m.funcMap,
 			PluginState: m.pluginState,
 		},
 	}
@@ -99,7 +97,6 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
 			Impl: &FuncMapperImpl{
 				Log:         m.toolkit.Log,
-				Map:         m.funcMap,
 				Impl:        m.Impl,
 				PluginState: m.pluginState,
 			},
