@@ -14,6 +14,23 @@ func NewPluginLogger(logger ambient.AppLogger) *PluginLogger {
 	}
 }
 
+// Log is equivalent to log.Printf() + "\n" if format is not empty.
+// It's equivalent to Println() if format is empty.
+func (l *PluginLogger) Log(level ambient.LogLevel, format string, v ...interface{}) {
+	switch level {
+	case ambient.LogLevelDebug:
+		l.Debug(format, v...)
+	case ambient.LogLevelInfo:
+		l.Info(format, v...)
+	case ambient.LogLevelWarn:
+		l.Warn(format, v...)
+	case ambient.LogLevelError:
+		l.Error(format, v...)
+	default:
+		l.Info(format, v...)
+	}
+}
+
 // Debug is equivalent to log.Printf() + "\n" if format is not empty.
 // It's equivalent to Println() if format is empty.
 func (l *PluginLogger) Debug(format string, v ...interface{}) {

@@ -16,6 +16,7 @@ type AppLogger interface {
 
 // Logger represents the log service for the plugins.
 type Logger interface {
+	Log(level LogLevel, format string, v ...interface{})
 	Debug(format string, v ...interface{})
 	Info(format string, v ...interface{})
 	Warn(format string, v ...interface{})
