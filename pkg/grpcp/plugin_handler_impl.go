@@ -13,7 +13,6 @@ import (
 // HandlerImpl .
 type HandlerImpl struct {
 	Log         ambient.Logger
-	Map         map[string]func(http.ResponseWriter, *http.Request) error
 	PluginState *grpcsafe.PluginState
 }
 
@@ -33,7 +32,7 @@ func (d *HandlerImpl) Handle(requestid string, method string, path string, fullP
 
 	w := NewResponseWriter()
 
-	fn, found := d.Map[pathkey(method, path)]
+	fn, found := d.PluginState.HandleMap(method, path)
 	if !found {
 		return http.StatusNotFound, "", "", nil
 	}

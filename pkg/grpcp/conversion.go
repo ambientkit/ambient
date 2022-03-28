@@ -12,10 +12,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func pathkey(method string, path string) string {
-	return fmt.Sprintf("%v %v", method, path)
-}
-
 // ObjectToProtobufStruct converts an object to a protobuf struct.
 func ObjectToProtobufStruct(obj interface{}) (*structpb.Struct, error) {
 	if obj == nil {

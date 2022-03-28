@@ -15,8 +15,8 @@ type PluginState struct {
 	assetMap      map[string]*AssetContainer
 	assetMapMutex sync.RWMutex
 
-	reqMap      map[string]func(http.ResponseWriter, *http.Request) error
-	reqMapMutex sync.RWMutex
+	handleMap      map[string]func(http.ResponseWriter, *http.Request) error
+	handleMapMutex sync.RWMutex
 }
 
 // NewPluginState returns a thread safe plugin state object.
@@ -24,6 +24,6 @@ func NewPluginState() *PluginState {
 	return &PluginState{
 		contextMap: make(map[string]context.Context),
 		assetMap:   make(map[string]*AssetContainer),
-		reqMap:     make(map[string]func(http.ResponseWriter, *http.Request) error),
+		handleMap:  make(map[string]func(http.ResponseWriter, *http.Request) error),
 	}
 }

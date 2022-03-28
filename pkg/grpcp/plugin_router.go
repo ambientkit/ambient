@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient"
+	"github.com/ambientkit/ambient/pkg/grpcp/grpcsafe"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
 	"golang.org/x/net/context"
@@ -11,25 +12,21 @@ import (
 
 // GRPCRouterPlugin .
 type GRPCRouterPlugin struct {
-	client protodef.RouterClient
-	Log    ambient.Logger
-	Map    map[string]func(http.ResponseWriter, *http.Request) error
+	client      protodef.RouterClient
+	Log         ambient.Logger
+	PluginState *grpcsafe.PluginState
 }
 
 // Handle request handler.
 func (c *GRPCRouterPlugin) Handle(method string, path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
 	//c.Log.Warn("grpc-plugin: %v called: %v", method, path)
-	c.Map[pathkey(method, path)] = fn
+	c.PluginState.SaveHandleMap(fn, method, path)
 
-	// // TODO: Not sure what to do with Context.
-	// // TODO: Not sure if this needs to be thread safe...I think it needs a mutex.
 	c.client.Handle(context.Background(), &protodef.RouterRequest{
-		//Uid:    c.brokerID,
+		//Uid:    c.brokerID, // TODO: Remove this from the definition.
 		Method: method,
 		Path:   path,
 	})
-
-	// s.Stop()
 }
 
 // Get request handler.

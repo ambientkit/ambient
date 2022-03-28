@@ -23,7 +23,6 @@ type GRPCPlugin struct {
 	conn             *grpc.ClientConn
 	server           *grpc.Server
 	funcMapperClient *GRPCFuncMapperServer
-	reqMap           map[string]func(http.ResponseWriter, *http.Request) error
 	pluginState      *grpcsafe.PluginState
 }
 
@@ -73,9 +72,9 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 	m.toolkit = &ambient.Toolkit{
 		Log: logger,
 		Mux: &GRPCRouterPlugin{
-			client: protodef.NewRouterClient(m.conn),
-			Log:    logger,
-			Map:    m.reqMap,
+			client:      protodef.NewRouterClient(m.conn),
+			Log:         logger,
+			PluginState: m.pluginState,
 		},
 		Site: &GRPCSitePlugin{
 			client: protodef.NewSiteClient(m.conn),
@@ -106,7 +105,6 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 			Log: m.toolkit.Log,
 			Impl: &HandlerImpl{
 				Log:         m.toolkit.Log,
-				Map:         m.reqMap,
 				PluginState: m.pluginState,
 			},
 		})
