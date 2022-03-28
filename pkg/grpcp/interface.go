@@ -41,8 +41,9 @@ func (p *GenericPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) er
 // GRPCClient .
 func (p *GenericPlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, c *grpc.ClientConn) (interface{}, error) {
 	return &GRPCServer{
-		client: protodef.NewGenericPluginClient(c),
-		broker: broker,
+		client:      protodef.NewGenericPluginClient(c),
+		broker:      broker,
+		serverState: grpcsafe.NewServerState(),
 	}, nil
 }
 

@@ -13,28 +13,28 @@ type HTTPContainer struct {
 	FuncMap  template.FuncMap
 }
 
-// RequestMap .
-type RequestMap struct {
+// ServerState .
+type ServerState struct {
 	arr   map[string]*HTTPContainer
 	mutex sync.RWMutex
 }
 
-// NewRequestMap .
-func NewRequestMap() *RequestMap {
-	return &RequestMap{
+// NewServerState .
+func NewServerState() *ServerState {
+	return &ServerState{
 		arr: make(map[string]*HTTPContainer),
 	}
 }
 
 // Save .
-func (m *RequestMap) Save(requestID string, c *HTTPContainer) {
+func (m *ServerState) Save(requestID string, c *HTTPContainer) {
 	m.mutex.Lock()
 	m.arr[requestID] = c
 	m.mutex.Unlock()
 }
 
 // Load .
-func (m *RequestMap) Load(requestID string) *HTTPContainer {
+func (m *ServerState) Load(requestID string) *HTTPContainer {
 	m.mutex.RLock()
 	c, found := m.arr[requestID]
 	m.mutex.RUnlock()
@@ -45,7 +45,7 @@ func (m *RequestMap) Load(requestID string) *HTTPContainer {
 }
 
 // Delete .
-func (m *RequestMap) Delete(requestID string) {
+func (m *ServerState) Delete(requestID string) {
 	m.mutex.Lock()
 	delete(m.arr, requestID)
 	m.mutex.Unlock()

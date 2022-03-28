@@ -1,5 +1,17 @@
 package grpcsafe
 
+import (
+	"html/template"
+
+	"github.com/ambientkit/ambient"
+)
+
+// AssetContainer contains a FuncMap and a virtual filesystem.
+type AssetContainer struct {
+	FuncMap template.FuncMap
+	FS      ambient.FileSystemReader
+}
+
 // SaveAssets will save the request assets.
 func (m *PluginState) SaveAssets(c *AssetContainer, requestID string) {
 	m.assetMapMutex.Lock()

@@ -1,10 +1,9 @@
 package grpcsafe
 
 import (
-	"html/template"
+	"net/http"
 	"sync"
 
-	"github.com/ambientkit/ambient"
 	"golang.org/x/net/context"
 )
 
@@ -15,12 +14,9 @@ type PluginState struct {
 
 	assetMap      map[string]*AssetContainer
 	assetMapMutex sync.RWMutex
-}
 
-// AssetContainer contains a FuncMap and a virtual filesystem.
-type AssetContainer struct {
-	FuncMap template.FuncMap
-	FS      ambient.FileSystemReader
+	reqMap      map[string]func(http.ResponseWriter, *http.Request) error
+	reqMapMutex sync.RWMutex
 }
 
 // NewPluginState returns a thread safe plugin state object.
@@ -28,5 +24,6 @@ func NewPluginState() *PluginState {
 	return &PluginState{
 		contextMap: make(map[string]context.Context),
 		assetMap:   make(map[string]*AssetContainer),
+		reqMap:     make(map[string]func(http.ResponseWriter, *http.Request) error),
 	}
 }

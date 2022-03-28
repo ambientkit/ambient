@@ -16,7 +16,7 @@ import (
 type GRPCRendererServer struct {
 	Log              ambient.Logger
 	Impl             ambient.Renderer
-	reqmap           *grpcsafe.RequestMap
+	reqmap           *grpcsafe.ServerState
 	FuncMapperClient *GRPCFuncMapperServer
 }
 

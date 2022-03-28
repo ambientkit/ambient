@@ -25,7 +25,7 @@ type GRPCServer struct {
 	toolkit          *ambient.Toolkit
 	conn             *grpc.ClientConn
 	server           *grpc.Server
-	reqmap           *grpcsafe.RequestMap
+	serverState      *grpcsafe.ServerState
 	funcMapperClient *GRPCFuncMapperServer
 }
 
@@ -53,7 +53,6 @@ func (m *GRPCServer) PluginVersion() string {
 func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 	//toolkit.Log.Debug("grpc-server: enabled called")
 
-	m.reqmap = grpcsafe.NewRequestMap()
 	m.toolkit = toolkit
 	loggerServer := &GRPCLoggerServer{
 		Impl: toolkit.Log,
@@ -62,17 +61,17 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 		Impl:   toolkit.Mux,
 		Log:    toolkit.Log,
 		broker: m.broker,
-		reqmap: m.reqmap,
+		reqmap: m.serverState,
 	}
 	siteServer := &GRPCSiteServer{
 		Impl:   toolkit.Site,
 		Log:    toolkit.Log,
-		reqmap: m.reqmap,
+		reqmap: m.serverState,
 	}
 	rendererServer := &GRPCRendererServer{
 		Log:    toolkit.Log,
 		Impl:   toolkit.Render,
-		reqmap: m.reqmap,
+		reqmap: m.serverState,
 	}
 	funcMapperServer := &GRPCFuncMapperPlugin{
 		Impl: &FuncMapperImpl{
@@ -268,12 +267,12 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 				//m.toolkit.Log.Error("grpc-server: body in: %v | %v | %v", r.RequestURI, len(body.Bytes()), body.String())
 
 				uuid := requestuuid.Get(r)
-				m.reqmap.Save(uuid, &grpcsafe.HTTPContainer{
+				m.serverState.Save(uuid, &grpcsafe.HTTPContainer{
 					Request:  r,
 					Response: w,
 					FuncMap:  make(template.FuncMap),
 				})
-				defer m.reqmap.Delete(uuid)
+				defer m.serverState.Delete(uuid)
 
 				resp, err := m.client.Middleware(context.Background(), &protodef.MiddlewareRequest{
 					Requestid: uuid,

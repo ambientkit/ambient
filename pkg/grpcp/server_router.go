@@ -22,7 +22,7 @@ type GRPCAddRouterServer struct {
 	broker        *plugin.GRPCBroker
 	conn          *grpc.ClientConn
 	HandlerClient *GRPCHandlerServer
-	reqmap        *grpcsafe.RequestMap
+	reqmap        *grpcsafe.ServerState
 }
 
 // Handle request handler.

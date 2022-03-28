@@ -15,7 +15,7 @@ import (
 type GRPCSiteServer struct {
 	Impl   ambient.SecureSite
 	Log    ambient.Logger
-	reqmap *grpcsafe.RequestMap
+	reqmap *grpcsafe.ServerState
 }
 
 // Load handler.
