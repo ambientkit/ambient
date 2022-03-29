@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"fmt"
 	"io"
 	"log"
 
@@ -122,4 +123,19 @@ func (l *Logger) Error(format string, v ...interface{}) {
 // to os.Exit(1).
 func (l *Logger) Fatal(format string, v ...interface{}) {
 	l.output(format, v...)
+}
+
+// Name returns the name of the logger.
+func (l *Logger) Name() string {
+	return l.appName
+}
+
+// Named returns a new logger with the appended name, linked to the existing
+// logger.
+func (l *Logger) Named(name string) ambient.AppLogger {
+	return &Logger{
+		appName:    fmt.Sprintf("%v.%v", l.appName, name),
+		log:        l.log,
+		appVersion: l.appVersion,
+	}
 }

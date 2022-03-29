@@ -216,7 +216,7 @@ func (p *PluginSystem) loadPlugin(plugin ambient.Plugin, middleware bool, grpcPl
 
 	// Detect plugin version change.
 	if pluginData.Version != version {
-		p.log.Info("ambient: detected plugin (%v) version change from (%v) to: %v", name, pluginData.Version, version)
+		p.log.Info("detected plugin (%v) version change from (%v) to: %v", name, pluginData.Version, version)
 		pluginData.Version = version
 		p.storage.site.PluginStorage[name] = pluginData
 		return true, nil
@@ -363,7 +363,7 @@ func (p *PluginSystem) PluginData(name string) (ambient.PluginData, error) {
 func (p *PluginSystem) Enabled(name string) bool {
 	data, ok := p.storage.site.PluginStorage[name]
 	if !ok {
-		p.log.Debug("pluginsystem.enabled: could not find plugin: %v", name)
+		p.log.Debug("could not find plugin: %v", name)
 		return false
 	}
 
@@ -374,7 +374,7 @@ func (p *PluginSystem) Enabled(name string) bool {
 func (p *PluginSystem) SetEnabled(pluginName string, enabled bool) error {
 	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
-		p.log.Debug("pluginsystem.setenabled: could not find plugin: %v", pluginName)
+		p.log.Debug("could not find plugin: %v", pluginName)
 		return amberror.ErrNotFound
 	}
 
@@ -398,17 +398,17 @@ func (p *PluginSystem) GrantRequests(pluginName string, grant ambient.Grant) ([]
 func (p *PluginSystem) Authorized(pluginName string, grant ambient.Grant) bool {
 	// Always allow ambient system to get full access.
 	if pluginName == "ambient" {
-		p.log.Debug("pluginsystem: granted system (%v) GrantAll access to the data item for grant: %v", "ambient", grant)
+		p.log.Debug("granted system (%v) GrantAll access to the data item for grant: %v", "ambient", grant)
 		return true
 	}
 
 	// If the grant was found, then allow access.
 	if granted := p.Granted(pluginName, grant); granted {
-		p.log.Debug("pluginsystem: granted plugin (%v) access to the data item for grant: %v", pluginName, grant)
+		p.log.Debug("granted plugin (%v) access to the data item for grant: %v", pluginName, grant)
 		return true
 	}
 
-	p.log.Warn("pluginsystem: denied plugin (%v) access to the data item, requires grant: %v", pluginName, grant)
+	p.log.Warn("denied plugin (%v) access to the data item, requires grant: %v", pluginName, grant)
 
 	return false
 }
@@ -417,13 +417,13 @@ func (p *PluginSystem) Authorized(pluginName string, grant ambient.Grant) bool {
 func (p *PluginSystem) Granted(pluginName string, grant ambient.Grant) bool {
 	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
-		p.log.Debug("pluginsystem.granted: could not find plugin: %v", pluginName)
+		p.log.Debug("could not find plugin: %v", pluginName)
 		return false
 	}
 
 	granted, found := data.Grants[grant]
 	if !found {
-		p.log.Debug("pluginsystem.granted: could not find grant for plugin (%v): %v", pluginName, grant)
+		p.log.Debug("could not find grant for plugin (%v): %v", pluginName, grant)
 		return false
 	}
 
@@ -434,7 +434,7 @@ func (p *PluginSystem) Granted(pluginName string, grant ambient.Grant) bool {
 func (p *PluginSystem) SetGrant(pluginName string, grant ambient.Grant) error {
 	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
-		p.log.Debug("pluginsystem.setgrant: could not find plugin: %v", pluginName)
+		p.log.Debug("could not find plugin: %v", pluginName)
 		return amberror.ErrNotFound
 	}
 
@@ -448,7 +448,7 @@ func (p *PluginSystem) SetGrant(pluginName string, grant ambient.Grant) error {
 func (p *PluginSystem) RemoveGrant(pluginName string, grant ambient.Grant) error {
 	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
-		p.log.Debug("pluginsystem.removegrant: could not find plugin: %v", pluginName)
+		p.log.Debug("could not find plugin: %v", pluginName)
 		return amberror.ErrNotFound
 	}
 
@@ -462,7 +462,7 @@ func (p *PluginSystem) RemoveGrant(pluginName string, grant ambient.Grant) error
 func (p *PluginSystem) SetSetting(pluginName string, settingName string, value interface{}) error {
 	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
-		p.log.Debug("pluginsystem.setsettings: could not find plugin: %v", pluginName)
+		p.log.Debug("could not find plugin: %v", pluginName)
 		return amberror.ErrNotFound
 	}
 
@@ -476,7 +476,7 @@ func (p *PluginSystem) SetSetting(pluginName string, settingName string, value i
 func (p *PluginSystem) Setting(pluginName string, settingName string) (interface{}, error) {
 	data, ok := p.storage.site.PluginStorage[pluginName]
 	if !ok {
-		p.log.Debug("pluginsystem.setting: could not find plugin: %v", pluginName)
+		p.log.Debug("could not find plugin: %v", pluginName)
 		return nil, amberror.ErrNotFound
 	}
 

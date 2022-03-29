@@ -108,7 +108,7 @@ func (ss *SecureSite) LoadSinglePluginPages(name string) {
 
 	recorder := ss.recorder.WithPlugin(name)
 
-	pss, _, err := NewSecureSite(name, ss.log, ss.pluginsystem, ss.sess, ss.mux, ss.render, ss.recorder, false)
+	pss, _, err := NewSecureSite(name, ss.log.Named(name), ss.pluginsystem, ss.sess, ss.mux, ss.render, ss.recorder, false)
 	if err != nil {
 		ss.log.Error("plugin load: problem creating securesite for (%v): %v", name, err.Error())
 		return

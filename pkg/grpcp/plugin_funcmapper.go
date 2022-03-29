@@ -29,19 +29,19 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 	for i, v := range req.Params {
 		err = ProtobufAnyToInterface(v, &params[i])
 		if err != nil {
-			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do any error: %v", err.Error())
+			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("Do any error: %v", err.Error())
 		}
 	}
 
 	var headers http.Header
 	err = ProtobufStructToObject(req.Headers, &headers)
 	if err != nil {
-		return nil, fmt.Errorf("grpc-server: Do header conversion error: %v", err.Error())
+		return nil, fmt.Errorf("Do header conversion error: %v", err.Error())
 	}
 
 	val, errText, err := m.Impl.Do(req.Globalfm, req.Requestid, req.Key, params, req.Method, req.Path, headers, req.Body)
 	if err != nil {
-		return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do error: %v", err.Error())
+		return &protodef.FuncMapperDoResponse{}, fmt.Errorf("Do error: %v", err.Error())
 	}
 
 	// if val != nil {
@@ -61,12 +61,12 @@ func (m *GRPCFuncMapperPlugin) Do(ctx context.Context, req *protodef.FuncMapperD
 	} else if reflect.TypeOf(val).Kind() == reflect.Slice {
 		arr, err = ArrayToProtobufStruct(val)
 		if err != nil {
-			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do array error: %v", err.Error())
+			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("Do array error: %v", err.Error())
 		}
 	} else {
 		anyVal, err = InterfaceToProtobufAny(val)
 		if err != nil {
-			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("grpc-plugin: Do interface error: %v", err.Error())
+			return &protodef.FuncMapperDoResponse{}, fmt.Errorf("Do interface error: %v", err.Error())
 		}
 	}
 

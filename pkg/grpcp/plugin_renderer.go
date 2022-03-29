@@ -31,7 +31,7 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return fmt.Errorf("grpc-plugin: error on Page struct conversion: %v | %v", err.Error(), pvars)
+		return fmt.Errorf("error on Page struct conversion: %v | %v", err.Error(), pvars)
 	}
 
 	keys := make([]string, 0)
@@ -112,7 +112,7 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return fmt.Errorf("grpc-plugin: error on PageContent struct conversion: %v", err.Error())
+		return fmt.Errorf("error on PageContent struct conversion: %v", err.Error())
 	}
 
 	keys := make([]string, 0)
@@ -161,7 +161,7 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return fmt.Errorf("grpc-plugin: error on Post struct conversion: %v", err.Error())
+		return fmt.Errorf("error on Post struct conversion: %v", err.Error())
 	}
 
 	keys := make([]string, 0)
@@ -242,7 +242,7 @@ func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request,
 
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return fmt.Errorf("grpc-plugin: error on PostContent struct conversion: %v", err.Error())
+		return fmt.Errorf("error on PostContent struct conversion: %v", err.Error())
 	}
 
 	keys := make([]string, 0)
@@ -291,7 +291,7 @@ func (l *GRPCRendererPlugin) Error(w http.ResponseWriter, r *http.Request, conte
 
 	pvars, err := ObjectToProtobufStruct(vars)
 	if err != nil {
-		return fmt.Errorf("grpc-plugin: error on Error struct conversion: %v", err.Error())
+		return fmt.Errorf("error on Error struct conversion: %v", err.Error())
 	}
 
 	keys := make([]string, 0)

@@ -52,7 +52,7 @@ func (m *GRPCServer) PluginVersion() string {
 
 // Enable handler.
 func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
-	//toolkit.Log.Debug("grpc-server: enabled called")
+	//toolkit.Log.Debug("enabled called")
 
 	m.toolkit = toolkit
 	loggerServer := &GRPCLoggerServer{
@@ -138,7 +138,7 @@ func (m *GRPCServer) Routes() {
 
 	_, err := m.client.Routes(context.Background(), &protodef.Empty{})
 	if err != nil {
-		m.toolkit.Log.Error("grpc-server: error calling routes: %v", err)
+		m.toolkit.Log.Error("error calling routes: %v", err)
 	}
 }
 
@@ -146,14 +146,14 @@ func (m *GRPCServer) Routes() {
 func (m *GRPCServer) Assets() ([]ambient.Asset, ambient.FileSystemReader) {
 	resp, err := m.client.Assets(context.Background(), &protodef.Empty{})
 	if err != nil {
-		m.toolkit.Log.Error("grpc-server: error calling Assets: %v", err)
+		m.toolkit.Log.Error("error calling Assets: %v", err)
 		return nil, nil
 	}
 
 	var assets []ambient.Asset
 	err = ProtobufStructToArray(resp.Assets, &assets)
 	if err != nil {
-		m.toolkit.Log.Error("grpc-server: error calling Assets conversion: %v", err)
+		m.toolkit.Log.Error("error calling Assets conversion: %v", err)
 	}
 
 	// Build a file system.
@@ -169,7 +169,7 @@ func (m *GRPCServer) Assets() ([]ambient.Asset, ambient.FileSystemReader) {
 func (m *GRPCServer) Settings() []ambient.Setting {
 	resp, err := m.client.Settings(context.Background(), &protodef.Empty{})
 	if err != nil {
-		m.toolkit.Log.Error("grpc-server: error calling Settings: %v", err)
+		m.toolkit.Log.Error("error calling Settings: %v", err)
 		return nil
 	}
 
@@ -179,7 +179,7 @@ func (m *GRPCServer) Settings() []ambient.Setting {
 		var i interface{}
 		err = ProtobufAnyToInterface(v.Default, &i)
 		if err != nil {
-			m.toolkit.Log.Error("grpc-server: error calling Settings: %v", err)
+			m.toolkit.Log.Error("error calling Settings: %v", err)
 		}
 
 		arr = append(arr, ambient.Setting{
@@ -195,7 +195,7 @@ func (m *GRPCServer) Settings() []ambient.Setting {
 	}
 
 	if err != nil {
-		m.toolkit.Log.Error("grpc-server: error calling Settings conversion: %v", err)
+		m.toolkit.Log.Error("error calling Settings conversion: %v", err)
 	}
 	return arr
 }
@@ -204,7 +204,7 @@ func (m *GRPCServer) Settings() []ambient.Setting {
 func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
 	resp, err := m.client.GrantRequests(context.Background(), &protodef.Empty{})
 	if err != nil {
-		m.toolkit.Log.Error("grpc-server: error calling GrantRequests: %v", err)
+		m.toolkit.Log.Error("error calling GrantRequests: %v", err)
 		return nil
 	}
 
@@ -224,7 +224,7 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 	// Return a list of keys for the FuncMap().
 	resp, err := m.client.FuncMap(context.Background(), &protodef.Empty{})
 	if err != nil {
-		m.toolkit.Log.Error("grpc-server: error calling FuncMap: %v", err)
+		m.toolkit.Log.Error("error calling FuncMap: %v", err)
 		return nil
 	}
 
@@ -240,7 +240,7 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 			fm[v] = func(args ...interface{}) (interface{}, error) {
 				val, errText, err := m.funcMapperClient.Do(req, requestuuid.Get(req), v, args, true)
 				if err != nil {
-					m.toolkit.Log.Error("grpc-server: error executing FuncMap: %v", err)
+					m.toolkit.Log.Error("error executing FuncMap: %v", err)
 				}
 				if len(errText) > 0 {
 					return val, errors.New(errText)
@@ -260,18 +260,18 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				sm, err := ObjectToProtobufStruct(r.Header)
 				if err != nil {
-					m.toolkit.Log.Error("grpc-server: error getting Middleware header: %v", err)
+					m.toolkit.Log.Error("error getting Middleware header: %v", err)
 				}
 
 				body := bytes.NewBuffer(nil)
 				_, err = io.Copy(body, r.Body)
 				if err != nil {
-					m.toolkit.Log.Error("grpc-server: error getting Middleware body: %v", err)
+					m.toolkit.Log.Error("error getting Middleware body: %v", err)
 				}
 				// Restore body.
 				r.Body = ioutil.NopCloser(body)
 
-				//m.toolkit.Log.Error("grpc-server: body in: %v | %v | %v", r.RequestURI, len(body.Bytes()), body.String())
+				//m.toolkit.Log.Error("body in: %v | %v | %v", r.RequestURI, len(body.Bytes()), body.String())
 
 				uuid := requestuuid.Get(r)
 				m.serverState.Save(uuid, &grpcsafe.HTTPContainer{
@@ -290,7 +290,7 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 				})
 
 				if err != nil {
-					m.toolkit.Log.Error("grpc-server: error calling Middleware: %v", err)
+					m.toolkit.Log.Error("error calling Middleware: %v", err)
 					return
 				}
 
@@ -298,7 +298,7 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 					var outHeader http.Header
 					err = ProtobufStructToObject(resp.Headers, &outHeader)
 					if err != nil {
-						m.toolkit.Log.Error("grpc-server: error converting Middleware headers: %v", err)
+						m.toolkit.Log.Error("error converting Middleware headers: %v", err)
 					}
 
 					// Copy over the headers.
@@ -306,7 +306,7 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 						w.Header()[k] = v
 					}
 
-					//m.toolkit.Log.Error("grpc-server: body ou: %v | %v", len(resp.Response), string(resp.Response))
+					//m.toolkit.Log.Error("body ou: %v | %v", len(resp.Response), string(resp.Response))
 
 					// If the response has text, then display it.
 					if len(resp.Response) > 0 {

@@ -37,7 +37,7 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 	vars := make(map[string]interface{})
 	err = ProtobufStructToObject(req.Vars, &vars)
 	if err != nil {
-		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on Page object conversion: %v", err.Error())
+		return &protodef.Empty{}, fmt.Errorf("error on Page object conversion: %v", err.Error())
 	}
 
 	err = m.Impl.Page(c.Response, c.Request, efs, req.Templatename, func(*http.Request) template.FuncMap {
@@ -49,7 +49,7 @@ func (m *GRPCRendererServer) Page(ctx context.Context, req *protodef.RendererPag
 				//m.Log.Error("FUNC ARGS: %v | %#v", v, args)
 				val, errText, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				if err != nil {
-					m.Log.Error("grpc-server: error executing FuncMap: %v", err)
+					m.Log.Error("error executing FuncMap: %v", err)
 				}
 				if len(errText) > 0 {
 					return val, errors.New(errText)
@@ -73,7 +73,7 @@ func (m *GRPCRendererServer) PageContent(ctx context.Context, req *protodef.Rend
 	vars := make(map[string]interface{})
 	err = ProtobufStructToObject(req.Vars, &vars)
 	if err != nil {
-		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on PageContent object conversion: %v", err.Error())
+		return &protodef.Empty{}, fmt.Errorf("error on PageContent object conversion: %v", err.Error())
 	}
 
 	err = m.Impl.PageContent(c.Response, c.Request, req.Content, func(*http.Request) template.FuncMap {
@@ -83,7 +83,7 @@ func (m *GRPCRendererServer) PageContent(ctx context.Context, req *protodef.Rend
 			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
 				val, errText, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				if err != nil {
-					m.Log.Error("grpc-server: error executing FuncMap: %v", err)
+					m.Log.Error("error executing FuncMap: %v", err)
 				}
 				if len(errText) > 0 {
 					return val, errors.New(errText)
@@ -113,7 +113,7 @@ func (m *GRPCRendererServer) Post(ctx context.Context, req *protodef.RendererPos
 	vars := make(map[string]interface{})
 	err = ProtobufStructToObject(req.Vars, &vars)
 	if err != nil {
-		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on Post object conversion: %v", err.Error())
+		return &protodef.Empty{}, fmt.Errorf("error on Post object conversion: %v", err.Error())
 	}
 
 	err = m.Impl.Post(c.Response, c.Request, efs, req.Templatename, func(*http.Request) template.FuncMap {
@@ -123,7 +123,7 @@ func (m *GRPCRendererServer) Post(ctx context.Context, req *protodef.RendererPos
 			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
 				val, errText, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				if err != nil {
-					m.Log.Error("grpc-server: error executing FuncMap: %v", err)
+					m.Log.Error("error executing FuncMap: %v", err)
 				}
 				if len(errText) > 0 {
 					return val, errors.New(errText)
@@ -147,7 +147,7 @@ func (m *GRPCRendererServer) PostContent(ctx context.Context, req *protodef.Rend
 	vars := make(map[string]interface{})
 	err = ProtobufStructToObject(req.Vars, &vars)
 	if err != nil {
-		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on PostContent object conversion: %v", err.Error())
+		return &protodef.Empty{}, fmt.Errorf("error on PostContent object conversion: %v", err.Error())
 	}
 
 	err = m.Impl.PostContent(c.Response, c.Request, req.Content, func(*http.Request) template.FuncMap {
@@ -157,7 +157,7 @@ func (m *GRPCRendererServer) PostContent(ctx context.Context, req *protodef.Rend
 			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
 				val, errText, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				if err != nil {
-					m.Log.Error("grpc-server: error executing FuncMap: %v", err)
+					m.Log.Error("error executing FuncMap: %v", err)
 				}
 				if len(errText) > 0 {
 					return val, errors.New(errText)
@@ -181,7 +181,7 @@ func (m *GRPCRendererServer) Error(ctx context.Context, req *protodef.RendererEr
 	vars := make(map[string]interface{})
 	err = ProtobufStructToObject(req.Vars, &vars)
 	if err != nil {
-		return &protodef.Empty{}, fmt.Errorf("grpc-server: error on Error object conversion: %v", err.Error())
+		return &protodef.Empty{}, fmt.Errorf("error on Error object conversion: %v", err.Error())
 	}
 
 	err = m.Impl.Error(c.Response, c.Request, req.Content, int(req.Statuscode), func(*http.Request) template.FuncMap {
@@ -191,7 +191,7 @@ func (m *GRPCRendererServer) Error(ctx context.Context, req *protodef.RendererEr
 			c.FuncMap[v] = func(args ...interface{}) (interface{}, error) {
 				val, errText, err := m.FuncMapperClient.Do(c.Request, req.Requestid, v, args, false)
 				if err != nil {
-					m.Log.Error("grpc-server: error executing FuncMap: %v", err)
+					m.Log.Error("error executing FuncMap: %v", err)
 				}
 				if len(errText) > 0 {
 					return val, errors.New(errText)

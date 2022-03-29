@@ -24,17 +24,17 @@ var (
 func Validate(p PluginCore) error {
 	// Don't allow certain plugin names.
 	if allowed, ok := disallowedPluginNames[p.PluginName()]; ok && !allowed {
-		return fmt.Errorf("ambient: plugin name not allowed: %v", p.PluginName())
+		return fmt.Errorf("plugin name not allowed: %v", p.PluginName())
 	}
 
 	// Don't allow certain plugin name characters.
 	if ok := rePluginName.Match([]byte(p.PluginName())); !ok {
-		return fmt.Errorf("ambient: plugin name format not allowed: '%v'", p.PluginName())
+		return fmt.Errorf("plugin name format not allowed: '%v'", p.PluginName())
 	}
 
 	// Ensure version meets https://semver.org/ requirements.
 	if ok := semver.IsValid(fmt.Sprintf("v%v", p.PluginVersion())); !ok {
-		return fmt.Errorf("ambient: plugin (%v) version not in semver format: %v", p.PluginName(), p.PluginVersion())
+		return fmt.Errorf("plugin (%v) version not in semver format: %v", p.PluginName(), p.PluginVersion())
 	}
 
 	return nil

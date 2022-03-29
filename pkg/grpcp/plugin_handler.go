@@ -24,14 +24,14 @@ func (m *GRPCHandlerPlugin) Handle(ctx context.Context, req *protodef.HandleRequ
 	headers := http.Header{}
 	err = ProtobufStructToObject(req.Headers, &headers)
 	if err != nil {
-		m.Log.Error("grpc-plugin: error getting headers: %v", err.Error())
+		m.Log.Error("error getting headers: %v", err.Error())
 	}
 
 	status, errText, response, rawHeaders := m.Impl.Handle(req.Requestid, req.Method, req.Path, req.Fullpath, headers, req.Body)
 
 	outHeaders, err := ObjectToProtobufStruct(rawHeaders)
 	if err != nil {
-		m.Log.Error("grpc-plugin: error converting headers: %v", err.Error(), rawHeaders)
+		m.Log.Error("error converting headers: %v", err.Error(), rawHeaders)
 		//return &protodef.MiddlewareResponse{}, err
 	}
 

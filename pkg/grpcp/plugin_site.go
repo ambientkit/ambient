@@ -35,7 +35,7 @@ func (c *GRPCSitePlugin) LoadSinglePluginPages(name string) {
 		Pluginname: name,
 	})
 	if err != nil {
-		c.Log.Error("grpc-plugin: site.LoadSinglePluginPages error: %v", err.Error())
+		c.Log.Error("site.LoadSinglePluginPages error: %v", err.Error())
 		return
 	}
 }
@@ -46,7 +46,7 @@ func (c *GRPCSitePlugin) Authorized(grant ambient.Grant) bool {
 		Grant: string(grant),
 	})
 	if err != nil {
-		c.Log.Error("grpc-plugin: site.Authorized error: %v", err.Error())
+		c.Log.Error("site.Authorized error: %v", err.Error())
 		return false
 	}
 
@@ -374,7 +374,7 @@ func (c *GRPCSitePlugin) SetCSRF(r *http.Request) string {
 		Requestid: requestuuid.Get(r),
 	})
 	if err != nil {
-		c.Log.Error("grpc-plugin: site.SetCSRF error: %v", err.Error())
+		c.Log.Error("site.SetCSRF error: %v", err.Error())
 		return ""
 	}
 
@@ -388,7 +388,7 @@ func (c *GRPCSitePlugin) CSRF(r *http.Request, token string) bool {
 		Token:     token,
 	})
 	if err != nil {
-		c.Log.Error("grpc-plugin: site.CSRF error: %v", err.Error())
+		c.Log.Error("site.CSRF error: %v", err.Error())
 		return false
 	}
 
@@ -402,7 +402,7 @@ func (c *GRPCSitePlugin) SessionValue(r *http.Request, name string) string {
 		Name:      name,
 	})
 	if err != nil {
-		c.Log.Error("grpc-plugin: site.SessionValue error: %v", err.Error())
+		c.Log.Error("site.SessionValue error: %v", err.Error())
 		return ""
 	}
 

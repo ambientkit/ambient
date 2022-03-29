@@ -71,15 +71,15 @@ func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP Cust
 					friendlyError = "Darn, we cannot find the page."
 				case 400:
 					if err != nil {
-						logger.Info("ambient: router error (%v): %v", status, err.Error())
+						logger.Info("router error (%v): %v", status, err.Error())
 					}
 				case 500:
 					if err != nil {
-						logger.Error("ambient: router error (%v): %v", status, err.Error())
+						logger.Error("router error (%v): %v", status, err.Error())
 					}
 				default:
 					if err != nil {
-						logger.Info("ambient: router error (%v): %v", status, err.Error())
+						logger.Info("router error (%v): %v", status, err.Error())
 					}
 				}
 
@@ -87,7 +87,7 @@ func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP Cust
 					err = te.Error(w, r, fmt.Sprintf("<h1>%v</h1>%v", status, friendlyError), status, nil, nil)
 					if err != nil {
 						if err != nil {
-							logger.Info("ambient: router error in rendering error template (%v): %v", status, err.Error())
+							logger.Info("router error in rendering error template (%v): %v", status, err.Error())
 						}
 						http.Error(w, "500 internal server error", http.StatusInternalServerError)
 						return

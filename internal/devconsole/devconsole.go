@@ -45,14 +45,14 @@ func JSON(w http.ResponseWriter, data interface{}) error {
 
 // EnableDevConsole turns on the dev console web listener.
 func (dc *DevConsole) EnableDevConsole() {
-	dc.log.Info("ambient: dev console started and available at: %v/%v", envdetect.DevConsoleURL(), envdetect.DevConsolePort())
+	dc.log.Info("started and available at: %v/%v", envdetect.DevConsoleURL(), envdetect.DevConsolePort())
 
 	go func() {
 		mux := router.New()
 
 		// Encrypt the site JSON file on disk.
 		mux.Post("/storage/encrypt", func(w http.ResponseWriter, r *http.Request) error {
-			dc.log.Debug("ambient: dev console - site.bin encrypted")
+			dc.log.Debug("site.bin encrypted")
 			err := dc.storage.LoadDecrypted()
 			if err != nil {
 				return ambient.StatusError{Code: http.StatusInternalServerError, Err: err}
@@ -67,7 +67,7 @@ func (dc *DevConsole) EnableDevConsole() {
 
 		// Decrypt the site JSON file on disk.
 		mux.Post("/storage/decrypt", func(w http.ResponseWriter, r *http.Request) error {
-			dc.log.Debug("ambient: dev console - site.bin decrypted")
+			dc.log.Debug("site.bin decrypted")
 			err := dc.storage.SaveDecrypted()
 			if err != nil {
 				return ambient.StatusError{Code: http.StatusInternalServerError, Err: err}
@@ -78,14 +78,14 @@ func (dc *DevConsole) EnableDevConsole() {
 
 		// Return a list of plugin names.
 		mux.Get("/plugins", func(w http.ResponseWriter, r *http.Request) error {
-			dc.log.Debug("ambient: dev console - get plugin names")
+			dc.log.Debug("get plugin names")
 			return JSON(w, dc.pluginsystem.TrustedPluginNames())
 		})
 
 		// Enable one plugin.
 		mux.Post("/plugins/{pluginName}/enable", func(w http.ResponseWriter, r *http.Request) error {
 			pluginName := mux.Param(r, "pluginName")
-			dc.log.Debug("ambient: dev console - enable plugin: %v", pluginName)
+			dc.log.Debug("enable plugin: %v", pluginName)
 
 			err := dc.securestorage.EnablePlugin(pluginName, true)
 			if err != nil {
@@ -97,14 +97,14 @@ func (dc *DevConsole) EnableDevConsole() {
 
 		// Enable all plugins.
 		mux.Post("/plugins/enable", func(w http.ResponseWriter, r *http.Request) error {
-			dc.log.Debug("ambient: dev console - enable all plugins")
+			dc.log.Debug("enable all plugins")
 
 			// Loop through all the trusted plugins.
 			for _, pluginName := range dc.pluginsystem.TrustedPluginNames() {
 				err := dc.securestorage.EnablePlugin(pluginName, true)
 				if err != nil {
 					// TODO: Should return an error at the end if at least one fails.
-					dc.log.Error("ambient: dev console - failed to enable plugin (%v): %v", pluginName, err.Error())
+					dc.log.Error("failed to enable plugin (%v): %v", pluginName, err.Error())
 					// Continue on
 				}
 			}
@@ -115,7 +115,7 @@ func (dc *DevConsole) EnableDevConsole() {
 		// Enable all grants for one plugin.
 		mux.Post("/plugins/{pluginName}/grant", func(w http.ResponseWriter, r *http.Request) error {
 			pluginName := mux.Param(r, "pluginName")
-			dc.log.Debug("ambient: dev console - enable plugin grants: %v", pluginName)
+			dc.log.Debug("enable plugin grants: %v", pluginName)
 
 			p, err := dc.pluginsystem.Plugin(pluginName)
 			if err != nil {
@@ -124,7 +124,7 @@ func (dc *DevConsole) EnableDevConsole() {
 			}
 
 			for _, request := range p.GrantRequests() {
-				dc.log.Debug("ambient: dev console - plugin (%v), add grant: %v", pluginName, request.Grant)
+				dc.log.Debug("plugin (%v), add grant: %v", pluginName, request.Grant)
 				err := dc.securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
 				if err != nil {
 					return ambient.StatusError{Code: http.StatusBadRequest,
@@ -138,7 +138,7 @@ func (dc *DevConsole) EnableDevConsole() {
 		// Enable all grants for all plugins.
 		mux.Post("/plugins/grant", func(w http.ResponseWriter, r *http.Request) error {
 			pluginName := mux.Param(r, "pluginName")
-			dc.log.Debug("ambient: dev console - enable plugin grant: %v", pluginName)
+			dc.log.Debug("enable plugin grant: %v", pluginName)
 
 			// Loop through all the trusted plugins.
 			for _, pluginName := range dc.pluginsystem.TrustedPluginNames() {
@@ -149,7 +149,7 @@ func (dc *DevConsole) EnableDevConsole() {
 				}
 
 				for _, request := range p.GrantRequests() {
-					dc.log.Debug("ambient: dev console - plugin (%v), add grant: %v", pluginName, request.Grant)
+					dc.log.Debug("plugin (%v), add grant: %v", pluginName, request.Grant)
 					err := dc.securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
 					if err != nil {
 						return ambient.StatusError{Code: http.StatusBadRequest,
@@ -163,7 +163,7 @@ func (dc *DevConsole) EnableDevConsole() {
 
 		err := http.ListenAndServe(":"+envdetect.DevConsolePort(), mux)
 		if err != nil {
-			dc.log.Error("ambient: dev console listener cannot start: %v", err.Error())
+			dc.log.Error("listener cannot start: %v", err.Error())
 		}
 	}()
 }

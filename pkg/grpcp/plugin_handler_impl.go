@@ -18,7 +18,7 @@ type HandlerImpl struct {
 
 // Handle .
 func (d *HandlerImpl) Handle(requestid string, method string, path string, fullPath string, headers http.Header, body []byte) (int, string, string, http.Header) {
-	// d.Log.Warn("grpc-plugin: Handle start: %v %v | Routes: %v | %v", method, path, len(d.Map), requestid)
+	// d.Log.Warn("Handle start: %v %v | Routes: %v | %v", method, path, len(d.Map), requestid)
 
 	req := httptest.NewRequest(method, fullPath, bytes.NewReader(body))
 	req = requestuuid.Set(req, requestid)
@@ -57,7 +57,7 @@ func (d *HandlerImpl) Handle(requestid string, method string, path string, fullP
 		}
 	}
 
-	//d.Log.Warn("grpc-plugin: Handle end: %v Output: \"%v\"", statusCode, w.Output())
+	//d.Log.Warn("Handle end: %v Output: \"%v\"", statusCode, w.Output())
 
 	return statusCode, errText, w.Output(), w.Header()
 }

@@ -12,6 +12,8 @@ type AppLogger interface {
 	// Fatal is reserved for the app level only.
 	Fatal(format string, v ...interface{})
 	SetLogLevel(level LogLevel)
+	Named(name string) AppLogger
+	Name() string
 }
 
 // Logger represents the log service for the plugins.

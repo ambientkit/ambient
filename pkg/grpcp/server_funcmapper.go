@@ -28,19 +28,19 @@ func (l *GRPCFuncMapperServer) Do(r *http.Request, requestID string, key string,
 	for i, v := range args {
 		arr[i], err = InterfaceToProtobufAny(v)
 		if err != nil {
-			return nil, "", fmt.Errorf("grpc-server: Do args error: %v", err.Error())
+			return nil, "", fmt.Errorf("Do args error: %v", err.Error())
 		}
 	}
 
 	sm, err := ObjectToProtobufStruct(r.Header)
 	if err != nil {
-		return nil, "", fmt.Errorf("grpc-server: Do header conversion error: %v", err.Error())
+		return nil, "", fmt.Errorf("Do header conversion error: %v", err.Error())
 	}
 
 	body := bytes.NewBuffer(nil)
 	_, err = io.Copy(body, r.Body)
 	if err != nil {
-		return nil, "", fmt.Errorf("grpc-server: Do body copy error: %v", err.Error())
+		return nil, "", fmt.Errorf("Do body copy error: %v", err.Error())
 	}
 	// Restore body.
 	r.Body = ioutil.NopCloser(body)
@@ -56,7 +56,7 @@ func (l *GRPCFuncMapperServer) Do(r *http.Request, requestID string, key string,
 		Body:      body.Bytes(),
 	})
 	if err != nil {
-		return nil, "", fmt.Errorf("grpc-server: Do response error:%v", err.Error())
+		return nil, "", fmt.Errorf("Do response error:%v", err.Error())
 	}
 
 	//l.Log.Error("SERVER: Kind: %v | Value: %v | Valid: %v | Args: %#v", reflect.TypeOf(resp.Value).Kind(), resp.Value, reflect.ValueOf(resp.Value).IsValid(), args)

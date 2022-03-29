@@ -87,7 +87,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		},
 	}
 
-	m.toolkit.Log.Debug("grpc-plugin: Enabled() called")
+	m.toolkit.Log.Debug("Enabled() called")
 
 	err = m.Impl.Enable(m.toolkit)
 
@@ -122,14 +122,14 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 
 // Disable handler.
 func (m *GRPCPlugin) Disable(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
-	m.toolkit.Log.Debug("grpc-plugin: Disable() called")
+	m.toolkit.Log.Debug("Disable() called")
 	defer m.conn.Close()
 	return &protodef.Empty{}, m.Impl.Disable()
 }
 
 // Routes handler.
 func (m *GRPCPlugin) Routes(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
-	m.toolkit.Log.Debug("grpc-plugin: Routes() called")
+	m.toolkit.Log.Debug("Routes() called")
 	m.Impl.Routes()
 	return &protodef.Empty{}, nil
 }
@@ -193,7 +193,7 @@ func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protod
 	for _, v := range settings {
 		any, err := InterfaceToProtobufAny(v.Default)
 		if err != nil {
-			m.toolkit.Log.Error("grpc-plugin: error on conversion: %v", err)
+			m.toolkit.Log.Error("error on conversion: %v", err)
 		}
 
 		arr = append(arr, &protodef.Setting{
@@ -215,7 +215,7 @@ func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protod
 
 // FuncMap handler.
 func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protodef.FuncMapResponse, error) {
-	//m.toolkit.Log.Error("grpc-plugin: FuncMap called.")
+	//m.toolkit.Log.Error("FuncMap called.")
 	fn := m.Impl.FuncMap()
 	keys := make([]string, 0)
 	if fn == nil {
@@ -243,7 +243,7 @@ func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protode
 
 // Middleware handler.
 func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareRequest) (*protodef.MiddlewareResponse, error) {
-	m.toolkit.Log.Debug("grpc-plugin: Middleware() called")
+	m.toolkit.Log.Debug("Middleware() called")
 
 	// Get the middleware from the plugin.
 	arr := m.Impl.Middleware()
@@ -302,7 +302,7 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 
 	outHeaders, err := ObjectToProtobufStruct(w.header)
 	if err != nil {
-		m.toolkit.Log.Error("grpc-plugin: error getting headers: %v", err.Error())
+		m.toolkit.Log.Error("error getting headers: %v", err.Error())
 		return &protodef.MiddlewareResponse{}, err
 	}
 

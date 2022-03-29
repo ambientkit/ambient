@@ -84,6 +84,8 @@ func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
 		return nil, nil, err
 	}
 
+	log = log.Named("ambient")
+
 	// Get the storage manager.
 	storage, sessionstorer, err := loadStorage(log, storagePluginGroup)
 	if err != nil {
@@ -96,7 +98,7 @@ func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
 	}
 
 	// Initialize the plugin system.
-	pluginsystem, err := config.NewPluginSystem(log, storage, plugins)
+	pluginsystem, err := config.NewPluginSystem(log.Named("pluginsystem"), storage, plugins)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -147,7 +149,7 @@ func loadStorage(log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) 
 	if err != nil {
 		log.Error(err.Error())
 	} else if pds != nil && pss != nil {
-		log.Info("ambient: using storage from first plugin: %v", plugin.PluginName())
+		log.Info("using storage from first plugin: %v", plugin.PluginName())
 		ds = pds
 		ss = pss
 	}
@@ -173,12 +175,12 @@ func (app *App) StopGRPCClients() {
 func (app *App) Handler() (http.Handler, error) {
 	// Get the session manager from the plugins.
 	if app.pluginsystem.SessionManager() != nil {
-		sm, err := app.pluginsystem.SessionManager().SessionManager(app.log, app.sessionstorer)
+		sm, err := app.pluginsystem.SessionManager().SessionManager(app.log.Named("sessionmanager"), app.sessionstorer)
 		if err != nil {
 			app.log.Error(err.Error())
 		} else if sm != nil {
 			// Only set the session manager once.
-			app.log.Info("ambient: using session manager from plugin: %v", app.pluginsystem.SessionManager().PluginName())
+			app.log.Info("using session manager from plugin: %v", app.pluginsystem.SessionManager().PluginName())
 			app.sess = sm
 		}
 	}
@@ -191,12 +193,12 @@ func (app *App) Handler() (http.Handler, error) {
 
 	// Get the template engine.
 	if app.pluginsystem.TemplateEngine() != nil {
-		tt, err := app.pluginsystem.TemplateEngine().TemplateEngine(app.log, pi)
+		tt, err := app.pluginsystem.TemplateEngine().TemplateEngine(app.log.Named("templateengine"), pi)
 		if err != nil {
 			return nil, err
 		} else if tt != nil {
 			// Only set the router once.
-			app.log.Info("ambient: using template engine from plugin: %v", app.pluginsystem.TemplateEngine().PluginName())
+			app.log.Info("using template engine from plugin: %v", app.pluginsystem.TemplateEngine().PluginName())
 			app.renderer = tt
 		}
 	}
@@ -206,12 +208,12 @@ func (app *App) Handler() (http.Handler, error) {
 
 	// Get the router.
 	if app.pluginsystem.Router() != nil {
-		rm, err := app.pluginsystem.Router().Router(app.log, app.renderer)
+		rm, err := app.pluginsystem.Router().Router(app.log.Named("router"), app.renderer)
 		if err != nil {
 			return nil, err
 		} else if rm != nil {
 			// Only set the router once.
-			app.log.Info("ambient: using router from plugin: %v", app.pluginsystem.Router().PluginName())
+			app.log.Info("using router from plugin: %v", app.pluginsystem.Router().PluginName())
 			app.mux = rm
 		}
 	}
@@ -225,7 +227,7 @@ func (app *App) Handler() (http.Handler, error) {
 	// full permissions.
 	var err error
 	var handler http.Handler
-	app.securesite, handler, err = secureconfig.NewSecureSite("ambient", app.log, app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder, true)
+	app.securesite, handler, err = secureconfig.NewSecureSite("ambient", app.log.Named("securesite"), app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder, true)
 	if err != nil {
 		return nil, err
 	}
@@ -236,7 +238,7 @@ func (app *App) Handler() (http.Handler, error) {
 	// Start Dev Console if enabled via environment variable.
 	if envdetect.DevConsoleEnabled() {
 		// TODO: Should probably store in an object that can be edited by system.
-		dc := devconsole.NewDevConsole(app.log, app.pluginsystem, app.pluginsystem.StorageManager(), app.securesite)
+		dc := devconsole.NewDevConsole(app.log.Named("devconsole"), app.pluginsystem, app.pluginsystem.StorageManager(), app.securesite)
 		dc.EnableDevConsole()
 	}
 
@@ -257,7 +259,7 @@ func (app *App) grantAccess() {
 		}
 
 		if !pluginInfo.Enabled {
-			app.log.Info("ambient: enabling trusted plugin: %v", pluginName)
+			app.log.Info("enabling trusted plugin: %v", pluginName)
 			err := app.pluginsystem.SetEnabled(pluginName, true)
 			if err != nil {
 				app.log.Error(err.Error())
@@ -273,7 +275,7 @@ func (app *App) grantAccess() {
 		for _, request := range p.GrantRequests() {
 			// If plugin is not granted permission, then grant.
 			if !app.pluginsystem.Granted(pluginName, request.Grant) {
-				app.log.Info("ambient: for plugin (%v), adding grant: %v", pluginName, request.Grant)
+				app.log.Info("for plugin (%v), adding grant: %v", pluginName, request.Grant)
 				err = app.pluginsystem.SetGrant(pluginName, request.Grant)
 				if err != nil {
 					app.log.Error(err.Error())
@@ -324,7 +326,7 @@ func (app *App) ListenAndServe(h http.Handler) error {
 
 	app.handleExit()
 
-	app.log.Info("ambient: web server listening on port: %v", port)
+	app.log.Info("web server listening on port: %v", port)
 	return http.ListenAndServe(":"+port, h)
 }
 
@@ -348,23 +350,23 @@ func (app *App) SecureSite() *secureconfig.SecureSite {
 // the app in a bad state.
 func (app *App) CleanUp() {
 	var err error
-	app.log.Info("ambient: shutdown started")
+	app.log.Info("shutdown started")
 
-	app.log.Info("ambient: stopping gRPC plugins")
+	app.log.Info("stopping gRPC plugins")
 	app.StopGRPCClients()
 
 	// Load decrypted just in case the storage was decrypted by AMB.
-	app.log.Info("ambient: loading storage")
+	app.log.Info("loading storage")
 	err = app.pluginsystem.StorageManager().LoadDecrypted()
 	if err != nil {
-		app.log.Error("ambient: could not load storage: %v", err.Error())
+		app.log.Error("could not load storage: %v", err.Error())
 	}
 
-	app.log.Info("ambient: saving storage")
+	app.log.Info("saving storage")
 	err = app.pluginsystem.StorageManager().Save()
 	if err != nil {
-		app.log.Error("ambient: could not save storage: %v", err.Error())
+		app.log.Error("could not save storage: %v", err.Error())
 	}
 
-	app.log.Info("ambient: shutdown done")
+	app.log.Info("shutdown done")
 }

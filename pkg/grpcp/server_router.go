@@ -27,10 +27,10 @@ type GRPCAddRouterServer struct {
 
 // Handle request handler.
 func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRequest) (resp *protodef.Empty, err error) {
-	//m.Log.Warn("grpc-server: GET called: %v", req.Path)
+	//m.Log.Warn("GET called: %v", req.Path)
 
 	m.Impl.Handle(req.Method, req.Path, func(w http.ResponseWriter, r *http.Request) error {
-		// m.Log.Warn("grpc-server: %v func called: %v | %v", req.Method, req.Path, r.URL.RequestURI())
+		// m.Log.Warn("%v func called: %v | %v", req.Method, req.Path, r.URL.RequestURI())
 
 		uuid := requestuuid.Get(r)
 		m.reqmap.Save(uuid, &grpcsafe.HTTPContainer{
@@ -42,7 +42,7 @@ func (m *GRPCAddRouterServer) Handle(ctx context.Context, req *protodef.RouterRe
 		status, errText, response, headers, err := m.HandlerClient.Handle(req.Method, req.Path, r, uuid)
 		m.reqmap.Delete(uuid)
 		if err != nil {
-			m.Log.Error("grpc-server: %v func error: %v", req.Method, err.Error())
+			m.Log.Error("%v func error: %v", req.Method, err.Error())
 			return err
 		}
 
@@ -126,7 +126,7 @@ func (m *GRPCAddRouterServer) Param(ctx context.Context, req *protodef.RouterPar
 
 // Delete request handler.
 func (m *GRPCAddRouterServer) Error(ctx context.Context, req *protodef.RouterErrorRequest) (resp *protodef.Empty, err error) {
-	m.Log.Warn("grpc-server: Error called: %v %v", req.Requestid, req.Status)
+	m.Log.Warn("Error called: %v %v", req.Requestid, req.Status)
 
 	c := m.reqmap.Load(req.Requestid)
 	if c == nil {

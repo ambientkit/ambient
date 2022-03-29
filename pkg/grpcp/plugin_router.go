@@ -19,7 +19,7 @@ type GRPCRouterPlugin struct {
 
 // Handle request handler.
 func (c *GRPCRouterPlugin) Handle(method string, path string, fn func(http.ResponseWriter, *http.Request) (err error)) {
-	//c.Log.Warn("grpc-plugin: %v called: %v", method, path)
+	//c.Log.Warn("%v called: %v", method, path)
 	c.PluginState.SaveHandleMap(fn, method, path)
 
 	c.client.Handle(context.Background(), &protodef.RouterRequest{
@@ -84,14 +84,14 @@ func (c *GRPCRouterPlugin) StatusError(status int, err error) error {
 func (c *GRPCRouterPlugin) Error(status int, w http.ResponseWriter, r *http.Request) {
 	v := requestuuid.Get(r)
 
-	c.Log.Warn("grpc-plugin: Error called: %v %v", v, status)
+	c.Log.Warn("Error called: %v %v", v, status)
 
 	_, err := c.client.Error(context.Background(), &protodef.RouterErrorRequest{
 		Status:    uint32(status),
 		Requestid: v,
 	})
 	if err != nil {
-		c.Log.Error("grpc-plugin: error from Error call: %v", err.Error())
+		c.Log.Error("error from Error call: %v", err.Error())
 	}
 
 }
