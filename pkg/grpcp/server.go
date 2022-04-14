@@ -84,6 +84,7 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
 		opts = append(opts, grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()))
+		opts = append(opts, grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()))
 		m.server = grpc.NewServer(opts...)
 		protodef.RegisterLoggerServer(m.server, loggerServer)
 		protodef.RegisterRouterServer(m.server, routerServer)
@@ -283,7 +284,7 @@ func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
 				})
 				defer m.serverState.Delete(uuid)
 
-				resp, err := m.client.Middleware(context.Background(), &protodef.MiddlewareRequest{
+				resp, err := m.client.Middleware(r.Context(), &protodef.MiddlewareRequest{
 					Requestid: uuid,
 					Method:    r.Method,
 					Path:      r.RequestURI,

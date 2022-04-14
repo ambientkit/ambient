@@ -1,7 +1,6 @@
 package grpcp
 
 import (
-	"context"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -90,7 +89,7 @@ func (l *GRPCRendererPlugin) Page(w http.ResponseWriter, r *http.Request, assets
 		}
 	}
 
-	_, err = l.client.Page(context.Background(), &protodef.RendererPageRequest{
+	_, err = l.client.Page(r.Context(), &protodef.RendererPageRequest{
 		Requestid:    rid,
 		Templatename: templateName,
 		Vars:         pvars,
@@ -140,7 +139,7 @@ func (l *GRPCRendererPlugin) PageContent(w http.ResponseWriter, r *http.Request,
 		l.PluginState.DeleteContextDelayed(rid)
 	}
 
-	_, err = l.client.PageContent(context.Background(), &protodef.RendererPageContentRequest{
+	_, err = l.client.PageContent(r.Context(), &protodef.RendererPageContentRequest{
 		Requestid: rid,
 		Content:   content,
 		Vars:      pvars,
@@ -220,7 +219,7 @@ func (l *GRPCRendererPlugin) Post(w http.ResponseWriter, r *http.Request, assets
 		}
 	}
 
-	_, err = l.client.Post(context.Background(), &protodef.RendererPostRequest{
+	_, err = l.client.Post(r.Context(), &protodef.RendererPostRequest{
 		Requestid:    rid,
 		Templatename: templateName,
 		Vars:         pvars,
@@ -270,7 +269,7 @@ func (l *GRPCRendererPlugin) PostContent(w http.ResponseWriter, r *http.Request,
 		l.PluginState.DeleteContextDelayed(rid)
 	}
 
-	_, err = l.client.PostContent(context.Background(), &protodef.RendererPostContentRequest{
+	_, err = l.client.PostContent(r.Context(), &protodef.RendererPostContentRequest{
 		Requestid: rid,
 		Content:   content,
 		Vars:      pvars,
@@ -319,7 +318,7 @@ func (l *GRPCRendererPlugin) Error(w http.ResponseWriter, r *http.Request, conte
 		l.PluginState.DeleteContextDelayed(rid)
 	}
 
-	_, err = l.client.Error(context.Background(), &protodef.RendererErrorRequest{
+	_, err = l.client.Error(r.Context(), &protodef.RendererErrorRequest{
 		Requestid:  rid,
 		Content:    content,
 		Vars:       pvars,

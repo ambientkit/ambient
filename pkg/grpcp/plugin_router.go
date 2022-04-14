@@ -68,7 +68,7 @@ func (c *GRPCRouterPlugin) Delete(path string, fn func(http.ResponseWriter, *htt
 func (c *GRPCRouterPlugin) Param(r *http.Request, name string) string {
 	v := requestuuid.Get(r)
 
-	out, _ := c.client.Param(context.Background(), &protodef.RouterParamRequest{
+	out, _ := c.client.Param(r.Context(), &protodef.RouterParamRequest{
 		Name:      name,
 		Requestid: v,
 	})
@@ -86,7 +86,7 @@ func (c *GRPCRouterPlugin) Error(status int, w http.ResponseWriter, r *http.Requ
 
 	c.Log.Warn("Error called: %v %v", v, status)
 
-	_, err := c.client.Error(context.Background(), &protodef.RouterErrorRequest{
+	_, err := c.client.Error(r.Context(), &protodef.RouterErrorRequest{
 		Status:    uint32(status),
 		Requestid: v,
 	})

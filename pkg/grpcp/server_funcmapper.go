@@ -9,7 +9,6 @@ import (
 
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
-	"golang.org/x/net/context"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 
@@ -22,7 +21,7 @@ type GRPCFuncMapperServer struct {
 // Do handler.
 func (l *GRPCFuncMapperServer) Do(r *http.Request, requestID string, key string, args []interface{}, globalFuncMap bool) (interface{}, string, error) {
 	var err error
-	ctx := context.Background()
+	ctx := r.Context()
 
 	arr := make([]*anypb.Any, len(args))
 	for i, v := range args {

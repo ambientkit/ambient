@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
-	"golang.org/x/net/context"
 )
 
 // GRPCHandlerServer .
@@ -18,7 +17,7 @@ type GRPCHandlerServer struct {
 // Handle sends the request information from the server to the plugin.
 func (l *GRPCHandlerServer) Handle(method string, path string, r *http.Request, requestID string) (
 	status int, errText string, response string, headers http.Header, err error) {
-	ctx := context.Background()
+	ctx := r.Context()
 
 	sm, err := ObjectToProtobufStruct(r.Header)
 	if err != nil {

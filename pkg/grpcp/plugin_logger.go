@@ -43,10 +43,10 @@ func (l *GRPCLoggerPlugin) Debug(format string, v ...interface{}) {
 		out = fmt.Sprintf(format, v...)
 	}
 
-	if l.ctx != nil {
-		l.client.Debug(l.ctx, &protodef.LogFormat{Format: out})
-		return
-	}
+	// if l.ctx != nil {
+	// 	l.client.Debug(l.ctx, &protodef.LogFormat{Format: out})
+	// 	return
+	// }
 
 	l.client.Debug(context.Background(), &protodef.LogFormat{Format: out})
 }
@@ -60,10 +60,10 @@ func (l *GRPCLoggerPlugin) Info(format string, v ...interface{}) {
 		out = fmt.Sprintf(format, v...)
 	}
 
-	if l.ctx != nil {
-		l.client.Info(l.ctx, &protodef.LogFormat{Format: out})
-		return
-	}
+	// if l.ctx != nil {
+	// 	l.client.Info(l.ctx, &protodef.LogFormat{Format: out})
+	// 	return
+	// }
 
 	l.client.Info(context.Background(), &protodef.LogFormat{Format: out})
 }
@@ -110,8 +110,10 @@ func (l *GRPCLoggerPlugin) For(ctx context.Context) ambient.Logger {
 		// TODO: Determine if these need to be saved.
 		//span.SpanContext().TraceID()
 		//span.SpanContext().SpanID()
+		l.Error("context found: %v", span.SpanContext().SpanID())
 		return logger
 	}
+	l.Error("No context found")
 	return l
 }
 

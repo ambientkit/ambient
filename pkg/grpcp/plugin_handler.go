@@ -26,7 +26,8 @@ func (m *GRPCHandlerPlugin) Handle(ctx context.Context, req *protodef.HandleRequ
 		m.Log.Error("error getting headers: %v", err.Error())
 	}
 
-	status, errText, response, rawHeaders := m.Process(req.Requestid, req.Method, req.Path, req.Fullpath, headers, req.Body)
+	//status, errText, response, rawHeaders := m.Process(req.Requestid, req.Method, req.Path, req.Fullpath, headers, req.Body)
+	status, errText, response, rawHeaders := m.Process(ctx, req, headers)
 
 	outHeaders, err := ObjectToProtobufStruct(rawHeaders)
 	if err != nil {
@@ -43,22 +44,23 @@ func (m *GRPCHandlerPlugin) Handle(ctx context.Context, req *protodef.HandleRequ
 }
 
 // Process handler.
-func (m *GRPCHandlerPlugin) Process(requestid string, method string, path string, fullPath string, headers http.Header, body []byte) (int, string, string, http.Header) {
+func (m *GRPCHandlerPlugin) Process(gctx context.Context, hr *protodef.HandleRequest, headers http.Header) (int, string, string, http.Header) {
 	// d.Log.Warn("Handle start: %v %v | Routes: %v | %v", method, path, len(d.Map), requestid)
 
-	req := httptest.NewRequest(method, fullPath, bytes.NewReader(body))
-	req = requestuuid.Set(req, requestid)
+	req := httptest.NewRequest(hr.Method, hr.Fullpath, bytes.NewReader(hr.Body))
+	req = req.WithContext(gctx)
+	req = requestuuid.Set(req, hr.Requestid)
 	req.Header = headers
 
 	// Get the context if saved from middleware.
-	ctx, ok := m.PluginState.Context(requestid)
+	ctx, ok := m.PluginState.Context(hr.Requestid)
 	if ok {
 		req = req.WithContext(ctx)
 	}
 
 	w := NewResponseWriter()
 
-	fn, found := m.PluginState.HandleMap(method, path)
+	fn, found := m.PluginState.HandleMap(hr.Method, hr.Path)
 	if !found {
 		return http.StatusNotFound, "", "", nil
 	}

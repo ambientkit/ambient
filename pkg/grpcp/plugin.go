@@ -106,6 +106,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
 		opts = append(opts, grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()))
+		opts = append(opts, grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()))
 		m.server = grpc.NewServer(opts...)
 		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
 			Impl: &FuncMapperImpl{
@@ -269,6 +270,7 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 	}
 
 	r := httptest.NewRequest(req.Method, req.Path, bytes.NewReader(req.Body))
+	r = r.WithContext(ctx)
 	r = requestuuid.Set(r, req.Requestid)
 	r.Header = headers
 	w := NewResponseWriter()

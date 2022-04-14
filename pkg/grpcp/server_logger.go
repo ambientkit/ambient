@@ -13,15 +13,15 @@ type GRPCLoggerServer struct {
 
 // Debug handler.
 func (m *GRPCLoggerServer) Debug(ctx context.Context, req *protodef.LogFormat) (resp *protodef.Empty, err error) {
-	m.Impl.For(ctx).Debug(req.Format)
-	//m.Impl.Debug(req.Format)
+	//m.Impl.For(ctx).Debug(req.Format)
+	m.Impl.Debug(req.Format)
 	return &protodef.Empty{}, err
 }
 
 // Info handler.
 func (m *GRPCLoggerServer) Info(ctx context.Context, req *protodef.LogFormat) (resp *protodef.Empty, err error) {
-	m.Impl.For(ctx).Info(req.Format)
-	//m.Impl.Info(req.Format)
+	//m.Impl.For(ctx).Info(req.Format)
+	m.Impl.Info(req.Format)
 	return &protodef.Empty{}, err
 }
 

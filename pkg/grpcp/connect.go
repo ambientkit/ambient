@@ -25,6 +25,7 @@ func ConnectPlugin(logger ambient.AppLogger, pluginName string, pluginPath strin
 		},
 		GRPCDialOptions: []grpcstd.DialOption{
 			grpcstd.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+			grpcstd.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
 		},
 	})
 

@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	"fmt"
 	"net/http"
+
+	"go.opentelemetry.io/otel/trace"
 )
 
 // AmbientContextKey is a context key.
@@ -17,13 +19,40 @@ const AmbientUUID AmbientContextKey = "ambient_requestid"
 func Generate(r *http.Request) *http.Request {
 	// Generate a unique request object, store the request for use by
 	// Param(), then delete the request once the request is done to clean up.
-	uuid, _ := UUID()
+
+	uuid := ""
+
+	if span := trace.SpanFromContext(r.Context()); span != nil {
+		//logger := l.clone()
+		//logger.ctx = ctx
+		// TODO: Determine if these need to be saved.
+		//span.SpanContext().TraceID()
+		//span.SpanContext().SpanID()
+		//l.Error("context found: %v", span.SpanContext().SpanID())
+		//return logger
+		if span.SpanContext().HasTraceID() {
+			uuid = span.SpanContext().TraceID().String()
+		}
+	}
+
+	if len(uuid) == 0 {
+		uuid, _ = UUID()
+	}
+
 	return Set(r, uuid)
 }
 
 // Set the request ID in the request context.
 func Set(r *http.Request, value string) *http.Request {
 	newContext := context.WithValue(r.Context(), AmbientUUID, value)
+
+	// f := tracecontext.HTTPFormat{}
+	// ot.
+	// sc, ok := f.SpanContextFromRequest(r)
+	// if ok {
+	// 	newContext = trace.ContextWithRemoteSpanContext(newContext, sc)
+	// }
+
 	return r.WithContext(newContext)
 }
 
