@@ -98,7 +98,7 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 	brokerID := m.broker.NextId()
 	go m.broker.AcceptAndServe(brokerID, serverFunc)
 
-	resp, err := m.client.Enable(context.Background(), &protodef.Toolkit{
+	resp, err := m.client.Enable(context.TODO(), &protodef.Toolkit{
 		Uid: brokerID,
 	})
 	if err != nil {
@@ -126,7 +126,7 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 // Disable handler.
 func (m *GRPCServer) Disable() error {
 	if m.server != nil {
-		_, _ = m.client.Disable(context.Background(), &protodef.Empty{})
+		_, _ = m.client.Disable(context.TODO(), &protodef.Empty{})
 		m.server.Stop()
 		m.server = nil
 	}
@@ -139,7 +139,7 @@ func (m *GRPCServer) Routes() {
 		return
 	}
 
-	_, err := m.client.Routes(context.Background(), &protodef.Empty{})
+	_, err := m.client.Routes(context.TODO(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling routes: %v", err)
 	}

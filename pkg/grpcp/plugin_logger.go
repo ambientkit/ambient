@@ -48,7 +48,7 @@ func (l *GRPCLoggerPlugin) Debug(format string, v ...interface{}) {
 	// 	return
 	// }
 
-	l.client.Debug(context.Background(), &protodef.LogFormat{Format: out})
+	l.client.Debug(context.TODO(), &protodef.LogFormat{Format: out})
 }
 
 // Info handler.
@@ -65,7 +65,7 @@ func (l *GRPCLoggerPlugin) Info(format string, v ...interface{}) {
 	// 	return
 	// }
 
-	l.client.Info(context.Background(), &protodef.LogFormat{Format: out})
+	l.client.Info(context.TODO(), &protodef.LogFormat{Format: out})
 }
 
 // Warn handler.
@@ -77,7 +77,7 @@ func (l *GRPCLoggerPlugin) Warn(format string, v ...interface{}) {
 		out = fmt.Sprintf(format, v...)
 	}
 
-	l.client.Warn(context.Background(), &protodef.LogFormat{Format: out})
+	l.client.Warn(context.TODO(), &protodef.LogFormat{Format: out})
 }
 
 // Error handler.
@@ -88,7 +88,7 @@ func (l *GRPCLoggerPlugin) Error(format string, v ...interface{}) {
 	} else {
 		out = fmt.Sprintf(format, v...)
 	}
-	l.client.Error(context.Background(), &protodef.LogFormat{Format: out})
+	l.client.Error(context.TODO(), &protodef.LogFormat{Format: out})
 }
 
 // clone returns a copy of the logger.

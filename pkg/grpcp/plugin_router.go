@@ -22,7 +22,7 @@ func (c *GRPCRouterPlugin) Handle(method string, path string, fn func(http.Respo
 	//c.Log.Warn("%v called: %v", method, path)
 	c.PluginState.SaveHandleMap(fn, method, path)
 
-	c.client.Handle(context.Background(), &protodef.RouterRequest{
+	c.client.Handle(context.TODO(), &protodef.RouterRequest{
 		//Uid:    c.brokerID, // TODO: Remove this from the definition.
 		Method: method,
 		Path:   path,
