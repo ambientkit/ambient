@@ -1,6 +1,7 @@
 package injector
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -40,7 +41,7 @@ func (c *PluginInjector) EscapeTemplates() bool {
 }
 
 // Inject will return a template and an error.
-func (c *PluginInjector) Inject(inject ambient.LayoutInjector, t *template.Template,
+func (c *PluginInjector) Inject(ctx context.Context, inject ambient.LayoutInjector, t *template.Template,
 	r *http.Request, layoutType ambient.LayoutType, vars map[string]interface{}) (*template.Template, error) {
 	pluginHead := ""
 	pluginHeader := ""
@@ -72,8 +73,8 @@ func (c *PluginInjector) Inject(inject ambient.LayoutInjector, t *template.Templ
 				afm := funcMap(r)
 				for fName, fValue := range afm {
 					// Ensure each of the FuncMaps are namespaced.
-					if !strings.HasPrefix(fName, v.PluginName()) {
-						fm[fmt.Sprintf("%v_%v", v.PluginName(), fName)] = fValue
+					if !strings.HasPrefix(fName, name) {
+						fm[fmt.Sprintf("%v_%v", name, fName)] = fValue
 					} else {
 						fm[fName] = fValue
 					}
@@ -108,7 +109,7 @@ func (c *PluginInjector) Inject(inject ambient.LayoutInjector, t *template.Templ
 					}
 
 					// Convert the asset to an element.
-					txt := file.Element(c.log, v, assets, c.debugTemplates)
+					txt := file.Element(ctx, c.log, v, assets, c.debugTemplates)
 
 					switch file.Location {
 					case ambient.LocationHead:
@@ -129,7 +130,7 @@ func (c *PluginInjector) Inject(inject ambient.LayoutInjector, t *template.Templ
 					case ambient.LocationBody:
 						pluginBody += txt + "\n    "
 					default:
-						c.log.Error("plugin injector: unsupported asset location for plugin (%v): %v", v.PluginName(), file.Filetype)
+						c.log.Error("plugin injector: unsupported asset location for plugin (%v): %v", name, file.Filetype)
 					}
 				}
 			}

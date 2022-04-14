@@ -1,6 +1,7 @@
 package pluginsafe_test
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -25,7 +26,8 @@ func TestRouteRecorder(t *testing.T) {
 	}
 
 	// Set up the lighweight app.
-	app, logger, err := ambientapp.NewApp("myapp", "1.0",
+	ctx := context.Background()
+	app, logger, err := ambientapp.NewApp(ctx, "myapp", "1.0",
 		mock.NewLoggerPlugin(nil),
 		ambient.StoragePluginGroup{
 			Storage: mock.NewStoragePlugin(),

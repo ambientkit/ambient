@@ -2,15 +2,19 @@
 
 package ambient
 
+import (
+	"context"
+)
+
 // GRPCSystem manages connecting, loading, monitoring, and disconnecting gRPC plugins..
 type GRPCSystem interface {
 	// Monitor starts monitoring the gRPC plugins.
 	Monitor(securesite SecureSite)
 	// ConnectAll will connect to all initial gRPC plugins in the plugin system.
-	ConnectAll()
+	ConnectAll(ctx context.Context)
 	// Connect will connect to a new gRPC plugin, these don't have to be in the
 	// initial plugin loader.
-	Connect(p Plugin, middleware bool)
+	Connect(ctx context.Context, p Plugin, middleware bool)
 	// Disconnect stops the gRPC clients.
 	Disconnect()
 }

@@ -25,7 +25,7 @@ func NewLoggerPlugin(optionalWriter io.Writer) *LoggerPlugin {
 }
 
 // PluginName returns the plugin name.
-func (p *LoggerPlugin) PluginName() string {
+func (p *LoggerPlugin) PluginName(context.Context) string {
 	return "mocklogger"
 }
 

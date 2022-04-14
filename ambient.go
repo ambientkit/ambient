@@ -2,6 +2,7 @@
 package ambient
 
 import (
+	"context"
 	"html/template"
 	"io"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 type PluginCore interface {
 	// PluginName should be globally unique. It must start with a lowercase
 	// letter and then contain only lowercase letters and numbers.
-	PluginName() string
+	PluginName(context.Context) string
 	// PluginVersion must follow https://semver.org/.
 	PluginVersion() string
 }

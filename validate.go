@@ -1,6 +1,7 @@
 package ambient
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 
@@ -21,20 +22,22 @@ var (
 )
 
 // Validate returns an error if the plugin name or version is not valid.
-func Validate(p PluginCore) error {
+func Validate(ctx context.Context, p PluginCore) error {
+	pluginName := p.PluginName(ctx)
+
 	// Don't allow certain plugin names.
-	if allowed, ok := disallowedPluginNames[p.PluginName()]; ok && !allowed {
-		return fmt.Errorf("plugin name not allowed: %v", p.PluginName())
+	if allowed, ok := disallowedPluginNames[pluginName]; ok && !allowed {
+		return fmt.Errorf("plugin name not allowed: %v", pluginName)
 	}
 
 	// Don't allow certain plugin name characters.
-	if ok := rePluginName.Match([]byte(p.PluginName())); !ok {
-		return fmt.Errorf("plugin name format not allowed: '%v'", p.PluginName())
+	if ok := rePluginName.Match([]byte(pluginName)); !ok {
+		return fmt.Errorf("plugin name format not allowed: '%v'", pluginName)
 	}
 
 	// Ensure version meets https://semver.org/ requirements.
 	if ok := semver.IsValid(fmt.Sprintf("v%v", p.PluginVersion())); !ok {
-		return fmt.Errorf("plugin (%v) version not in semver format: %v", p.PluginName(), p.PluginVersion())
+		return fmt.Errorf("plugin (%v) version not in semver format: %v", pluginName, p.PluginVersion())
 	}
 
 	return nil

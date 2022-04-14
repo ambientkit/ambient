@@ -3,6 +3,7 @@
 package ambient
 
 import (
+	"context"
 	"time"
 )
 
@@ -27,7 +28,7 @@ type PluginSystem interface {
 	// StorageManager returns the storage manager.
 	StorageManager() Storage
 	// LoadPlugin loads a single plugin into the plugin system and saves the config.
-	LoadPlugin(plugin Plugin, middleware bool, grpcPlugin bool) (err error)
+	LoadPlugin(ctx context.Context, plugin Plugin, middleware bool, grpcPlugin bool) (err error)
 	// Load will load the storage and return an error if one occurs.
 	Load() error
 	// Save will save the storage and return an error if one occurs.

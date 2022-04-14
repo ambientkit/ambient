@@ -2,6 +2,7 @@ package ambient
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"html"
 	"io"
@@ -129,7 +130,9 @@ func (file Asset) SanitizedPath() string {
 }
 
 // Element returns an HTML element.
-func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool) string {
+func (file *Asset) Element(ctx context.Context, logger AppLogger, v Plugin, assets fs.FS, debug bool) string {
+	pluginName := v.PluginName(ctx)
+
 	// Build the attributes.
 	attrs := make([]string, 0)
 	for _, attr := range file.Attributes {
@@ -141,7 +144,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 	}
 
 	if debug {
-		attrs = append(attrs, fmt.Sprintf(`%v="%v"`, html.EscapeString("data-ambplugin"), html.EscapeString(fmt.Sprint(v.PluginName()))))
+		attrs = append(attrs, fmt.Sprintf(`%v="%v"`, html.EscapeString("data-ambplugin"), html.EscapeString(fmt.Sprint(pluginName))))
 	}
 
 	attrsJoined := strings.Join(attrs, " ")
@@ -170,7 +173,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 			if file.External {
 				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
 			} else {
-				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v/plugins/%v/%v?v=%v"%v>`, urlprefix, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v/plugins/%v/%v?v=%v"%v>`, urlprefix, pluginName, file.SanitizedPath(), v.PluginVersion(), attrsJoined)
 			}
 		}
 	case AssetJavaScript:
@@ -185,7 +188,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 			if file.External {
 				txt = fmt.Sprintf(`<script type="application/javascript" src="%v"%v></script>`, file.SanitizedPath(), attrsJoined)
 			} else {
-				txt = fmt.Sprintf(`<script type="application/javascript" src="%v/plugins/%v/%v?v=%v"%v></script>`, urlprefix, v.PluginName(), file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+				txt = fmt.Sprintf(`<script type="application/javascript" src="%v/plugins/%v/%v?v=%v"%v></script>`, urlprefix, pluginName, file.SanitizedPath(), v.PluginVersion(), attrsJoined)
 			}
 		}
 	case AssetGeneric:
@@ -217,7 +220,7 @@ func (file *Asset) Element(logger AppLogger, v Plugin, assets fs.FS, debug bool)
 			}
 		}
 	default:
-		logger.Error("plugin injector: unsupported asset filetype for plugin (%v): %v", v.PluginName(), file.Filetype)
+		logger.Error("plugin injector: unsupported asset filetype for plugin (%v): %v", pluginName, file.Filetype)
 	}
 
 	return txt

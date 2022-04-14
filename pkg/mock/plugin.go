@@ -1,6 +1,10 @@
 package mock
 
-import "github.com/ambientkit/ambient"
+import (
+	"context"
+
+	"github.com/ambientkit/ambient"
+)
 
 // Plugin represents an Ambient plugin.
 type Plugin struct {
@@ -24,7 +28,7 @@ func NewPlugin(name string, version string) *Plugin {
 }
 
 // PluginName returns the plugin name.
-func (p *Plugin) PluginName() string {
+func (p *Plugin) PluginName(context.Context) string {
 	return p.pluginName
 }
 

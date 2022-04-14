@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"context"
 	"sync"
 
 	"github.com/ambientkit/ambient"
@@ -15,7 +16,7 @@ func NewStoragePlugin() *StoragePlugin {
 }
 
 // PluginName returns the plugin name.
-func (p *StoragePlugin) PluginName() string {
+func (p *StoragePlugin) PluginName(context.Context) string {
 	return "mockstorage"
 }
 

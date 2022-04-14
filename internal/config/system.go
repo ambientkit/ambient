@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"sort"
 
@@ -54,12 +55,15 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, loader *ambient.Pl
 	// shouldSave is for efficiency so there is not saving on every plugin.
 	shouldSave := false
 
+	ctx := context.Background()
+
 	// Load the middleware.
 	for _, p := range loader.Middleware {
+		name := p.PluginName(ctx)
 		// Ensure a plugin can't be loaded twice or two plugins with the same
 		// names can't both be loaded.
-		if _, found := ps.plugins[p.PluginName()]; found {
-			return nil, fmt.Errorf("found a duplicate plugin: %v", p.PluginName())
+		if _, found := ps.plugins[name]; found {
+			return nil, fmt.Errorf("found a duplicate plugin: %v", name)
 		}
 
 		// Skip gRPC plugins.
@@ -68,7 +72,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, loader *ambient.Pl
 		}
 
 		// Else, load the standard plugin.
-		save, err := ps.loadPlugin(p, true, false)
+		save, err := ps.loadPlugin(ctx, p, true, false)
 		if err != nil {
 			return nil, err
 		} else if save {
@@ -78,10 +82,11 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, loader *ambient.Pl
 
 	// Load the plugins.
 	for _, p := range loader.Plugins {
+		name := p.PluginName(ctx)
 		// Ensure a plugin can't be loaded twice or two plugins with the same
 		// names can't both be loaded.
-		if _, found := ps.plugins[p.PluginName()]; found {
-			return nil, fmt.Errorf("found a duplicate plugin: %v", p.PluginName())
+		if _, found := ps.plugins[name]; found {
+			return nil, fmt.Errorf("found a duplicate plugin: %v", name)
 		}
 
 		// Skip gRPC plugins.
@@ -90,7 +95,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, loader *ambient.Pl
 		}
 
 		// Else, load the standard plugin.
-		save, err := ps.loadPlugin(p, false, false)
+		save, err := ps.loadPlugin(ctx, p, false, false)
 		if err != nil {
 			return nil, err
 		} else if save {
@@ -148,8 +153,8 @@ func (p *PluginSystem) StorageManager() ambient.Storage {
 }
 
 // LoadPlugin loads a single plugin into the plugin system and saves the config.
-func (p *PluginSystem) LoadPlugin(plugin ambient.Plugin, middleware bool, grpcPlugin bool) (err error) {
-	shouldSave, err := p.loadPlugin(plugin, middleware, grpcPlugin)
+func (p *PluginSystem) LoadPlugin(ctx context.Context, plugin ambient.Plugin, middleware bool, grpcPlugin bool) (err error) {
+	shouldSave, err := p.loadPlugin(ctx, plugin, middleware, grpcPlugin)
 	if err != nil {
 		return err
 	}
@@ -172,19 +177,19 @@ func (p *PluginSystem) LoadPlugin(plugin ambient.Plugin, middleware bool, grpcPl
 
 // loadPlugin adds a plugin to the plugin system and returns whether the config
 // should be saved.
-func (p *PluginSystem) loadPlugin(plugin ambient.Plugin, middleware bool, grpcPlugin bool) (shouldSave bool, err error) {
+func (p *PluginSystem) loadPlugin(ctx context.Context, plugin ambient.Plugin, middleware bool, grpcPlugin bool) (shouldSave bool, err error) {
 	// Validate plugin name and version.
-	err = ambient.Validate(plugin)
+	err = ambient.Validate(ctx, plugin)
 	if err != nil {
 		return false, err
 	}
-	name := plugin.PluginName()
+	name := plugin.PluginName(ctx)
 	version := plugin.PluginVersion()
 
-	isGRPC, found := p.grpcPlugins[plugin.PluginName()]
+	isGRPC, found := p.grpcPlugins[name]
 	if found {
 		if grpcPlugin != isGRPC {
-			return false, fmt.Errorf("cannot load the same plugin of two different types (gRPC/non-gRPC): %v", plugin.PluginName())
+			return false, fmt.Errorf("cannot load the same plugin of two different types (gRPC/non-gRPC): %v", name)
 		}
 	}
 
@@ -196,14 +201,14 @@ func (p *PluginSystem) loadPlugin(plugin ambient.Plugin, middleware bool, grpcPl
 
 	// Store the plugin.
 	p.plugins[name] = plugin
-	p.grpcPlugins[plugin.PluginName()] = grpcPlugin
+	p.grpcPlugins[name] = grpcPlugin
 	if !exists {
-		p.pluginNames = append(p.pluginNames, plugin.PluginName())
+		p.pluginNames = append(p.pluginNames, name)
 	}
 	if middleware {
-		p.middlewareNamesMap[plugin.PluginName()] = true
+		p.middlewareNamesMap[name] = true
 		if !exists {
-			p.middlewareNames = append(p.middlewareNames, plugin.PluginName())
+			p.middlewareNames = append(p.middlewareNames, name)
 		}
 	}
 

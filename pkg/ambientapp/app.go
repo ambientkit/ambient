@@ -40,7 +40,7 @@ type App struct {
 }
 
 // NewAppLogger returns a logger from Ambient without all the other dependencies.
-func NewAppLogger(appName string, appVersion string, logPlugin ambient.LoggingPlugin, logLevel ambient.LogLevel) (ambient.AppLogger, error) {
+func NewAppLogger(ctx context.Context, appName string, appVersion string, logPlugin ambient.LoggingPlugin, logLevel ambient.LogLevel) (ambient.AppLogger, error) {
 	// Set the time zone. Required for plugins that rely on timzone like MFA.
 	tz := os.Getenv("AMB_TIMEZONE")
 	if len(tz) > 0 {
@@ -48,7 +48,7 @@ func NewAppLogger(appName string, appVersion string, logPlugin ambient.LoggingPl
 	}
 
 	// Get the logger from the plugin.
-	log, err := loadLogger(appName, appVersion, logPlugin)
+	log, err := loadLogger(ctx, appName, appVersion, logPlugin)
 	if err != nil {
 		return nil, err
 	}
@@ -60,9 +60,9 @@ func NewAppLogger(appName string, appVersion string, logPlugin ambient.LoggingPl
 }
 
 // LoadLogger returns the logger.
-func loadLogger(appName string, appVersion string, plugin ambient.LoggingPlugin) (ambient.AppLogger, error) {
+func loadLogger(ctx context.Context, appName string, appVersion string, plugin ambient.LoggingPlugin) (ambient.AppLogger, error) {
 	// Validate plugin name and version.
-	err := ambient.Validate(plugin)
+	err := ambient.Validate(ctx, plugin)
 	if err != nil {
 		return nil, err
 	}
@@ -74,17 +74,17 @@ func loadLogger(appName string, appVersion string, plugin ambient.LoggingPlugin)
 	} else if log == nil {
 		return nil, fmt.Errorf("ambient: no logger found")
 	} else {
-		log.Info("ambient: using logger from plugin: %v", plugin.PluginName())
+		log.Info("ambient: using logger from plugin: %v", plugin.PluginName(ctx))
 	}
 
 	return log, nil
 }
 
 // NewApp returns a new Ambient app that supports plugins.
-func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
+func NewApp(ctx context.Context, appName string, appVersion string, logPlugin ambient.LoggingPlugin,
 	storagePluginGroup ambient.StoragePluginGroup, plugins *ambient.PluginLoader) (*App, ambient.AppLogger, error) {
 	// Set up the logger first.
-	log, err := NewAppLogger(appName, appVersion, logPlugin, ambient.EnvLogLevel())
+	log, err := NewAppLogger(ctx, appName, appVersion, logPlugin, ambient.EnvLogLevel())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -103,14 +103,14 @@ func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
 	//defer f(ctx)
 
 	// Get the storage manager.
-	storage, sessionstorer, err := loadStorage(log, storagePluginGroup)
+	storage, sessionstorer, err := loadStorage(ctx, log, storagePluginGroup)
 	if err != nil {
 		return nil, log, err
 	}
 
 	// Implicitly trust session manager so the middleware will work properly.
 	if plugins.SessionManager != nil {
-		plugins.TrustedPlugins[plugins.SessionManager.PluginName()] = true
+		plugins.TrustedPlugins[plugins.SessionManager.PluginName(ctx)] = true
 	}
 
 	// Initialize the plugin system.
@@ -120,7 +120,7 @@ func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
 	}
 
 	grpcsystem := grpcsystem.New(log, pluginsystem)
-	grpcsystem.ConnectAll()
+	grpcsystem.ConnectAll(ctx)
 
 	ambientApp := &App{
 		log:             log,
@@ -143,7 +143,7 @@ func (app *App) PluginSystem() ambient.PluginSystem {
 }
 
 // LoadStorage returns the storage.
-func loadStorage(log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) (*config.Storage, ambient.SessionStorer, error) {
+func loadStorage(ctx context.Context, log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) (*config.Storage, ambient.SessionStorer, error) {
 	// Detect if storage plugin is missing.
 	if pluginGroup.Storage == nil {
 		return nil, nil, fmt.Errorf("ambient: storage plugin is missing")
@@ -152,7 +152,7 @@ func loadStorage(log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) 
 	plugin := pluginGroup.Storage
 
 	// Validate plugin name and version.
-	err := ambient.Validate(plugin)
+	err := ambient.Validate(ctx, plugin)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -166,7 +166,7 @@ func loadStorage(log ambient.AppLogger, pluginGroup ambient.StoragePluginGroup) 
 	if err != nil {
 		log.Error(err.Error())
 	} else if pds != nil && pss != nil {
-		log.Info("using storage from first plugin: %v", plugin.PluginName())
+		log.Info("using storage from first plugin: %v", plugin.PluginName(ctx))
 		ds = pds
 		ss = pss
 	}
@@ -189,7 +189,7 @@ func (app *App) StopGRPCClients() {
 }
 
 // Handler loads the plugins and returns the handler.
-func (app *App) Handler() (http.Handler, error) {
+func (app *App) Handler(ctx context.Context) (http.Handler, error) {
 	// Get the session manager from the plugins.
 	if app.pluginsystem.SessionManager() != nil {
 		sm, err := app.pluginsystem.SessionManager().SessionManager(app.log.Named("sessionmanager"), app.sessionstorer)
@@ -197,7 +197,7 @@ func (app *App) Handler() (http.Handler, error) {
 			app.log.Error(err.Error())
 		} else if sm != nil {
 			// Only set the session manager once.
-			app.log.Info("using session manager from plugin: %v", app.pluginsystem.SessionManager().PluginName())
+			app.log.Info("using session manager from plugin: %v", app.pluginsystem.SessionManager().PluginName(ctx))
 			app.sess = sm
 		}
 	}
@@ -215,7 +215,7 @@ func (app *App) Handler() (http.Handler, error) {
 			return nil, err
 		} else if tt != nil {
 			// Only set the router once.
-			app.log.Info("using template engine from plugin: %v", app.pluginsystem.TemplateEngine().PluginName())
+			app.log.Info("using template engine from plugin: %v", app.pluginsystem.TemplateEngine().PluginName(ctx))
 			app.renderer = tt
 		}
 	}
@@ -230,7 +230,7 @@ func (app *App) Handler() (http.Handler, error) {
 			return nil, err
 		} else if rm != nil {
 			// Only set the router once.
-			app.log.Info("using router from plugin: %v", app.pluginsystem.Router().PluginName())
+			app.log.Info("using router from plugin: %v", app.pluginsystem.Router().PluginName(ctx))
 			app.mux = rm
 		}
 	}

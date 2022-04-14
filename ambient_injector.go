@@ -1,13 +1,14 @@
 package ambient
 
 import (
+	"context"
 	"html/template"
 	"net/http"
 )
 
 // AssetInjector represents code that can inject files into a template.
 type AssetInjector interface {
-	Inject(injector LayoutInjector, t *template.Template, r *http.Request, layoutType LayoutType, vars map[string]interface{}) (*template.Template, error)
+	Inject(ctx context.Context, injector LayoutInjector, t *template.Template, r *http.Request, layoutType LayoutType, vars map[string]interface{}) (*template.Template, error)
 	DebugTemplates() bool
 	EscapeTemplates() bool
 }

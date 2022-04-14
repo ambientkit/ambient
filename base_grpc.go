@@ -1,5 +1,7 @@
 package ambient
 
+import "context"
+
 // GRPCPluginBase represents a base gRPC plugin that works with Ambient.
 type GRPCPluginBase struct {
 	PluginBase
@@ -17,7 +19,7 @@ func NewGRPCPlugin(pluginName string, pluginPath string) *GRPCPluginBase {
 }
 
 // PluginName returns the gRPC plugin name.
-func (p *GRPCPluginBase) PluginName() string {
+func (p *GRPCPluginBase) PluginName(context.Context) string {
 	return p.pluginName
 }
 

@@ -32,8 +32,8 @@ type GRPCServer struct {
 }
 
 // PluginName handler.
-func (m *GRPCServer) PluginName() string {
-	resp, err := m.client.PluginName(context.TODO(), &protodef.Empty{})
+func (m *GRPCServer) PluginName(ctx context.Context) string {
+	resp, err := m.client.PluginName(ctx, &protodef.Empty{})
 	if err != nil {
 		return ""
 	}

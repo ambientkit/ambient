@@ -32,7 +32,7 @@ type GRPCPlugin struct {
 
 // PluginName handler.
 func (m *GRPCPlugin) PluginName(ctx context.Context, req *protodef.Empty) (*protodef.PluginNameResponse, error) {
-	name := m.Impl.PluginName()
+	name := m.Impl.PluginName(ctx)
 	return &protodef.PluginNameResponse{Name: name}, nil
 }
 
@@ -65,15 +65,17 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 		return nil, err
 	}
 
+	name := m.Impl.PluginName(ctx)
+
 	logger := &GRPCLoggerPlugin{
 		client:         protodef.NewLoggerClient(m.conn),
 		tracerProvider: m.tracerProvider,
-		appName:        m.Impl.PluginName(),
+		appName:        name,
 	}
 
 	// TODO: This need to be dynamic to match the app? But compiled can't match
 	// the app. Hmm. See if we can rely on environment variables.
-	logger.tracerProvider, _, err = jaegertracer.Provider(logger, "http://localhost:14268/api/traces", m.Impl.PluginName())
+	logger.tracerProvider, _, err = jaegertracer.Provider(logger, "http://localhost:14268/api/traces", name)
 	if err != nil {
 		return nil, err
 	}

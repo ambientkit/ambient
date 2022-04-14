@@ -2,6 +2,7 @@ package secureconfig
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"net/http"
 	"path"
@@ -257,7 +258,7 @@ func (ss *SecureSite) loadAllPluginMiddleware() http.Handler {
 				}
 
 				plugin := pluginRaw.(ambient.MiddlewarePlugin)
-				hi = ss.loadSinglePluginMiddleware(hi, plugin)
+				hi = ss.loadSinglePluginMiddleware(r.Context(), hi, plugin)
 			}
 			hi.ServeHTTP(w, r)
 		})
@@ -268,11 +269,11 @@ func (ss *SecureSite) loadAllPluginMiddleware() http.Handler {
 
 // LoadSinglePluginMiddleware returns a handler that is wrapped in conditional
 // middleware from the plugins.
-func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin ambient.MiddlewarePlugin) http.Handler {
+func (ss *SecureSite) loadSinglePluginMiddleware(ctx context.Context, h http.Handler, plugin ambient.MiddlewarePlugin) http.Handler {
 	// Loop through each piece of middleware.
 	arrHandlers := plugin.Middleware()
 	if len(arrHandlers) > 0 {
-		ss.log.Debug("plugin middleware: loading (%v) middleware for plugin: %v", len(plugin.Middleware()), plugin.PluginName())
+		ss.log.Debug("plugin middleware: loading (%v) middleware for plugin: %v", len(plugin.Middleware()), plugin.PluginName(ctx))
 	}
 
 	// Iterate in reverse since the nature of middleware is recursive and
@@ -288,33 +289,34 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin ambient.
 			safePluginMiddleware := pluginMiddleware
 			middlewareIndex := i
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				ctx, span := ss.log.Trace(r.Context(), "middleware: "+safePlugin.PluginName())
+				pluginName := safePlugin.PluginName(r.Context())
+				ctx, span := ss.log.Trace(r.Context(), "middleware: "+pluginName)
 				defer span.End()
 
 				//fmt.Println("middleware called")
 				// If the plugin is not found in the storage, then skip it.
-				safePluginSettings, err := ss.pluginsystem.PluginData(safePlugin.PluginName())
+				safePluginSettings, err := ss.pluginsystem.PluginData(pluginName)
 				if err != nil {
 					span.SetAttributes(attribute.Bool("middleware.found", false))
-					ss.log.For(ctx).Debug("plugin middleware: plugin (%v) not found", safePlugin.PluginName())
+					ss.log.For(ctx).Debug("plugin middleware: plugin (%v) not found", pluginName)
 					next.ServeHTTP(w, r.WithContext(ctx))
 					return
 				}
 
 				span.SetAttributes(attribute.Bool("middleware.enabled", safePluginSettings.Enabled))
-				span.SetAttributes(attribute.Bool("middleware.authorized", ss.pluginsystem.Authorized(plugin.PluginName(), ambient.GrantRouterMiddlewareWrite)))
+				span.SetAttributes(attribute.Bool("middleware.authorized", ss.pluginsystem.Authorized(pluginName, ambient.GrantRouterMiddlewareWrite)))
 
 				// If the plugin is enabled, then wrap with the middleware.
 				if safePluginSettings.Enabled {
-					if !ss.pluginsystem.Authorized(plugin.PluginName(), ambient.GrantRouterMiddlewareWrite) {
+					if !ss.pluginsystem.Authorized(pluginName, ambient.GrantRouterMiddlewareWrite) {
 						next.ServeHTTP(w, r.WithContext(ctx))
 						return
 					}
 
-					ss.log.For(ctx).Debug("plugin middleware: running (enabled) middleware (%v) by plugin: %v", middlewareIndex, safePlugin.PluginName())
+					ss.log.For(ctx).Debug("plugin middleware: running (enabled) middleware (%v) by plugin: %v", middlewareIndex, pluginName)
 					safePluginMiddleware(next).ServeHTTP(w, r.WithContext(ctx))
 				} else {
-					ss.log.For(ctx).Debug("plugin middleware: skipping (disabled) middleware (%v) by plugin: %v", middlewareIndex, safePlugin.PluginName())
+					ss.log.For(ctx).Debug("plugin middleware: skipping (disabled) middleware (%v) by plugin: %v", middlewareIndex, pluginName)
 					next.ServeHTTP(w, r.WithContext(ctx))
 				}
 			})

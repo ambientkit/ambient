@@ -3,6 +3,7 @@
 package grpcsystem
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -53,41 +54,42 @@ func (s *GRPCSystem) Monitor(securesite ambient.SecureSite) {
 }
 
 // ConnectAll will connect to all initial gRPC plugins in the plugin system.
-func (s *GRPCSystem) ConnectAll() {
+func (s *GRPCSystem) ConnectAll(ctx context.Context) {
 	for _, p := range s.pluginsystem.LoaderMiddleware() {
 		if p.PluginVersion() == "gRPC" {
-			s.Connect(p, true)
+			s.Connect(ctx, p, true)
 		}
 	}
 
 	for _, p := range s.pluginsystem.LoaderPlugins() {
 		if p.PluginVersion() == "gRPC" {
-			s.Connect(p, false)
+			s.Connect(ctx, p, false)
 		}
 	}
 }
 
 // Connect will connect to a new gRPC plugin, these don't have to be in the
 // initial plugin loader.
-func (s *GRPCSystem) Connect(p ambient.Plugin, middleware bool) {
+func (s *GRPCSystem) Connect(ctx context.Context, p ambient.Plugin, middleware bool) {
+	name := p.PluginName(ctx)
 	gpb, ok := p.(*ambient.GRPCPluginBase)
 	if !ok {
-		s.log.Error("plugin, %v, is not a gRPC plugin", p.PluginName())
+		s.log.Error("plugin, %v, is not a gRPC plugin", name)
 		return
 	}
 
-	gp, pc, cp, err := grpcp.ConnectPlugin(s.log.Named("grpc-server"), gpb.PluginName(), gpb.PluginPath())
+	gp, pc, cp, err := grpcp.ConnectPlugin(s.log.Named("grpc-server"), name, gpb.PluginPath())
 	if err != nil {
-		s.log.Error("plugin, %v, could not establish a connection: %v", p.PluginName(), err.Error())
+		s.log.Error("plugin, %v, could not establish a connection: %v", name, err.Error())
 		return
 	}
 
 	// Load plugin - does not matter if the plugin already exists because
 	// it will be overwritten. If a different type plugin already exists
 	// then it will return an error.
-	err = s.pluginsystem.LoadPlugin(gp, middleware, true)
+	err = s.pluginsystem.LoadPlugin(ctx, gp, middleware, true)
 	if err != nil {
-		s.log.Error("plugin, %v, could not load: %v", p.PluginName(), err.Error())
+		s.log.Error("plugin, %v, could not load: %v", name, err.Error())
 		// Kill it since it can't be used.
 		pc.Kill()
 		cp.Close()
@@ -96,8 +98,8 @@ func (s *GRPCSystem) Connect(p ambient.Plugin, middleware bool) {
 
 	// Store reference to the gRPC plugin.
 	s.pluginClientsMutex.Lock()
-	s.pluginClients[gpb.PluginName()] = pc
-	s.pluginClientsProtocol[gpb.PluginName()] = cp
+	s.pluginClients[name] = pc
+	s.pluginClientsProtocol[name] = cp
 	s.pluginClientsMutex.Unlock()
 }
 
@@ -139,7 +141,7 @@ func (s *GRPCSystem) monitorGRPCClients() {
 		if !s.isMonitoring() {
 			break
 		}
-
+		ctx := context.Background()
 	ClientLoop:
 		for name, v := range s.pluginClients {
 			if v.Exited() {
@@ -155,7 +157,7 @@ func (s *GRPCSystem) monitorGRPCClients() {
 				isMiddleware := false
 
 				for _, v := range s.pluginsystem.LoaderMiddleware() {
-					if v.PluginName() == name {
+					if v.PluginName(ctx) == name {
 						plugin = v
 						isMiddleware = true
 					}
@@ -163,7 +165,7 @@ func (s *GRPCSystem) monitorGRPCClients() {
 
 				if plugin == nil {
 					for _, v := range s.pluginsystem.LoaderPlugins() {
-						if v.PluginName() == name {
+						if v.PluginName(ctx) == name {
 							plugin = v
 						}
 					}
@@ -172,7 +174,7 @@ func (s *GRPCSystem) monitorGRPCClients() {
 				if plugin != nil {
 					delete(s.pluginClients, name)
 					if s.RestartAutomatically {
-						s.Connect(plugin, isMiddleware)
+						s.Connect(ctx, plugin, isMiddleware)
 						s.securesite.LoadSinglePluginPages(name)
 						if isMiddleware {
 							s.log.Info("gRPC middleware restarted: %v", name)
