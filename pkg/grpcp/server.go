@@ -33,7 +33,7 @@ type GRPCServer struct {
 
 // PluginName handler.
 func (m *GRPCServer) PluginName() string {
-	resp, err := m.client.PluginName(context.Background(), &protodef.Empty{})
+	resp, err := m.client.PluginName(context.TODO(), &protodef.Empty{})
 	if err != nil {
 		return ""
 	}
@@ -43,7 +43,7 @@ func (m *GRPCServer) PluginName() string {
 
 // PluginVersion handler.
 func (m *GRPCServer) PluginVersion() string {
-	resp, err := m.client.PluginVersion(context.Background(), &protodef.Empty{})
+	resp, err := m.client.PluginVersion(context.TODO(), &protodef.Empty{})
 	if err != nil {
 		return ""
 	}
@@ -147,7 +147,7 @@ func (m *GRPCServer) Routes() {
 
 // Assets handler.
 func (m *GRPCServer) Assets() ([]ambient.Asset, ambient.FileSystemReader) {
-	resp, err := m.client.Assets(context.Background(), &protodef.Empty{})
+	resp, err := m.client.Assets(context.TODO(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling Assets: %v", err)
 		return nil, nil
@@ -170,7 +170,7 @@ func (m *GRPCServer) Assets() ([]ambient.Asset, ambient.FileSystemReader) {
 
 // Settings handler.
 func (m *GRPCServer) Settings() []ambient.Setting {
-	resp, err := m.client.Settings(context.Background(), &protodef.Empty{})
+	resp, err := m.client.Settings(context.TODO(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling Settings: %v", err)
 		return nil
@@ -205,7 +205,7 @@ func (m *GRPCServer) Settings() []ambient.Setting {
 
 // GrantRequests handler.
 func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
-	resp, err := m.client.GrantRequests(context.Background(), &protodef.Empty{})
+	resp, err := m.client.GrantRequests(context.TODO(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling GrantRequests: %v", err)
 		return nil
@@ -225,7 +225,7 @@ func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
 // FuncMap handler.
 func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 	// Return a list of keys for the FuncMap().
-	resp, err := m.client.FuncMap(context.Background(), &protodef.Empty{})
+	resp, err := m.client.FuncMap(context.TODO(), &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling FuncMap: %v", err)
 		return nil
