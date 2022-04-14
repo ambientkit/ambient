@@ -15,6 +15,7 @@ import (
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
 	plugin "github.com/hashicorp/go-plugin"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -82,6 +83,7 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 	}
 
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
+		opts = append(opts, grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()))
 		m.server = grpc.NewServer(opts...)
 		protodef.RegisterLoggerServer(m.server, loggerServer)
 		protodef.RegisterRouterServer(m.server, routerServer)

@@ -1,6 +1,11 @@
 package pluginsafe
 
-import "github.com/ambientkit/ambient"
+import (
+	"context"
+
+	"github.com/ambientkit/ambient"
+	"go.opentelemetry.io/otel/trace"
+)
 
 // PluginLogger represents a plugin logger.
 type PluginLogger struct {
@@ -53,4 +58,14 @@ func (l *PluginLogger) Warn(format string, v ...interface{}) {
 // It's equivalent to Println() if format is empty.
 func (l *PluginLogger) Error(format string, v ...interface{}) {
 	l.log.Error(format, v...)
+}
+
+// For returns a context-aware logger.
+func (l *PluginLogger) For(ctx context.Context) ambient.Logger {
+	return l.log.For(ctx)
+}
+
+// Trace returns a context and an OpenTelemetry span.
+func (l *PluginLogger) Trace(ctx context.Context, spanName string) (context.Context, trace.Span) {
+	return l.log.Trace(ctx, spanName)
 }

@@ -1,11 +1,14 @@
 package mock
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
 
 	"github.com/ambientkit/ambient"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // LoggerPlugin represents an Ambient plugin.
@@ -45,6 +48,8 @@ type Logger struct {
 
 	appName    string
 	appVersion string
+
+	tracerProvider *sdktrace.TracerProvider
 }
 
 // NewLogger returns a new logger with a default log level of error.
@@ -138,4 +143,20 @@ func (l *Logger) Named(name string) ambient.AppLogger {
 		log:        l.log,
 		appVersion: l.appVersion,
 	}
+}
+
+// For returns the context-aware logger.
+func (l *Logger) For(ctx context.Context) ambient.Logger {
+	// FIXME: Do something with context? May not need it in a mock.
+	return l
+}
+
+// SetTracerProvider sets the tracer provider.
+func (l *Logger) SetTracerProvider(tp *sdktrace.TracerProvider) {
+	l.tracerProvider = tp
+}
+
+// Trace returns a context and an OpenTelemetry span.
+func (l *Logger) Trace(ctx context.Context, spanName string) (context.Context, trace.Span) {
+	return l.tracerProvider.Tracer(l.appName).Start(ctx, spanName)
 }

@@ -3,6 +3,9 @@ package ambient
 import (
 	"fmt"
 	"net/http"
+
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 )
 
 // AppRouter represents a router.
@@ -44,6 +47,8 @@ type CustomServeHTTP func(log Logger, renderer Renderer,
 func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP CustomServeHTTP) {
 	// Set the default handler.
 	defaultServeHTTP := func(w http.ResponseWriter, r *http.Request, err error) {
+		ctx, span := logger.Trace(r.Context(), "router: error handler")
+		defer span.End()
 		if err != nil {
 			// Set default errors to internal server error.
 			status := http.StatusInternalServerError
@@ -60,8 +65,13 @@ func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP Cust
 				}
 			}
 
+			span.SetAttributes(attribute.Int("http.status.code", status))
+			span.SetAttributes(attribute.String("http.status.message", http.StatusText(status)))
+
 			// Handle only errors.
 			if status >= 400 {
+				span.SetStatus(codes.Error, friendlyError)
+
 				switch status {
 				case 403:
 					// Already logged on plugin access denials.
@@ -82,12 +92,13 @@ func SetupRouter(logger Logger, mux AppRouter, te Renderer, customServeHTTP Cust
 						logger.Info("router error (%v): %v", status, err.Error())
 					}
 				}
+				span.SetAttributes(attribute.String("http.err.friendly", http.StatusText(status)))
 
 				if te != nil {
 					err = te.Error(w, r, fmt.Sprintf("<h1>%v</h1>%v", status, friendlyError), status, nil, nil)
 					if err != nil {
 						if err != nil {
-							logger.Info("router error in rendering error template (%v): %v", status, err.Error())
+							logger.For(ctx).Info("router error in rendering error template (%v): %v", status, err.Error())
 						}
 						http.Error(w, "500 internal server error", http.StatusInternalServerError)
 						return

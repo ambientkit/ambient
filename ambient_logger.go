@@ -1,28 +1,55 @@
 package ambient
 
 import (
+	"context"
 	"os"
 	"strings"
+
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // AppLogger represents the log service for the app.
 type AppLogger interface {
 	Logger
 
+	// Fatal is equivalent to log.Printf() + "\n" if format is not empty.
+	// It's equivalent to Println() if format is empty. It's followed by a call
+	// to os.Exit(1).
 	// Fatal is reserved for the app level only.
 	Fatal(format string, v ...interface{})
+	// SetLogLevel sets the logger output level.
 	SetLogLevel(level LogLevel)
+	// Named returns a new logger with the appended name, linked to the existing
+	// logger.
 	Named(name string) AppLogger
+	// Name returns the name of the logger.
 	Name() string
+	// SetTracerProvider sets the OpenTelemetry tracer provider.
+	SetTracerProvider(tp *sdktrace.TracerProvider)
 }
 
 // Logger represents the log service for the plugins.
 type Logger interface {
+	// Log is equivalent to log.Printf() + "\n" if format is not empty.
+	// It's equivalent to Println() if format is empty.
 	Log(level LogLevel, format string, v ...interface{})
+	// Debug is equivalent to log.Printf() + "\n" if format is not empty.
+	// It's equivalent to Println() if format is empty.
 	Debug(format string, v ...interface{})
+	// Info is equivalent to log.Printf() + "\n" if format is not empty.
+	// It's equivalent to Println() if format is empty.
 	Info(format string, v ...interface{})
+	// Warn is equivalent to log.Printf() + "\n" if format is not empty.
+	// It's equivalent to Println() if format is empty.
 	Warn(format string, v ...interface{})
+	// Error is equivalent to log.Printf() + "\n" if format is not empty.
+	// It's equivalent to Println() if format is empty.
 	Error(format string, v ...interface{})
+	// For returns a context-aware logger to support OpenTracing.
+	For(ctx context.Context) Logger
+	// Trace returns a context and span to support OpenTracing.
+	Trace(ctx context.Context, operation string) (context.Context, trace.Span)
 }
 
 // LogLevel is a log level.

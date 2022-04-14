@@ -1,6 +1,7 @@
 package ambientapp
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -15,20 +16,24 @@ import (
 	"github.com/ambientkit/ambient/internal/pluginsafe"
 	"github.com/ambientkit/ambient/internal/secureconfig"
 	"github.com/ambientkit/ambient/pkg/envdetect"
+	"github.com/ambientkit/ambient/pkg/jaegertracer"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
+	"go.opentelemetry.io/otel/attribute"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 // App represents an Ambient app that supports plugins.
 type App struct {
-	log           ambient.AppLogger
-	pluginsystem  ambient.PluginSystem
-	grpcsystem    ambient.GRPCSystem
-	sessionstorer ambient.SessionStorer
-	mux           ambient.AppRouter
-	renderer      ambient.Renderer
-	sess          ambient.AppSession
-	recorder      *pluginsafe.RouteRecorder
-	securesite    *secureconfig.SecureSite
+	log            ambient.AppLogger
+	pluginsystem   ambient.PluginSystem
+	grpcsystem     ambient.GRPCSystem
+	sessionstorer  ambient.SessionStorer
+	mux            ambient.AppRouter
+	renderer       ambient.Renderer
+	sess           ambient.AppSession
+	recorder       *pluginsafe.RouteRecorder
+	securesite     *secureconfig.SecureSite
+	tracerProvider *sdktrace.TracerProvider
 
 	debugTemplates  bool
 	escapeTemplates bool
@@ -86,6 +91,17 @@ func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
 
 	log = log.Named("ambient")
 
+	// TODO: add into the newapp logger as well?
+	// OpenTelemetry
+	//ctx, cancel := context.WithCancel(context.Background())
+	//defer cancel()
+	tp, _, err := jaegertracer.Provider(log, "http://localhost:14268/api/traces", appName)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	log.SetTracerProvider(tp)
+	//defer f(ctx)
+
 	// Get the storage manager.
 	storage, sessionstorer, err := loadStorage(log, storagePluginGroup)
 	if err != nil {
@@ -112,6 +128,7 @@ func NewApp(appName string, appVersion string, logPlugin ambient.LoggingPlugin,
 		grpcsystem:      grpcsystem,
 		sessionstorer:   sessionstorer,
 		escapeTemplates: true,
+		tracerProvider:  tp,
 	}
 
 	// Enable the trusted plugins.
@@ -242,8 +259,25 @@ func (app *App) Handler() (http.Handler, error) {
 		dc.EnableDevConsole()
 	}
 
+	// Wrap middleware with OpenTelemetry
+	h := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Each execution of the run loop, we should get a new "root" span and context.
+			ctx, span := app.tracerProvider.Tracer("ambient").Start(context.Background(), fmt.Sprintf("HTTP %v %v", r.Method, r.RequestURI))
+			defer span.End()
+			span.SetAttributes(attribute.String("request.id", requestuuid.Get(r)))
+			span.SetAttributes(attribute.String("request.host", r.Host))
+			span.SetAttributes(attribute.String("request.remote", r.RemoteAddr))
+			// TODO: add ability to dump body if enabled
+			//span.SetStatus(codes.Ok, "ok")
+			//span.RecordError(errors.New("there was an error"))
+
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}(handler)
+
 	// Add a request UUID around all routes.
-	return requestuuid.Middleware(handler), nil
+	return requestuuid.Middleware(h), nil
 }
 
 // GrantAccess grants access to all trusted plugins.

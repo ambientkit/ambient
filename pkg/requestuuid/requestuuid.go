@@ -17,7 +17,7 @@ const AmbientUUID AmbientContextKey = "ambient_requestid"
 func Generate(r *http.Request) *http.Request {
 	// Generate a unique request object, store the request for use by
 	// Param(), then delete the request once the request is done to clean up.
-	uuid, _ := generateUUID()
+	uuid, _ := UUID()
 	return Set(r, uuid)
 }
 
@@ -47,8 +47,8 @@ func Middleware(h http.Handler) http.Handler {
 	})
 }
 
-// generateUUID a UUID for use as an ID.
-func generateUUID() (string, error) {
+// UUID generates a UUID for use as an ID.
+func UUID() (string, error) {
 	b := make([]byte, 16)
 	_, err := rand.Read(b)
 	if err != nil {

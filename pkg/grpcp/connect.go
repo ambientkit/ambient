@@ -7,6 +7,8 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/hclogadapter"
 	plugin "github.com/hashicorp/go-plugin"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	grpcstd "google.golang.org/grpc"
 )
 
 // ConnectPlugin will connect to a plugin over gRPC.
@@ -21,7 +23,12 @@ func ConnectPlugin(logger ambient.AppLogger, pluginName string, pluginPath strin
 		AllowedProtocols: []plugin.Protocol{
 			plugin.ProtocolNetRPC, plugin.ProtocolGRPC,
 		},
+		GRPCDialOptions: []grpcstd.DialOption{
+			grpcstd.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+		},
 	})
+
+	//grpc.Dial(ctx context.Context, opts ...option.ClientOption)
 
 	// Connect via RPC.
 	rpcClient, err := client.Client()

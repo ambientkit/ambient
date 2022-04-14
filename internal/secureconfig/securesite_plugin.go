@@ -11,6 +11,7 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/pluginsafe"
 	"github.com/ambientkit/ambient/pkg/amberror"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 // Plugins returns the plugin list.
@@ -118,7 +119,7 @@ func (ss *SecureSite) LoadSinglePluginPages(name string) {
 		Mux:    recorder,
 		Render: pluginsafe.NewRenderer(ss.render),
 		Site:   pss,
-		Log:    pluginsafe.NewPluginLogger(ss.log),
+		Log:    pluginsafe.NewPluginLogger(ss.log.Named(name)),
 	}
 
 	// Enable the plugin and pass in the toolkit.
@@ -287,27 +288,34 @@ func (ss *SecureSite) loadSinglePluginMiddleware(h http.Handler, plugin ambient.
 			safePluginMiddleware := pluginMiddleware
 			middlewareIndex := i
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				ctx, span := ss.log.Trace(r.Context(), "middleware: "+safePlugin.PluginName())
+				defer span.End()
+
 				//fmt.Println("middleware called")
 				// If the plugin is not found in the storage, then skip it.
 				safePluginSettings, err := ss.pluginsystem.PluginData(safePlugin.PluginName())
 				if err != nil {
-					ss.log.Debug("plugin middleware: plugin (%v) not found", safePlugin.PluginName())
-					next.ServeHTTP(w, r)
+					span.SetAttributes(attribute.Bool("middleware.found", false))
+					ss.log.For(ctx).Debug("plugin middleware: plugin (%v) not found", safePlugin.PluginName())
+					next.ServeHTTP(w, r.WithContext(ctx))
 					return
 				}
+
+				span.SetAttributes(attribute.Bool("middleware.enabled", safePluginSettings.Enabled))
+				span.SetAttributes(attribute.Bool("middleware.authorized", ss.pluginsystem.Authorized(plugin.PluginName(), ambient.GrantRouterMiddlewareWrite)))
 
 				// If the plugin is enabled, then wrap with the middleware.
 				if safePluginSettings.Enabled {
 					if !ss.pluginsystem.Authorized(plugin.PluginName(), ambient.GrantRouterMiddlewareWrite) {
-						next.ServeHTTP(w, r)
+						next.ServeHTTP(w, r.WithContext(ctx))
 						return
 					}
 
-					ss.log.Debug("plugin middleware: running (enabled) middleware (%v) by plugin: %v", middlewareIndex, safePlugin.PluginName())
-					safePluginMiddleware(next).ServeHTTP(w, r)
+					ss.log.For(ctx).Debug("plugin middleware: running (enabled) middleware (%v) by plugin: %v", middlewareIndex, safePlugin.PluginName())
+					safePluginMiddleware(next).ServeHTTP(w, r.WithContext(ctx))
 				} else {
-					ss.log.Debug("plugin middleware: skipping (disabled) middleware (%v) by plugin: %v", middlewareIndex, safePlugin.PluginName())
-					next.ServeHTTP(w, r)
+					ss.log.For(ctx).Debug("plugin middleware: skipping (disabled) middleware (%v) by plugin: %v", middlewareIndex, safePlugin.PluginName())
+					next.ServeHTTP(w, r.WithContext(ctx))
 				}
 			})
 		}(h)

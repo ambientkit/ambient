@@ -9,8 +9,11 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/grpcp/grpcsafe"
 	"github.com/ambientkit/ambient/pkg/grpcp/protodef"
+	"github.com/ambientkit/ambient/pkg/jaegertracer"
 	"github.com/ambientkit/ambient/pkg/requestuuid"
 	plugin "github.com/hashicorp/go-plugin"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -24,6 +27,7 @@ type GRPCPlugin struct {
 	server           *grpc.Server
 	funcMapperClient *GRPCFuncMapperServer
 	pluginState      *grpcsafe.PluginState
+	tracerProvider   *sdktrace.TracerProvider
 }
 
 // PluginName handler.
@@ -62,7 +66,16 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 	}
 
 	logger := &GRPCLoggerPlugin{
-		client: protodef.NewLoggerClient(m.conn),
+		client:         protodef.NewLoggerClient(m.conn),
+		tracerProvider: m.tracerProvider,
+		appName:        m.Impl.PluginName(),
+	}
+
+	// TODO: This need to be dynamic to match the app? But compiled can't match
+	// the app. Hmm. See if we can rely on environment variables.
+	logger.tracerProvider, _, err = jaegertracer.Provider(logger, "http://localhost:14268/api/traces", m.Impl.PluginName())
+	if err != nil {
+		return nil, err
 	}
 
 	m.funcMapperClient = &GRPCFuncMapperServer{
@@ -92,6 +105,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 	err = m.Impl.Enable(m.toolkit)
 
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
+		opts = append(opts, grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()))
 		m.server = grpc.NewServer(opts...)
 		protodef.RegisterFuncMapperServer(m.server, &GRPCFuncMapperPlugin{
 			Impl: &FuncMapperImpl{
