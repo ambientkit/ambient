@@ -116,11 +116,8 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 			Log: m.toolkit.Log,
 		})
 		protodef.RegisterHandlerServer(m.server, &GRPCHandlerPlugin{
-			Log: m.toolkit.Log,
-			Impl: &HandlerImpl{
-				Log:         m.toolkit.Log,
-				PluginState: m.pluginState,
-			},
+			Log:         m.toolkit.Log,
+			PluginState: m.pluginState,
 		})
 
 		return m.server
