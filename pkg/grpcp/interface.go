@@ -25,7 +25,7 @@ type GenericPlugin struct {
 	Impl ambient.MiddlewarePlugin
 }
 
-// GRPCServer .
+// GRPCServer is for the plugin.
 func (p *GenericPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	protodef.RegisterGenericPluginServer(s, &GRPCPlugin{
 		Impl:        p.Impl,
@@ -35,7 +35,7 @@ func (p *GenericPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) er
 	return nil
 }
 
-// GRPCClient .
+// GRPCClient is for the Ambient server.
 func (p *GenericPlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, c *grpc.ClientConn) (interface{}, error) {
 	return &GRPCServer{
 		client:      protodef.NewGenericPluginClient(c),
