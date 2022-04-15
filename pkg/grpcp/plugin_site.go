@@ -159,8 +159,8 @@ func (c *GRPCSitePlugin) PluginNames() ([]string, error) {
 }
 
 // DeletePlugin handler.
-func (c *GRPCSitePlugin) DeletePlugin(pluginName string) error {
-	_, err := c.client.DeletePlugin(context.Background(), &protodef.SiteDeletePluginRequest{
+func (c *GRPCSitePlugin) DeletePlugin(ctx context.Context, pluginName string) error {
+	_, err := c.client.DeletePlugin(ctx, &protodef.SiteDeletePluginRequest{
 		Name: pluginName,
 	})
 	if err != nil {

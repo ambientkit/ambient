@@ -67,7 +67,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, loader *ambient.Pl
 		}
 
 		// Skip gRPC plugins.
-		if p.PluginVersion() == "gRPC" {
+		if p.PluginVersion(ctx) == "gRPC" {
 			continue
 		}
 
@@ -90,7 +90,7 @@ func NewPluginSystem(log ambient.AppLogger, storage *Storage, loader *ambient.Pl
 		}
 
 		// Skip gRPC plugins.
-		if p.PluginVersion() == "gRPC" {
+		if p.PluginVersion(ctx) == "gRPC" {
 			continue
 		}
 
@@ -184,7 +184,7 @@ func (p *PluginSystem) loadPlugin(ctx context.Context, plugin ambient.Plugin, mi
 		return false, err
 	}
 	name := plugin.PluginName(ctx)
-	version := plugin.PluginVersion()
+	version := plugin.PluginVersion(ctx)
 
 	isGRPC, found := p.grpcPlugins[name]
 	if found {

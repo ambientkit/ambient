@@ -132,6 +132,7 @@ func (file Asset) SanitizedPath() string {
 // Element returns an HTML element.
 func (file *Asset) Element(ctx context.Context, logger AppLogger, v Plugin, assets fs.FS, debug bool) string {
 	pluginName := v.PluginName(ctx)
+	pluginVersion := v.PluginVersion(ctx)
 
 	// Build the attributes.
 	attrs := make([]string, 0)
@@ -173,7 +174,7 @@ func (file *Asset) Element(ctx context.Context, logger AppLogger, v Plugin, asse
 			if file.External {
 				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v"%v>`, file.SanitizedPath(), attrsJoined)
 			} else {
-				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v/plugins/%v/%v?v=%v"%v>`, urlprefix, pluginName, file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+				txt = fmt.Sprintf(`<link rel="stylesheet" href="%v/plugins/%v/%v?v=%v"%v>`, urlprefix, pluginName, file.SanitizedPath(), pluginVersion, attrsJoined)
 			}
 		}
 	case AssetJavaScript:
@@ -188,7 +189,7 @@ func (file *Asset) Element(ctx context.Context, logger AppLogger, v Plugin, asse
 			if file.External {
 				txt = fmt.Sprintf(`<script type="application/javascript" src="%v"%v></script>`, file.SanitizedPath(), attrsJoined)
 			} else {
-				txt = fmt.Sprintf(`<script type="application/javascript" src="%v/plugins/%v/%v?v=%v"%v></script>`, urlprefix, pluginName, file.SanitizedPath(), v.PluginVersion(), attrsJoined)
+				txt = fmt.Sprintf(`<script type="application/javascript" src="%v/plugins/%v/%v?v=%v"%v></script>`, urlprefix, pluginName, file.SanitizedPath(), pluginVersion, attrsJoined)
 			}
 		}
 	case AssetGeneric:

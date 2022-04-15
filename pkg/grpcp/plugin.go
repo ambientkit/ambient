@@ -38,7 +38,7 @@ func (m *GRPCPlugin) PluginName(ctx context.Context, req *protodef.Empty) (*prot
 
 // PluginVersion handler.
 func (m *GRPCPlugin) PluginVersion(ctx context.Context, req *protodef.Empty) (*protodef.PluginVersionResponse, error) {
-	version := m.Impl.PluginVersion()
+	version := m.Impl.PluginVersion(ctx)
 	return &protodef.PluginVersionResponse{Version: version}, nil
 }
 

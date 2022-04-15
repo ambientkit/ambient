@@ -30,7 +30,7 @@ func (p *LoggerPlugin) PluginName(context.Context) string {
 }
 
 // PluginVersion returns the plugin version.
-func (p *LoggerPlugin) PluginVersion() string {
+func (p *LoggerPlugin) PluginVersion(context.Context) string {
 	return "1.0.0"
 }
 

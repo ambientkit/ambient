@@ -56,13 +56,13 @@ func (s *GRPCSystem) Monitor(securesite ambient.SecureSite) {
 // ConnectAll will connect to all initial gRPC plugins in the plugin system.
 func (s *GRPCSystem) ConnectAll(ctx context.Context) {
 	for _, p := range s.pluginsystem.LoaderMiddleware() {
-		if p.PluginVersion() == "gRPC" {
+		if p.PluginVersion(ctx) == "gRPC" {
 			s.Connect(ctx, p, true)
 		}
 	}
 
 	for _, p := range s.pluginsystem.LoaderPlugins() {
-		if p.PluginVersion() == "gRPC" {
+		if p.PluginVersion(ctx) == "gRPC" {
 			s.Connect(ctx, p, false)
 		}
 	}

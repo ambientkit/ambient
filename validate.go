@@ -24,6 +24,7 @@ var (
 // Validate returns an error if the plugin name or version is not valid.
 func Validate(ctx context.Context, p PluginCore) error {
 	pluginName := p.PluginName(ctx)
+	pluginVersion := p.PluginVersion(ctx)
 
 	// Don't allow certain plugin names.
 	if allowed, ok := disallowedPluginNames[pluginName]; ok && !allowed {
@@ -36,8 +37,8 @@ func Validate(ctx context.Context, p PluginCore) error {
 	}
 
 	// Ensure version meets https://semver.org/ requirements.
-	if ok := semver.IsValid(fmt.Sprintf("v%v", p.PluginVersion())); !ok {
-		return fmt.Errorf("plugin (%v) version not in semver format: %v", pluginName, p.PluginVersion())
+	if ok := semver.IsValid(fmt.Sprintf("v%v", pluginVersion)); !ok {
+		return fmt.Errorf("plugin (%v) version not in semver format: %v", pluginName, pluginVersion)
 	}
 
 	return nil

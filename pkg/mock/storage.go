@@ -21,7 +21,7 @@ func (p *StoragePlugin) PluginName(context.Context) string {
 }
 
 // PluginVersion returns the plugin version.
-func (p *StoragePlugin) PluginVersion() string {
+func (p *StoragePlugin) PluginVersion(context.Context) string {
 	return "1.0.0"
 }
 

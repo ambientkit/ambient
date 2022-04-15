@@ -42,8 +42,8 @@ func (m *GRPCServer) PluginName(ctx context.Context) string {
 }
 
 // PluginVersion handler.
-func (m *GRPCServer) PluginVersion() string {
-	resp, err := m.client.PluginVersion(context.TODO(), &protodef.Empty{})
+func (m *GRPCServer) PluginVersion(ctx context.Context) string {
+	resp, err := m.client.PluginVersion(ctx, &protodef.Empty{})
 	if err != nil {
 		return ""
 	}

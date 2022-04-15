@@ -24,7 +24,7 @@ func (p *GRPCPluginBase) PluginName(context.Context) string {
 }
 
 // PluginVersion returns the gRPc text.
-func (p *GRPCPluginBase) PluginVersion() string {
+func (p *GRPCPluginBase) PluginVersion(context.Context) string {
 	return "gRPC"
 }
 

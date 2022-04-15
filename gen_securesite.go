@@ -3,6 +3,7 @@
 package ambient
 
 import (
+	"context"
 	"net/http"
 	"time"
 )
@@ -31,7 +32,7 @@ type SecureSite interface {
 	// PluginNames returns the list of plugin name.
 	PluginNames() ([]string, error)
 	// DeletePlugin deletes a plugin.
-	DeletePlugin(name string) error
+	DeletePlugin(ctx context.Context, name string) error
 	// EnablePlugin enables a plugin.
 	EnablePlugin(pluginName string, loadPlugin bool) error
 	// LoadSinglePluginPages loads the plugin.

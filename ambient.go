@@ -14,7 +14,7 @@ type PluginCore interface {
 	// letter and then contain only lowercase letters and numbers.
 	PluginName(context.Context) string
 	// PluginVersion must follow https://semver.org/.
-	PluginVersion() string
+	PluginVersion(context.Context) string
 }
 
 // Plugin represents a plugin.

@@ -33,7 +33,7 @@ func (ss *SecureSite) PluginNames() ([]string, error) {
 }
 
 // DeletePlugin deletes a plugin.
-func (ss *SecureSite) DeletePlugin(name string) error {
+func (ss *SecureSite) DeletePlugin(ctx context.Context, name string) error {
 	if !ss.Authorized(ambient.GrantSitePluginDelete) {
 		return amberror.ErrAccessDenied
 	}
@@ -48,7 +48,7 @@ func (ss *SecureSite) DeletePlugin(name string) error {
 		return err
 	}
 
-	return ss.pluginsystem.InitializePlugin(name, p.PluginVersion())
+	return ss.pluginsystem.InitializePlugin(name, p.PluginVersion(ctx))
 }
 
 // EnablePlugin enables a plugin.
