@@ -263,7 +263,7 @@ func (app *App) Handler(ctx context.Context) (http.Handler, error) {
 	h := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Each execution of the run loop, we should get a new "root" span and context.
-			ctx, span := app.tracerProvider.Tracer("ambient").Start(context.Background(), fmt.Sprintf("HTTP %v %v", r.Method, r.RequestURI))
+			ctxInside, span := app.tracerProvider.Tracer("ambient").Start(context.Background(), fmt.Sprintf("HTTP %v %v", r.Method, r.RequestURI))
 			defer span.End()
 			span.SetAttributes(attribute.String("request.id", requestuuid.Get(r)))
 			span.SetAttributes(attribute.String("request.host", r.Host))
@@ -272,7 +272,7 @@ func (app *App) Handler(ctx context.Context) (http.Handler, error) {
 			//span.SetStatus(codes.Ok, "ok")
 			//span.RecordError(errors.New("there was an error"))
 
-			next.ServeHTTP(w, r.WithContext(ctx))
+			next.ServeHTTP(w, requestuuid.Set(r.WithContext(ctxInside), requestuuid.Get(r)))
 		})
 	}(handler)
 

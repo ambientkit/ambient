@@ -12,6 +12,7 @@ import (
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/internal/pluginsafe"
 	"github.com/ambientkit/ambient/pkg/amberror"
+	"github.com/ambientkit/ambient/pkg/requestuuid"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -269,11 +270,11 @@ func (ss *SecureSite) loadAllPluginMiddleware() http.Handler {
 
 // LoadSinglePluginMiddleware returns a handler that is wrapped in conditional
 // middleware from the plugins.
-func (ss *SecureSite) loadSinglePluginMiddleware(ctx context.Context, h http.Handler, plugin ambient.MiddlewarePlugin) http.Handler {
+func (ss *SecureSite) loadSinglePluginMiddleware(ctxroot context.Context, h http.Handler, plugin ambient.MiddlewarePlugin) http.Handler {
 	// Loop through each piece of middleware.
-	arrHandlers := plugin.Middleware(ctx)
+	arrHandlers := plugin.Middleware(ctxroot)
 	if len(arrHandlers) > 0 {
-		ss.log.Debug("plugin middleware: loading (%v) middleware for plugin: %v", len(arrHandlers), plugin.PluginName(ctx))
+		ss.log.Debug("plugin middleware: loading (%v) middleware for plugin: %v", len(arrHandlers), plugin.PluginName(ctxroot))
 	}
 
 	// Iterate in reverse since the nature of middleware is recursive and
@@ -305,6 +306,7 @@ func (ss *SecureSite) loadSinglePluginMiddleware(ctx context.Context, h http.Han
 
 				span.SetAttributes(attribute.Bool("middleware.enabled", safePluginSettings.Enabled))
 				span.SetAttributes(attribute.Bool("middleware.authorized", ss.pluginsystem.Authorized(pluginName, ambient.GrantRouterMiddlewareWrite)))
+				span.SetAttributes(attribute.String("request.id", requestuuid.Get(r)))
 
 				// If the plugin is enabled, then wrap with the middleware.
 				if safePluginSettings.Enabled {

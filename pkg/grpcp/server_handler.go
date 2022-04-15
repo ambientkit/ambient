@@ -17,8 +17,6 @@ type GRPCHandlerServer struct {
 // Handle sends the request information from the server to the plugin.
 func (l *GRPCHandlerServer) Handle(method string, path string, r *http.Request, requestID string) (
 	status int, errText string, response string, headers http.Header, err error) {
-	ctx := r.Context()
-
 	sm, err := ObjectToProtobufStruct(r.Header)
 	if err != nil {
 		return http.StatusInternalServerError, err.Error(), "", headers, err
@@ -32,7 +30,7 @@ func (l *GRPCHandlerServer) Handle(method string, path string, r *http.Request, 
 	// Restore body.
 	r.Body = ioutil.NopCloser(body)
 
-	resp, err := l.client.Handle(ctx, &protodef.HandleRequest{
+	resp, err := l.client.Handle(r.Context(), &protodef.HandleRequest{
 		Requestid: requestID,
 		Method:    method,
 		Path:      path,

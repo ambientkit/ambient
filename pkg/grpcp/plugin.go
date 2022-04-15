@@ -291,6 +291,7 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 
 	if mux.R != nil {
 		// Save and remove context after 30 seconds.
+		m.toolkit.Log.Error("SAVE1: %v | %v", r.Context().Err(), req.Requestid)
 		m.pluginState.SaveContext(r.Context(), req.Requestid)
 		m.pluginState.DeleteContextDelayed(req.Requestid)
 	}

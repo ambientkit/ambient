@@ -47,16 +47,23 @@ func (m *GRPCHandlerPlugin) Handle(ctx context.Context, req *protodef.HandleRequ
 func (m *GRPCHandlerPlugin) Process(gctx context.Context, hr *protodef.HandleRequest, headers http.Header) (int, string, string, http.Header) {
 	// d.Log.Warn("Handle start: %v %v | Routes: %v | %v", method, path, len(d.Map), requestid)
 
+	m.Log.Error("Process context: %v", gctx.Err())
+
 	req := httptest.NewRequest(hr.Method, hr.Fullpath, bytes.NewReader(hr.Body))
 	req = req.WithContext(gctx)
 	req = requestuuid.Set(req, hr.Requestid)
 	req.Header = headers
 
+	m.Log.Error("Process req context: %v", req.Context().Err())
+
 	// Get the context if saved from middleware.
 	ctx, ok := m.PluginState.Context(hr.Requestid)
 	if ok {
 		req = req.WithContext(ctx)
+		m.Log.Error("Process found context: %v | %v | %v", ctx.Err(), hr.Requestid, ctx)
 	}
+
+	m.Log.Error("Process with context: %v", req.Context().Err())
 
 	w := NewResponseWriter()
 
