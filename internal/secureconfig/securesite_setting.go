@@ -1,6 +1,7 @@
 package secureconfig
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 
@@ -9,7 +10,7 @@ import (
 )
 
 // PluginNeighborSettingsList gets the grants requests for a neighbor plugin.
-func (ss *SecureSite) PluginNeighborSettingsList(pluginName string) ([]ambient.Setting, error) {
+func (ss *SecureSite) PluginNeighborSettingsList(ctx context.Context, pluginName string) ([]ambient.Setting, error) {
 	if !ss.Authorized(ambient.GrantPluginNeighborSettingRead) {
 		return nil, amberror.ErrAccessDenied
 	}
@@ -19,7 +20,7 @@ func (ss *SecureSite) PluginNeighborSettingsList(pluginName string) ([]ambient.S
 		return nil, amberror.ErrNotFound
 	}
 
-	return plugin.Settings(), nil
+	return plugin.Settings(ctx), nil
 }
 
 // SetPluginSetting sets a variable for the plugin.
@@ -32,12 +33,12 @@ func (ss *SecureSite) SetPluginSetting(settingName string, value string) error {
 }
 
 // PluginSettingBool returns a plugin setting as a bool.
-func (ss *SecureSite) PluginSettingBool(name string) (bool, error) {
+func (ss *SecureSite) PluginSettingBool(ctx context.Context, name string) (bool, error) {
 	if !ss.Authorized(ambient.GrantPluginSettingRead) {
 		return false, amberror.ErrAccessDenied
 	}
 
-	value, err := ss.settingField(ss.pluginName, name)
+	value, err := ss.settingField(ctx, ss.pluginName, name)
 	if err != nil {
 		return false, err
 	}
@@ -50,12 +51,12 @@ func (ss *SecureSite) PluginSettingBool(name string) (bool, error) {
 }
 
 // PluginSettingString returns a setting for the plugin as a string.
-func (ss *SecureSite) PluginSettingString(fieldName string) (string, error) {
+func (ss *SecureSite) PluginSettingString(ctx context.Context, fieldName string) (string, error) {
 	if !ss.Authorized(ambient.GrantPluginSettingRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
-	ival, err := ss.settingField(ss.pluginName, fieldName)
+	ival, err := ss.settingField(ctx, ss.pluginName, fieldName)
 	if err != nil {
 		return "", err
 	}
@@ -69,12 +70,12 @@ func (ss *SecureSite) PluginSettingString(fieldName string) (string, error) {
 }
 
 // PluginSetting returns a setting for the plugin as an interface{}.
-func (ss *SecureSite) PluginSetting(fieldName string) (interface{}, error) {
+func (ss *SecureSite) PluginSetting(ctx context.Context, fieldName string) (interface{}, error) {
 	if !ss.Authorized(ambient.GrantPluginSettingRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
-	ival, err := ss.settingField(ss.pluginName, fieldName)
+	ival, err := ss.settingField(ctx, ss.pluginName, fieldName)
 	if err != nil {
 		return "", err
 	}
@@ -88,12 +89,12 @@ func (ss *SecureSite) PluginSetting(fieldName string) (interface{}, error) {
 }
 
 // SetNeighborPluginSetting sets a setting for a neighbor plugin.
-func (ss *SecureSite) SetNeighborPluginSetting(pluginName string, settingName string, value string) error {
+func (ss *SecureSite) SetNeighborPluginSetting(ctx context.Context, pluginName string, settingName string, value string) error {
 	if !ss.Authorized(ambient.GrantPluginNeighborSettingWrite) {
 		return amberror.ErrAccessDenied
 	}
 
-	settings, err := ss.PluginNeighborSettingsList(pluginName)
+	settings, err := ss.PluginNeighborSettingsList(ctx, pluginName)
 	if err != nil {
 		return err
 	}
@@ -115,12 +116,12 @@ func (ss *SecureSite) SetNeighborPluginSetting(pluginName string, settingName st
 }
 
 // NeighborPluginSettingString returns a setting for a neighbor plugin as a string.
-func (ss *SecureSite) NeighborPluginSettingString(pluginName string, fieldName string) (string, error) {
+func (ss *SecureSite) NeighborPluginSettingString(ctx context.Context, pluginName string, fieldName string) (string, error) {
 	if !ss.Authorized(ambient.GrantPluginNeighborSettingRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
-	ival, err := ss.settingField(pluginName, fieldName)
+	ival, err := ss.settingField(ctx, pluginName, fieldName)
 	if err != nil {
 		return "", err
 	}
@@ -134,15 +135,15 @@ func (ss *SecureSite) NeighborPluginSettingString(pluginName string, fieldName s
 }
 
 // NeighborPluginSetting returns a setting for a neighbor plugin as an interface{}.
-func (ss *SecureSite) NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error) {
+func (ss *SecureSite) NeighborPluginSetting(ctx context.Context, pluginName string, fieldName string) (interface{}, error) {
 	if !ss.Authorized(ambient.GrantPluginNeighborSettingRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
-	return ss.settingField(pluginName, fieldName)
+	return ss.settingField(ctx, pluginName, fieldName)
 }
 
-func (ss *SecureSite) settingField(pluginName string, settingName string) (interface{}, error) {
+func (ss *SecureSite) settingField(ctx context.Context, pluginName string, settingName string) (interface{}, error) {
 	raw, err := ss.pluginsystem.Setting(pluginName, settingName)
 	if err != nil {
 		if err != amberror.ErrNotFound {
@@ -154,7 +155,7 @@ func (ss *SecureSite) settingField(pluginName string, settingName string) (inter
 		return raw, nil
 	}
 
-	defaultValue, err := ss.pluginsystem.SettingDefault(pluginName, settingName)
+	defaultValue, err := ss.pluginsystem.SettingDefault(ctx, pluginName, settingName)
 	if err != nil {
 		return "", err
 	}

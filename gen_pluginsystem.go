@@ -63,7 +63,7 @@ type PluginSystem interface {
 	// SetEnabled sets a plugin as enabled or not.
 	SetEnabled(pluginName string, enabled bool) error
 	// GrantRequests returns a list of grant requests.
-	GrantRequests(pluginName string, grant Grant) ([]GrantRequest, error)
+	GrantRequests(ctx context.Context, pluginName string, grant Grant) ([]GrantRequest, error)
 	// Authorized returns whether a plugin is inherited granted for a plugin.
 	Authorized(pluginName string, grant Grant) bool
 	// Granted returns whether a plugin is explicitly granted for a plugin.
@@ -77,7 +77,7 @@ type PluginSystem interface {
 	// Setting returns a setting value.
 	Setting(pluginName string, settingName string) (interface{}, error)
 	// SettingDefault returns a setting default for a setting.
-	SettingDefault(pluginName string, settingName string) (interface{}, error)
+	SettingDefault(ctx context.Context, pluginName string, settingName string) (interface{}, error)
 	// SetRoute saves a route.
 	SetRoute(pluginName string, route []Route)
 	// SetTitle sets the title.

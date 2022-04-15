@@ -1,12 +1,14 @@
 package secureconfig
 
 import (
+	"context"
+
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/amberror"
 )
 
 // NeighborPluginGrantList gets the grants requests for a neighbor plugin.
-func (ss *SecureSite) NeighborPluginGrantList(pluginName string) ([]ambient.GrantRequest, error) {
+func (ss *SecureSite) NeighborPluginGrantList(ctx context.Context, pluginName string) ([]ambient.GrantRequest, error) {
 	if !ss.Authorized(ambient.GrantPluginNeighborGrantRead) {
 		return nil, amberror.ErrAccessDenied
 	}
@@ -16,11 +18,11 @@ func (ss *SecureSite) NeighborPluginGrantList(pluginName string) ([]ambient.Gran
 		return nil, amberror.ErrNotFound
 	}
 
-	return plugin.GrantRequests(), nil
+	return plugin.GrantRequests(ctx), nil
 }
 
 // NeighborPluginGrants gets the map of granted permissions.
-func (ss *SecureSite) NeighborPluginGrants(pluginName string) (map[ambient.Grant]bool, error) {
+func (ss *SecureSite) NeighborPluginGrants(ctx context.Context, pluginName string) (map[ambient.Grant]bool, error) {
 	if !ss.Authorized(ambient.GrantPluginNeighborGrantRead) {
 		return nil, amberror.ErrAccessDenied
 	}
@@ -31,7 +33,7 @@ func (ss *SecureSite) NeighborPluginGrants(pluginName string) (map[ambient.Grant
 	}
 
 	grants := make(map[ambient.Grant]bool)
-	for _, grant := range plugin.GrantRequests() {
+	for _, grant := range plugin.GrantRequests(ctx) {
 		grants[grant.Grant] = ss.pluginsystem.Granted(pluginName, grant.Grant)
 	}
 
@@ -49,7 +51,7 @@ func (ss *SecureSite) NeighborPluginGranted(pluginName string, grantName ambient
 
 // NeighborPluginRequestedGrant returns true if the plugin requests the grant.
 // This shouldn't be used to determine if a plugin has been approved the grant.
-func (ss *SecureSite) NeighborPluginRequestedGrant(pluginName string, grantName ambient.Grant) (bool, error) {
+func (ss *SecureSite) NeighborPluginRequestedGrant(ctx context.Context, pluginName string, grantName ambient.Grant) (bool, error) {
 	if !ss.Authorized(ambient.GrantPluginNeighborGrantRead) {
 		return false, amberror.ErrAccessDenied
 	}
@@ -59,7 +61,7 @@ func (ss *SecureSite) NeighborPluginRequestedGrant(pluginName string, grantName 
 		return false, amberror.ErrNotFound
 	}
 
-	for _, grant := range plugin.GrantRequests() {
+	for _, grant := range plugin.GrantRequests(ctx) {
 		if grant.Grant == grantName {
 			return true, nil
 		}
@@ -69,7 +71,7 @@ func (ss *SecureSite) NeighborPluginRequestedGrant(pluginName string, grantName 
 }
 
 // SetNeighborPluginGrant sets a grant for a neighbor plugin.
-func (ss *SecureSite) SetNeighborPluginGrant(pluginName string, grantName ambient.Grant, granted bool) error {
+func (ss *SecureSite) SetNeighborPluginGrant(ctx context.Context, pluginName string, grantName ambient.Grant, granted bool) error {
 	if !ss.Authorized(ambient.GrantPluginNeighborGrantWrite) {
 		return amberror.ErrAccessDenied
 	}
@@ -79,7 +81,7 @@ func (ss *SecureSite) SetNeighborPluginGrant(pluginName string, grantName ambien
 		// Get the list of grants and ensure the grant is requested by the
 		// plugin or else deny it.
 		var grants []ambient.GrantRequest
-		grants, err = ss.NeighborPluginGrantList(pluginName)
+		grants, err = ss.NeighborPluginGrantList(ctx, pluginName)
 		if err != nil {
 			return err
 		}

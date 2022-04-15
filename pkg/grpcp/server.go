@@ -52,7 +52,7 @@ func (m *GRPCServer) PluginVersion(ctx context.Context) string {
 }
 
 // Enable handler.
-func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
+func (m *GRPCServer) Enable(ctx context.Context, toolkit *ambient.Toolkit) error {
 	//toolkit.Log.Debug("enabled called")
 
 	m.toolkit = toolkit
@@ -98,7 +98,7 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 	brokerID := m.broker.NextId()
 	go m.broker.AcceptAndServe(brokerID, serverFunc)
 
-	resp, err := m.client.Enable(context.TODO(), &protodef.Toolkit{
+	resp, err := m.client.Enable(ctx, &protodef.Toolkit{
 		Uid: brokerID,
 	})
 	if err != nil {
@@ -124,9 +124,9 @@ func (m *GRPCServer) Enable(toolkit *ambient.Toolkit) error {
 }
 
 // Disable handler.
-func (m *GRPCServer) Disable() error {
+func (m *GRPCServer) Disable(ctx context.Context) error {
 	if m.server != nil {
-		_, _ = m.client.Disable(context.TODO(), &protodef.Empty{})
+		_, _ = m.client.Disable(ctx, &protodef.Empty{})
 		m.server.Stop()
 		m.server = nil
 	}
@@ -134,20 +134,20 @@ func (m *GRPCServer) Disable() error {
 }
 
 // Routes handler.
-func (m *GRPCServer) Routes() {
+func (m *GRPCServer) Routes(ctx context.Context) {
 	if m.server == nil || m.toolkit == nil || m.toolkit.Log == nil {
 		return
 	}
 
-	_, err := m.client.Routes(context.TODO(), &protodef.Empty{})
+	_, err := m.client.Routes(ctx, &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling routes: %v", err)
 	}
 }
 
 // Assets handler.
-func (m *GRPCServer) Assets() ([]ambient.Asset, ambient.FileSystemReader) {
-	resp, err := m.client.Assets(context.TODO(), &protodef.Empty{})
+func (m *GRPCServer) Assets(ctx context.Context) ([]ambient.Asset, ambient.FileSystemReader) {
+	resp, err := m.client.Assets(ctx, &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling Assets: %v", err)
 		return nil, nil
@@ -169,8 +169,8 @@ func (m *GRPCServer) Assets() ([]ambient.Asset, ambient.FileSystemReader) {
 }
 
 // Settings handler.
-func (m *GRPCServer) Settings() []ambient.Setting {
-	resp, err := m.client.Settings(context.TODO(), &protodef.Empty{})
+func (m *GRPCServer) Settings(ctx context.Context) []ambient.Setting {
+	resp, err := m.client.Settings(ctx, &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling Settings: %v", err)
 		return nil
@@ -204,8 +204,8 @@ func (m *GRPCServer) Settings() []ambient.Setting {
 }
 
 // GrantRequests handler.
-func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
-	resp, err := m.client.GrantRequests(context.TODO(), &protodef.Empty{})
+func (m *GRPCServer) GrantRequests(ctx context.Context) []ambient.GrantRequest {
+	resp, err := m.client.GrantRequests(ctx, &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling GrantRequests: %v", err)
 		return nil
@@ -223,9 +223,9 @@ func (m *GRPCServer) GrantRequests() []ambient.GrantRequest {
 }
 
 // FuncMap handler.
-func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
+func (m *GRPCServer) FuncMap(ctx context.Context) func(r *http.Request) template.FuncMap {
 	// Return a list of keys for the FuncMap().
-	resp, err := m.client.FuncMap(context.TODO(), &protodef.Empty{})
+	resp, err := m.client.FuncMap(ctx, &protodef.Empty{})
 	if err != nil {
 		m.toolkit.Log.Error("error calling FuncMap: %v", err)
 		return nil
@@ -257,7 +257,7 @@ func (m *GRPCServer) FuncMap() func(r *http.Request) template.FuncMap {
 }
 
 // Middleware handler.
-func (m *GRPCServer) Middleware() []func(next http.Handler) http.Handler {
+func (m *GRPCServer) Middleware(context.Context) []func(next http.Handler) http.Handler {
 	return []func(next http.Handler) http.Handler{
 		func(h http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -66,7 +66,7 @@ func (c *PluginInjector) Inject(ctx context.Context, inject ambient.LayoutInject
 		}
 
 		// If a FuncMap exists, pass request into FuncMap.
-		funcMap := v.FuncMap()
+		funcMap := v.FuncMap(ctx)
 		if funcMap != nil {
 			// Ensure the plugin has access to write to FuncMap.
 			if c.pluginsystem.Authorized(name, ambient.GrantSiteFuncMapWrite) {
@@ -83,7 +83,7 @@ func (c *PluginInjector) Inject(ctx context.Context, inject ambient.LayoutInject
 		}
 
 		// Ensure the plugin has access to write to assets.
-		files, assets := v.Assets()
+		files, assets := v.Assets(ctx)
 		if len(files) > 0 {
 			if c.pluginsystem.Authorized(name, ambient.GrantSiteAssetWrite) {
 				_, err := c.sess.AuthenticatedUser(r)

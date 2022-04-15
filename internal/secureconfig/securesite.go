@@ -2,6 +2,7 @@
 package secureconfig
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/ambientkit/ambient"
@@ -24,7 +25,7 @@ type SecureSite struct {
 }
 
 // NewSecureSite returns a new secure site.
-func NewSecureSite(pluginName string, log ambient.AppLogger, ps ambient.PluginSystem,
+func NewSecureSite(ctx context.Context, pluginName string, log ambient.AppLogger, ps ambient.PluginSystem,
 	session ambient.AppSession, mux ambient.AppRouter, render ambient.Renderer, recorder *pluginsafe.RouteRecorder, loadPlugins bool) (*SecureSite, http.Handler, error) {
 	ss := &SecureSite{
 		pluginName: pluginName,
@@ -38,7 +39,7 @@ func NewSecureSite(pluginName string, log ambient.AppLogger, ps ambient.PluginSy
 	}
 
 	if loadPlugins {
-		err := ss.loadAllPluginPages()
+		err := ss.loadAllPluginPages(ctx)
 		if err != nil {
 			return nil, nil, err
 		}

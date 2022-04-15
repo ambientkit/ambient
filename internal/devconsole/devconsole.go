@@ -87,7 +87,7 @@ func (dc *DevConsole) EnableDevConsole() {
 			pluginName := mux.Param(r, "pluginName")
 			dc.log.Debug("enable plugin: %v", pluginName)
 
-			err := dc.securestorage.EnablePlugin(pluginName, true)
+			err := dc.securestorage.EnablePlugin(r.Context(), pluginName, true)
 			if err != nil {
 				return ambient.StatusError{Code: http.StatusBadRequest, Err: err}
 			}
@@ -101,7 +101,7 @@ func (dc *DevConsole) EnableDevConsole() {
 
 			// Loop through all the trusted plugins.
 			for _, pluginName := range dc.pluginsystem.TrustedPluginNames() {
-				err := dc.securestorage.EnablePlugin(pluginName, true)
+				err := dc.securestorage.EnablePlugin(r.Context(), pluginName, true)
 				if err != nil {
 					// TODO: Should return an error at the end if at least one fails.
 					dc.log.Error("failed to enable plugin (%v): %v", pluginName, err.Error())
@@ -123,9 +123,9 @@ func (dc *DevConsole) EnableDevConsole() {
 					Err: fmt.Errorf("failed to get plugin (%v) for grants: %v", pluginName, err.Error())}
 			}
 
-			for _, request := range p.GrantRequests() {
+			for _, request := range p.GrantRequests(r.Context()) {
 				dc.log.Debug("plugin (%v), add grant: %v", pluginName, request.Grant)
-				err := dc.securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
+				err := dc.securestorage.SetNeighborPluginGrant(r.Context(), pluginName, request.Grant, true)
 				if err != nil {
 					return ambient.StatusError{Code: http.StatusBadRequest,
 						Err: fmt.Errorf("failed to enable plugin (%v) for grant, %v: %v", pluginName, request.Grant, err.Error())}
@@ -148,9 +148,9 @@ func (dc *DevConsole) EnableDevConsole() {
 						Err: fmt.Errorf("failed to get plugin (%v) for grants: %v", pluginName, err.Error())}
 				}
 
-				for _, request := range p.GrantRequests() {
+				for _, request := range p.GrantRequests(r.Context()) {
 					dc.log.Debug("plugin (%v), add grant: %v", pluginName, request.Grant)
-					err := dc.securestorage.SetNeighborPluginGrant(pluginName, request.Grant, true)
+					err := dc.securestorage.SetNeighborPluginGrant(r.Context(), pluginName, request.Grant, true)
 					if err != nil {
 						return ambient.StatusError{Code: http.StatusBadRequest,
 							Err: fmt.Errorf("failed to enable plugin (%v) for grant, %v: %v", pluginName, request.Grant, err.Error())}

@@ -175,7 +175,7 @@ func (s *GRPCSystem) monitorGRPCClients() {
 					delete(s.pluginClients, name)
 					if s.RestartAutomatically {
 						s.Connect(ctx, plugin, isMiddleware)
-						s.securesite.LoadSinglePluginPages(name)
+						s.securesite.LoadSinglePluginPages(ctx, name)
 						if isMiddleware {
 							s.log.Info("gRPC middleware restarted: %v", name)
 						} else {
@@ -183,7 +183,7 @@ func (s *GRPCSystem) monitorGRPCClients() {
 						}
 					} else {
 						s.pluginsystem.SetEnabled(name, false)
-						plugin.Disable()
+						plugin.Disable(ctx)
 						if isMiddleware {
 							s.log.Info("gRPC middleware disabled: %v", name)
 						} else {

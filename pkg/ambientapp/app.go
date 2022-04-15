@@ -132,7 +132,7 @@ func NewApp(ctx context.Context, appName string, appVersion string, logPlugin am
 	}
 
 	// Enable the trusted plugins.
-	ambientApp.grantAccess()
+	ambientApp.grantAccess(ctx)
 
 	return ambientApp, log, nil
 }
@@ -162,7 +162,7 @@ func loadStorage(ctx context.Context, log ambient.AppLogger, pluginGroup ambient
 	var ss ambient.SessionStorer
 
 	// Get the storage manager from the plugins.
-	pds, pss, err := plugin.Storage(log)
+	pds, pss, err := plugin.Storage(ctx, log)
 	if err != nil {
 		log.Error(err.Error())
 	} else if pds != nil && pss != nil {
@@ -244,7 +244,7 @@ func (app *App) Handler(ctx context.Context) (http.Handler, error) {
 	// full permissions.
 	var err error
 	var handler http.Handler
-	app.securesite, handler, err = secureconfig.NewSecureSite("ambient", app.log.Named("securesite"), app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder, true)
+	app.securesite, handler, err = secureconfig.NewSecureSite(ctx, "ambient", app.log.Named("securesite"), app.pluginsystem, app.sess, app.mux, app.renderer, app.recorder, true)
 	if err != nil {
 		return nil, err
 	}
@@ -281,7 +281,7 @@ func (app *App) Handler(ctx context.Context) (http.Handler, error) {
 }
 
 // GrantAccess grants access to all trusted plugins.
-func (app *App) grantAccess() {
+func (app *App) grantAccess(ctx context.Context) {
 	pluginsData := app.pluginsystem.PluginsData()
 
 	// Enable trusted plugins.
@@ -306,7 +306,7 @@ func (app *App) grantAccess() {
 			return
 		}
 
-		for _, request := range p.GrantRequests() {
+		for _, request := range p.GrantRequests(ctx) {
 			// If plugin is not granted permission, then grant.
 			if !app.pluginsystem.Granted(pluginName, request.Grant) {
 				app.log.Info("for plugin (%v), adding grant: %v", pluginName, request.Grant)

@@ -196,7 +196,7 @@ func (p *PluginSystem) loadPlugin(ctx context.Context, plugin ambient.Plugin, mi
 	// Determine if an old plugin is found already loaded.
 	oldPlugin, exists := p.plugins[name]
 	if exists {
-		oldPlugin.Disable()
+		oldPlugin.Disable(ctx)
 	}
 
 	// Store the plugin.
@@ -390,13 +390,13 @@ func (p *PluginSystem) SetEnabled(pluginName string, enabled bool) error {
 }
 
 // GrantRequests returns a list of grant requests.
-func (p *PluginSystem) GrantRequests(pluginName string, grant ambient.Grant) ([]ambient.GrantRequest, error) {
+func (p *PluginSystem) GrantRequests(ctx context.Context, pluginName string, grant ambient.Grant) ([]ambient.GrantRequest, error) {
 	plugin, err := p.Plugin(pluginName)
 	if err != nil {
 		return nil, err
 	}
 
-	return plugin.GrantRequests(), nil
+	return plugin.GrantRequests(ctx), nil
 }
 
 // Authorized returns whether a plugin is inherited granted for a plugin.
@@ -494,14 +494,14 @@ func (p *PluginSystem) Setting(pluginName string, settingName string) (interface
 }
 
 // SettingDefault returns a setting default for a setting.
-func (p *PluginSystem) SettingDefault(pluginName string, settingName string) (interface{}, error) {
+func (p *PluginSystem) SettingDefault(ctx context.Context, pluginName string, settingName string) (interface{}, error) {
 	plugin, err := p.Plugin(pluginName)
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO: this needs to be more efficient.
-	fields := plugin.Settings()
+	fields := plugin.Settings(ctx)
 	for _, field := range fields {
 		if field.Name == settingName {
 			return field.Default, nil

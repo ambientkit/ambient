@@ -17,16 +17,16 @@ type SecureSite interface {
 	// Authorized determines if the current context has access.
 	Authorized(grant Grant) bool
 	// NeighborPluginGrantList gets the grants requests for a neighbor plugin.
-	NeighborPluginGrantList(pluginName string) ([]GrantRequest, error)
+	NeighborPluginGrantList(ctx context.Context, pluginName string) ([]GrantRequest, error)
 	// NeighborPluginGrants gets the map of granted permissions.
-	NeighborPluginGrants(pluginName string) (map[Grant]bool, error)
+	NeighborPluginGrants(ctx context.Context, pluginName string) (map[Grant]bool, error)
 	// NeighborPluginGranted returns true if the plugin has the grant.
 	NeighborPluginGranted(pluginName string, grantName Grant) (bool, error)
 	// NeighborPluginRequestedGrant returns true if the plugin requests the grant.
 	// This shouldn't be used to determine if a plugin has been approved the grant.
-	NeighborPluginRequestedGrant(pluginName string, grantName Grant) (bool, error)
+	NeighborPluginRequestedGrant(ctx context.Context, pluginName string, grantName Grant) (bool, error)
 	// SetNeighborPluginGrant sets a grant for a neighbor plugin.
-	SetNeighborPluginGrant(pluginName string, grantName Grant, granted bool) error
+	SetNeighborPluginGrant(ctx context.Context, pluginName string, grantName Grant, granted bool) error
 	// Plugins returns the plugin list.
 	Plugins() (map[string]PluginData, error)
 	// PluginNames returns the list of plugin name.
@@ -34,11 +34,11 @@ type SecureSite interface {
 	// DeletePlugin deletes a plugin.
 	DeletePlugin(ctx context.Context, name string) error
 	// EnablePlugin enables a plugin.
-	EnablePlugin(pluginName string, loadPlugin bool) error
+	EnablePlugin(ctx context.Context, pluginName string, loadPlugin bool) error
 	// LoadSinglePluginPages loads the plugin.
-	LoadSinglePluginPages(name string)
+	LoadSinglePluginPages(ctx context.Context, name string)
 	// DisablePlugin disables a plugin.
-	DisablePlugin(pluginName string, unloadPlugin bool) error
+	DisablePlugin(ctx context.Context, pluginName string, unloadPlugin bool) error
 	// SavePost saves a post.
 	SavePost(ID string, post Post) error
 	// PostsAndPages returns the list of posts and pages.
@@ -77,21 +77,21 @@ type SecureSite interface {
 	// DeleteSessionValue deletes a session value on the current session.
 	DeleteSessionValue(r *http.Request, name string)
 	// PluginNeighborSettingsList gets the grants requests for a neighbor plugin.
-	PluginNeighborSettingsList(pluginName string) ([]Setting, error)
+	PluginNeighborSettingsList(ctx context.Context, pluginName string) ([]Setting, error)
 	// SetPluginSetting sets a variable for the plugin.
 	SetPluginSetting(settingName string, value string) error
 	// PluginSettingBool returns a plugin setting as a bool.
-	PluginSettingBool(name string) (bool, error)
+	PluginSettingBool(ctx context.Context, name string) (bool, error)
 	// PluginSettingString returns a setting for the plugin as a string.
-	PluginSettingString(fieldName string) (string, error)
+	PluginSettingString(ctx context.Context, fieldName string) (string, error)
 	// PluginSetting returns a setting for the plugin as an interface{}.
-	PluginSetting(fieldName string) (interface{}, error)
+	PluginSetting(ctx context.Context, fieldName string) (interface{}, error)
 	// SetNeighborPluginSetting sets a setting for a neighbor plugin.
-	SetNeighborPluginSetting(pluginName string, settingName string, value string) error
+	SetNeighborPluginSetting(ctx context.Context, pluginName string, settingName string, value string) error
 	// NeighborPluginSettingString returns a setting for a neighbor plugin as a string.
-	NeighborPluginSettingString(pluginName string, fieldName string) (string, error)
+	NeighborPluginSettingString(ctx context.Context, pluginName string, fieldName string) (string, error)
 	// NeighborPluginSetting returns a setting for a neighbor plugin as an interface{}.
-	NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error)
+	NeighborPluginSetting(ctx context.Context, pluginName string, fieldName string) (interface{}, error)
 	// PluginTrusted returns whether a plugin is trusted or not.
 	PluginTrusted(pluginName string) (bool, error)
 	// SetTitle sets the title.

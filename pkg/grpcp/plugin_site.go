@@ -30,8 +30,8 @@ func (c *GRPCSitePlugin) Load() error {
 }
 
 // LoadSinglePluginPages handler.
-func (c *GRPCSitePlugin) LoadSinglePluginPages(name string) {
-	_, err := c.client.LoadSinglePluginPages(context.Background(), &protodef.SiteLoadSinglePluginPagesRequest{
+func (c *GRPCSitePlugin) LoadSinglePluginPages(ctx context.Context, name string) {
+	_, err := c.client.LoadSinglePluginPages(ctx, &protodef.SiteLoadSinglePluginPagesRequest{
 		Pluginname: name,
 	})
 	if err != nil {
@@ -54,8 +54,8 @@ func (c *GRPCSitePlugin) Authorized(grant ambient.Grant) bool {
 }
 
 // NeighborPluginGrantList handler.
-func (c *GRPCSitePlugin) NeighborPluginGrantList(pluginName string) ([]ambient.GrantRequest, error) {
-	resp, err := c.client.NeighborPluginGrantList(context.Background(), &protodef.SiteNeighborPluginGrantListRequest{
+func (c *GRPCSitePlugin) NeighborPluginGrantList(ctx context.Context, pluginName string) ([]ambient.GrantRequest, error) {
+	resp, err := c.client.NeighborPluginGrantList(ctx, &protodef.SiteNeighborPluginGrantListRequest{
 		Pluginname: pluginName,
 	})
 	if err != nil {
@@ -75,8 +75,8 @@ func (c *GRPCSitePlugin) NeighborPluginGrantList(pluginName string) ([]ambient.G
 }
 
 // NeighborPluginGrants handler.
-func (c *GRPCSitePlugin) NeighborPluginGrants(pluginName string) (map[ambient.Grant]bool, error) {
-	resp, err := c.client.NeighborPluginGrants(context.Background(), &protodef.SiteNeighborPluginGrantsRequest{
+func (c *GRPCSitePlugin) NeighborPluginGrants(ctx context.Context, pluginName string) (map[ambient.Grant]bool, error) {
+	resp, err := c.client.NeighborPluginGrants(ctx, &protodef.SiteNeighborPluginGrantsRequest{
 		Pluginname: pluginName,
 	})
 	if err != nil {
@@ -106,8 +106,8 @@ func (c *GRPCSitePlugin) NeighborPluginGranted(pluginName string, grantName ambi
 }
 
 // NeighborPluginRequestedGrant handler.
-func (c *GRPCSitePlugin) NeighborPluginRequestedGrant(pluginName string, grantName ambient.Grant) (bool, error) {
-	resp, err := c.client.NeighborPluginRequestedGrant(context.Background(), &protodef.SiteNeighborPluginRequestedGrantRequest{
+func (c *GRPCSitePlugin) NeighborPluginRequestedGrant(ctx context.Context, pluginName string, grantName ambient.Grant) (bool, error) {
+	resp, err := c.client.NeighborPluginRequestedGrant(ctx, &protodef.SiteNeighborPluginRequestedGrantRequest{
 		Pluginname: pluginName,
 		Grant:      string(grantName),
 	})
@@ -119,8 +119,8 @@ func (c *GRPCSitePlugin) NeighborPluginRequestedGrant(pluginName string, grantNa
 }
 
 // SetNeighborPluginGrant handler.
-func (c *GRPCSitePlugin) SetNeighborPluginGrant(pluginName string, grantName ambient.Grant, granted bool) error {
-	_, err := c.client.SetNeighborPluginGrant(context.Background(), &protodef.SiteSetNeighborPluginGrantRequest{
+func (c *GRPCSitePlugin) SetNeighborPluginGrant(ctx context.Context, pluginName string, grantName ambient.Grant, granted bool) error {
+	_, err := c.client.SetNeighborPluginGrant(ctx, &protodef.SiteSetNeighborPluginGrantRequest{
 		Pluginname: pluginName,
 		Grant:      string(grantName),
 		Granted:    granted,
@@ -171,8 +171,8 @@ func (c *GRPCSitePlugin) DeletePlugin(ctx context.Context, pluginName string) er
 }
 
 // EnablePlugin handler.
-func (c *GRPCSitePlugin) EnablePlugin(pluginName string, loadPlugin bool) error {
-	_, err := c.client.EnablePlugin(context.Background(), &protodef.SiteEnablePluginRequest{
+func (c *GRPCSitePlugin) EnablePlugin(ctx context.Context, pluginName string, loadPlugin bool) error {
+	_, err := c.client.EnablePlugin(ctx, &protodef.SiteEnablePluginRequest{
 		Name: pluginName,
 		Load: loadPlugin,
 	})
@@ -184,8 +184,8 @@ func (c *GRPCSitePlugin) EnablePlugin(pluginName string, loadPlugin bool) error 
 }
 
 // DisablePlugin handler.
-func (c *GRPCSitePlugin) DisablePlugin(pluginName string, unloadPlugin bool) error {
-	_, err := c.client.DisablePlugin(context.Background(), &protodef.SiteDisablePluginRequest{
+func (c *GRPCSitePlugin) DisablePlugin(ctx context.Context, pluginName string, unloadPlugin bool) error {
+	_, err := c.client.DisablePlugin(ctx, &protodef.SiteDisablePluginRequest{
 		Name:   pluginName,
 		Unload: unloadPlugin,
 	})
@@ -435,10 +435,10 @@ func (c *GRPCSitePlugin) DeleteSessionValue(r *http.Request, name string) {
 }
 
 // PluginNeighborSettingsList handler.
-func (c *GRPCSitePlugin) PluginNeighborSettingsList(pluginName string) ([]ambient.Setting, error) {
+func (c *GRPCSitePlugin) PluginNeighborSettingsList(ctx context.Context, pluginName string) ([]ambient.Setting, error) {
 	settings := make([]ambient.Setting, 0)
 
-	resp, err := c.client.PluginNeighborSettingsList(context.Background(), &protodef.SitePluginNeighborSettingsListRequest{
+	resp, err := c.client.PluginNeighborSettingsList(ctx, &protodef.SitePluginNeighborSettingsListRequest{
 		Pluginname: pluginName,
 	})
 	if err != nil {
@@ -463,8 +463,8 @@ func (c *GRPCSitePlugin) SetPluginSetting(settingName string, value string) erro
 }
 
 // PluginSettingBool handler.
-func (c *GRPCSitePlugin) PluginSettingBool(fieldName string) (bool, error) {
-	resp, err := c.client.PluginSettingBool(context.Background(), &protodef.SitePluginSettingBoolRequest{
+func (c *GRPCSitePlugin) PluginSettingBool(ctx context.Context, fieldName string) (bool, error) {
+	resp, err := c.client.PluginSettingBool(ctx, &protodef.SitePluginSettingBoolRequest{
 		Fieldname: fieldName,
 	})
 	if err != nil {
@@ -475,8 +475,8 @@ func (c *GRPCSitePlugin) PluginSettingBool(fieldName string) (bool, error) {
 }
 
 // PluginSettingString handler.
-func (c *GRPCSitePlugin) PluginSettingString(fieldName string) (string, error) {
-	resp, err := c.client.PluginSettingString(context.Background(), &protodef.SitePluginSettingStringRequest{
+func (c *GRPCSitePlugin) PluginSettingString(ctx context.Context, fieldName string) (string, error) {
+	resp, err := c.client.PluginSettingString(ctx, &protodef.SitePluginSettingStringRequest{
 		Fieldname: fieldName,
 	})
 	if err != nil {
@@ -487,8 +487,8 @@ func (c *GRPCSitePlugin) PluginSettingString(fieldName string) (string, error) {
 }
 
 // PluginSetting handler.
-func (c *GRPCSitePlugin) PluginSetting(fieldName string) (interface{}, error) {
-	resp, err := c.client.PluginSetting(context.Background(), &protodef.SitePluginSettingRequest{
+func (c *GRPCSitePlugin) PluginSetting(ctx context.Context, fieldName string) (interface{}, error) {
+	resp, err := c.client.PluginSetting(ctx, &protodef.SitePluginSettingRequest{
 		Fieldname: fieldName,
 	})
 	if err != nil {
@@ -501,8 +501,8 @@ func (c *GRPCSitePlugin) PluginSetting(fieldName string) (interface{}, error) {
 }
 
 // SetNeighborPluginSetting handler.
-func (c *GRPCSitePlugin) SetNeighborPluginSetting(pluginName string, settingName string, settingValue string) error {
-	_, err := c.client.SetNeighborPluginSetting(context.Background(), &protodef.SiteSetNeighborPluginSettingRequest{
+func (c *GRPCSitePlugin) SetNeighborPluginSetting(ctx context.Context, pluginName string, settingName string, settingValue string) error {
+	_, err := c.client.SetNeighborPluginSetting(ctx, &protodef.SiteSetNeighborPluginSettingRequest{
 		Pluginname:   pluginName,
 		Settingname:  settingName,
 		Settingvalue: settingValue,
@@ -515,8 +515,8 @@ func (c *GRPCSitePlugin) SetNeighborPluginSetting(pluginName string, settingName
 }
 
 // NeighborPluginSettingString handler.
-func (c *GRPCSitePlugin) NeighborPluginSettingString(pluginName string, fieldName string) (string, error) {
-	resp, err := c.client.NeighborPluginSettingString(context.Background(), &protodef.SiteNeighborPluginSettingStringRequest{
+func (c *GRPCSitePlugin) NeighborPluginSettingString(ctx context.Context, pluginName string, fieldName string) (string, error) {
+	resp, err := c.client.NeighborPluginSettingString(ctx, &protodef.SiteNeighborPluginSettingStringRequest{
 		Pluginname: pluginName,
 		Fieldname:  fieldName,
 	})
@@ -528,8 +528,8 @@ func (c *GRPCSitePlugin) NeighborPluginSettingString(pluginName string, fieldNam
 }
 
 // NeighborPluginSetting handler.
-func (c *GRPCSitePlugin) NeighborPluginSetting(pluginName string, fieldName string) (interface{}, error) {
-	resp, err := c.client.NeighborPluginSetting(context.Background(), &protodef.SiteNeighborPluginSettingRequest{
+func (c *GRPCSitePlugin) NeighborPluginSetting(ctx context.Context, pluginName string, fieldName string) (interface{}, error) {
+	resp, err := c.client.NeighborPluginSetting(ctx, &protodef.SiteNeighborPluginSettingRequest{
 		Pluginname: pluginName,
 		Fieldname:  fieldName,
 	})

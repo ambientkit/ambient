@@ -35,7 +35,7 @@ func (d *FuncMapperImpl) Do(globalFuncMap bool, requestID string, key string, ar
 
 	var callable interface{}
 	if globalFuncMap {
-		fmc := d.Impl.FuncMap()
+		fmc := d.Impl.FuncMap(ctx)
 		if fmc == nil {
 			return nil, "", nil
 		}

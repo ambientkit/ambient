@@ -1,6 +1,7 @@
 package pluginsafe
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -51,7 +52,7 @@ func (rec *RouteRecorder) WithPlugin(pluginName string) *PluginRouteRecorder {
 }
 
 // Routes returns list of routes.
-func (rec *PluginRouteRecorder) Routes() []ambient.Route {
+func (rec *PluginRouteRecorder) Routes(context.Context) []ambient.Route {
 	return rec.routeList
 }
 

@@ -44,7 +44,7 @@ func (m *GRPCPlugin) PluginVersion(ctx context.Context, req *protodef.Empty) (*p
 
 // GrantRequests handler.
 func (m *GRPCPlugin) GrantRequests(ctx context.Context, req *protodef.Empty) (*protodef.GrantRequestsResponse, error) {
-	requests := m.Impl.GrantRequests()
+	requests := m.Impl.GrantRequests(ctx)
 	arr := make([]*protodef.GrantRequest, 0)
 
 	for _, v := range requests {
@@ -104,7 +104,7 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 
 	m.toolkit.Log.Debug("Enabled() called")
 
-	err = m.Impl.Enable(m.toolkit)
+	err = m.Impl.Enable(ctx, m.toolkit)
 
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
 		opts = append(opts, grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()))
@@ -138,19 +138,19 @@ func (m *GRPCPlugin) Enable(ctx context.Context, req *protodef.Toolkit) (*protod
 func (m *GRPCPlugin) Disable(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
 	m.toolkit.Log.Debug("Disable() called")
 	defer m.conn.Close()
-	return &protodef.Empty{}, m.Impl.Disable()
+	return &protodef.Empty{}, m.Impl.Disable(ctx)
 }
 
 // Routes handler.
 func (m *GRPCPlugin) Routes(ctx context.Context, req *protodef.Empty) (*protodef.Empty, error) {
 	m.toolkit.Log.Debug("Routes() called")
-	m.Impl.Routes()
+	m.Impl.Routes(ctx)
 	return &protodef.Empty{}, nil
 }
 
 // Assets handler.
 func (m *GRPCPlugin) Assets(ctx context.Context, req *protodef.Empty) (*protodef.AssetsResponse, error) {
-	settings, embedFS := m.Impl.Assets()
+	settings, embedFS := m.Impl.Assets(ctx)
 
 	assets, err := ArrayToProtobufStruct(settings)
 	if err != nil {
@@ -201,7 +201,7 @@ func (m *GRPCPlugin) Assets(ctx context.Context, req *protodef.Empty) (*protodef
 
 // Settings handler.
 func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protodef.SettingsResponse, error) {
-	settings := m.Impl.Settings()
+	settings := m.Impl.Settings(ctx)
 
 	arr := make([]*protodef.Setting, 0)
 	for _, v := range settings {
@@ -230,7 +230,7 @@ func (m *GRPCPlugin) Settings(ctx context.Context, req *protodef.Empty) (*protod
 // FuncMap handler.
 func (m *GRPCPlugin) FuncMap(ctx context.Context, req *protodef.Empty) (*protodef.FuncMapResponse, error) {
 	//m.toolkit.Log.Error("FuncMap called.")
-	fn := m.Impl.FuncMap()
+	fn := m.Impl.FuncMap(ctx)
 	keys := make([]string, 0)
 	if fn == nil {
 		return &protodef.FuncMapResponse{
@@ -260,7 +260,7 @@ func (m *GRPCPlugin) Middleware(ctx context.Context, req *protodef.MiddlewareReq
 	m.toolkit.Log.Debug("Middleware() called")
 
 	// Get the middleware from the plugin.
-	arr := m.Impl.Middleware()
+	arr := m.Impl.Middleware(ctx)
 	if len(arr) == 0 {
 		return &protodef.MiddlewareResponse{}, nil
 	}

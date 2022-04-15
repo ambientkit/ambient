@@ -22,13 +22,13 @@ type Plugin interface {
 	PluginCore
 
 	// These should all have access to the toolkit.
-	Enable(*Toolkit) error                           // optional, called during enable
-	Disable() error                                  // optional, called during disable
-	Routes()                                         // optional, called during enable
-	Assets() ([]Asset, FileSystemReader)             // optional, called during enable
-	Settings() []Setting                             // optional, called during special operations
-	GrantRequests() []GrantRequest                   // optional, called during every plugin operation against data provider
-	FuncMap() func(r *http.Request) template.FuncMap // optional, called on every render
+	Enable(context.Context, *Toolkit) error                         // optional, called during enable
+	Disable(context.Context) error                                  // optional, called during disable
+	Routes(context.Context)                                         // optional, called during enable
+	Assets(context.Context) ([]Asset, FileSystemReader)             // optional, called during enable
+	Settings(context.Context) []Setting                             // optional, called during special operations
+	GrantRequests(context.Context) []GrantRequest                   // optional, called during every plugin operation against data provider
+	FuncMap(context.Context) func(r *http.Request) template.FuncMap // optional, called on every render
 }
 
 // LoggingPlugin represents a logging plugin.
@@ -49,7 +49,7 @@ type StoragePluginGroup struct {
 type StoragePlugin interface {
 	PluginCore
 
-	Storage(logger Logger) (DataStorer, SessionStorer, error)
+	Storage(ctx context.Context, logger Logger) (DataStorer, SessionStorer, error)
 }
 
 // StorageEncryption represents a encryption/decryption for a storage
@@ -79,12 +79,12 @@ type SessionManagerPlugin interface {
 
 	// Session manager should have middleware with it.
 	SessionManager(logger Logger, sessionStorer SessionStorer) (AppSession, error)
-	Middleware() []func(next http.Handler) http.Handler
+	Middleware(context.Context) []func(next http.Handler) http.Handler
 }
 
 // MiddlewarePlugin represents a middleware plugin.
 type MiddlewarePlugin interface {
 	Plugin
 
-	Middleware() []func(next http.Handler) http.Handler // optional, called during enable
+	Middleware(context.Context) []func(next http.Handler) http.Handler // optional, called during enable
 }

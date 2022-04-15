@@ -26,7 +26,7 @@ func (m *GRPCSiteServer) Load(ctx context.Context, req *protodef.Empty) (resp *p
 
 // LoadSinglePluginPages handler.
 func (m *GRPCSiteServer) LoadSinglePluginPages(ctx context.Context, req *protodef.SiteLoadSinglePluginPagesRequest) (resp *protodef.Empty, err error) {
-	m.Impl.LoadSinglePluginPages(req.Pluginname)
+	m.Impl.LoadSinglePluginPages(ctx, req.Pluginname)
 	return &protodef.Empty{}, nil
 }
 
@@ -41,7 +41,7 @@ func (m *GRPCSiteServer) Authorized(ctx context.Context, req *protodef.SiteAutho
 // NeighborPluginGrantList handler.
 func (m *GRPCSiteServer) NeighborPluginGrantList(ctx context.Context, req *protodef.SiteNeighborPluginGrantListRequest) (
 	resp *protodef.SiteNeighborPluginGrantListResponse, err error) {
-	gr, err := m.Impl.NeighborPluginGrantList(req.Pluginname)
+	gr, err := m.Impl.NeighborPluginGrantList(ctx, req.Pluginname)
 	if err != nil {
 		return &protodef.SiteNeighborPluginGrantListResponse{
 			Grants: []*protodef.GrantRequest{},
@@ -64,7 +64,7 @@ func (m *GRPCSiteServer) NeighborPluginGrantList(ctx context.Context, req *proto
 // NeighborPluginGrants handler.
 func (m *GRPCSiteServer) NeighborPluginGrants(ctx context.Context, req *protodef.SiteNeighborPluginGrantsRequest) (
 	resp *protodef.SiteNeighborPluginGrantsResponse, err error) {
-	gr, err := m.Impl.NeighborPluginGrants(req.Pluginname)
+	gr, err := m.Impl.NeighborPluginGrants(ctx, req.Pluginname)
 	if err != nil {
 		return &protodef.SiteNeighborPluginGrantsResponse{
 			Grants: &structpb.Struct{},
@@ -93,7 +93,7 @@ func (m *GRPCSiteServer) NeighborPluginGranted(ctx context.Context, req *protode
 // NeighborPluginRequestedGrant handler.
 func (m *GRPCSiteServer) NeighborPluginRequestedGrant(ctx context.Context, req *protodef.SiteNeighborPluginRequestedGrantRequest) (
 	resp *protodef.SiteNeighborPluginRequestedGrantResponse, err error) {
-	granted, err := m.Impl.NeighborPluginRequestedGrant(req.Pluginname, ambient.Grant(req.Grant))
+	granted, err := m.Impl.NeighborPluginRequestedGrant(ctx, req.Pluginname, ambient.Grant(req.Grant))
 	if err != nil {
 		return &protodef.SiteNeighborPluginRequestedGrantResponse{}, err
 	}
@@ -106,7 +106,7 @@ func (m *GRPCSiteServer) NeighborPluginRequestedGrant(ctx context.Context, req *
 // SetNeighborPluginGrant handler.
 func (m *GRPCSiteServer) SetNeighborPluginGrant(ctx context.Context, req *protodef.SiteSetNeighborPluginGrantRequest) (
 	resp *protodef.Empty, err error) {
-	err = m.Impl.SetNeighborPluginGrant(req.Pluginname, ambient.Grant(req.Grant), req.Granted)
+	err = m.Impl.SetNeighborPluginGrant(ctx, req.Pluginname, ambient.Grant(req.Grant), req.Granted)
 	return &protodef.Empty{}, err
 }
 
@@ -151,14 +151,14 @@ func (m *GRPCSiteServer) DeletePlugin(ctx context.Context, req *protodef.SiteDel
 // EnablePlugin handler.
 func (m *GRPCSiteServer) EnablePlugin(ctx context.Context, req *protodef.SiteEnablePluginRequest) (
 	resp *protodef.Empty, err error) {
-	err = m.Impl.EnablePlugin(req.Name, req.Load)
+	err = m.Impl.EnablePlugin(ctx, req.Name, req.Load)
 	return &protodef.Empty{}, err
 }
 
 // DisablePlugin handler.
 func (m *GRPCSiteServer) DisablePlugin(ctx context.Context, req *protodef.SiteDisablePluginRequest) (
 	resp *protodef.Empty, err error) {
-	err = m.Impl.DisablePlugin(req.Name, req.Unload)
+	err = m.Impl.DisablePlugin(ctx, req.Name, req.Unload)
 	return &protodef.Empty{}, err
 }
 
@@ -399,7 +399,7 @@ func (m *GRPCSiteServer) DeleteSessionValue(ctx context.Context, req *protodef.S
 
 // PluginNeighborSettingsList handler.
 func (m *GRPCSiteServer) PluginNeighborSettingsList(ctx context.Context, req *protodef.SitePluginNeighborSettingsListRequest) (resp *protodef.SitePluginNeighborSettingsListResponse, err error) {
-	settings, err := m.Impl.PluginNeighborSettingsList(req.Pluginname)
+	settings, err := m.Impl.PluginNeighborSettingsList(ctx, req.Pluginname)
 	if err != nil {
 		return &protodef.SitePluginNeighborSettingsListResponse{}, err
 	}
@@ -422,7 +422,7 @@ func (m *GRPCSiteServer) SetPluginSetting(ctx context.Context, req *protodef.Sit
 
 // PluginSettingBool handler.
 func (m *GRPCSiteServer) PluginSettingBool(ctx context.Context, req *protodef.SitePluginSettingBoolRequest) (resp *protodef.SitePluginSettingBoolResponse, err error) {
-	val, err := m.Impl.PluginSettingBool(req.Fieldname)
+	val, err := m.Impl.PluginSettingBool(ctx, req.Fieldname)
 	if err != nil {
 		return &protodef.SitePluginSettingBoolResponse{
 			Value: false,
@@ -436,7 +436,7 @@ func (m *GRPCSiteServer) PluginSettingBool(ctx context.Context, req *protodef.Si
 
 // PluginSettingString handler.
 func (m *GRPCSiteServer) PluginSettingString(ctx context.Context, req *protodef.SitePluginSettingStringRequest) (resp *protodef.SitePluginSettingStringResponse, err error) {
-	val, err := m.Impl.PluginSettingString(req.Fieldname)
+	val, err := m.Impl.PluginSettingString(ctx, req.Fieldname)
 	if err != nil {
 		return &protodef.SitePluginSettingStringResponse{
 			Value: "",
@@ -450,7 +450,7 @@ func (m *GRPCSiteServer) PluginSettingString(ctx context.Context, req *protodef.
 
 // PluginSetting handler.
 func (m *GRPCSiteServer) PluginSetting(ctx context.Context, req *protodef.SitePluginSettingRequest) (resp *protodef.SitePluginSettingResponse, err error) {
-	setting, err := m.Impl.PluginSetting(req.Fieldname)
+	setting, err := m.Impl.PluginSetting(ctx, req.Fieldname)
 	if err != nil {
 		return &protodef.SitePluginSettingResponse{}, err
 	}
@@ -463,7 +463,7 @@ func (m *GRPCSiteServer) PluginSetting(ctx context.Context, req *protodef.SitePl
 
 // SetNeighborPluginSetting handler.
 func (m *GRPCSiteServer) SetNeighborPluginSetting(ctx context.Context, req *protodef.SiteSetNeighborPluginSettingRequest) (resp *protodef.Empty, err error) {
-	err = m.Impl.SetNeighborPluginSetting(req.Pluginname, req.Settingname, req.Settingvalue)
+	err = m.Impl.SetNeighborPluginSetting(ctx, req.Pluginname, req.Settingname, req.Settingvalue)
 	if err != nil {
 		return &protodef.Empty{}, err
 	}
@@ -473,7 +473,7 @@ func (m *GRPCSiteServer) SetNeighborPluginSetting(ctx context.Context, req *prot
 
 // NeighborPluginSettingString handler.
 func (m *GRPCSiteServer) NeighborPluginSettingString(ctx context.Context, req *protodef.SiteNeighborPluginSettingStringRequest) (resp *protodef.SiteNeighborPluginSettingStringResponse, err error) {
-	val, err := m.Impl.NeighborPluginSettingString(req.Pluginname, req.Fieldname)
+	val, err := m.Impl.NeighborPluginSettingString(ctx, req.Pluginname, req.Fieldname)
 	if err != nil {
 		return &protodef.SiteNeighborPluginSettingStringResponse{
 			Value: "",
@@ -487,7 +487,7 @@ func (m *GRPCSiteServer) NeighborPluginSettingString(ctx context.Context, req *p
 
 // NeighborPluginSetting handler.
 func (m *GRPCSiteServer) NeighborPluginSetting(ctx context.Context, req *protodef.SiteNeighborPluginSettingRequest) (resp *protodef.SiteNeighborPluginSettingResponse, err error) {
-	setting, err := m.Impl.NeighborPluginSetting(req.Pluginname, req.Fieldname)
+	setting, err := m.Impl.NeighborPluginSetting(ctx, req.Pluginname, req.Fieldname)
 	if err != nil {
 		return &protodef.SiteNeighborPluginSettingResponse{}, err
 	}
