@@ -9,7 +9,7 @@ import (
 
 // AuthenticatedUser returns if the current user is authenticated.
 func (ss *SecureSite) AuthenticatedUser(r *http.Request) (string, error) {
-	if !ss.Authorized(ambient.GrantUserAuthenticatedRead) {
+	if !ss.Authorized(r.Context(), ambient.GrantUserAuthenticatedRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -18,7 +18,7 @@ func (ss *SecureSite) AuthenticatedUser(r *http.Request) (string, error) {
 
 // UserLogin sets the current user as authenticated.
 func (ss *SecureSite) UserLogin(r *http.Request, username string) error {
-	if !ss.Authorized(ambient.GrantUserAuthenticatedWrite) {
+	if !ss.Authorized(r.Context(), ambient.GrantUserAuthenticatedWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -29,7 +29,7 @@ func (ss *SecureSite) UserLogin(r *http.Request, username string) error {
 
 // UserPersist sets the user session to retain after browser close.
 func (ss *SecureSite) UserPersist(r *http.Request, persist bool) error {
-	if !ss.Authorized(ambient.GrantUserPersistWrite) {
+	if !ss.Authorized(r.Context(), ambient.GrantUserPersistWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -40,7 +40,7 @@ func (ss *SecureSite) UserPersist(r *http.Request, persist bool) error {
 
 // UserLogout logs out the current user.
 func (ss *SecureSite) UserLogout(r *http.Request) error {
-	if !ss.Authorized(ambient.GrantUserAuthenticatedWrite) {
+	if !ss.Authorized(r.Context(), ambient.GrantUserAuthenticatedWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -51,7 +51,7 @@ func (ss *SecureSite) UserLogout(r *http.Request) error {
 
 // LogoutAllUsers logs out all users.
 func (ss *SecureSite) LogoutAllUsers(r *http.Request) error {
-	if !ss.Authorized(ambient.GrantAllUserAuthenticatedWrite) {
+	if !ss.Authorized(r.Context(), ambient.GrantAllUserAuthenticatedWrite) {
 		return amberror.ErrAccessDenied
 	}
 

@@ -9,7 +9,7 @@ import (
 
 // NeighborPluginGrantList gets the grants requests for a neighbor plugin.
 func (ss *SecureSite) NeighborPluginGrantList(ctx context.Context, pluginName string) ([]ambient.GrantRequest, error) {
-	if !ss.Authorized(ambient.GrantPluginNeighborGrantRead) {
+	if !ss.Authorized(ctx, ambient.GrantPluginNeighborGrantRead) {
 		return nil, amberror.ErrAccessDenied
 	}
 
@@ -23,7 +23,7 @@ func (ss *SecureSite) NeighborPluginGrantList(ctx context.Context, pluginName st
 
 // NeighborPluginGrants gets the map of granted permissions.
 func (ss *SecureSite) NeighborPluginGrants(ctx context.Context, pluginName string) (map[ambient.Grant]bool, error) {
-	if !ss.Authorized(ambient.GrantPluginNeighborGrantRead) {
+	if !ss.Authorized(ctx, ambient.GrantPluginNeighborGrantRead) {
 		return nil, amberror.ErrAccessDenied
 	}
 
@@ -41,8 +41,8 @@ func (ss *SecureSite) NeighborPluginGrants(ctx context.Context, pluginName strin
 }
 
 // NeighborPluginGranted returns true if the plugin has the grant.
-func (ss *SecureSite) NeighborPluginGranted(pluginName string, grantName ambient.Grant) (bool, error) {
-	if !ss.Authorized(ambient.GrantPluginNeighborGrantRead) {
+func (ss *SecureSite) NeighborPluginGranted(ctx context.Context, pluginName string, grantName ambient.Grant) (bool, error) {
+	if !ss.Authorized(ctx, ambient.GrantPluginNeighborGrantRead) {
 		return false, amberror.ErrAccessDenied
 	}
 
@@ -52,7 +52,7 @@ func (ss *SecureSite) NeighborPluginGranted(pluginName string, grantName ambient
 // NeighborPluginRequestedGrant returns true if the plugin requests the grant.
 // This shouldn't be used to determine if a plugin has been approved the grant.
 func (ss *SecureSite) NeighborPluginRequestedGrant(ctx context.Context, pluginName string, grantName ambient.Grant) (bool, error) {
-	if !ss.Authorized(ambient.GrantPluginNeighborGrantRead) {
+	if !ss.Authorized(ctx, ambient.GrantPluginNeighborGrantRead) {
 		return false, amberror.ErrAccessDenied
 	}
 
@@ -72,7 +72,7 @@ func (ss *SecureSite) NeighborPluginRequestedGrant(ctx context.Context, pluginNa
 
 // SetNeighborPluginGrant sets a grant for a neighbor plugin.
 func (ss *SecureSite) SetNeighborPluginGrant(ctx context.Context, pluginName string, grantName ambient.Grant, granted bool) error {
-	if !ss.Authorized(ambient.GrantPluginNeighborGrantWrite) {
+	if !ss.Authorized(ctx, ambient.GrantPluginNeighborGrantWrite) {
 		return amberror.ErrAccessDenied
 	}
 

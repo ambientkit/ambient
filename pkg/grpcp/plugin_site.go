@@ -24,8 +24,8 @@ func (c *GRPCSitePlugin) Error(siteError error) error {
 }
 
 // Load handler.
-func (c *GRPCSitePlugin) Load() error {
-	_, err := c.client.Load(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) Load(ctx context.Context) error {
+	_, err := c.client.Load(ctx, &protodef.Empty{})
 	return ErrorHandler(err)
 }
 
@@ -41,8 +41,8 @@ func (c *GRPCSitePlugin) LoadSinglePluginPages(ctx context.Context, name string)
 }
 
 // Authorized handler.
-func (c *GRPCSitePlugin) Authorized(grant ambient.Grant) bool {
-	resp, err := c.client.Authorized(context.Background(), &protodef.SiteAuthorizedRequest{
+func (c *GRPCSitePlugin) Authorized(ctx context.Context, grant ambient.Grant) bool {
+	resp, err := c.client.Authorized(ctx, &protodef.SiteAuthorizedRequest{
 		Grant: string(grant),
 	})
 	if err != nil {
@@ -93,8 +93,8 @@ func (c *GRPCSitePlugin) NeighborPluginGrants(ctx context.Context, pluginName st
 }
 
 // NeighborPluginGranted handler.
-func (c *GRPCSitePlugin) NeighborPluginGranted(pluginName string, grantName ambient.Grant) (bool, error) {
-	resp, err := c.client.NeighborPluginGranted(context.Background(), &protodef.SiteNeighborPluginGrantedRequest{
+func (c *GRPCSitePlugin) NeighborPluginGranted(ctx context.Context, pluginName string, grantName ambient.Grant) (bool, error) {
+	resp, err := c.client.NeighborPluginGranted(ctx, &protodef.SiteNeighborPluginGrantedRequest{
 		Pluginname: pluginName,
 		Grant:      string(grantName),
 	})
@@ -133,8 +133,8 @@ func (c *GRPCSitePlugin) SetNeighborPluginGrant(ctx context.Context, pluginName 
 }
 
 // Plugins handler.
-func (c *GRPCSitePlugin) Plugins() (map[string]ambient.PluginData, error) {
-	resp, err := c.client.Plugins(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) Plugins(ctx context.Context) (map[string]ambient.PluginData, error) {
+	resp, err := c.client.Plugins(ctx, &protodef.Empty{})
 	if err != nil {
 		return make(map[string]ambient.PluginData), ErrorHandler(err)
 	}
@@ -149,8 +149,8 @@ func (c *GRPCSitePlugin) Plugins() (map[string]ambient.PluginData, error) {
 }
 
 // PluginNames handler.
-func (c *GRPCSitePlugin) PluginNames() ([]string, error) {
-	resp, err := c.client.PluginNames(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) PluginNames(ctx context.Context) ([]string, error) {
+	resp, err := c.client.PluginNames(ctx, &protodef.Empty{})
 	if err != nil {
 		return make([]string, 0), ErrorHandler(err)
 	}
@@ -197,13 +197,13 @@ func (c *GRPCSitePlugin) DisablePlugin(ctx context.Context, pluginName string, u
 }
 
 // SavePost handler.
-func (c *GRPCSitePlugin) SavePost(ID string, post ambient.Post) error {
+func (c *GRPCSitePlugin) SavePost(ctx context.Context, ID string, post ambient.Post) error {
 	ps, err := ObjectToProtobufStruct(post)
 	if err != nil {
 		return ErrorHandler(err)
 	}
 
-	_, err = c.client.SavePost(context.Background(), &protodef.SiteSavePostRequest{
+	_, err = c.client.SavePost(ctx, &protodef.SiteSavePostRequest{
 		Id:   ID,
 		Post: ps,
 	})
@@ -215,8 +215,8 @@ func (c *GRPCSitePlugin) SavePost(ID string, post ambient.Post) error {
 }
 
 // PostsAndPages handler.
-func (c *GRPCSitePlugin) PostsAndPages(onlyPublished bool) (ambient.PostWithIDList, error) {
-	resp, err := c.client.PostsAndPages(context.Background(), &protodef.SitePostsAndPagesRequest{
+func (c *GRPCSitePlugin) PostsAndPages(ctx context.Context, onlyPublished bool) (ambient.PostWithIDList, error) {
+	resp, err := c.client.PostsAndPages(ctx, &protodef.SitePostsAndPagesRequest{
 		Onlypublished: onlyPublished,
 	})
 	if err != nil {
@@ -229,8 +229,8 @@ func (c *GRPCSitePlugin) PostsAndPages(onlyPublished bool) (ambient.PostWithIDLi
 }
 
 // PublishedPosts handler.
-func (c *GRPCSitePlugin) PublishedPosts() ([]ambient.Post, error) {
-	resp, err := c.client.PublishedPosts(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) PublishedPosts(ctx context.Context) ([]ambient.Post, error) {
+	resp, err := c.client.PublishedPosts(ctx, &protodef.Empty{})
 	if err != nil {
 		return make([]ambient.Post, 0), ErrorHandler(err)
 	}
@@ -241,8 +241,8 @@ func (c *GRPCSitePlugin) PublishedPosts() ([]ambient.Post, error) {
 }
 
 // PublishedPages handler.
-func (c *GRPCSitePlugin) PublishedPages() ([]ambient.Post, error) {
-	resp, err := c.client.PublishedPages(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) PublishedPages(ctx context.Context) ([]ambient.Post, error) {
+	resp, err := c.client.PublishedPages(ctx, &protodef.Empty{})
 	if err != nil {
 		return make([]ambient.Post, 0), ErrorHandler(err)
 	}
@@ -253,8 +253,8 @@ func (c *GRPCSitePlugin) PublishedPages() ([]ambient.Post, error) {
 }
 
 // PostBySlug handler.
-func (c *GRPCSitePlugin) PostBySlug(slug string) (ambient.PostWithID, error) {
-	resp, err := c.client.PostBySlug(context.Background(), &protodef.SitePostBySlugRequest{
+func (c *GRPCSitePlugin) PostBySlug(ctx context.Context, slug string) (ambient.PostWithID, error) {
+	resp, err := c.client.PostBySlug(ctx, &protodef.SitePostBySlugRequest{
 		Slug: slug,
 	})
 	if err != nil {
@@ -267,8 +267,8 @@ func (c *GRPCSitePlugin) PostBySlug(slug string) (ambient.PostWithID, error) {
 }
 
 // PostByID handler.
-func (c *GRPCSitePlugin) PostByID(ID string) (ambient.Post, error) {
-	resp, err := c.client.PostByID(context.Background(), &protodef.SitePostByIDRequest{
+func (c *GRPCSitePlugin) PostByID(ctx context.Context, ID string) (ambient.Post, error) {
+	resp, err := c.client.PostByID(ctx, &protodef.SitePostByIDRequest{
 		Id: ID,
 	})
 	if err != nil {
@@ -281,8 +281,8 @@ func (c *GRPCSitePlugin) PostByID(ID string) (ambient.Post, error) {
 }
 
 // DeletePostByID handler.
-func (c *GRPCSitePlugin) DeletePostByID(ID string) error {
-	_, err := c.client.DeletePostByID(context.Background(), &protodef.SiteDeletePostByIDRequest{
+func (c *GRPCSitePlugin) DeletePostByID(ctx context.Context, ID string) error {
+	_, err := c.client.DeletePostByID(ctx, &protodef.SiteDeletePostByIDRequest{
 		Id: ID,
 	})
 	if err != nil {
@@ -293,8 +293,8 @@ func (c *GRPCSitePlugin) DeletePostByID(ID string) error {
 }
 
 // PluginNeighborRoutesList handler.
-func (c *GRPCSitePlugin) PluginNeighborRoutesList(pluginName string) ([]ambient.Route, error) {
-	resp, err := c.client.PluginNeighborRoutesList(context.Background(), &protodef.SitePluginNeighborRoutesListRequest{
+func (c *GRPCSitePlugin) PluginNeighborRoutesList(ctx context.Context, pluginName string) ([]ambient.Route, error) {
+	resp, err := c.client.PluginNeighborRoutesList(ctx, &protodef.SitePluginNeighborRoutesListRequest{
 		Pluginname: pluginName,
 	})
 	if err != nil {
@@ -308,7 +308,7 @@ func (c *GRPCSitePlugin) PluginNeighborRoutesList(pluginName string) ([]ambient.
 
 // UserPersist handler.
 func (c *GRPCSitePlugin) UserPersist(r *http.Request, persist bool) error {
-	_, err := c.client.UserPersist(context.Background(), &protodef.SiteUserPersistRequest{
+	_, err := c.client.UserPersist(r.Context(), &protodef.SiteUserPersistRequest{
 		Requestid: requestuuid.Get(r),
 		Persist:   persist,
 	})
@@ -321,7 +321,7 @@ func (c *GRPCSitePlugin) UserPersist(r *http.Request, persist bool) error {
 
 // UserLogin handler.
 func (c *GRPCSitePlugin) UserLogin(r *http.Request, username string) error {
-	_, err := c.client.UserLogin(context.Background(), &protodef.SiteUserLoginRequest{
+	_, err := c.client.UserLogin(r.Context(), &protodef.SiteUserLoginRequest{
 		Username:  username,
 		Requestid: requestuuid.Get(r),
 	})
@@ -330,7 +330,7 @@ func (c *GRPCSitePlugin) UserLogin(r *http.Request, username string) error {
 
 // AuthenticatedUser handler.
 func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
-	out, err := c.client.AuthenticatedUser(context.Background(), &protodef.SiteAuthenticatedUserRequest{
+	out, err := c.client.AuthenticatedUser(r.Context(), &protodef.SiteAuthenticatedUserRequest{
 		Requestid: requestuuid.Get(r),
 	})
 	if err != nil {
@@ -346,7 +346,7 @@ func (c *GRPCSitePlugin) AuthenticatedUser(r *http.Request) (string, error) {
 
 // UserLogout handler.
 func (c *GRPCSitePlugin) UserLogout(r *http.Request) error {
-	_, err := c.client.UserLogout(context.Background(), &protodef.SiteUserLogoutRequest{
+	_, err := c.client.UserLogout(r.Context(), &protodef.SiteUserLogoutRequest{
 		Requestid: requestuuid.Get(r),
 	})
 	if err != nil {
@@ -358,7 +358,7 @@ func (c *GRPCSitePlugin) UserLogout(r *http.Request) error {
 
 // LogoutAllUsers handler.
 func (c *GRPCSitePlugin) LogoutAllUsers(r *http.Request) error {
-	_, err := c.client.LogoutAllUsers(context.Background(), &protodef.SiteLogoutAllUsersRequest{
+	_, err := c.client.LogoutAllUsers(r.Context(), &protodef.SiteLogoutAllUsersRequest{
 		Requestid: requestuuid.Get(r),
 	})
 	if err != nil {
@@ -370,7 +370,7 @@ func (c *GRPCSitePlugin) LogoutAllUsers(r *http.Request) error {
 
 // SetCSRF handler.
 func (c *GRPCSitePlugin) SetCSRF(r *http.Request) string {
-	resp, err := c.client.SetCSRF(context.Background(), &protodef.SiteSetCSRFRequest{
+	resp, err := c.client.SetCSRF(r.Context(), &protodef.SiteSetCSRFRequest{
 		Requestid: requestuuid.Get(r),
 	})
 	if err != nil {
@@ -383,7 +383,7 @@ func (c *GRPCSitePlugin) SetCSRF(r *http.Request) string {
 
 // CSRF handler.
 func (c *GRPCSitePlugin) CSRF(r *http.Request, token string) bool {
-	resp, err := c.client.CSRF(context.Background(), &protodef.SiteCSRFRequest{
+	resp, err := c.client.CSRF(r.Context(), &protodef.SiteCSRFRequest{
 		Requestid: requestuuid.Get(r),
 		Token:     token,
 	})
@@ -397,7 +397,7 @@ func (c *GRPCSitePlugin) CSRF(r *http.Request, token string) bool {
 
 // SessionValue handler.
 func (c *GRPCSitePlugin) SessionValue(r *http.Request, name string) string {
-	resp, err := c.client.SessionValue(context.Background(), &protodef.SiteSessionValueRequest{
+	resp, err := c.client.SessionValue(r.Context(), &protodef.SiteSessionValueRequest{
 		Requestid: requestuuid.Get(r),
 		Name:      name,
 	})
@@ -411,7 +411,7 @@ func (c *GRPCSitePlugin) SessionValue(r *http.Request, name string) string {
 
 // SetSessionValue handler.
 func (c *GRPCSitePlugin) SetSessionValue(r *http.Request, name string, value string) error {
-	_, err := c.client.SetSessionValue(context.Background(), &protodef.SiteSetSessionValueRequest{
+	_, err := c.client.SetSessionValue(r.Context(), &protodef.SiteSetSessionValueRequest{
 		Requestid: requestuuid.Get(r),
 		Name:      name,
 		Value:     value,
@@ -425,7 +425,7 @@ func (c *GRPCSitePlugin) SetSessionValue(r *http.Request, name string, value str
 
 // DeleteSessionValue handler.
 func (c *GRPCSitePlugin) DeleteSessionValue(r *http.Request, name string) {
-	_, err := c.client.DeleteSessionValue(context.Background(), &protodef.SiteDeleteSessionValueRequest{
+	_, err := c.client.DeleteSessionValue(r.Context(), &protodef.SiteDeleteSessionValueRequest{
 		Requestid: requestuuid.Get(r),
 		Name:      name,
 	})
@@ -450,8 +450,8 @@ func (c *GRPCSitePlugin) PluginNeighborSettingsList(ctx context.Context, pluginN
 }
 
 // SetPluginSetting handler.
-func (c *GRPCSitePlugin) SetPluginSetting(settingName string, value string) error {
-	_, err := c.client.SetPluginSetting(context.Background(), &protodef.SiteSetPluginSettingRequest{
+func (c *GRPCSitePlugin) SetPluginSetting(ctx context.Context, settingName string, value string) error {
+	_, err := c.client.SetPluginSetting(ctx, &protodef.SiteSetPluginSettingRequest{
 		Settingname: settingName,
 		Value:       value,
 	})
@@ -543,8 +543,8 @@ func (c *GRPCSitePlugin) NeighborPluginSetting(ctx context.Context, pluginName s
 }
 
 // PluginTrusted handler.
-func (c *GRPCSitePlugin) PluginTrusted(pluginName string) (bool, error) {
-	resp, err := c.client.PluginTrusted(context.Background(), &protodef.SitePluginTrustedRequest{
+func (c *GRPCSitePlugin) PluginTrusted(ctx context.Context, pluginName string) (bool, error) {
+	resp, err := c.client.PluginTrusted(ctx, &protodef.SitePluginTrustedRequest{
 		Pluginname: pluginName,
 	})
 	if err != nil {
@@ -555,8 +555,8 @@ func (c *GRPCSitePlugin) PluginTrusted(pluginName string) (bool, error) {
 }
 
 // SetTitle handler.
-func (c *GRPCSitePlugin) SetTitle(title string) error {
-	_, err := c.client.SetTitle(context.Background(), &protodef.SiteSetTitleRequest{
+func (c *GRPCSitePlugin) SetTitle(ctx context.Context, title string) error {
+	_, err := c.client.SetTitle(ctx, &protodef.SiteSetTitleRequest{
 		Title: title,
 	})
 	if err != nil {
@@ -567,8 +567,8 @@ func (c *GRPCSitePlugin) SetTitle(title string) error {
 }
 
 // Title handler.
-func (c *GRPCSitePlugin) Title() (string, error) {
-	resp, err := c.client.Title(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) Title(ctx context.Context) (string, error) {
+	resp, err := c.client.Title(ctx, &protodef.Empty{})
 	if err != nil {
 		return "", ErrorHandler(err)
 	}
@@ -577,8 +577,8 @@ func (c *GRPCSitePlugin) Title() (string, error) {
 }
 
 // SetScheme handler.
-func (c *GRPCSitePlugin) SetScheme(scheme string) error {
-	_, err := c.client.SetScheme(context.Background(), &protodef.SiteSetSchemeRequest{
+func (c *GRPCSitePlugin) SetScheme(ctx context.Context, scheme string) error {
+	_, err := c.client.SetScheme(ctx, &protodef.SiteSetSchemeRequest{
 		Scheme: scheme,
 	})
 	if err != nil {
@@ -589,8 +589,8 @@ func (c *GRPCSitePlugin) SetScheme(scheme string) error {
 }
 
 // Scheme handler.
-func (c *GRPCSitePlugin) Scheme() (string, error) {
-	resp, err := c.client.Scheme(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) Scheme(ctx context.Context) (string, error) {
+	resp, err := c.client.Scheme(ctx, &protodef.Empty{})
 	if err != nil {
 		return "", ErrorHandler(err)
 	}
@@ -599,8 +599,8 @@ func (c *GRPCSitePlugin) Scheme() (string, error) {
 }
 
 // SetURL handler.
-func (c *GRPCSitePlugin) SetURL(URL string) error {
-	_, err := c.client.SetURL(context.Background(), &protodef.SiteSetURLRequest{
+func (c *GRPCSitePlugin) SetURL(ctx context.Context, URL string) error {
+	_, err := c.client.SetURL(ctx, &protodef.SiteSetURLRequest{
 		Url: URL,
 	})
 	if err != nil {
@@ -611,8 +611,8 @@ func (c *GRPCSitePlugin) SetURL(URL string) error {
 }
 
 // URL handler.
-func (c *GRPCSitePlugin) URL() (string, error) {
-	resp, err := c.client.URL(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) URL(ctx context.Context) (string, error) {
+	resp, err := c.client.URL(ctx, &protodef.Empty{})
 	if err != nil {
 		return "", ErrorHandler(err)
 	}
@@ -621,8 +621,8 @@ func (c *GRPCSitePlugin) URL() (string, error) {
 }
 
 // FullURL handler.
-func (c *GRPCSitePlugin) FullURL() (string, error) {
-	resp, err := c.client.FullURL(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) FullURL(ctx context.Context) (string, error) {
+	resp, err := c.client.FullURL(ctx, &protodef.Empty{})
 	if err != nil {
 		return "", ErrorHandler(err)
 	}
@@ -631,8 +631,8 @@ func (c *GRPCSitePlugin) FullURL() (string, error) {
 }
 
 // Updated handler.
-func (c *GRPCSitePlugin) Updated() (time.Time, error) {
-	resp, err := c.client.Updated(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) Updated(ctx context.Context) (time.Time, error) {
+	resp, err := c.client.Updated(ctx, &protodef.Empty{})
 	if err != nil {
 		return time.Time{}, ErrorHandler(err)
 	}
@@ -641,8 +641,8 @@ func (c *GRPCSitePlugin) Updated() (time.Time, error) {
 }
 
 // SetContent handler.
-func (c *GRPCSitePlugin) SetContent(content string) error {
-	_, err := c.client.SetContent(context.Background(), &protodef.SiteSetContentRequest{
+func (c *GRPCSitePlugin) SetContent(ctx context.Context, content string) error {
+	_, err := c.client.SetContent(ctx, &protodef.SiteSetContentRequest{
 		Content: content,
 	})
 	if err != nil {
@@ -653,8 +653,8 @@ func (c *GRPCSitePlugin) SetContent(content string) error {
 }
 
 // Content handler.
-func (c *GRPCSitePlugin) Content() (string, error) {
-	resp, err := c.client.Content(context.Background(), &protodef.Empty{})
+func (c *GRPCSitePlugin) Content(ctx context.Context) (string, error) {
+	resp, err := c.client.Content(ctx, &protodef.Empty{})
 	if err != nil {
 		return "", ErrorHandler(err)
 	}
@@ -663,9 +663,9 @@ func (c *GRPCSitePlugin) Content() (string, error) {
 }
 
 // Tags handler.
-func (c *GRPCSitePlugin) Tags(onlyPublished bool) (ambient.TagList, error) {
+func (c *GRPCSitePlugin) Tags(ctx context.Context, onlyPublished bool) (ambient.TagList, error) {
 	tags := make(ambient.TagList, 0)
-	resp, err := c.client.Tags(context.Background(), &protodef.SiteTagsRequest{
+	resp, err := c.client.Tags(ctx, &protodef.SiteTagsRequest{
 		Onlypublished: onlyPublished,
 	})
 	if err != nil {

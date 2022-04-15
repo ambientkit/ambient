@@ -11,7 +11,7 @@ import (
 
 // PluginNeighborSettingsList gets the grants requests for a neighbor plugin.
 func (ss *SecureSite) PluginNeighborSettingsList(ctx context.Context, pluginName string) ([]ambient.Setting, error) {
-	if !ss.Authorized(ambient.GrantPluginNeighborSettingRead) {
+	if !ss.Authorized(ctx, ambient.GrantPluginNeighborSettingRead) {
 		return nil, amberror.ErrAccessDenied
 	}
 
@@ -24,8 +24,8 @@ func (ss *SecureSite) PluginNeighborSettingsList(ctx context.Context, pluginName
 }
 
 // SetPluginSetting sets a variable for the plugin.
-func (ss *SecureSite) SetPluginSetting(settingName string, value string) error {
-	if !ss.Authorized(ambient.GrantPluginSettingWrite) {
+func (ss *SecureSite) SetPluginSetting(ctx context.Context, settingName string, value string) error {
+	if !ss.Authorized(ctx, ambient.GrantPluginSettingWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -34,7 +34,7 @@ func (ss *SecureSite) SetPluginSetting(settingName string, value string) error {
 
 // PluginSettingBool returns a plugin setting as a bool.
 func (ss *SecureSite) PluginSettingBool(ctx context.Context, name string) (bool, error) {
-	if !ss.Authorized(ambient.GrantPluginSettingRead) {
+	if !ss.Authorized(ctx, ambient.GrantPluginSettingRead) {
 		return false, amberror.ErrAccessDenied
 	}
 
@@ -52,7 +52,7 @@ func (ss *SecureSite) PluginSettingBool(ctx context.Context, name string) (bool,
 
 // PluginSettingString returns a setting for the plugin as a string.
 func (ss *SecureSite) PluginSettingString(ctx context.Context, fieldName string) (string, error) {
-	if !ss.Authorized(ambient.GrantPluginSettingRead) {
+	if !ss.Authorized(ctx, ambient.GrantPluginSettingRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -71,7 +71,7 @@ func (ss *SecureSite) PluginSettingString(ctx context.Context, fieldName string)
 
 // PluginSetting returns a setting for the plugin as an interface{}.
 func (ss *SecureSite) PluginSetting(ctx context.Context, fieldName string) (interface{}, error) {
-	if !ss.Authorized(ambient.GrantPluginSettingRead) {
+	if !ss.Authorized(ctx, ambient.GrantPluginSettingRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -90,7 +90,7 @@ func (ss *SecureSite) PluginSetting(ctx context.Context, fieldName string) (inte
 
 // SetNeighborPluginSetting sets a setting for a neighbor plugin.
 func (ss *SecureSite) SetNeighborPluginSetting(ctx context.Context, pluginName string, settingName string, value string) error {
-	if !ss.Authorized(ambient.GrantPluginNeighborSettingWrite) {
+	if !ss.Authorized(ctx, ambient.GrantPluginNeighborSettingWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -117,7 +117,7 @@ func (ss *SecureSite) SetNeighborPluginSetting(ctx context.Context, pluginName s
 
 // NeighborPluginSettingString returns a setting for a neighbor plugin as a string.
 func (ss *SecureSite) NeighborPluginSettingString(ctx context.Context, pluginName string, fieldName string) (string, error) {
-	if !ss.Authorized(ambient.GrantPluginNeighborSettingRead) {
+	if !ss.Authorized(ctx, ambient.GrantPluginNeighborSettingRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -136,7 +136,7 @@ func (ss *SecureSite) NeighborPluginSettingString(ctx context.Context, pluginNam
 
 // NeighborPluginSetting returns a setting for a neighbor plugin as an interface{}.
 func (ss *SecureSite) NeighborPluginSetting(ctx context.Context, pluginName string, fieldName string) (interface{}, error) {
-	if !ss.Authorized(ambient.GrantPluginNeighborSettingRead) {
+	if !ss.Authorized(ctx, ambient.GrantPluginNeighborSettingRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -164,8 +164,8 @@ func (ss *SecureSite) settingField(ctx context.Context, pluginName string, setti
 }
 
 // PluginTrusted returns whether a plugin is trusted or not.
-func (ss *SecureSite) PluginTrusted(pluginName string) (bool, error) {
-	if !ss.Authorized(ambient.GrantPluginTrustedRead) {
+func (ss *SecureSite) PluginTrusted(ctx context.Context, pluginName string) (bool, error) {
+	if !ss.Authorized(ctx, ambient.GrantPluginTrustedRead) {
 		return false, amberror.ErrAccessDenied
 	}
 

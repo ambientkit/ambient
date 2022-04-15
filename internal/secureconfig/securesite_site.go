@@ -1,6 +1,7 @@
 package secureconfig
 
 import (
+	"context"
 	"time"
 
 	"github.com/ambientkit/ambient"
@@ -8,8 +9,8 @@ import (
 )
 
 // SetTitle sets the title.
-func (ss *SecureSite) SetTitle(title string) error {
-	if !ss.Authorized(ambient.GrantSiteTitleWrite) {
+func (ss *SecureSite) SetTitle(ctx context.Context, title string) error {
+	if !ss.Authorized(ctx, ambient.GrantSiteTitleWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -17,8 +18,8 @@ func (ss *SecureSite) SetTitle(title string) error {
 }
 
 // Title returns the title.
-func (ss *SecureSite) Title() (string, error) {
-	if !ss.Authorized(ambient.GrantSiteTitleRead) {
+func (ss *SecureSite) Title(ctx context.Context) (string, error) {
+	if !ss.Authorized(ctx, ambient.GrantSiteTitleRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -26,8 +27,8 @@ func (ss *SecureSite) Title() (string, error) {
 }
 
 // SetScheme sets the site scheme.
-func (ss *SecureSite) SetScheme(scheme string) error {
-	if !ss.Authorized(ambient.GrantSiteSchemeWrite) {
+func (ss *SecureSite) SetScheme(ctx context.Context, scheme string) error {
+	if !ss.Authorized(ctx, ambient.GrantSiteSchemeWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -35,8 +36,8 @@ func (ss *SecureSite) SetScheme(scheme string) error {
 }
 
 // Scheme returns the site scheme.
-func (ss *SecureSite) Scheme() (string, error) {
-	if !ss.Authorized(ambient.GrantSiteSchemeRead) {
+func (ss *SecureSite) Scheme(ctx context.Context) (string, error) {
+	if !ss.Authorized(ctx, ambient.GrantSiteSchemeRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -44,8 +45,8 @@ func (ss *SecureSite) Scheme() (string, error) {
 }
 
 // SetURL sets the site URL.
-func (ss *SecureSite) SetURL(URL string) error {
-	if !ss.Authorized(ambient.GrantSiteURLWrite) {
+func (ss *SecureSite) SetURL(ctx context.Context, URL string) error {
+	if !ss.Authorized(ctx, ambient.GrantSiteURLWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -53,8 +54,8 @@ func (ss *SecureSite) SetURL(URL string) error {
 }
 
 // URL returns the URL without the scheme at the beginning.
-func (ss *SecureSite) URL() (string, error) {
-	if !ss.Authorized(ambient.GrantSiteURLRead) {
+func (ss *SecureSite) URL(ctx context.Context) (string, error) {
+	if !ss.Authorized(ctx, ambient.GrantSiteURLRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -62,8 +63,9 @@ func (ss *SecureSite) URL() (string, error) {
 }
 
 // FullURL returns the URL with the scheme at the beginning.
-func (ss *SecureSite) FullURL() (string, error) {
-	if !ss.Authorized(ambient.GrantSiteURLRead) || !ss.Authorized(ambient.GrantSiteSchemeRead) {
+func (ss *SecureSite) FullURL(ctx context.Context) (string, error) {
+	if !ss.Authorized(ctx, ambient.GrantSiteURLRead) ||
+		!ss.Authorized(ctx, ambient.GrantSiteSchemeRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -71,8 +73,8 @@ func (ss *SecureSite) FullURL() (string, error) {
 }
 
 // Updated returns the home last updated timestamp.
-func (ss *SecureSite) Updated() (time.Time, error) {
-	if !ss.Authorized(ambient.GrantSiteUpdatedRead) {
+func (ss *SecureSite) Updated(ctx context.Context) (time.Time, error) {
+	if !ss.Authorized(ctx, ambient.GrantSiteUpdatedRead) {
 		return time.Now(), amberror.ErrAccessDenied
 	}
 
@@ -80,8 +82,8 @@ func (ss *SecureSite) Updated() (time.Time, error) {
 }
 
 // SetContent sets the home page content.
-func (ss *SecureSite) SetContent(content string) error {
-	if !ss.Authorized(ambient.GrantSiteContentWrite) {
+func (ss *SecureSite) SetContent(ctx context.Context, content string) error {
+	if !ss.Authorized(ctx, ambient.GrantSiteContentWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -89,8 +91,8 @@ func (ss *SecureSite) SetContent(content string) error {
 }
 
 // Content returns the site home page content.
-func (ss *SecureSite) Content() (string, error) {
-	if !ss.Authorized(ambient.GrantSiteContentRead) {
+func (ss *SecureSite) Content(ctx context.Context) (string, error) {
+	if !ss.Authorized(ctx, ambient.GrantSiteContentRead) {
 		return "", amberror.ErrAccessDenied
 	}
 
@@ -98,8 +100,8 @@ func (ss *SecureSite) Content() (string, error) {
 }
 
 // Tags returns the list of tags.
-func (ss *SecureSite) Tags(onlyPublished bool) (ambient.TagList, error) {
-	if !ss.Authorized(ambient.GrantSitePostRead) {
+func (ss *SecureSite) Tags(ctx context.Context, onlyPublished bool) (ambient.TagList, error) {
+	if !ss.Authorized(ctx, ambient.GrantSitePostRead) {
 		return nil, amberror.ErrAccessDenied
 	}
 

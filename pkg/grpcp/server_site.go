@@ -20,7 +20,7 @@ type GRPCSiteServer struct {
 
 // Load handler.
 func (m *GRPCSiteServer) Load(ctx context.Context, req *protodef.Empty) (resp *protodef.Empty, err error) {
-	err = m.Impl.Load()
+	err = m.Impl.Load(ctx)
 	return &protodef.Empty{}, err
 }
 
@@ -32,7 +32,7 @@ func (m *GRPCSiteServer) LoadSinglePluginPages(ctx context.Context, req *protode
 
 // Authorized handler.
 func (m *GRPCSiteServer) Authorized(ctx context.Context, req *protodef.SiteAuthorizedRequest) (resp *protodef.SiteAuthorizedResponse, err error) {
-	authorized := m.Impl.Authorized(ambient.Grant(req.Grant))
+	authorized := m.Impl.Authorized(ctx, ambient.Grant(req.Grant))
 	return &protodef.SiteAuthorizedResponse{
 		Authorized: authorized,
 	}, err
@@ -80,7 +80,7 @@ func (m *GRPCSiteServer) NeighborPluginGrants(ctx context.Context, req *protodef
 // NeighborPluginGranted handler.
 func (m *GRPCSiteServer) NeighborPluginGranted(ctx context.Context, req *protodef.SiteNeighborPluginGrantedRequest) (
 	resp *protodef.SiteNeighborPluginGrantedResponse, err error) {
-	granted, err := m.Impl.NeighborPluginGranted(req.Pluginname, ambient.Grant(req.Grant))
+	granted, err := m.Impl.NeighborPluginGranted(ctx, req.Pluginname, ambient.Grant(req.Grant))
 	if err != nil {
 		return &protodef.SiteNeighborPluginGrantedResponse{}, err
 	}
@@ -113,7 +113,7 @@ func (m *GRPCSiteServer) SetNeighborPluginGrant(ctx context.Context, req *protod
 // Plugins handler.
 func (m *GRPCSiteServer) Plugins(ctx context.Context, req *protodef.Empty) (
 	resp *protodef.SitePluginsResponse, err error) {
-	pd, err := m.Impl.Plugins()
+	pd, err := m.Impl.Plugins(ctx)
 	if err != nil {
 		return &protodef.SitePluginsResponse{
 			Plugindata: &structpb.Struct{},
@@ -129,7 +129,7 @@ func (m *GRPCSiteServer) Plugins(ctx context.Context, req *protodef.Empty) (
 // PluginNames handler.
 func (m *GRPCSiteServer) PluginNames(ctx context.Context, req *protodef.Empty) (
 	resp *protodef.SitePluginNamesResponse, err error) {
-	names, err := m.Impl.PluginNames()
+	names, err := m.Impl.PluginNames(ctx)
 	if err != nil {
 		return &protodef.SitePluginNamesResponse{
 			Names: make([]string, 0),
@@ -170,14 +170,14 @@ func (m *GRPCSiteServer) SavePost(ctx context.Context, req *protodef.SiteSavePos
 	if err != nil {
 		return &protodef.Empty{}, err
 	}
-	err = m.Impl.SavePost(req.Id, post)
+	err = m.Impl.SavePost(ctx, req.Id, post)
 	return &protodef.Empty{}, err
 }
 
 // PostsAndPages handler.
 func (m *GRPCSiteServer) PostsAndPages(ctx context.Context, req *protodef.SitePostsAndPagesRequest) (
 	resp *protodef.SitePostsAndPagesResponse, err error) {
-	post, err := m.Impl.PostsAndPages(req.Onlypublished)
+	post, err := m.Impl.PostsAndPages(ctx, req.Onlypublished)
 	if err != nil {
 		return &protodef.SitePostsAndPagesResponse{}, err
 	}
@@ -191,7 +191,7 @@ func (m *GRPCSiteServer) PostsAndPages(ctx context.Context, req *protodef.SitePo
 // PublishedPosts handler.
 func (m *GRPCSiteServer) PublishedPosts(ctx context.Context, req *protodef.Empty) (
 	resp *protodef.SitePublishedPostsResponse, err error) {
-	post, err := m.Impl.PublishedPosts()
+	post, err := m.Impl.PublishedPosts(ctx)
 	if err != nil {
 		return &protodef.SitePublishedPostsResponse{}, err
 	}
@@ -205,7 +205,7 @@ func (m *GRPCSiteServer) PublishedPosts(ctx context.Context, req *protodef.Empty
 // PublishedPages handler.
 func (m *GRPCSiteServer) PublishedPages(ctx context.Context, req *protodef.Empty) (
 	resp *protodef.SitePublishedPagesResponse, err error) {
-	post, err := m.Impl.PublishedPages()
+	post, err := m.Impl.PublishedPages(ctx)
 	if err != nil {
 		return &protodef.SitePublishedPagesResponse{}, err
 	}
@@ -219,7 +219,7 @@ func (m *GRPCSiteServer) PublishedPages(ctx context.Context, req *protodef.Empty
 // PostBySlug handler.
 func (m *GRPCSiteServer) PostBySlug(ctx context.Context, req *protodef.SitePostBySlugRequest) (
 	resp *protodef.SitePostBySlugResponse, err error) {
-	post, err := m.Impl.PostBySlug(req.Slug)
+	post, err := m.Impl.PostBySlug(ctx, req.Slug)
 	if err != nil {
 		return &protodef.SitePostBySlugResponse{}, err
 	}
@@ -233,7 +233,7 @@ func (m *GRPCSiteServer) PostBySlug(ctx context.Context, req *protodef.SitePostB
 // PostByID handler.
 func (m *GRPCSiteServer) PostByID(ctx context.Context, req *protodef.SitePostByIDRequest) (
 	resp *protodef.SitePostByIDResponse, err error) {
-	post, err := m.Impl.PostByID(req.Id)
+	post, err := m.Impl.PostByID(ctx, req.Id)
 	if err != nil {
 		return &protodef.SitePostByIDResponse{}, err
 	}
@@ -247,7 +247,7 @@ func (m *GRPCSiteServer) PostByID(ctx context.Context, req *protodef.SitePostByI
 // DeletePostByID handler.
 func (m *GRPCSiteServer) DeletePostByID(ctx context.Context, req *protodef.SiteDeletePostByIDRequest) (
 	resp *protodef.Empty, err error) {
-	err = m.Impl.DeletePostByID(req.Id)
+	err = m.Impl.DeletePostByID(ctx, req.Id)
 	if err != nil {
 		return &protodef.Empty{}, err
 	}
@@ -258,7 +258,7 @@ func (m *GRPCSiteServer) DeletePostByID(ctx context.Context, req *protodef.SiteD
 // PluginNeighborRoutesList handler.
 func (m *GRPCSiteServer) PluginNeighborRoutesList(ctx context.Context, req *protodef.SitePluginNeighborRoutesListRequest) (
 	resp *protodef.SitePluginNeighborRoutesListResponse, err error) {
-	routes, err := m.Impl.PluginNeighborRoutesList(req.Pluginname)
+	routes, err := m.Impl.PluginNeighborRoutesList(ctx, req.Pluginname)
 	if err != nil {
 		return &protodef.SitePluginNeighborRoutesListResponse{}, err
 	}
@@ -412,7 +412,7 @@ func (m *GRPCSiteServer) PluginNeighborSettingsList(ctx context.Context, req *pr
 
 // SetPluginSetting handler.
 func (m *GRPCSiteServer) SetPluginSetting(ctx context.Context, req *protodef.SiteSetPluginSettingRequest) (resp *protodef.Empty, err error) {
-	err = m.Impl.SetPluginSetting(req.Settingname, req.Value)
+	err = m.Impl.SetPluginSetting(ctx, req.Settingname, req.Value)
 	if err != nil {
 		return &protodef.Empty{}, err
 	}
@@ -500,7 +500,7 @@ func (m *GRPCSiteServer) NeighborPluginSetting(ctx context.Context, req *protode
 
 // PluginTrusted handler.
 func (m *GRPCSiteServer) PluginTrusted(ctx context.Context, req *protodef.SitePluginTrustedRequest) (resp *protodef.SitePluginTrustedResponse, err error) {
-	trusted, err := m.Impl.PluginTrusted(req.Pluginname)
+	trusted, err := m.Impl.PluginTrusted(ctx, req.Pluginname)
 	if err != nil {
 		return &protodef.SitePluginTrustedResponse{
 			Trusted: false,
@@ -514,7 +514,7 @@ func (m *GRPCSiteServer) PluginTrusted(ctx context.Context, req *protodef.SitePl
 
 // SetTitle handler.
 func (m *GRPCSiteServer) SetTitle(ctx context.Context, req *protodef.SiteSetTitleRequest) (resp *protodef.Empty, err error) {
-	err = m.Impl.SetTitle(req.Title)
+	err = m.Impl.SetTitle(ctx, req.Title)
 	if err != nil {
 		return &protodef.Empty{}, err
 	}
@@ -524,7 +524,7 @@ func (m *GRPCSiteServer) SetTitle(ctx context.Context, req *protodef.SiteSetTitl
 
 // Title handler.
 func (m *GRPCSiteServer) Title(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteTitleResponse, err error) {
-	title, err := m.Impl.Title()
+	title, err := m.Impl.Title(ctx)
 	if err != nil {
 		return &protodef.SiteTitleResponse{
 			Title: "",
@@ -538,7 +538,7 @@ func (m *GRPCSiteServer) Title(ctx context.Context, req *protodef.Empty) (resp *
 
 // SetScheme handler.
 func (m *GRPCSiteServer) SetScheme(ctx context.Context, req *protodef.SiteSetSchemeRequest) (resp *protodef.Empty, err error) {
-	err = m.Impl.SetScheme(req.Scheme)
+	err = m.Impl.SetScheme(ctx, req.Scheme)
 	if err != nil {
 		return &protodef.Empty{}, err
 	}
@@ -548,7 +548,7 @@ func (m *GRPCSiteServer) SetScheme(ctx context.Context, req *protodef.SiteSetSch
 
 // Scheme handler.
 func (m *GRPCSiteServer) Scheme(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteSchemeResponse, err error) {
-	scheme, err := m.Impl.Scheme()
+	scheme, err := m.Impl.Scheme(ctx)
 	if err != nil {
 		return &protodef.SiteSchemeResponse{
 			Scheme: "",
@@ -562,7 +562,7 @@ func (m *GRPCSiteServer) Scheme(ctx context.Context, req *protodef.Empty) (resp 
 
 // SetURL handler.
 func (m *GRPCSiteServer) SetURL(ctx context.Context, req *protodef.SiteSetURLRequest) (resp *protodef.Empty, err error) {
-	err = m.Impl.SetURL(req.Url)
+	err = m.Impl.SetURL(ctx, req.Url)
 	if err != nil {
 		return &protodef.Empty{}, err
 	}
@@ -572,7 +572,7 @@ func (m *GRPCSiteServer) SetURL(ctx context.Context, req *protodef.SiteSetURLReq
 
 // URL handler.
 func (m *GRPCSiteServer) URL(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteURLResponse, err error) {
-	URL, err := m.Impl.URL()
+	URL, err := m.Impl.URL(ctx)
 	if err != nil {
 		return &protodef.SiteURLResponse{
 			Url: "",
@@ -586,7 +586,7 @@ func (m *GRPCSiteServer) URL(ctx context.Context, req *protodef.Empty) (resp *pr
 
 // FullURL handler.
 func (m *GRPCSiteServer) FullURL(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteFullURLResponse, err error) {
-	FullURL, err := m.Impl.FullURL()
+	FullURL, err := m.Impl.FullURL(ctx)
 	if err != nil {
 		return &protodef.SiteFullURLResponse{
 			Fullurl: "",
@@ -600,7 +600,7 @@ func (m *GRPCSiteServer) FullURL(ctx context.Context, req *protodef.Empty) (resp
 
 // Updated handler.
 func (m *GRPCSiteServer) Updated(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteUpdatedResponse, err error) {
-	timestamp, err := m.Impl.Updated()
+	timestamp, err := m.Impl.Updated(ctx)
 	if err != nil {
 		return &protodef.SiteUpdatedResponse{
 			Timestamp: timestamppb.New(timestamp),
@@ -614,7 +614,7 @@ func (m *GRPCSiteServer) Updated(ctx context.Context, req *protodef.Empty) (resp
 
 // SetContent handler.
 func (m *GRPCSiteServer) SetContent(ctx context.Context, req *protodef.SiteSetContentRequest) (resp *protodef.Empty, err error) {
-	err = m.Impl.SetContent(req.Content)
+	err = m.Impl.SetContent(ctx, req.Content)
 	if err != nil {
 		return &protodef.Empty{}, err
 	}
@@ -624,7 +624,7 @@ func (m *GRPCSiteServer) SetContent(ctx context.Context, req *protodef.SiteSetCo
 
 // Content handler.
 func (m *GRPCSiteServer) Content(ctx context.Context, req *protodef.Empty) (resp *protodef.SiteContentResponse, err error) {
-	Content, err := m.Impl.Content()
+	Content, err := m.Impl.Content(ctx)
 	if err != nil {
 		return &protodef.SiteContentResponse{
 			Content: "",
@@ -639,7 +639,7 @@ func (m *GRPCSiteServer) Content(ctx context.Context, req *protodef.Empty) (resp
 // Tags handler.
 func (m *GRPCSiteServer) Tags(ctx context.Context, req *protodef.SiteTagsRequest) (resp *protodef.SiteTagsResponse, err error) {
 	tags := make([]*protodef.Tag, 0)
-	arr, err := m.Impl.Tags(req.Onlypublished)
+	arr, err := m.Impl.Tags(ctx, req.Onlypublished)
 	if err != nil {
 		return &protodef.SiteTagsResponse{
 			Tags: tags,

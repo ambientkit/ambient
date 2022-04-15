@@ -74,8 +74,8 @@ func (ss *SecureSite) Error(siteError error) (err error) {
 }
 
 // Load forces a reload of the data.
-func (ss *SecureSite) Load() error {
-	if !ss.Authorized(ambient.GrantSiteLoadTrigger) {
+func (ss *SecureSite) Load(ctx context.Context) error {
+	if !ss.Authorized(ctx, ambient.GrantSiteLoadTrigger) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -83,6 +83,6 @@ func (ss *SecureSite) Load() error {
 }
 
 // Authorized determines if the current context has access.
-func (ss *SecureSite) Authorized(grant ambient.Grant) bool {
+func (ss *SecureSite) Authorized(_ context.Context, grant ambient.Grant) bool {
 	return ss.pluginsystem.Authorized(ss.pluginName, grant)
 }

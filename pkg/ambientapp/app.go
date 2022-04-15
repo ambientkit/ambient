@@ -68,7 +68,7 @@ func loadLogger(ctx context.Context, appName string, appVersion string, plugin a
 	}
 
 	// Get the logger from the plugins.
-	log, err := plugin.Logger(appName, appVersion, nil)
+	log, err := plugin.Logger(ctx, appName, appVersion, nil)
 	if err != nil {
 		return nil, err
 	} else if log == nil {
@@ -192,7 +192,7 @@ func (app *App) StopGRPCClients() {
 func (app *App) Handler(ctx context.Context) (http.Handler, error) {
 	// Get the session manager from the plugins.
 	if app.pluginsystem.SessionManager() != nil {
-		sm, err := app.pluginsystem.SessionManager().SessionManager(app.log.Named("sessionmanager"), app.sessionstorer)
+		sm, err := app.pluginsystem.SessionManager().SessionManager(ctx, app.log.Named("sessionmanager"), app.sessionstorer)
 		if err != nil {
 			app.log.Error(err.Error())
 		} else if sm != nil {
@@ -210,7 +210,7 @@ func (app *App) Handler(ctx context.Context) (http.Handler, error) {
 
 	// Get the template engine.
 	if app.pluginsystem.TemplateEngine() != nil {
-		tt, err := app.pluginsystem.TemplateEngine().TemplateEngine(app.log.Named("templateengine"), pi)
+		tt, err := app.pluginsystem.TemplateEngine().TemplateEngine(ctx, app.log.Named("templateengine"), pi)
 		if err != nil {
 			return nil, err
 		} else if tt != nil {
@@ -225,7 +225,7 @@ func (app *App) Handler(ctx context.Context) (http.Handler, error) {
 
 	// Get the router.
 	if app.pluginsystem.Router() != nil {
-		rm, err := app.pluginsystem.Router().Router(app.log.Named("router"), app.renderer)
+		rm, err := app.pluginsystem.Router().Router(ctx, app.log.Named("router"), app.renderer)
 		if err != nil {
 			return nil, err
 		} else if rm != nil {

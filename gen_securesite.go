@@ -13,24 +13,24 @@ type SecureSite interface {
 	// Error handles returning the proper error.
 	Error(siteError error) (err error)
 	// Load forces a reload of the data.
-	Load() error
+	Load(ctx context.Context) error
 	// Authorized determines if the current context has access.
-	Authorized(grant Grant) bool
+	Authorized(_ context.Context, grant Grant) bool
 	// NeighborPluginGrantList gets the grants requests for a neighbor plugin.
 	NeighborPluginGrantList(ctx context.Context, pluginName string) ([]GrantRequest, error)
 	// NeighborPluginGrants gets the map of granted permissions.
 	NeighborPluginGrants(ctx context.Context, pluginName string) (map[Grant]bool, error)
 	// NeighborPluginGranted returns true if the plugin has the grant.
-	NeighborPluginGranted(pluginName string, grantName Grant) (bool, error)
+	NeighborPluginGranted(ctx context.Context, pluginName string, grantName Grant) (bool, error)
 	// NeighborPluginRequestedGrant returns true if the plugin requests the grant.
 	// This shouldn't be used to determine if a plugin has been approved the grant.
 	NeighborPluginRequestedGrant(ctx context.Context, pluginName string, grantName Grant) (bool, error)
 	// SetNeighborPluginGrant sets a grant for a neighbor plugin.
 	SetNeighborPluginGrant(ctx context.Context, pluginName string, grantName Grant, granted bool) error
 	// Plugins returns the plugin list.
-	Plugins() (map[string]PluginData, error)
+	Plugins(ctx context.Context) (map[string]PluginData, error)
 	// PluginNames returns the list of plugin name.
-	PluginNames() ([]string, error)
+	PluginNames(ctx context.Context) ([]string, error)
 	// DeletePlugin deletes a plugin.
 	DeletePlugin(ctx context.Context, name string) error
 	// EnablePlugin enables a plugin.
@@ -40,21 +40,21 @@ type SecureSite interface {
 	// DisablePlugin disables a plugin.
 	DisablePlugin(ctx context.Context, pluginName string, unloadPlugin bool) error
 	// SavePost saves a post.
-	SavePost(ID string, post Post) error
+	SavePost(ctx context.Context, ID string, post Post) error
 	// PostsAndPages returns the list of posts and pages.
-	PostsAndPages(onlyPublished bool) (PostWithIDList, error)
+	PostsAndPages(ctx context.Context, onlyPublished bool) (PostWithIDList, error)
 	// PublishedPosts returns the list of published posts.
-	PublishedPosts() ([]Post, error)
+	PublishedPosts(ctx context.Context) ([]Post, error)
 	// PublishedPages returns the list of published pages.
-	PublishedPages() ([]Post, error)
+	PublishedPages(ctx context.Context) ([]Post, error)
 	// PostBySlug returns the post by slug.
-	PostBySlug(slug string) (PostWithID, error)
+	PostBySlug(ctx context.Context, slug string) (PostWithID, error)
 	// PostByID returns the post by ID.
-	PostByID(ID string) (Post, error)
+	PostByID(ctx context.Context, ID string) (Post, error)
 	// DeletePostByID deletes a post.
-	DeletePostByID(ID string) error
+	DeletePostByID(ctx context.Context, ID string) error
 	// PluginNeighborRoutesList gets the routes for a neighbor plugin.
-	PluginNeighborRoutesList(pluginName string) ([]Route, error)
+	PluginNeighborRoutesList(ctx context.Context, pluginName string) ([]Route, error)
 	// AuthenticatedUser returns if the current user is authenticated.
 	AuthenticatedUser(r *http.Request) (string, error)
 	// UserLogin sets the current user as authenticated.
@@ -79,7 +79,7 @@ type SecureSite interface {
 	// PluginNeighborSettingsList gets the grants requests for a neighbor plugin.
 	PluginNeighborSettingsList(ctx context.Context, pluginName string) ([]Setting, error)
 	// SetPluginSetting sets a variable for the plugin.
-	SetPluginSetting(settingName string, value string) error
+	SetPluginSetting(ctx context.Context, settingName string, value string) error
 	// PluginSettingBool returns a plugin setting as a bool.
 	PluginSettingBool(ctx context.Context, name string) (bool, error)
 	// PluginSettingString returns a setting for the plugin as a string.
@@ -93,27 +93,27 @@ type SecureSite interface {
 	// NeighborPluginSetting returns a setting for a neighbor plugin as an interface{}.
 	NeighborPluginSetting(ctx context.Context, pluginName string, fieldName string) (interface{}, error)
 	// PluginTrusted returns whether a plugin is trusted or not.
-	PluginTrusted(pluginName string) (bool, error)
+	PluginTrusted(ctx context.Context, pluginName string) (bool, error)
 	// SetTitle sets the title.
-	SetTitle(title string) error
+	SetTitle(ctx context.Context, title string) error
 	// Title returns the title.
-	Title() (string, error)
+	Title(ctx context.Context) (string, error)
 	// SetScheme sets the site scheme.
-	SetScheme(scheme string) error
+	SetScheme(ctx context.Context, scheme string) error
 	// Scheme returns the site scheme.
-	Scheme() (string, error)
+	Scheme(ctx context.Context) (string, error)
 	// SetURL sets the site URL.
-	SetURL(URL string) error
+	SetURL(ctx context.Context, URL string) error
 	// URL returns the URL without the scheme at the beginning.
-	URL() (string, error)
+	URL(ctx context.Context) (string, error)
 	// FullURL returns the URL with the scheme at the beginning.
-	FullURL() (string, error)
+	FullURL(ctx context.Context) (string, error)
 	// Updated returns the home last updated timestamp.
-	Updated() (time.Time, error)
+	Updated(ctx context.Context) (time.Time, error)
 	// SetContent sets the home page content.
-	SetContent(content string) error
+	SetContent(ctx context.Context, content string) error
 	// Content returns the site home page content.
-	Content() (string, error)
+	Content(ctx context.Context) (string, error)
 	// Tags returns the list of tags.
-	Tags(onlyPublished bool) (TagList, error)
+	Tags(ctx context.Context, onlyPublished bool) (TagList, error)
 }

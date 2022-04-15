@@ -35,7 +35,7 @@ type Plugin interface {
 type LoggingPlugin interface {
 	PluginCore
 
-	Logger(appName string, appVersion string, writer io.Writer) (AppLogger, error)
+	Logger(ctx context.Context, appName string, appVersion string, writer io.Writer) (AppLogger, error)
 }
 
 // StoragePluginGroup represents a storage plugin and an optional encryption
@@ -63,14 +63,14 @@ type StorageEncryption interface {
 type RouterPlugin interface {
 	PluginCore
 
-	Router(logger Logger, render Renderer) (AppRouter, error)
+	Router(ctx context.Context, logger Logger, render Renderer) (AppRouter, error)
 }
 
 // TemplateEnginePlugin represents a template engine plugin.
 type TemplateEnginePlugin interface {
 	PluginCore
 
-	TemplateEngine(logger Logger, injector AssetInjector) (Renderer, error)
+	TemplateEngine(ctx context.Context, logger Logger, injector AssetInjector) (Renderer, error)
 }
 
 // SessionManagerPlugin represents a session manager plugin.
@@ -78,7 +78,7 @@ type SessionManagerPlugin interface {
 	PluginCore
 
 	// Session manager should have middleware with it.
-	SessionManager(logger Logger, sessionStorer SessionStorer) (AppSession, error)
+	SessionManager(ctx context.Context, logger Logger, sessionStorer SessionStorer) (AppSession, error)
 	Middleware(context.Context) []func(next http.Handler) http.Handler
 }
 

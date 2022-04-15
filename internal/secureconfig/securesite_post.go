@@ -1,13 +1,15 @@
 package secureconfig
 
 import (
+	"context"
+
 	"github.com/ambientkit/ambient"
 	"github.com/ambientkit/ambient/pkg/amberror"
 )
 
 // SavePost saves a post.
-func (ss *SecureSite) SavePost(ID string, post ambient.Post) error {
-	if !ss.Authorized(ambient.GrantSitePostWrite) {
+func (ss *SecureSite) SavePost(ctx context.Context, ID string, post ambient.Post) error {
+	if !ss.Authorized(ctx, ambient.GrantSitePostWrite) {
 		return amberror.ErrAccessDenied
 	}
 
@@ -15,8 +17,8 @@ func (ss *SecureSite) SavePost(ID string, post ambient.Post) error {
 }
 
 // PostsAndPages returns the list of posts and pages.
-func (ss *SecureSite) PostsAndPages(onlyPublished bool) (ambient.PostWithIDList, error) {
-	if !ss.Authorized(ambient.GrantSitePostRead) {
+func (ss *SecureSite) PostsAndPages(ctx context.Context, onlyPublished bool) (ambient.PostWithIDList, error) {
+	if !ss.Authorized(ctx, ambient.GrantSitePostRead) {
 		return nil, amberror.ErrAccessDenied
 	}
 
@@ -24,8 +26,8 @@ func (ss *SecureSite) PostsAndPages(onlyPublished bool) (ambient.PostWithIDList,
 }
 
 // PublishedPosts returns the list of published posts.
-func (ss *SecureSite) PublishedPosts() ([]ambient.Post, error) {
-	if !ss.Authorized(ambient.GrantSitePostRead) {
+func (ss *SecureSite) PublishedPosts(ctx context.Context) ([]ambient.Post, error) {
+	if !ss.Authorized(ctx, ambient.GrantSitePostRead) {
 		return nil, amberror.ErrAccessDenied
 	}
 
@@ -33,8 +35,8 @@ func (ss *SecureSite) PublishedPosts() ([]ambient.Post, error) {
 }
 
 // PublishedPages returns the list of published pages.
-func (ss *SecureSite) PublishedPages() ([]ambient.Post, error) {
-	if !ss.Authorized(ambient.GrantSitePostRead) {
+func (ss *SecureSite) PublishedPages(ctx context.Context) ([]ambient.Post, error) {
+	if !ss.Authorized(ctx, ambient.GrantSitePostRead) {
 		return nil, amberror.ErrAccessDenied
 	}
 
@@ -42,8 +44,8 @@ func (ss *SecureSite) PublishedPages() ([]ambient.Post, error) {
 }
 
 // PostBySlug returns the post by slug.
-func (ss *SecureSite) PostBySlug(slug string) (ambient.PostWithID, error) {
-	if !ss.Authorized(ambient.GrantSitePostRead) {
+func (ss *SecureSite) PostBySlug(ctx context.Context, slug string) (ambient.PostWithID, error) {
+	if !ss.Authorized(ctx, ambient.GrantSitePostRead) {
 		return ambient.PostWithID{}, amberror.ErrAccessDenied
 	}
 
@@ -56,8 +58,8 @@ func (ss *SecureSite) PostBySlug(slug string) (ambient.PostWithID, error) {
 }
 
 // PostByID returns the post by ID.
-func (ss *SecureSite) PostByID(ID string) (ambient.Post, error) {
-	if !ss.Authorized(ambient.GrantSitePostRead) {
+func (ss *SecureSite) PostByID(ctx context.Context, ID string) (ambient.Post, error) {
+	if !ss.Authorized(ctx, ambient.GrantSitePostRead) {
 		return ambient.Post{}, amberror.ErrAccessDenied
 	}
 
@@ -65,8 +67,8 @@ func (ss *SecureSite) PostByID(ID string) (ambient.Post, error) {
 }
 
 // DeletePostByID deletes a post.
-func (ss *SecureSite) DeletePostByID(ID string) error {
-	if !ss.Authorized(ambient.GrantSitePostDelete) {
+func (ss *SecureSite) DeletePostByID(ctx context.Context, ID string) error {
+	if !ss.Authorized(ctx, ambient.GrantSitePostDelete) {
 		return amberror.ErrAccessDenied
 	}
 
